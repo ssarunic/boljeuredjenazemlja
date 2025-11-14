@@ -329,7 +329,7 @@ for result in results:
 
 ## Monorepo Structure
 
-**Note:** This repository is transitioning to a monorepo structure. Current structure is being refactored according to [REFACTORING_TODO.md](REFACTORING_TODO.md).
+**Note:** This repository has been refactored to a monorepo structure. See [refactoring-todo.md](docs/refactoring-todo.md) for the migration checklist.
 
 ### Target Structure (Monorepo)
 
@@ -408,19 +408,15 @@ boljeuredjenazemlja/
 │
 ├── README.md                     # Main repository README
 ├── CLAUDE.md                     # This file
-├── NAMING_CONVENTIONS.md         # Naming standards
-└── REFACTORING_TODO.md           # Refactoring checklist
+├── .env.example                  # Environment variables template
+└── pyproject.toml                # Legacy (for reference)
 ```
-
-### Current Structure (Legacy - Being Refactored)
-
-The current structure has all code in `src/cadastral_api/`. See [REFACTORING_TODO.md](REFACTORING_TODO.md) for migration plan.
 
 ## Development Guidelines
 
 ### Naming Conventions
 
-**IMPORTANT:** All new code must follow the naming conventions in [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md):
+**IMPORTANT:** All new code must follow the naming conventions in [naming-conventions.md](docs/naming-conventions.md):
 
 - **Top-level projects**: `kebab-case/` (e.g., `api/`, `mock-server/`)
 - **Python packages**: `snake_case/` (e.g., `cadastral_api/`, `cadastral_cli/`)
@@ -436,7 +432,7 @@ The current structure has all code in `src/cadastral_api/`. See [REFACTORING_TOD
 4. **Localization**: Wrap user-facing strings in `_()` from `i18n` module
 5. **Error handling**: Use typed exceptions from `exceptions.py`
 6. **Testing**: Add tests for new features
-7. **File naming**: Follow [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
+7. **File naming**: Follow [naming-conventions.md](docs/naming-conventions.md)
 
 ### Internationalization Workflow
 
@@ -489,24 +485,29 @@ ruff check src/
 
 ### Repository Documentation
 - **[README.md](README.md)** - Main repository README
-- **[NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)** - File and folder naming standards
-- **[REFACTORING_TODO.md](REFACTORING_TODO.md)** - Monorepo refactoring checklist
 - **[CLAUDE.md](CLAUDE.md)** - This file (AI assistant instructions)
+- **[docs/naming-conventions.md](docs/naming-conventions.md)** - File and folder naming standards
+- **[docs/refactoring-todo.md](docs/refactoring-todo.md)** - Monorepo refactoring checklist
 
-### User Documentation
-- **[docs/CLI.md](docs/CLI.md)** - Complete CLI command reference (to be moved to `cli/docs/`)
-- **[docs/MCP_SERVER.md](docs/MCP_SERVER.md)** - MCP server documentation (to be moved to `mcp/docs/`)
+### Project Documentation
+- **[api/README.md](api/README.md)** - Python SDK documentation
+- **[api/docs/pydantic-entities-implementation.md](api/docs/pydantic-entities-implementation.md)** - Pydantic models specification
+- **[cli/README.md](cli/README.md)** - CLI application documentation
+- **[cli/docs/command-reference.md](cli/docs/command-reference.md)** - Complete CLI command reference
+- **[mcp/README.md](mcp/README.md)** - MCP server documentation
+- **[mcp/docs/mcp-server.md](mcp/docs/mcp-server.md)** - MCP protocol details
+- **[mock-server/README.md](mock-server/README.md)** - Mock server documentation
 
 ### Technical Specifications
-- **[specs/Croatian_Cadastral_API_Specification.md](specs/Croatian_Cadastral_API_Specification.md)** - Complete API documentation
-- **[specs/Pydantic_Business_Entities_Implementation.md](specs/Pydantic_Business_Entities_Implementation.md)** - Pydantic models specification
-- **[specs/I18N_GUIDE.md](specs/I18N_GUIDE.md)** - Internationalization developer guide
-- **[specs/I18N_IMPLEMENTATION_STATUS.md](specs/I18N_IMPLEMENTATION_STATUS.md)** - i18n implementation status
+- **[docs/croatian-cadastral-api-specification.md](docs/croatian-cadastral-api-specification.md)** - Complete API specification
+- **[docs/i18n-guide.md](docs/i18n-guide.md)** - Internationalization developer guide
+- **[docs/i18n-implementation-status.md](docs/i18n-implementation-status.md)** - i18n implementation status
+- **[docs/translation-status.md](docs/translation-status.md)** - Translation progress tracking
 
 ### Examples
-- **[examples/basic_usage.py](examples/basic_usage.py)** - Basic SDK usage (to be moved to `api/examples/`)
-- **[examples/municipality_search.py](examples/municipality_search.py)** - Municipality search (to be moved to `api/examples/`)
-- **[examples/gis_parcel_geometry.py](examples/gis_parcel_geometry.py)** - GIS geometry (to be moved to `api/examples/`)
+- **[api/examples/basic_usage.py](api/examples/basic_usage.py)** - Basic SDK usage
+- **[api/examples/municipality_search.py](api/examples/municipality_search.py)** - Municipality search
+- **[api/examples/gis_parcel_geometry.py](api/examples/gis_parcel_geometry.py)** - GIS geometry examples
 
 ## Related Services
 
