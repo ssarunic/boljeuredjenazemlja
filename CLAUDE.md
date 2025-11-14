@@ -43,7 +43,7 @@ This is a **monorepo** containing multiple related projects demonstrating modern
 - **MCP Server** (`mcp/`): AI agent integration via Model Context Protocol
 - **GIS Integration**: Parcel geometry parsing and local caching from GML files
 - **Batch Processing**: Process multiple parcels in a single operation (CLI list or file input)
-- **Internationalization**: Croatian (default), English, German, Italian support via gettext
+- **Internationalization**: Croatian (default) and English support via gettext
 - **Rate Limiting**: Automatic request throttling (0.75s default, configurable)
 - **Error Handling**: Comprehensive error types with user-friendly messages
 
@@ -109,7 +109,7 @@ The API client can be configured via environment variables or a `.env` file:
 - `CADASTRAL_API_BASE_URL`: API base URL (default: `http://localhost:8000`)
 - `CADASTRAL_API_TIMEOUT`: Request timeout in seconds (default: `10.0`)
 - `CADASTRAL_API_RATE_LIMIT`: Rate limit between requests in seconds (default: `0.75`)
-- `CADASTRAL_LANG`: Language for CLI output (`hr`, `en`, `de`, `it`) - Croatian is default
+- `CADASTRAL_LANG`: Language for CLI output (`hr`, `en`) - Croatian is default
 
 **Setup:**
 1. Copy `.env.example` to `.env`
@@ -124,7 +124,7 @@ CADASTRAL_API_BASE_URL=http://localhost:8000
 # Or use production API (requires authorization)
 # CADASTRAL_API_BASE_URL=https://oss.uredjenazemlja.hr/oss/public
 
-# Optional: Set language (hr, en, de, it)
+# Optional: Set language (hr, en)
 # CADASTRAL_LANG=hr
 ```
 
@@ -206,8 +206,6 @@ The CLI supports multiple languages via the `--lang` flag or `CADASTRAL_LANG` en
 
 - **Croatian (hr)** - Default language
 - **English (en)** - Full English translation
-- **German (de)** - Supported
-- **Italian (it)** - Supported
 
 Language selection priority:
 1. `--lang` CLI flag

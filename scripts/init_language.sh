@@ -15,8 +15,6 @@ if [ $# -ne 1 ]; then
     echo "Examples:"
     echo "  $0 hr    # Croatian"
     echo "  $0 en    # English"
-    echo "  $0 de    # German"
-    echo "  $0 it    # Italian"
     exit 1
 fi
 
