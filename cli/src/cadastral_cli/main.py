@@ -16,9 +16,9 @@ See README.md for full disclaimer.
 import click
 from rich.console import Console
 
-from .. import CadastralAPIClient, __version__
-from ..exceptions import CadastralAPIError
-from ..i18n import _, get_current_language, set_language, SUPPORTED_LANGUAGES
+from cadastral_cli import CadastralAPIClient, __version__
+from cadastral_cliexceptions import CadastralAPIError
+from cadastral_clii18n import _, get_current_language, set_language, SUPPORTED_LANGUAGES
 from .commands import batch, cache, discovery, gis, parcel, search
 
 console = Console()

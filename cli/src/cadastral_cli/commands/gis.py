@@ -6,10 +6,10 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from ... import CadastralAPIClient
-from ...exceptions import CadastralAPIError
-from ...i18n import _
-from ..formatters import print_error, print_success
+from cadastral_api import CadastralAPIClient
+from cadastral_apiexceptions import CadastralAPIError
+from cadastral_apii18n import _
+from cadastral_cliformatters import print_error, print_success
 from .search import _resolve_municipality
 
 console = Console()
@@ -206,7 +206,7 @@ def download_gis(
 
                 # Try to count parcels
                 try:
-                    from ...gis import GMLParser
+                    from cadastral_apigis import GMLParser
                     parcel_file = output_path / "katastarske_cestice.gml"
                     if parcel_file.exists():
                         parser = GMLParser(parcel_file)

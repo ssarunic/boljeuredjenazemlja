@@ -3,10 +3,10 @@
 import click
 from rich.console import Console
 
-from ... import CadastralAPIClient, __version__
-from ...exceptions import CadastralAPIError
-from ...i18n import _
-from ..formatters import print_error, print_output
+from cadastral_api import CadastralAPIClient, __version__
+from cadastral_apiexceptions import CadastralAPIError
+from cadastral_apii18n import _
+from cadastral_cliformatters import print_error, print_output
 
 console = Console()
 
