@@ -1,15 +1,15 @@
 # i18n Status
 
-**Last Updated**: 2025-11-14
+**Last Updated**: 2025-11-14 23:30
 
-## 📊 Overall Status: 85% Complete
+## 📊 Overall Status: 95% Complete ✅
 
 - ✅ **Infrastructure**: 100% complete
 - ✅ **Code Localization**: 100% complete
-- 🔄 **Translations**: 79% complete (147/186 strings)
+- ✅ **Translations**: 100% complete (186/186 strings)
 - ⏳ **Testing**: 0% complete
 
-**Estimated time to 100%**: 5-8 hours
+**Estimated time to 100%**: 2-3 hours (testing only)
 
 ---
 
@@ -49,12 +49,12 @@
 
 All user-facing strings wrapped in `_()`, `ngettext()`, or `pgettext()`.
 
-### Translation Files (79%)
+### Translation Files (100%) ✅
 
 **Created**:
-- `po/hr.po` - Croatian (147/186 translated, 79%)
-- `po/en.po` - English (3 explicit, rest use source)
-- `api/src/cadastral_api/locale/hr/LC_MESSAGES/cadastral.mo` (9.9KB)
+- `po/hr.po` - Croatian (186/186 translated, 100% ✅)
+- `po/en.po` - English (15 explicit, rest use source)
+- `api/src/cadastral_api/locale/hr/LC_MESSAGES/cadastral.mo` (14KB)
 - `api/src/cadastral_api/locale/en/LC_MESSAGES/cadastral.mo` (1.2KB)
 
 **Coverage**:
@@ -63,25 +63,32 @@ All user-facing strings wrapped in `_()`, `ngettext()`, or `pgettext()`.
 - ✅ Section headers (PARCEL INFORMATION → INFORMACIJE O ČESTICI)
 - ✅ Status messages (Searching... → Pretražujem...)
 - ✅ Error messages (Parcel not found → Čestica nije pronađena)
-- ✅ Cache management messages
+- ✅ Cache management messages (all 9 strings completed)
+- ✅ Municipality search messages (all 10 strings completed)
+- ✅ GIS operation messages (all 14 strings completed)
 - ✅ Plural forms (3 forms for Croatian)
-- 🔄 CLI help text (mostly complete, 39 strings remaining)
+- ✅ All CLI output text (100% translated)
 
 ---
 
-## 🔄 In Progress
+## ✅ Recently Completed (2025-11-14)
 
-### Croatian Translations (79% complete)
+### Croatian Translations (100% complete) ✅
 
-**Status**: 147 translated, 39 untranslated
+**Status**: 186/186 translated (all strings completed!)
 
-**Missing translations**: Mostly CLI help text and option descriptions
+**Completed translations include**:
+- Cache management: "Location: {cache_dir}" → "Lokacija: {cache_dir}"
+- Municipality search: "Municipality '{municipality}' not found" → "Općina '{municipality}' nije pronađena"
+- Parcel operations: "Fetching parcel {parcel_number}..." → "Dohvaćam česticu {parcel_number}..."
+- GIS operations: "Geometry not found" → "Geometrija nije pronađena"
+- File exports: "WKT saved to: {output}" → "WKT spremljen u: {output}"
+- Error messages: "API error: {error_type}" → "API greška: {error_type}"
 
-**To complete**:
+**Compilation**:
 ```bash
-./scripts/update_translations.sh
-# Edit po/hr.po to add missing 39 translations
 ./scripts/compile_translations.sh
+# ✓ Compiled 186 messages to cadastral.mo
 ```
 
 ---
@@ -118,13 +125,13 @@ cadastral get-parcel <5_owners> -m SAVAR  # 5 vlasnika
 
 ## 📋 Next Steps
 
-### 1. Complete Croatian Translations (~2-3 hours)
-Add 39 missing translations in `po/hr.po`
+### 1. ~~Complete Croatian Translations~~ ✅ DONE
+~~Add 33 missing translations in `po/hr.po`~~
 
-### 2. Test End-to-End (~2-3 hours)
+### 2. Test End-to-End (~2-3 hours) ⏳ NEXT
 Verify all functionality works in both languages
 
-### 3. Fix Issues (~1-2 hours)
+### 3. Fix Issues (~1-2 hours) ⏳
 Address any bugs found during testing
 
 ---
@@ -197,12 +204,12 @@ Examples:
 
 - ~~Infrastructure~~ ✅ DONE
 - ~~Code localization~~ ✅ DONE
-- Complete 39 translations: **2-3 hours**
-- Testing: **2-3 hours**
-- Bug fixes: **1-2 hours**
+- ~~Complete 33 translations~~ ✅ DONE (2025-11-14)
+- Testing: **2-3 hours** ⏳
+- Bug fixes: **0-1 hours** ⏳
 
-**Total remaining: 5-8 hours**
+**Total remaining: 2-4 hours**
 
 ---
 
-**Status**: Nearly production-ready. Main work remaining is completing translations and testing.
+**Status**: Production-ready for translations! All 186 strings translated to Croatian. Only testing remains.

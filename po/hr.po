@@ -126,6 +126,8 @@ msgid ""
 "\n"
 "{count} municipalities{filter_desc}:\n"
 msgstr ""
+"\n"
+"{count} općina{filter_desc}:\n"
 
 #: src/cadastral_api/cli/commands/discovery.py:173
 msgid "Croatian Cadastral CLI"
@@ -248,7 +250,7 @@ msgstr[2] "   {count} čestica nije uspjelo - pogledajte izlaz za detalje"
 #: src/cadastral_api/cli/commands/parcel.py:86
 #, python-brace-format
 msgid "API error: {error_type}"
-msgstr ""
+msgstr "API greška: {error_type}"
 
 #: src/cadastral_api/cli/commands/batch.py:217
 #, python-brace-format
@@ -374,6 +376,8 @@ msgid ""
 "\n"
 "Download GIS data: cadastral download-gis <municipality> -o ./output"
 msgstr ""
+"\n"
+"Preuzmite GIS podatke: cadastral download-gis <općina> -o ./izlaz"
 
 #: src/cadastral_api/cli/commands/cache.py:84
 #, python-brace-format
@@ -404,7 +408,7 @@ msgstr ""
 #: src/cadastral_api/cli/commands/cache.py:105
 #, python-brace-format
 msgid "Cache Location: {cache_dir}"
-msgstr ""
+msgstr "Lokacija predmemorije: {cache_dir}"
 
 #: src/cadastral_api/cli/commands/cache.py:110
 #, python-brace-format
@@ -451,17 +455,17 @@ msgstr "Očišćena sva predmemorija (oslobođeno {size} MB)"
 #: src/cadastral_api/cli/commands/cache.py:170
 #, python-brace-format
 msgid "Municipality {municipality_code} is not cached"
-msgstr ""
+msgstr "Općina {municipality_code} nije u predmemoriji"
 
 #: src/cadastral_api/cli/commands/cache.py:179
 #, python-brace-format
 msgid "Clearing cache for municipality {municipality_code}..."
-msgstr ""
+msgstr "Čistim predmemoriju za općinu {municipality_code}..."
 
 #: src/cadastral_api/cli/commands/cache.py:184
 #, python-brace-format
 msgid "Cleared municipality {municipality_code} ({size} KB freed)"
-msgstr ""
+msgstr "Očišćena općina {municipality_code} (oslobođeno {size} KB)"
 
 #: src/cadastral_api/cli/commands/cache.py:192
 #, python-brace-format
@@ -475,7 +479,7 @@ msgstr "INFORMACIJE O PREDMEMORIJI"
 #: src/cadastral_api/cli/commands/cache.py:213
 #, python-brace-format
 msgid "Location: {cache_dir}"
-msgstr ""
+msgstr "Lokacija: {cache_dir}"
 
 #: src/cadastral_api/cli/commands/cache.py:216
 msgid "Status: Empty (directory does not exist)"
@@ -510,6 +514,8 @@ msgid ""
 "\n"
 "To list cached municipalities: cadastral cache list"
 msgstr ""
+"\n"
+"Za popis općina u predmemoriji: cadastral cache list"
 
 #: src/cadastral_api/cli/commands/cache.py:252
 #, python-brace-format
@@ -526,7 +532,7 @@ msgstr "Tražim česticu {parcel_number}..."
 #: src/cadastral_api/cli/commands/parcel.py:81
 #, python-brace-format
 msgid "Parcel '{parcel_number}' not found in municipality {municipality}"
-msgstr ""
+msgstr "Čestica '{parcel_number}' nije pronađena u općini {municipality}"
 
 #: src/cadastral_api/cli/commands/search.py:47
 #: src/cadastral_api/cli/commands/search.py:239
@@ -608,11 +614,11 @@ msgstr "Za potpune detalje"
 #: src/cadastral_api/cli/commands/search.py:262
 #, python-brace-format
 msgid "Municipality '{municipality}' not found"
-msgstr ""
+msgstr "Općina '{municipality}' nije pronađena"
 
 #: src/cadastral_api/cli/commands/search.py:139
 msgid "At least one of search_term, --office, or --department is required"
-msgstr ""
+msgstr "Potreban je barem jedan od: search_term, --office ili --department"
 
 #: src/cadastral_api/cli/commands/search.py:140
 msgid "Try"
@@ -628,47 +634,49 @@ msgid ""
 "\n"
 "Found {count} municipalities ({filters}):\n"
 msgstr ""
+"\n"
+"Pronađeno {count} općina ({filters}):\n"
 
 #: src/cadastral_api/cli/commands/search.py:208
 #, python-brace-format
 msgid "No municipalities found for '{search}'"
-msgstr ""
+msgstr "Nema pronađenih općina za '{search}'"
 
 #: src/cadastral_api/cli/commands/search.py:241
 msgid "Search for municipalities"
-msgstr ""
+msgstr "Pretražite općine"
 
 #: src/cadastral_api/cli/commands/search.py:244
 msgid "List all municipalities"
-msgstr ""
+msgstr "Ispišite sve općine"
 
 #: src/cadastral_api/cli/commands/search.py:245
 msgid "Use municipality code directly"
-msgstr ""
+msgstr "Koristite šifru općine izravno"
 
 #: src/cadastral_api/cli/commands/search.py:249
 #, python-brace-format
 msgid "Multiple municipalities found for '{municipality}'"
-msgstr ""
+msgstr "Pronađeno više općina za '{municipality}'"
 
 #: src/cadastral_api/cli/commands/search.py:252
 msgid "Please specify using municipality code"
-msgstr ""
+msgstr "Molimo navedite šifru općine"
 
 #: src/cadastral_api/cli/commands/search.py:264
 #, python-brace-format
 msgid "Failed to resolve municipality: {error_type}"
-msgstr ""
+msgstr "Neuspješno razrješavanje općine: {error_type}"
 
 #: src/cadastral_api/cli/commands/parcel.py:51
 #, python-brace-format
 msgid "Fetching parcel {parcel_number}..."
-msgstr ""
+msgstr "Dohvaćam česticu {parcel_number}..."
 
 #: src/cadastral_api/cli/commands/parcel.py:57
 #, python-brace-format
 msgid "Parcel '{parcel_number}' not found"
-msgstr ""
+msgstr "Čestica '{parcel_number}' nije pronađena"
 
 #: src/cadastral_api/cli/commands/parcel.py:65
 msgid "Fetching geometry..."
@@ -786,7 +794,7 @@ msgstr "  Visina"
 
 #: src/cadastral_api/cli/commands/parcel.py:315
 msgid "To export coordinates"
-msgstr ""
+msgstr "Za izvoz koordinata"
 
 #: src/cadastral_api/cli/commands/parcel.py:323
 msgid "ADDITIONAL INFO"
@@ -803,38 +811,40 @@ msgstr "List pregleda"
 #: src/cadastral_api/cli/commands/gis.py:49
 #, python-brace-format
 msgid "Fetching geometry for parcel {parcel_number}..."
-msgstr ""
+msgstr "Dohvaćam geometriju za česticu {parcel_number}..."
 
 #: src/cadastral_api/cli/commands/gis.py:55
 #, python-brace-format
 msgid "Geometry not found for parcel '{parcel_number}'"
-msgstr ""
+msgstr "Geometrija nije pronađena za česticu '{parcel_number}'"
 
 #: src/cadastral_api/cli/commands/gis.py:58
 msgid ""
 "\n"
 "Note: GIS data must be downloaded first (this happens automatically)"
 msgstr ""
+"\n"
+"Napomena: GIS podaci moraju biti prvo preuzeti (to se događa automatski)"
 
 #: src/cadastral_api/cli/commands/gis.py:72
 #, python-brace-format
 msgid "WKT saved to: {output}"
-msgstr ""
+msgstr "WKT spremljen u: {output}"
 
 #: src/cadastral_api/cli/commands/gis.py:94
 #, python-brace-format
 msgid "GeoJSON saved to: {output}"
-msgstr ""
+msgstr "GeoJSON spremljen u: {output}"
 
 #: src/cadastral_api/cli/commands/gis.py:106
 #, python-brace-format
 msgid "CSV saved to: {output}"
-msgstr ""
+msgstr "CSV spremljen u: {output}"
 
 #: src/cadastral_api/cli/commands/gis.py:129
 #, python-brace-format
 msgid "JSON saved to: {output}"
-msgstr ""
+msgstr "JSON spremljen u: {output}"
 
 #: src/cadastral_api/cli/commands/gis.py:171
 msgid "Clearing cache..."
@@ -842,12 +852,12 @@ msgstr "Čistim predmemoriju..."
 
 #: src/cadastral_api/cli/commands/gis.py:173
 msgid "Cache cleared"
-msgstr ""
+msgstr "Predmemorija očišćena"
 
 #: src/cadastral_api/cli/commands/gis.py:176
 #, python-brace-format
 msgid "Downloading GIS data for municipality {municipality_code}..."
-msgstr ""
+msgstr "Preuzimam GIS podatke za općinu {municipality_code}..."
 
 #: src/cadastral_api/cli/commands/gis.py:180
 msgid "Downloading..."
@@ -856,7 +866,7 @@ msgstr "Preuzimam..."
 #: src/cadastral_api/cli/commands/gis.py:184
 #, python-brace-format
 msgid "Downloaded: {filename} ({size} KB)"
-msgstr ""
+msgstr "Preuzeto: {filename} ({size} KB)"
 
 #: src/cadastral_api/cli/commands/gis.py:194
 msgid "Extracting..."
@@ -865,7 +875,7 @@ msgstr "Raspakiravam..."
 #: src/cadastral_api/cli/commands/gis.py:198
 #, python-brace-format
 msgid "Extracted to: {output_path}"
-msgstr ""
+msgstr "Raspakirano u: {output_path}"
 
 #: src/cadastral_api/cli/commands/gis.py:201
 msgid ""
@@ -887,7 +897,7 @@ msgstr ""
 #: src/cadastral_api/cli/commands/gis.py:221
 #, python-brace-format
 msgid "ZIP file copied to: {dest_zip}"
-msgstr ""
+msgstr "ZIP datoteka kopirana u: {dest_zip}"
 
 #: src/cadastral_api/cli/commands/gis.py:223
 #, python-brace-format
@@ -896,11 +906,14 @@ msgid ""
 "To get parcel geometry: cadastral get-geometry <parcel> -m "
 "{municipality_code}"
 msgstr ""
+"\n"
+"Za dohvaćanje geometrije čestice: cadastral get-geometry <čestica> -m "
+"{municipality_code}"
 
 #: src/cadastral_api/cli/commands/gis.py:231
 #, python-brace-format
 msgid "Error downloading GIS data: {error}"
-msgstr ""
+msgstr "Greška pri preuzimanju GIS podataka: {error}"
 
 #: src/cadastral_api/cli/commands/gis.py:237
 msgid "GEOMETRY STATISTICS"
@@ -908,7 +921,7 @@ msgstr "STATISTIKA GEOMETRIJE"
 
 #: src/cadastral_api/cli/commands/gis.py:248
 msgid "Area (GIS)"
-msgstr ""
+msgstr "Površina (GIS)"
 
 #: src/cadastral_api/cli/commands/gis.py:253
 msgid "  Min X"
@@ -946,6 +959,8 @@ msgid ""
 "\n"
 "✗ Error: {error}"
 msgstr ""
+"\n"
+"✗ Greška: {error}"
 
 #: src/cadastral_api/cli/main.py:87
 msgid ""
