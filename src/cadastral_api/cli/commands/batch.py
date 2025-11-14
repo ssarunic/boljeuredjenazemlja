@@ -5,7 +5,7 @@ from rich.console import Console
 
 from ... import CadastralAPIClient
 from ...exceptions import CadastralAPIError
-from ...i18n import _
+from ...i18n import _, ngettext
 from ..batch_processor import process_batch
 from ..formatters import print_error, print_success, print_output
 from ..input_parsers import parse_cli_list, parse_input_file
@@ -154,7 +154,12 @@ def batch_fetch(
             print_error(_("Input parsing error: {error}").format(error=str(e)))
             raise SystemExit(1)
 
-        console.print(f"📊 Found {len(parcel_list)} parcel(s) to process\n", style="dim")
+        parcel_count_msg = ngettext(
+            "📊 Found {count} parcel to process\n",
+            "📊 Found {count} parcels to process\n",
+            len(parcel_list)
+        ).format(count=len(parcel_list))
+        console.print(parcel_count_msg, style="dim")
 
         # Process batch
         with CadastralAPIClient() as client:
@@ -185,14 +190,19 @@ def batch_fetch(
             )
         else:
             console.print(
-                f"⚠️  Processed {summary.successful}/{summary.total} parcels "
-                f"({summary.success_rate:.1f}% success rate)",
+                _("⚠️  Processed {successful}/{total} parcels ({rate}% success rate)").format(
+                    successful=summary.successful,
+                    total=summary.total,
+                    rate=f"{summary.success_rate:.1f}"
+                ),
                 style="yellow",
             )
-            console.print(
-                f"   {summary.failed} parcel(s) failed - see output for details",
-                style="yellow",
-            )
+            failed_msg = ngettext(
+                "   {count} parcel failed - see output for details",
+                "   {count} parcels failed - see output for details",
+                summary.failed
+            ).format(count=summary.failed)
+            console.print(failed_msg, style="yellow")
 
         # Exit with error code if any failures (only in non-interactive mode)
         if summary.failed > 0:
@@ -204,7 +214,7 @@ def batch_fetch(
             console.print(f"   Details: {e.details}", style="dim red")
         raise SystemExit(1)
     except Exception as e:
-        print_error(f"Unexpected error: {str(e)}")
+        print_error(_("Unexpected error: {error}").format(error=str(e)))
         if ctx.obj.get("verbose"):
             raise
         raise SystemExit(1)

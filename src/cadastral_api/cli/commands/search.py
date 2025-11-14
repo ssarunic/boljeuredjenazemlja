@@ -5,7 +5,7 @@ from rich.console import Console
 
 from ... import CadastralAPIClient
 from ...exceptions import CadastralAPIError, ErrorType
-from ...i18n import _
+from ...i18n import _, ngettext
 from ..formatters import format_table, print_error, print_output
 
 console = Console()
@@ -61,7 +61,13 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
                 _("Area"): f"{parcel.area_numeric:,} m²" if parcel.area_numeric else _("N/A"),
                 _("Land Use"): ", ".join(parcel.land_use_summary.keys()) if parcel.land_use_summary else _("N/A"),
                 _("Building Permitted"): _("Yes") if parcel.has_building_right else _("No"),
-                _("Owners"): _("{count} owner(s)").format(count=parcel.total_owners) if parcel.total_owners else _("Unknown"),
+                _("Owners"): (
+                    ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
+                        count=parcel.total_owners
+                    )
+                    if parcel.total_owners
+                    else _("Unknown")
+                ),
             }
 
             if output_format == "table":

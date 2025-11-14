@@ -6,7 +6,7 @@ from rich.table import Table
 
 from ... import CadastralAPIClient
 from ...exceptions import CadastralAPIError, ErrorType
-from ...i18n import _
+from ...i18n import _, ngettext
 from ..formatters import print_error, print_output
 from .search import _resolve_municipality
 
@@ -219,7 +219,10 @@ def _print_landuse_info(parcel) -> None:
 
 def _print_ownership_info(parcel) -> None:
     """Print ownership information."""
-    header = f"{_('OWNERSHIP')} ({parcel.total_owners} {_('owner(s)')})"
+    owners_text = ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
+        count=parcel.total_owners
+    )
+    header = f"{_('OWNERSHIP')} ({owners_text})"
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
 
