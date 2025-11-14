@@ -1,25 +1,26 @@
-# User Documentation
+# Documentation Index
 
-This directory contains end-user documentation for the Croatian Cadastral API project.
+This directory contains repository-wide documentation for the Croatian Cadastral API monorepo.
 
-## Command-Line Interface
+## Project Status & Planning
 
-- **[CLI.md](CLI.md)** - Complete CLI command reference
-  - Installation and quick start
-  - All available commands and options
-  - Usage examples for each command
-  - Output formats (table, JSON, CSV, WKT, GeoJSON)
-  - Tips, tricks, and troubleshooting
+- [refactoring-todo.md](refactoring-todo.md) - Monorepo refactoring checklist (✅ 90% complete)
+- [naming-conventions.md](naming-conventions.md) - File and directory naming standards
 
-## Related Documentation
+## Technical Documentation
 
-### Technical Specifications
-See the [specs/](../specs/) directory for:
-- API specification and technical details
-- Pydantic model implementations
-- i18n implementation guide and status
-- Developer documentation
+- [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md) - Complete API specification
+- [documentation-structure.md](documentation-structure.md) - Documentation organization
 
-### Getting Started
-- [Main README](../README.md) - Project overview and Python SDK usage
-- [Examples](../examples/) - Python code examples
+## Internationalization (i18n)
+
+- [i18n-guide.md](i18n-guide.md) - Developer guide for adding translations
+- [i18n-status.md](i18n-status.md) - Implementation and translation status (85% complete)
+- [localization_example.py](localization_example.py) - Code example for localizing commands
+
+## Project-Specific Documentation
+
+- [../api/README.md](../api/README.md) - Python SDK documentation
+- [../cli/README.md](../cli/README.md) - CLI application documentation
+- [../mcp/README.md](../mcp/README.md) - MCP server documentation
+- [../mock-server/README.md](../mock-server/README.md) - Mock server documentation
