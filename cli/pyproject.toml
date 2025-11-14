@@ -34,6 +34,7 @@ dev = [
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",
+    "pylint>=3.0.0",
 ]
 
 [project.scripts]
@@ -68,3 +69,29 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --cov=cadastral_cli --cov-report=term-missing"
+
+[tool.pylint.main]
+py-version = "3.12"
+jobs = 0  # Use all available CPUs
+
+[tool.pylint.messages_control]
+# Disable some overly strict checks while keeping best practices
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-instance-attributes",
+    "fixme",  # Allow TODO comments
+]
+
+[tool.pylint.format]
+max-line-length = 100  # Match ruff configuration
+
+[tool.pylint.design]
+max-attributes = 12
+max-args = 8
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_", "id", "ok", "cli"]
