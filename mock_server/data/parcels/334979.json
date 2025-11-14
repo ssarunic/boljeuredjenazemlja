@@ -1,0 +1,670 @@
+[
+  {
+    "parcelId": 6564817,
+    "parcelNumber": "103/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "POLJE",
+    "area": "1200",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74357391,
+        "name": "MASLINJAK",
+        "area": "1200",
+        "possessionSheetId": 14823725,
+        "possessionSheetNumber": "657",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14823725,
+        "possessionSheetNumber": "657",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "IVIĆ MARKO, SIN PETRA",
+            "address": "TESTNA ULICA 15, SPLIT",
+            "ownership": null
+          },
+          {
+            "name": "IVIĆ ANA, KĆI PETRA",
+            "address": "SAVAR",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13122441,
+      "lrUnitNumber": "657",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6564715,
+    "parcelNumber": "45",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "POLJE",
+    "area": "981",
+    "buildingRemark": 0,
+    "detailSheetNumber": "2",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74357201,
+        "name": "PAŠNJAK",
+        "area": "981",
+        "possessionSheetId": 14823456,
+        "possessionSheetNumber": "138",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14823456,
+        "possessionSheetNumber": "138",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "HORVAT TOMISLAV, SIN IVANA",
+            "address": "ZADAR, PRIMJERNA OBALA 20",
+            "ownership": "1/1"
+          }
+        ]
+      },
+      {
+        "possessionSheetId": 14823457,
+        "possessionSheetNumber": "43",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "NOVAK PETAR, SIN ANTE",
+            "address": "SAVAR",
+            "ownership": "1/1"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13122342,
+      "lrUnitNumber": "138",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6565198,
+    "parcelNumber": "396/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ILO",
+    "area": "2077",
+    "buildingRemark": 0,
+    "detailSheetNumber": "8",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74358912,
+        "name": "ŠUMA",
+        "area": "2077",
+        "possessionSheetId": 14824156,
+        "possessionSheetNumber": "645",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824156,
+        "possessionSheetNumber": "645",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "TEST Person A",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person B",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person C",
+            "address": "ZADAR, TESTNA ULICA 45",
+            "ownership": null
+          },
+          {
+            "name": "Test Person D",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person E",
+            "address": "SPLIT, TESTNA CESTA 23",
+            "ownership": null
+          },
+          {
+            "name": "Test Person F",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person G",
+            "address": "ZADAR, PRIMJERNA 11",
+            "ownership": null
+          },
+          {
+            "name": "Test Person H",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person I",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person J",
+            "address": "ZADAR, PRIMJER 7",
+            "ownership": null
+          },
+          {
+            "name": "Test Person K",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person L",
+            "address": "SPLIT, TESTNA 34",
+            "ownership": null
+          },
+          {
+            "name": "Test Person M",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person N",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person O",
+            "address": "ZADAR, PRIMJERSKA 9",
+            "ownership": null
+          },
+          {
+            "name": "Test Person P",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person Q",
+            "address": "SAVAR",
+            "ownership": null
+          },
+          {
+            "name": "Test Person R",
+            "address": "SPLIT, TESTNA PUT 56",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13123567,
+      "lrUnitNumber": "645",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6564900,
+    "parcelNumber": "114",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "845",
+    "buildingRemark": 1,
+    "detailSheetNumber": "5",
+    "hasBuildingRight": true,
+    "parcelParts": [
+      {
+        "parcelPartId": 74357512,
+        "name": "ORANICA",
+        "area": "845",
+        "possessionSheetId": 14823801,
+        "possessionSheetNumber": "234",
+        "building": true
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14823801,
+        "possessionSheetNumber": "234",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "KOVAČEVIĆ LUKA, SIN IVANA",
+            "address": "SAVAR",
+            "ownership": "1/2"
+          },
+          {
+            "name": "KOVAČEVIĆ MAJA, KĆI IVANA",
+            "address": "ZADAR, PRIMJERNA ULICA 18",
+            "ownership": "1/2"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13122678,
+      "lrUnitNumber": "234",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6564901,
+    "parcelNumber": "1140/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "STARI PUT",
+    "area": "1523",
+    "buildingRemark": 0,
+    "detailSheetNumber": "6",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74357613,
+        "name": "VOĆNJAK",
+        "area": "1523",
+        "possessionSheetId": 14823902,
+        "possessionSheetNumber": "412",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14823902,
+        "possessionSheetNumber": "412",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "BABIĆ MARKO, SIN JOSIPA",
+            "address": "SAVAR",
+            "ownership": "1/4"
+          },
+          {
+            "name": "BABIĆ PETRA, KĆI JOSIPA",
+            "address": "SPLIT, TESTNA ULICA 89",
+            "ownership": "1/4"
+          },
+          {
+            "name": "MARIĆ IVAN, SIN ANTE",
+            "address": "SAVAR",
+            "ownership": "1/2"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13122789,
+      "lrUnitNumber": "412",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6564902,
+    "parcelNumber": "1141",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "NOVO SELO",
+    "area": "678",
+    "buildingRemark": 0,
+    "detailSheetNumber": "7",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74357714,
+        "name": "VINOGRAD",
+        "area": "678",
+        "possessionSheetId": 14824003,
+        "possessionSheetNumber": "589",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824003,
+        "possessionSheetNumber": "589",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "PERIĆ ANTE, SIN IVANA",
+            "address": "ZADAR, PRIMJERSKA ULICA 33",
+            "ownership": "1/1"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13122890,
+      "lrUnitNumber": "589",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6565012,
+    "parcelNumber": "256",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "GORNJI KRAJ",
+    "area": "2134",
+    "buildingRemark": 0,
+    "detailSheetNumber": "9",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74358234,
+        "name": "PAŠNJAK",
+        "area": "1200",
+        "possessionSheetId": 14824234,
+        "possessionSheetNumber": "321",
+        "building": false
+      },
+      {
+        "parcelPartId": 74358235,
+        "name": "ŠUMA",
+        "area": "934",
+        "possessionSheetId": 14824234,
+        "possessionSheetNumber": "321",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824234,
+        "possessionSheetNumber": "321",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "JUKIĆ MARIN, SIN PETRA",
+            "address": "SAVAR",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13123234,
+      "lrUnitNumber": "321",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6565123,
+    "parcelNumber": "78/3",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "DONJI KRAJ",
+    "area": "567",
+    "buildingRemark": 0,
+    "detailSheetNumber": "3",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74358345,
+        "name": "MASLINJAK",
+        "area": "567",
+        "possessionSheetId": 14824345,
+        "possessionSheetNumber": "178",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824345,
+        "possessionSheetNumber": "178",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "TURK JOSIP, SIN MARKA",
+            "address": "ZADAR, TESTNA CESTA 25",
+            "ownership": "1/3"
+          },
+          {
+            "name": "TURK ANA, KĆI MARKA",
+            "address": "SPLIT, PRIMJERNA 67",
+            "ownership": "1/3"
+          },
+          {
+            "name": "TURK LUKA, SIN MARKA",
+            "address": "SAVAR",
+            "ownership": "1/3"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13123345,
+      "lrUnitNumber": "178",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6565234,
+    "parcelNumber": "512",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "VRTAČA",
+    "area": "1890",
+    "buildingRemark": 0,
+    "detailSheetNumber": "11",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74358456,
+        "name": "ORANICA",
+        "area": "1234",
+        "possessionSheetId": 14824456,
+        "possessionSheetNumber": "467",
+        "building": false
+      },
+      {
+        "parcelPartId": 74358457,
+        "name": "VOĆNJAK",
+        "area": "656",
+        "possessionSheetId": 14824456,
+        "possessionSheetNumber": "467",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824456,
+        "possessionSheetNumber": "467",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "LUKIĆ STJEPAN, SIN IVANA",
+            "address": "SAVAR",
+            "ownership": "1/2"
+          },
+          {
+            "name": "LUKIĆ MARIJA, KĆI IVANA",
+            "address": "ZADAR, PRIMJERNA CESTA 44",
+            "ownership": "1/2"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13123456,
+      "lrUnitNumber": "467",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6565345,
+    "parcelNumber": "89/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "PRIMORJE",
+    "area": "3456",
+    "buildingRemark": 0,
+    "detailSheetNumber": "12",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 74358567,
+        "name": "ŠUMA",
+        "area": "3456",
+        "possessionSheetId": 14824567,
+        "possessionSheetNumber": "734",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14824567,
+        "possessionSheetNumber": "734",
+        "cadMunicipalityId": 2387,
+        "possessors": [
+          {
+            "name": "BARIĆ NIKOLA, SIN ANTE",
+            "address": "SPLIT, TESTNA CESTA 112",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 13123567,
+      "lrUnitNumber": "734",
+      "mainBookId": 21277,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  }
+]

@@ -1,0 +1,165 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Monorepo: Each project may have its own venv
+api/.venv/
+cli/.venv/
+mcp/.venv/
+mock-server/.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Keep shared .vscode settings if needed
+!.vscode/settings.json
+!.vscode/launch.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+coverage.xml
+*.cover
+
+# Monorepo: Test artifacts in each project
+api/.pytest_cache/
+cli/.pytest_cache/
+mcp/.pytest_cache/
+mock-server/.pytest_cache/
+api/.coverage
+cli/.coverage
+mcp/.coverage
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Monorepo: Type checking cache in each project
+api/.mypy_cache/
+cli/.mypy_cache/
+mcp/.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Monorepo: Ruff cache in each project
+api/.ruff_cache/
+cli/.ruff_cache/
+mcp/.ruff_cache/
+
+# Environment variables
+.env
+.env.local
+*.env
+
+# Keep example env file
+!.env.example
+
+# Documentation
+docs/_build/
+site/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Monorepo: Build artifacts in each project
+api/build/
+api/dist/
+api/*.egg-info/
+cli/build/
+cli/dist/
+cli/*.egg-info/
+mcp/build/
+mcp/dist/
+mcp/*.egg-info/
+
+# GIS Cache (user-specific)
+.cadastral_api_cache/
+*.gml
+*.gml.gz
+
+# Keep mock server test data
+!mock-server/data/**/*.gml
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Translation binaries (compiled from .po files)
+*.mo
+
+# Keep locale .mo files that are distributed
+!api/src/cadastral_api/locale/**/*.mo
+!cli/src/cadastral_cli/locale/**/*.mo
+
+# Legacy structure (remove after refactoring)
+src/croatian_cadastral_api.egg-info/
+messages.mo
+
+# Claude Code
+.claude/settings.local.json
+
+# Keep shared Claude settings if needed
+!.claude/settings.json

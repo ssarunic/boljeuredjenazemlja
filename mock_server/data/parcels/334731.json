@@ -1,0 +1,414 @@
+[
+  {
+    "parcelId": 6504123,
+    "parcelNumber": "23",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "CENTAR",
+    "area": "756",
+    "buildingRemark": 1,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": true,
+    "parcelParts": [
+      {
+        "parcelPartId": 73456789,
+        "name": "ORANICA",
+        "area": "756",
+        "possessionSheetId": 14756123,
+        "possessionSheetNumber": "89",
+        "building": true
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756123,
+        "possessionSheetNumber": "89",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "PETROVIĆ JOSIP, SIN ANTE",
+            "address": "LUKA",
+            "ownership": "1/1"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12956789,
+      "lrUnitNumber": "89",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504234,
+    "parcelNumber": "67/2",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "OBALA",
+    "area": "1423",
+    "buildingRemark": 0,
+    "detailSheetNumber": "2",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73456890,
+        "name": "MASLINJAK",
+        "area": "1423",
+        "possessionSheetId": 14756234,
+        "possessionSheetNumber": "156",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756234,
+        "possessionSheetNumber": "156",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "KOVAČ STJEPAN, SIN JURE",
+            "address": "ZADAR, TESTNA ULICA 78",
+            "ownership": null
+          },
+          {
+            "name": "KOVAČ DUJE, SIN JURE",
+            "address": "LUKA",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12956890,
+      "lrUnitNumber": "156",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504345,
+    "parcelNumber": "145",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "GORNJI DIO",
+    "area": "2789",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73457001,
+        "name": "PAŠNJAK",
+        "area": "1500",
+        "possessionSheetId": 14756345,
+        "possessionSheetNumber": "234",
+        "building": false
+      },
+      {
+        "parcelPartId": 73457002,
+        "name": "ŠUMA",
+        "area": "1289",
+        "possessionSheetId": 14756345,
+        "possessionSheetNumber": "234",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756345,
+        "possessionSheetNumber": "234",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "HORVAT MATE, SIN IVANA",
+            "address": "LUKA",
+            "ownership": "1/2"
+          },
+          {
+            "name": "HORVAT NIKO, SIN IVANA",
+            "address": "ZADAR, TESTNA CESTA 12",
+            "ownership": "1/2"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12957001,
+      "lrUnitNumber": "234",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504456,
+    "parcelNumber": "312/1",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "DONJI DIO",
+    "area": "934",
+    "buildingRemark": 0,
+    "detailSheetNumber": "5",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73457112,
+        "name": "VINOGRAD",
+        "area": "934",
+        "possessionSheetId": 14756456,
+        "possessionSheetNumber": "478",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756456,
+        "possessionSheetNumber": "478",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "JUKIĆ VICKO, SIN PETRA",
+            "address": "SPLIT, PRIMJERNA ULICA 89",
+            "ownership": "1/4"
+          },
+          {
+            "name": "JUKIĆ TONI, SIN PETRA",
+            "address": "LUKA",
+            "ownership": "1/4"
+          },
+          {
+            "name": "JUKIĆ SILVA, KĆI PETRA",
+            "address": "ZADAR, TESTNA PUT 45",
+            "ownership": "1/4"
+          },
+          {
+            "name": "JUKIĆ MAJA, KĆI PETRA",
+            "address": "LUKA",
+            "ownership": "1/4"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12957112,
+      "lrUnitNumber": "478",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504567,
+    "parcelNumber": "89",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "UVALA",
+    "area": "1678",
+    "buildingRemark": 0,
+    "detailSheetNumber": "6",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73457223,
+        "name": "PAŠNJAK",
+        "area": "1678",
+        "possessionSheetId": 14756567,
+        "possessionSheetNumber": "523",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756567,
+        "possessionSheetNumber": "523",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "MARIĆ FRANE, SIN JOSIPA",
+            "address": "LUKA",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12957223,
+      "lrUnitNumber": "523",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504678,
+    "parcelNumber": "456/3",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "STARI PUT",
+    "area": "2345",
+    "buildingRemark": 0,
+    "detailSheetNumber": "7",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73457334,
+        "name": "ŠUMA",
+        "area": "2345",
+        "possessionSheetId": 14756678,
+        "possessionSheetNumber": "689",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756678,
+        "possessionSheetNumber": "689",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "TOMIĆ JAKOV, SIN ANTE",
+            "address": "LUKA",
+            "ownership": null
+          },
+          {
+            "name": "TOMIĆ MARKO, SIN ANTE",
+            "address": "ZADAR, PRIMJERNA ULICA 34",
+            "ownership": null
+          },
+          {
+            "name": "TOMIĆ PETRA, KĆI ANTE",
+            "address": "SPLIT, TESTNA CESTA 56",
+            "ownership": null
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12957334,
+      "lrUnitNumber": "689",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": false,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  },
+  {
+    "parcelId": 6504789,
+    "parcelNumber": "12/5",
+    "cadMunicipalityId": 2155,
+    "cadMunicipalityRegNum": "334731",
+    "cadMunicipalityName": "LUKA",
+    "institutionId": 114,
+    "address": "POLJE",
+    "area": "1123",
+    "buildingRemark": 0,
+    "detailSheetNumber": "8",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 73457445,
+        "name": "VOĆNJAK",
+        "area": "1123",
+        "possessionSheetId": 14756789,
+        "possessionSheetNumber": "712",
+        "building": false
+      }
+    ],
+    "possessionSheets": [
+      {
+        "possessionSheetId": 14756789,
+        "possessionSheetNumber": "712",
+        "cadMunicipalityId": 2155,
+        "possessors": [
+          {
+            "name": "IVIĆ ROKO, SIN IVANA",
+            "address": "LUKA",
+            "ownership": "1/3"
+          },
+          {
+            "name": "IVIĆ VICKO, SIN IVANA",
+            "address": "ZADAR, PRIMJERSKA CESTA 23",
+            "ownership": "2/3"
+          }
+        ]
+      }
+    ],
+    "lrUnit": {
+      "lrUnitId": 12957445,
+      "lrUnitNumber": "712",
+      "mainBookId": 21145,
+      "status": "0",
+      "verificated": true,
+      "condominiums": false
+    },
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": true
+  }
+]
