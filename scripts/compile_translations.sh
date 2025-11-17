@@ -9,7 +9,7 @@
 set -e
 
 DOMAIN="cadastral"
-LOCALE_DIR="src/cadastral_api/locale"
+LOCALE_DIR="api/src/cadastral_api/locale"
 
 echo "========================================="
 echo "Compiling translation files..."

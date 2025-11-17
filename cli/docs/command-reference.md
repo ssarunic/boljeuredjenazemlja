@@ -218,6 +218,105 @@ Bounding Box: ...
 
 ---
 
+#### `cadastral get-lr-unit`
+Get detailed land registry unit (zemljišnoknjižni uložak) information including ownership, parcels, and encumbrances.
+
+```bash
+# Get by LR unit number and main book ID
+cadastral get-lr-unit --unit-number 769 --main-book 21277
+
+# Get from parcel (automatic lookup)
+cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
+
+# Show only ownership information (Sheet B)
+cadastral get-lr-unit -u 769 -b 21277 --show-owners
+
+# Show all parcels in the unit (Sheet A)
+cadastral get-lr-unit -u 769 -b 21277 --show-parcels
+
+# Show encumbrances (Sheet C)
+cadastral get-lr-unit -u 769 -b 21277 --show-encumbrances
+
+# Show all sheets
+cadastral get-lr-unit -p 279/6 -m SAVAR --all
+
+# Export to JSON
+cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
+```
+
+**Options:**
+- `--unit-number, -u` - Land registry unit number (e.g., '769')
+- `--main-book, -b` - Main book ID (e.g., 21277)
+- `--from-parcel, -p` - Get LR unit from parcel number (requires --municipality)
+- `--municipality, -m` - Municipality name or code (required with --from-parcel)
+- `--show-owners, -o` - Display ownership details (Sheet B)
+- `--show-parcels, -P` - Display all parcels in unit (Sheet A)
+- `--show-encumbrances, -e` - Display encumbrances (Sheet C)
+- `--all, -a` - Show all sheets
+- `--format, -f` - Output format: table (default), json, csv
+- `--output` - Save output to file
+- `--lang` - Language for output (hr, en)
+
+**Output (default - summary):**
+```
+=== LAND REGISTRY UNIT ===
+Unit Number        769
+Main Book          TESTMUNICIPALITY
+Institution        Test Land Registry Office
+Status             Aktivan
+Unit Type          VLASNIČKI
+Last Diary Number  Z-27986/2025
+
+=== SUMMARY ===
+Total Parcels      3
+Total Area         2,621 m²
+Number of Owners   5
+Has Encumbrances   Yes
+
+💡 Use --show-owners to see ownership details
+💡 Use --show-parcels to see all parcels
+💡 Use --show-encumbrances to see encumbrances
+```
+
+**Output (with --show-owners):**
+```
+=== OWNERSHIP SHEET (LIST B) ===
+Share              Owner          Address                    OIB
+--------------     -----------    ----------------------     -----------
+4/8                Test Owner A   -                          -
+1/8                Test Owner B   -                          -
+1/8                Test Owner C   -                          -
+1/8                Test Owner D   Test Street 123            12345678901
+1/8                Test Owner E   Test Avenue 456            98765432109
+```
+
+**Output (with --show-parcels):**
+```
+=== PARCEL LIST (SHEET A) ===
+Parcel Number  Address          Area (m²)
+-------------  --------------   ---------
+118/4          TEST FIELD       409
+192/3          TEST AREA        322
+279/6          TEST LOCATION    1890
+
+TOTAL                           2621
+```
+
+**Output (with --show-encumbrances):**
+```
+=== ENCUMBRANCES SHEET (LIST C) ===
+Description                     Details
+-----------------------------   --------------------------------
+1. Na suvlasnički dio: 1 (4/8)  • 1.1: Zaprimljeno 05.05.2016...
+```
+
+**Land Registry Sheets:**
+- **Sheet A (Posjedovni list)** - List of all parcels in the LR unit
+- **Sheet B (List vlasništva)** - Ownership information with shares
+- **Sheet C (Teretn list)** - Encumbrances (mortgages, liens, easements)
+
+---
+
 ### GIS Commands
 
 #### `cadastral get-geometry`
@@ -534,7 +633,25 @@ for code in $(cat municipality_codes.txt); do
 done
 ```
 
-### Example 4: Cache Management
+### Example 4: Land Registry Research
+```bash
+# Get land registry unit from parcel
+cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
+
+# Show only ownership (Sheet B)
+cadastral get-lr-unit -u 769 -b 21277 --show-owners
+
+# Show all parcels in the unit (Sheet A)
+cadastral get-lr-unit -u 769 -b 21277 --show-parcels
+
+# Complete information (all sheets)
+cadastral get-lr-unit -u 769 -b 21277 --all
+
+# Export complete data for analysis
+cadastral get-lr-unit -p 279/6 -m SAVAR --all --format json -o lr-unit.json
+```
+
+### Example 5: Cache Management
 ```bash
 # Check cache status
 cadastral info

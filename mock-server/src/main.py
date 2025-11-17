@@ -34,12 +34,13 @@ app.add_middleware(
 )
 
 # Data directory
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "data"
 
 # In-memory data storage (loaded at startup)
 _offices: list[dict[str, Any]] = []
 _municipalities: list[dict[str, Any]] = []
 _parcels: dict[str, list[dict[str, Any]]] = {}  # municipality_code -> parcels
+_lr_units: dict[str, dict[str, Any]] = {}  # "mainBookId-lrUnitNumber" -> lr_unit_data
 
 
 def load_json(filepath: Path) -> Any:
@@ -51,7 +52,7 @@ def load_json(filepath: Path) -> Any:
 @app.on_event("startup")
 async def load_data():
     """Load all static data into memory on startup."""
-    global _offices, _municipalities, _parcels
+    global _offices, _municipalities, _parcels, _lr_units
 
     # Load offices
     offices_file = DATA_DIR / "offices.json"
@@ -74,7 +75,17 @@ async def load_data():
             _parcels[municipality_code] = parcels_data
             print(f"✓ Loaded {len(parcels_data)} parcels for municipality {municipality_code}")
 
-    print(f"\n🚀 Mock server ready with {len(_parcels)} municipalities")
+    # Load land registry units
+    lr_units_dir = DATA_DIR / "lr-units"
+    if lr_units_dir.exists():
+        for lr_unit_file in lr_units_dir.glob("*.json"):
+            # Filename format: mainBookId-lrUnitNumber.json (e.g., 21277-769.json)
+            key = lr_unit_file.stem
+            lr_unit_data = load_json(lr_unit_file)
+            _lr_units[key] = lr_unit_data
+            print(f"✓ Loaded LR unit {key}")
+
+    print(f"\n🚀 Mock server ready with {len(_parcels)} municipalities and {len(_lr_units)} LR units")
 
 
 @app.get("/")
@@ -89,12 +100,14 @@ async def root():
             "municipalities": "/search-cad-parcels/municipalities",
             "parcel_search": "/search-cad-parcels/parcel-numbers",
             "parcel_info": "/cad/parcel-info",
+            "lr_unit": "/lr/lr-unit",
             "gis_download": "/atom/ko-{code}.zip",
         },
         "data_loaded": {
             "offices": len(_offices),
             "municipalities": len(_municipalities),
             "parcel_sets": len(_parcels),
+            "lr_units": len(_lr_units),
         },
     }
 
@@ -218,6 +231,50 @@ async def get_parcel_info(
     return JSONResponse(
         status_code=404,
         content={"error": "Parcel not found", "parcelId": parcelId},
+    )
+
+
+@app.get("/lr/lr-unit")
+async def get_lr_unit(
+    lrUnitNumber: str = Query(..., description="Land registry unit number"),
+    mainBookId: int = Query(..., description="Main book ID"),
+    historicalOverview: bool = Query(False, description="Include historical data"),
+):
+    """
+    Get detailed land registry unit information.
+
+    This endpoint returns complete information about a land registry unit (zemljišnoknjižni uložak),
+    including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).
+
+    Args:
+        lrUnitNumber: Land registry unit number (e.g., "769")
+        mainBookId: Main book ID (e.g., 21277)
+        historicalOverview: Include historical data (default: False)
+
+    Returns:
+        List containing land registry unit data (typically 1 element).
+
+    Note:
+        ⚠️ DEMO/EDUCATIONAL USE ONLY - Returns static test data.
+        The real API returns a list with typically one element.
+    """
+    # Create lookup key
+    key = f"{mainBookId}-{lrUnitNumber}"
+
+    # Check if LR unit exists
+    if key in _lr_units:
+        lr_unit_data = _lr_units[key]
+        # Return as list (matching real API behavior)
+        return [lr_unit_data]
+
+    # LR unit not found
+    return JSONResponse(
+        status_code=404,
+        content={
+            "error": "Land registry unit not found",
+            "lrUnitNumber": lrUnitNumber,
+            "mainBookId": mainBookId,
+        },
     )
 
 

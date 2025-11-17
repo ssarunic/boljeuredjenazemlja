@@ -27,7 +27,13 @@ from pydantic import ValidationError
 
 from ..exceptions import CadastralAPIError, ErrorType
 from ..gis import GISCache, GMLParser
-from ..models import CadastralOffice, MunicipalitySearchResult, ParcelInfo, ParcelSearchResult
+from ..models import (
+    CadastralOffice,
+    LandRegistryUnitDetailed,
+    MunicipalitySearchResult,
+    ParcelInfo,
+    ParcelSearchResult,
+)
 from ..models.gis_entities import ParcelGeometry
 
 # Load environment variables from .env file
@@ -500,3 +506,183 @@ class CadastralAPIClient:
         # Parse GML and find parcel
         parser = GMLParser(gml_path)
         return parser.get_parcel_by_number(parcel_number)
+
+    def get_lr_unit_detailed(
+        self,
+        lr_unit_number: str,
+        main_book_id: int,
+        historical_overview: bool = False,
+    ) -> LandRegistryUnitDetailed:
+        """
+        Get detailed land registry unit information including all sheets (A, B, C).
+
+        This method retrieves complete information about a land registry unit (zemljišnoknjižni uložak),
+        including:
+        - Sheet A: List of all cadastral parcels in the unit
+        - Sheet B: Ownership information with co-owners and shares
+        - Sheet C: Encumbrances (mortgages, liens, easements, etc.)
+
+        Args:
+            lr_unit_number: Land registry unit number (e.g., "769")
+            main_book_id: Main book ID (e.g., 21277 for SAVAR)
+            historical_overview: Include historical data (default: False)
+
+        Returns:
+            LandRegistryUnitDetailed object with complete unit information
+
+        Raises:
+            CadastralAPIError: Any API error occurred
+
+        Example:
+            # Get LR unit details
+            lr_unit = client.get_lr_unit_detailed("769", 21277)
+
+            # Access ownership information
+            owners = lr_unit.get_all_owners()
+            for owner in owners:
+                print(f"Owner: {owner.name}, OIB: {owner.tax_number}")
+
+            # Check for encumbrances
+            if lr_unit.has_encumbrances():
+                print("Unit has encumbrances (mortgages, liens, etc.)")
+
+            # Get summary
+            summary = lr_unit.summary()
+            print(f"Total parcels: {summary['total_parcels']}")
+            print(f"Total area: {summary['total_area_m2']} m²")
+
+        Note:
+            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+            The API response is returned as a list with typically one element.
+        """
+        endpoint = "/lr/lr-unit"
+        params = {
+            "lrUnitNumber": str(lr_unit_number),
+            "mainBookId": str(main_book_id),
+            "historicalOverview": str(historical_overview).lower(),
+        }
+
+        response_data = self._make_request(endpoint, params)
+
+        if not response_data:
+            raise CadastralAPIError(
+                error_type=ErrorType.LR_UNIT_NOT_FOUND,
+                details={
+                    "lr_unit_number": lr_unit_number,
+                    "main_book_id": main_book_id,
+                    "reason": "empty_response",
+                },
+            )
+
+        # API returns a list, typically with one element
+        if isinstance(response_data, list):
+            if not response_data:
+                raise CadastralAPIError(
+                    error_type=ErrorType.LR_UNIT_NOT_FOUND,
+                    details={
+                        "lr_unit_number": lr_unit_number,
+                        "main_book_id": main_book_id,
+                        "reason": "empty_list_response",
+                    },
+                )
+            response_data = response_data[0]
+
+        try:
+            return LandRegistryUnitDetailed.model_validate(response_data)
+        except ValidationError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={
+                    "endpoint": endpoint,
+                    "lr_unit_number": lr_unit_number,
+                    "main_book_id": main_book_id,
+                    "reason": "validation_failed",
+                },
+                cause=e,
+            ) from e
+
+    def get_lr_unit_from_parcel(
+        self,
+        parcel_number: str,
+        municipality: str | int,
+        historical_overview: bool = False,
+    ) -> LandRegistryUnitDetailed:
+        """
+        Convenience method to get LR unit details by first looking up parcel.
+
+        This method performs a two-step process:
+        1. Searches for the parcel to get its lr_unit information
+        2. Retrieves detailed LR unit information using the found unit number and main book ID
+
+        Args:
+            parcel_number: Parcel number (e.g., "103/2", "279/6")
+            municipality: Municipality name (e.g., "SAVAR") or registration number (e.g., "334979")
+            historical_overview: Include historical data (default: False)
+
+        Returns:
+            LandRegistryUnitDetailed object with complete unit information
+
+        Raises:
+            CadastralAPIError: Any API error occurred (parcel not found, LR unit not found, etc.)
+
+        Example:
+            # Get LR unit details for a specific parcel
+            lr_unit = client.get_lr_unit_from_parcel("279/6", "SAVAR")
+
+            # See all parcels in the same LR unit
+            all_parcels = lr_unit.get_all_parcels()
+            for parcel in all_parcels:
+                print(f"Parcel: {parcel.parcel_number}, Area: {parcel.area_numeric} m²")
+
+            # Get all co-owners
+            owners = lr_unit.get_all_owners()
+            print(f"Number of co-owners: {len(owners)}")
+
+        Note:
+            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+            This is a convenience wrapper that combines parcel lookup with LR unit retrieval.
+        """
+        # If municipality is a name, search for it
+        if not municipality.isdigit():
+            municipalities = self.search_municipality(str(municipality))
+            if not municipalities:
+                raise CadastralAPIError(
+                    error_type=ErrorType.MUNICIPALITY_NOT_FOUND,
+                    details={"municipality": municipality},
+                )
+            municipality_reg_num = municipalities[0].municipality_reg_num
+        else:
+            municipality_reg_num = str(municipality)
+
+        # Get parcel info to extract LR unit details
+        parcel_info = self.get_parcel_by_number(parcel_number, municipality_reg_num)
+
+        if not parcel_info:
+            raise CadastralAPIError(
+                error_type=ErrorType.PARCEL_NOT_FOUND,
+                details={
+                    "parcel_number": parcel_number,
+                    "municipality": municipality,
+                },
+            )
+
+        if not parcel_info.lr_unit:
+            raise CadastralAPIError(
+                error_type=ErrorType.LR_UNIT_NOT_FOUND,
+                details={
+                    "parcel_number": parcel_number,
+                    "municipality": municipality,
+                    "reason": "parcel_has_no_lr_unit",
+                },
+            )
+
+        # Extract LR unit details from parcel info
+        lr_unit_number = parcel_info.lr_unit.lr_unit_number
+        main_book_id = parcel_info.lr_unit.main_book_id
+
+        # Get detailed LR unit information
+        return self.get_lr_unit_detailed(
+            lr_unit_number=lr_unit_number,
+            main_book_id=main_book_id,
+            historical_overview=historical_overview,
+        )

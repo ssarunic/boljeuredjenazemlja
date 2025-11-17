@@ -6,9 +6,9 @@ from typing import Any
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 
-from cadastral_cli import CadastralAPIClient
-from cadastral_cliexceptions import CadastralAPIError, ErrorType
-from cadastral_climodels.entities import ParcelInfo
+from cadastral_api import CadastralAPIClient
+from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.models.entities import ParcelInfo
 from .input_parsers import ParcelInput
 
 console = Console()

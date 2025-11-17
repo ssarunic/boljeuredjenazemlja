@@ -26,6 +26,9 @@ cadastral search 103/2 --municipality SAVAR
 # Get detailed parcel information with owners
 cadastral get-parcel 103/2 -m 334979 --show-owners
 
+# Get land registry unit information
+cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
+
 # Batch processing
 cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
 

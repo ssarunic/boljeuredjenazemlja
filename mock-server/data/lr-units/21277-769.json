@@ -1,0 +1,261 @@
+{
+  "lrUnitId": 13122553,
+  "lrUnitNumber": "769",
+  "mainBookId": 21277,
+  "mainBookName": "TESTMUNICIPALITY",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Test Land Registry Office",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": true,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-27986/2025",
+  "activePlumbs": [],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "1. Suvlasnički dio: 4/8",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930291,
+            "name": "Test Owner A",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "1.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503704,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "1"
+      },
+      {
+        "description": "2. Suvlasnički dio: 1/8",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930293,
+            "name": "Test Owner B",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "2.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503705,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "2"
+      },
+      {
+        "description": "3. Suvlasnički dio: 1/8",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930290,
+            "name": "Test Owner C",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "3.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503706,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "3"
+      },
+      {
+        "description": "4. Suvlasnički dio: 1/8",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930288,
+            "name": "Test Owner D",
+            "address": "Test Street 123, Test City",
+            "taxNumber": "12345678901",
+            "lrEntry": {
+              "description": "Zaprimljeno 14.02.2020.g. pod brojem Z-3937/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU",
+              "orderNumber": "4.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503707,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "4"
+      },
+      {
+        "description": "5. Suvlasnički dio: 1/8",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930294,
+            "name": "Test Owner E",
+            "address": "Test Avenue 456, Test City",
+            "taxNumber": "98765432109",
+            "lrEntry": {
+              "description": "Zaprimljeno 21.03.2018.g. pod brojem Z-6789/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU",
+              "orderNumber": "5.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503708,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "5"
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "cadParcels": [
+      {
+        "parcelId": 6564837,
+        "parcelNumber": "118/4",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "TESTMUNICIPALITY",
+        "institutionId": 114,
+        "address": "TEST FIELD",
+        "area": "409",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358714,
+            "name": "MASLINJAK",
+            "area": "409",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "TESTMUNICIPALITY",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6564918,
+        "parcelNumber": "192/3",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "TESTMUNICIPALITY",
+        "institutionId": 114,
+        "address": "TEST AREA",
+        "area": "322",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358715,
+            "name": "ORANICA",
+            "area": "322",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "TESTMUNICIPALITY",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6565030,
+        "parcelNumber": "279/6",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "TESTMUNICIPALITY",
+        "institutionId": 114,
+        "address": "TEST LOCATION",
+        "area": "1890",
+        "buildingRemark": 0,
+        "detailSheetNumber": "1",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358720,
+            "name": "MASLINJAK",
+            "area": "890",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          },
+          {
+            "parcelPartId": 74358721,
+            "name": "PAŠNJAK",
+            "area": "1000",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "TESTMUNICIPALITY",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": [
+      {
+        "description": "1. Na suvlasnički dio: 1 (4/8)",
+        "shareOrderNumber": "1",
+        "lrEntries": [
+          {
+            "description": "Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016<br><br>ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI",
+            "lrEntryId": 93358400,
+            "orderNumber": "1.1"
+          }
+        ]
+      }
+    ]
+  }
+}

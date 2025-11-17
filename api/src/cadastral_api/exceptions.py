@@ -1,5 +1,7 @@
 """Custom exceptions for the Croatian Cadastral API client."""
 
+from __future__ import annotations
+
 from enum import Enum
 from typing import Any
 
@@ -13,6 +15,7 @@ class ErrorType(str, Enum):
     INVALID_RESPONSE = "invalid_response"
     PARCEL_NOT_FOUND = "parcel_not_found"
     MUNICIPALITY_NOT_FOUND = "municipality_not_found"
+    LR_UNIT_NOT_FOUND = "lr_unit_not_found"
     SERVER_ERROR = "server_error"
 
 

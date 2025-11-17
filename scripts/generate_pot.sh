@@ -10,7 +10,8 @@ set -e
 
 DOMAIN="cadastral"
 POT_FILE="po/${DOMAIN}.pot"
-SRC_DIR="src/cadastral_api"
+API_SRC_DIR="api/src/cadastral_api"
+CLI_SRC_DIR="cli/src/cadastral_cli"
 VERSION="0.1.0"
 BUGS_EMAIL="your.email@example.com"
 
@@ -37,7 +38,7 @@ xgettext \
     --msgid-bugs-address="${BUGS_EMAIL}" \
     --copyright-holder="Croatian Cadastral API Contributors" \
     --foreign-user \
-    $(find ${SRC_DIR} -name "*.py" -type f)
+    $(find ${API_SRC_DIR} ${CLI_SRC_DIR} -name "*.py" -type f 2>/dev/null)
 
 # Count extracted strings
 TOTAL_STRINGS=$(grep -c "^msgid" "${POT_FILE}" || echo "0")

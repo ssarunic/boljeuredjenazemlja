@@ -10,7 +10,7 @@ from rich.console import Console
 from rich.table import Table
 from tabulate import tabulate
 
-from cadastral_clii18n import _
+from cadastral_api.i18n import _
 
 
 console = Console()

@@ -4,9 +4,9 @@ import click
 from rich.console import Console
 
 from cadastral_api import CadastralAPIClient, __version__
-from cadastral_apiexceptions import CadastralAPIError
-from cadastral_apii18n import _
-from cadastral_cliformatters import print_error, print_output
+from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.i18n import _
+from cadastral_cli.formatters import print_error, print_output
 
 console = Console()
 

@@ -4,11 +4,11 @@ import click
 from rich.console import Console
 
 from cadastral_api import CadastralAPIClient
-from cadastral_apiexceptions import CadastralAPIError
-from cadastral_apii18n import _, ngettext
-from cadastral_clibatch_processor import process_batch
-from cadastral_cliformatters import print_error, print_success, print_output
-from cadastral_cliinput_parsers import parse_cli_list, parse_input_file
+from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.i18n import _, ngettext
+from cadastral_cli.batch_processor import process_batch
+from cadastral_cli.formatters import print_error, print_success, print_output
+from cadastral_cli.input_parsers import parse_cli_list, parse_input_file
 
 console = Console()
 

@@ -5,9 +5,9 @@ from rich.console import Console
 from rich.table import Table
 
 from cadastral_api import CadastralAPIClient
-from cadastral_apiexceptions import CadastralAPIError, ErrorType
-from cadastral_apii18n import _, ngettext
-from cadastral_cliformatters import print_error, print_output
+from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.i18n import _, ngettext
+from cadastral_cli.formatters import print_error, print_output
 from .search import _resolve_municipality
 
 console = Console()

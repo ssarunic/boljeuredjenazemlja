@@ -5,8 +5,8 @@ from rich.console import Console
 from rich.table import Table
 
 from cadastral_api import CadastralAPIClient
-from cadastral_apii18n import _
-from cadastral_cliformatters import print_error, print_success
+from cadastral_api.i18n import _
+from cadastral_cli.formatters import print_error, print_success
 
 console = Console()
 
