@@ -292,6 +292,139 @@ class CadastralTools:
             logger.error(f"Failed to list cadastral offices: {e}", exc_info=True)
             raise ValueError("Could not retrieve cadastral offices.") from e
 
+    async def get_lr_unit(
+        self,
+        unit_number: str,
+        main_book_id: int,
+        include_full_details: bool = True,
+    ) -> dict[str, Any]:
+        """
+        Get detailed land registry unit (zemljišnoknjižni uložak) information.
+
+        A land registry unit contains:
+        - Sheet A (Posjedovni list): All parcels in the unit
+        - Sheet B (List vlasništva): Ownership information with shares
+        - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
+
+        Args:
+            unit_number: LR unit number (e.g., "769")
+            main_book_id: Main book ID (e.g., 21277)
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with LR unit data including all sheets
+
+        Example:
+            >>> await get_lr_unit("769", 21277)
+            {
+                "lr_unit_number": "769",
+                "main_book_name": "SAVAR",
+                "ownership_sheet_b": {...},
+                "possession_sheet_a1": {...},
+                "encumbrance_sheet_c": {...},
+                "summary": {
+                    "total_parcels": 3,
+                    "total_area_m2": 2621,
+                    "num_owners": 5,
+                    "has_encumbrances": True
+                }
+            }
+        """
+        try:
+            logger.info(f"Fetching LR unit {unit_number} from main book {main_book_id}")
+
+            # Fetch LR unit
+            lr_unit = self.client.get_lr_unit_detailed(unit_number, main_book_id)
+
+            # Convert to dict
+            result = lr_unit.model_dump(mode="json")
+
+            # Add summary
+            result["summary"] = lr_unit.summary()
+
+            # Optionally simplify if not full details
+            if not include_full_details:
+                # Keep only summary and basic info
+                return {
+                    "lr_unit_number": lr_unit.lr_unit_number,
+                    "main_book_name": lr_unit.main_book_name,
+                    "institution_name": lr_unit.institution_name,
+                    "summary": result["summary"],
+                }
+
+            return result
+
+        except CadastralAPIError as e:
+            logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not retrieve land registry unit '{unit_number}' from main book {main_book_id}. "
+                f"Please verify the unit number and main book ID."
+            ) from e
+
+    async def get_lr_unit_from_parcel(
+        self,
+        parcel_number: str,
+        municipality: str,
+        include_full_details: bool = True,
+    ) -> dict[str, Any]:
+        """
+        Get land registry unit information from a parcel number.
+
+        This is a convenience method that:
+        1. Searches for the parcel
+        2. Extracts the LR unit reference
+        3. Fetches the complete LR unit data
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "279/6")
+            municipality: Municipality name or code
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with LR unit data including all sheets
+
+        Example:
+            >>> await get_lr_unit_from_parcel("279/6", "SAVAR")
+            {
+                "lr_unit_number": "769",
+                "main_book_name": "SAVAR",
+                "ownership_sheet_b": {...},
+                ...
+            }
+        """
+        try:
+            logger.info(f"Fetching LR unit for parcel {parcel_number} in {municipality}")
+
+            # Resolve municipality
+            muni_code = await self._resolve_municipality(municipality)
+
+            # Use API client's convenience method
+            lr_unit = self.client.get_lr_unit_from_parcel(parcel_number, muni_code)
+
+            # Convert to dict
+            result = lr_unit.model_dump(mode="json")
+
+            # Add summary
+            result["summary"] = lr_unit.summary()
+
+            # Optionally simplify if not full details
+            if not include_full_details:
+                return {
+                    "lr_unit_number": lr_unit.lr_unit_number,
+                    "main_book_name": lr_unit.main_book_name,
+                    "institution_name": lr_unit.institution_name,
+                    "summary": result["summary"],
+                }
+
+            return result
+
+        except CadastralAPIError as e:
+            logger.error(f"Failed to fetch LR unit from parcel {parcel_number}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not retrieve land registry unit for parcel '{parcel_number}'. "
+                f"Please verify the parcel number and municipality."
+            ) from e
+
     async def _resolve_municipality(self, name_or_code: str) -> str:
         """
         Internal helper to resolve municipality name to code.

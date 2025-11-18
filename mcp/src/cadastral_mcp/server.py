@@ -174,6 +174,54 @@ def create_mcp_server() -> FastMCP:
         logger.info(f"Tool invoked: list_cadastral_offices(filter={filter_name})")
         return await tools_handler.list_cadastral_offices(filter_name)
 
+    @mcp.tool()
+    async def get_lr_unit(
+        unit_number: str,
+        main_book_id: int,
+        include_full_details: bool = True
+    ) -> dict[str, Any]:
+        """
+        Get detailed land registry unit (zemljišnoknjižni uložak) information.
+
+        A land registry unit contains:
+        - Sheet A (Posjedovni list): All parcels in the unit
+        - Sheet B (List vlasništva): Ownership information with shares
+        - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
+
+        Args:
+            unit_number: LR unit number (e.g., "769")
+            main_book_id: Main book ID (e.g., 21277)
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with LR unit data including all sheets and summary
+        """
+        logger.info(f"Tool invoked: get_lr_unit({unit_number}, {main_book_id})")
+        return await tools_handler.get_lr_unit(unit_number, main_book_id, include_full_details)
+
+    @mcp.tool()
+    async def get_lr_unit_from_parcel(
+        parcel_number: str,
+        municipality: str,
+        include_full_details: bool = True
+    ) -> dict[str, Any]:
+        """
+        Get land registry unit information from a parcel number.
+
+        This is a convenience method that searches for the parcel and retrieves
+        its complete land registry unit data.
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "279/6")
+            municipality: Municipality name or code
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with LR unit data including all sheets and summary
+        """
+        logger.info(f"Tool invoked: get_lr_unit_from_parcel({parcel_number}, {municipality})")
+        return await tools_handler.get_lr_unit_from_parcel(parcel_number, municipality, include_full_details)
+
     # ========================================================================
     # PROMPTS - User-selected templates
     # ========================================================================

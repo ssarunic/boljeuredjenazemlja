@@ -38,10 +38,17 @@ AI agents can auto-fetch contextual information:
 
 The AI decides when to invoke these based on user queries:
 
+**Parcel Operations:**
 - **`search_parcel`** - Search for parcels by number and municipality
 - **`batch_fetch_parcels`** - Process multiple parcels efficiently
-- **`resolve_municipality`** - Convert municipality names to codes
 - **`get_parcel_geometry`** - Download and return parcel boundaries
+
+**Land Registry Operations:**
+- **`get_lr_unit`** - Get detailed land registry unit by unit number and main book ID
+- **`get_lr_unit_from_parcel`** - Get land registry unit information from a parcel number
+
+**Lookup Operations:**
+- **`resolve_municipality`** - Convert municipality names to codes
 - **`list_cadastral_offices`** - List available cadastral offices
 
 ### Prompts (User-selected templates)
