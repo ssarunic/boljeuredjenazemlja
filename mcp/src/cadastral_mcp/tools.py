@@ -59,7 +59,7 @@ class CadastralTools:
             muni_code = await self._resolve_municipality(municipality)
 
             # Step 2: Search for parcel
-            results = self.client.search_parcels(parcel_number, muni_code)
+            results = self.client.search_parcel(parcel_number, muni_code)
 
             if not results:
                 raise ValueError(
@@ -69,11 +69,10 @@ class CadastralTools:
             # Return first match
             result = results[0]
             return {
-                "parcel_id": result.key1,
+                "parcel_id": result.parcel_id,
                 "parcel_number": result.parcel_number,
-                "municipality": result.municipality_name,
-                "address": result.address or "N/A",
-                "area": result.area or "N/A",
+                "municipality": municipality,
+                "municipality_code": muni_code,
                 "success": True,
             }
 
@@ -137,7 +136,7 @@ class CadastralTools:
                         parcel_id = search_result["parcel_id"]
 
                     # Fetch detailed info
-                    parcel = self.client.get_parcel_by_id(parcel_id)
+                    parcel = self.client.get_parcel_info(parcel_id)
 
                     result_data = parcel.model_dump(mode="json")
 
@@ -190,13 +189,13 @@ class CadastralTools:
             code = await self._resolve_municipality(name_or_code)
 
             # Fetch full municipality info
-            municipalities = self.client.search_municipalities("")
+            municipalities = self.client.search_municipality("")
             for muni in municipalities:
-                if muni.key1 == code:
+                if muni.municipality_reg_num == code:
                     return {
-                        "code": muni.key1,
-                        "name": muni.name,
-                        "full_name": muni.full_name,
+                        "code": muni.municipality_reg_num,
+                        "name": muni.municipality_name,
+                        "full_name": muni.display_value,
                     }
 
             raise ValueError(f"Municipality {name_or_code} not found")
@@ -443,10 +442,10 @@ class CadastralTools:
             return name_or_code
 
         # Search for municipality by name
-        municipalities = self.client.search_municipalities(name_or_code)
+        municipalities = self.client.search_municipality(name_or_code)
 
         if not municipalities:
             raise ValueError(f"Municipality '{name_or_code}' not found")
 
-        # Return first match code
-        return municipalities[0].key1
+        # Return first match registration number (used for parcel searches)
+        return municipalities[0].municipality_reg_num

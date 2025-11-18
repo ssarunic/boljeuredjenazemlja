@@ -660,8 +660,10 @@ class EncumbranceGroup(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     description: str = Field(description="Description of the encumbrance group")
-    share_order_number: str = Field(
-        alias="shareOrderNumber", description="Order number (e.g., '1', '2')"
+    share_order_number: str | None = Field(
+        default=None,
+        alias="shareOrderNumber",
+        description="Order number (e.g., '1', '2') - optional as API sometimes omits this field"
     )
     lr_entries: list[LREntry] = Field(
         default_factory=list,

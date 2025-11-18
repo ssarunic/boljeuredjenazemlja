@@ -32,7 +32,6 @@ def create_mcp_server() -> FastMCP:
     # Initialize FastMCP server
     mcp = FastMCP(
         name=config.server_name,
-        version=config.server_version,
     )
 
     # Initialize cadastral API client (shared across all requests)
@@ -58,33 +57,29 @@ def create_mcp_server() -> FastMCP:
     # ========================================================================
 
     @mcp.resource("cadastral://parcel/{parcel_id}")
-    async def get_parcel_resource(uri: str) -> str:
+    async def get_parcel_resource(parcel_id: str) -> str:
         """Get full parcel details by ID."""
-        # Extract parcel_id from URI
-        parcel_id = uri.split("/")[-1]
-        logger.info(f"Resource request: {uri}")
+        logger.info(f"Resource request: cadastral://parcel/{parcel_id}")
 
         result = await resources_handler.get_parcel_resource(parcel_id)
         import json
         return json.dumps(result, indent=2)
 
     @mcp.resource("cadastral://municipality/{code}")
-    async def get_municipality_resource(uri: str) -> str:
+    async def get_municipality_resource(code: str) -> str:
         """Get municipality information by code."""
-        code = uri.split("/")[-1]
-        logger.info(f"Resource request: {uri}")
+        logger.info(f"Resource request: cadastral://municipality/{code}")
 
         result = await resources_handler.get_municipality_resource(code)
         import json
         return json.dumps(result, indent=2)
 
-    @mcp.resource("cadastral://office/{code}")
-    async def get_office_resource(uri: str) -> str:
+    @mcp.resource("cadastral://office/{office_code}")
+    async def get_office_resource(office_code: str) -> str:
         """Get cadastral office information by code."""
-        code = uri.split("/")[-1]
-        logger.info(f"Resource request: {uri}")
+        logger.info(f"Resource request: cadastral://office/{office_code}")
 
-        result = await resources_handler.get_office_resource(code)
+        result = await resources_handler.get_office_resource(office_code)
         import json
         return json.dumps(result, indent=2)
 

@@ -10,6 +10,16 @@ Model Context Protocol (MCP) server for querying Croatian cadastral and land reg
 - ❌ **Production Systems**: DO NOT configure to use Croatian government APIs
 - ⚠️ **Terms of Service**: Using this with production systems violates Croatian government ToS and involves sensitive personal data
 
+## 📖 For Claude Desktop Users
+
+**If you're using this with Claude Desktop, read the [Claude Usage Guide](claude-usage-guide.md) first!**
+
+It includes:
+- ✅ Which tools work and how to use them
+- ⚠️ Known issues and workarounds
+- 💡 Usage tips and common patterns
+- 🔧 Troubleshooting guide
+
 ## What is MCP?
 
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an open standard that enables AI applications to securely access external data sources and tools. Think of it as "USB-C for AI" - a universal way to connect AI models to various services.
