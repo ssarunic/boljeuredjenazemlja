@@ -58,8 +58,8 @@ class CadastralTools:
             # Step 1: Resolve municipality if needed
             muni_code = await self._resolve_municipality(municipality)
 
-            # Step 2: Search for parcel
-            results = self.client.search_parcel(parcel_number, muni_code)
+            # Step 2: Find parcel
+            results = self.client.find_parcel(parcel_number, muni_code)
 
             if not results:
                 raise ValueError(
@@ -189,7 +189,7 @@ class CadastralTools:
             code = await self._resolve_municipality(name_or_code)
 
             # Fetch full municipality info
-            municipalities = self.client.search_municipality("")
+            municipalities = self.client.find_municipality("")
             for muni in municipalities:
                 if muni.municipality_reg_num == code:
                     return {
@@ -441,8 +441,8 @@ class CadastralTools:
         if name_or_code.isdigit():
             return name_or_code
 
-        # Search for municipality by name
-        municipalities = self.client.search_municipality(name_or_code)
+        # Find municipality by name
+        municipalities = self.client.find_municipality(name_or_code)
 
         if not municipalities:
             raise ValueError(f"Municipality '{name_or_code}' not found")

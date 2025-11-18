@@ -127,7 +127,7 @@ class TestProcessBatch:
     def test_process_parcel_numbers_success(self, mock_client, mock_parcel_info):
         """Test processing parcel numbers successfully."""
         # Setup mock
-        mock_client.search_municipality.return_value = [
+        mock_client.find_municipality.return_value = [
             Mock(name="SAVAR", municipality_reg_num="334979")
         ]
         mock_client.get_parcel_by_number.return_value = mock_parcel_info
@@ -171,7 +171,7 @@ class TestProcessBatch:
     def test_process_with_parcel_not_found(self, mock_client):
         """Test processing when parcel is not found."""
         # Setup mock to return None
-        mock_client.search_municipality.return_value = [
+        mock_client.find_municipality.return_value = [
             Mock(name="SAVAR", municipality_reg_num="334979")
         ]
         mock_client.get_parcel_by_number.return_value = None
@@ -192,7 +192,7 @@ class TestProcessBatch:
     def test_process_with_api_error_continue(self, mock_client, mock_parcel_info):
         """Test processing with API error and continue_on_error=True."""
         # Setup mock to raise error on first call, succeed on second
-        mock_client.search_municipality.return_value = [
+        mock_client.find_municipality.return_value = [
             Mock(name="SAVAR", municipality_reg_num="334979")
         ]
         mock_client.get_parcel_by_number.side_effect = [
@@ -219,7 +219,7 @@ class TestProcessBatch:
     def test_process_with_api_error_stop(self, mock_client):
         """Test processing with API error and continue_on_error=False."""
         # Setup mock to raise error
-        mock_client.search_municipality.return_value = [
+        mock_client.find_municipality.return_value = [
             Mock(name="SAVAR", municipality_reg_num="334979")
         ]
         mock_client.get_parcel_by_number.side_effect = CadastralAPIError(
@@ -239,7 +239,7 @@ class TestProcessBatch:
     def test_process_with_unexpected_error_continue(self, mock_client, mock_parcel_info):
         """Test processing with unexpected error and continue_on_error=True."""
         # Setup mock to raise unexpected error on first call
-        mock_client.search_municipality.return_value = [
+        mock_client.find_municipality.return_value = [
             Mock(name="SAVAR", municipality_reg_num="334979")
         ]
         mock_client.get_parcel_by_number.side_effect = [
@@ -270,7 +270,7 @@ class TestProcessBatch:
         municipality_result = Mock()
         municipality_result.municipality_name = "SAVAR"
         municipality_result.municipality_reg_num = "334979"
-        mock_client.search_municipality.return_value = [municipality_result]
+        mock_client.find_municipality.return_value = [municipality_result]
         mock_client.get_parcel_by_number.return_value = mock_parcel_info
 
         # Create input with municipality name
@@ -280,14 +280,14 @@ class TestProcessBatch:
         summary = process_batch(mock_client, parcels, show_progress=False)
 
         # Verify municipality was resolved
-        mock_client.search_municipality.assert_called_once_with(search_term="SAVAR")
+        mock_client.find_municipality.assert_called_once_with(search_term="SAVAR")
         mock_client.get_parcel_by_number.assert_called_once_with("103/2", "334979", exact_match=True)
         assert summary.successful == 1
 
     def test_process_municipality_not_found(self, mock_client):
         """Test handling when municipality is not found."""
         # Setup mock to return no results
-        mock_client.search_municipality.return_value = []
+        mock_client.find_municipality.return_value = []
 
         # Create input
         parcels = [ParcelInput(parcel_number="103/2", municipality="UNKNOWN")]

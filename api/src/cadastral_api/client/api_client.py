@@ -235,14 +235,14 @@ class CadastralAPIClient:
                 cause=e,
             ) from e
 
-    def search_municipality(
+    def find_municipality(
         self,
         search_term: str | None = None,
         office_id: str | None = None,
         department_id: str | None = None,
     ) -> list[MunicipalitySearchResult]:
         """
-        Search for municipalities by name, code, or filter by cadastral office/department.
+        Find municipalities by name, code, or filter by cadastral office/department.
 
         Args:
             search_term: Municipality name (e.g., "SAVAR") or code (e.g., "334979")
@@ -256,17 +256,17 @@ class CadastralAPIClient:
             CadastralAPIError: Any API error occurred
 
         Examples:
-            # Search by name
-            municipalities = client.search_municipality("SAVAR")
+            # Find by name
+            municipalities = client.find_municipality("SAVAR")
 
             # Filter by office (162 municipalities in Zadar office)
-            municipalities = client.search_municipality(office_id="114")
+            municipalities = client.find_municipality(office_id="114")
 
             # Filter by office and department (66 municipalities)
-            municipalities = client.search_municipality(office_id="114", department_id="116")
+            municipalities = client.find_municipality(office_id="114", department_id="116")
 
             # Combine search with filters
-            municipalities = client.search_municipality("SAVAR", office_id="114")
+            municipalities = client.find_municipality("SAVAR", office_id="114")
 
         Note:
             - All parameters are optional but at least one should be provided
@@ -304,11 +304,11 @@ class CadastralAPIClient:
                 cause=e,
             ) from e
 
-    def search_parcel(
+    def find_parcel(
         self, parcel_number: str, municipality_reg_num: str
     ) -> list[ParcelSearchResult]:
         """
-        Search for parcel IDs by parcel number and municipality.
+        Find parcel IDs by parcel number and municipality.
 
         Args:
             parcel_number: Parcel number (e.g., "103/2", "114")
@@ -386,7 +386,7 @@ class CadastralAPIClient:
         self, parcel_number: str, municipality_reg_num: str, exact_match: bool = True
     ) -> ParcelInfo | None:
         """
-        Convenience method to search and retrieve parcel info in one call.
+        Convenience method to find and retrieve parcel info in one call.
 
         Args:
             parcel_number: Parcel number (e.g., "103/2")
@@ -399,7 +399,7 @@ class CadastralAPIClient:
         Raises:
             CadastralAPIError: Any API error occurred
         """
-        search_results = self.search_parcel(parcel_number, municipality_reg_num)
+        search_results = self.find_parcel(parcel_number, municipality_reg_num)
 
         if not search_results:
             return None
@@ -642,9 +642,9 @@ class CadastralAPIClient:
             ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
             This is a convenience wrapper that combines parcel lookup with LR unit retrieval.
         """
-        # If municipality is a name, search for it
+        # If municipality is a name, find it
         if not municipality.isdigit():
-            municipalities = self.search_municipality(str(municipality))
+            municipalities = self.find_municipality(str(municipality))
             if not municipalities:
                 raise CadastralAPIError(
                     error_type=ErrorType.MUNICIPALITY_NOT_FOUND,

@@ -88,11 +88,11 @@ def create_mcp_server() -> FastMCP:
     # ========================================================================
 
     @mcp.tool()
-    async def search_parcel(parcel_number: str, municipality: str) -> dict[str, Any]:
+    async def find_parcel(parcel_number: str, municipality: str) -> dict[str, Any]:
         """
-        Search for a parcel and return basic information.
+        Find a parcel and return basic information.
 
-        Aggregates the 3-step API workflow: resolve municipality, search parcel, return info.
+        Aggregates the 3-step API workflow: resolve municipality, find parcel, return info.
 
         Args:
             parcel_number: Cadastral parcel number (e.g., "103/2")
@@ -101,7 +101,7 @@ def create_mcp_server() -> FastMCP:
         Returns:
             Dictionary with parcel search results including parcel_id
         """
-        logger.info(f"Tool invoked: search_parcel({parcel_number}, {municipality})")
+        logger.info(f"Tool invoked: find_parcel({parcel_number}, {municipality})")
         return await tools_handler.search_parcel(parcel_number, municipality)
 
     @mcp.tool()
@@ -278,8 +278,8 @@ def create_mcp_server() -> FastMCP:
         return await prompts_handler.land_use_summary(parcel_id)
 
     logger.info("MCP server initialized successfully")
-    logger.info("Available tools: search_parcel, batch_fetch_parcels, resolve_municipality, "
-                "get_parcel_geometry, list_cadastral_offices")
+    logger.info("Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
+                "get_parcel_geometry, list_cadastral_offices, get_lr_unit, get_lr_unit_from_parcel")
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")
     logger.info("Available resources: cadastral://parcel/{id}, cadastral://municipality/{code}, "

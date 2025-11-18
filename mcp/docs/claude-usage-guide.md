@@ -4,14 +4,14 @@ This guide helps Claude (the AI assistant) use the Cadastral MCP server correctl
 
 ## ✅ Working Tools
 
-### 1. `search_parcel` - Search for a parcel
+### 1. `find_parcel` - Find a parcel
 **Status:** ✅ Working
 
-Searches for a parcel and returns basic information including parcel_id.
+Finds a parcel and returns basic information including parcel_id.
 
 **Example:**
 ```
-Search for parcel 103/2 in SAVAR
+Find parcel 103/2 in SAVAR
 ```
 
 **What you'll get:**
@@ -27,7 +27,7 @@ Search for parcel 103/2 in SAVAR
 
 Fetches detailed information for multiple parcels in one operation.
 
-**Important:** Use `parcel_id` directly (from search_parcel results), NOT just parcel_number.
+**Important:** Use `parcel_id` directly (from find_parcel results), NOT just parcel_number.
 
 **Example - CORRECT:**
 ```json
@@ -195,19 +195,19 @@ Municipality codes are more reliable than names. Once you've resolved a name to 
 
 ```
 # Good
-search_parcel("103/2", "334979")
+find_parcel("103/2", "334979")
 
 # Also works but slower
-search_parcel("103/2", "SAVAR")
+find_parcel("103/2", "SAVAR")
 ```
 
 ### Tip 2: Two-step workflow for detailed info
-1. First search to get parcel_id
+1. First find to get parcel_id
 2. Then batch fetch for full details
 
 ```python
-# Step 1: Search
-result = search_parcel("103/2", "SAVAR")
+# Step 1: Find
+result = find_parcel("103/2", "SAVAR")
 parcel_id = result["parcel_id"]
 
 # Step 2: Get details
@@ -314,13 +314,13 @@ else:
 
 ### Pattern 1: Find parcel and show ownership
 ```
-1. Search for parcel 103/2 in SAVAR
+1. Find parcel 103/2 in SAVAR
 2. Get detailed information with owners for that parcel
 ```
 
 ### Pattern 2: Compare multiple parcels
 ```
-1. Search for parcels 103/2, 45, and 396/1 in SAVAR
+1. Find parcels 103/2, 45, and 396/1 in SAVAR
 2. Fetch full details for all of them
 3. Compare their areas and ownership
 ```
@@ -348,7 +348,7 @@ else:
 
 **All Tools Working:** ✅
 
-- ✅ search_parcel
+- ✅ find_parcel
 - ✅ batch_fetch_parcels (use parcel_id)
 - ✅ resolve_municipality
 - ✅ list_cadastral_offices

@@ -106,7 +106,7 @@ def list_municipalities(
             status_msg += "..."
 
             with console.status(status_msg):
-                municipalities = client.search_municipality(
+                municipalities = client.find_municipality(
                     search_term=search,
                     office_id=office,
                     department_id=department

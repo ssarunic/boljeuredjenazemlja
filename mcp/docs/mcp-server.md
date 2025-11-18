@@ -49,7 +49,7 @@ AI agents can auto-fetch contextual information:
 The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
-- **`search_parcel`** - Search for parcels by number and municipality
+- **`find_parcel`** - Find parcels by number and municipality
 - **`batch_fetch_parcels`** - Process multiple parcels efficiently
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 
@@ -203,9 +203,9 @@ Response:
 
 When integrated with Claude Desktop, you can interact naturally:
 
-**User**: "Search for parcel 103/2 in SAVAR"
+**User**: "Find parcel 103/2 in SAVAR"
 
-**Claude** (invokes `search_parcel` tool):
+**Claude** (invokes `find_parcel` tool):
 ```json
 {
   "parcel_id": "...",
@@ -265,7 +265,7 @@ Claude compares multiple parcels across:
    - No session affinity required
 
 2. **Capability Aggregation**: Higher-level abstractions
-   - `search_parcel` aggregates: municipality lookup → parcel search → basic info
+   - `find_parcel` aggregates: municipality lookup → parcel search → basic info
    - Reduces context window usage
    - Simplifies AI reasoning
 

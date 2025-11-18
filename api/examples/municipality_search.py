@@ -16,18 +16,18 @@ from cadastral_api import CadastralAPIClient, CadastralAPIError, ErrorType
 
 def search_and_display(search_term: str) -> None:
     """
-    Search for municipalities and display results.
+    Find municipalities and display results.
 
     Args:
         search_term: Municipality name or registration code
     """
     print(f"\n{'='*80}")
-    print(f"Searching for: '{search_term}'")
+    print(f"Finding: '{search_term}'")
     print(f"{'='*80}\n")
 
     with CadastralAPIClient() as client:
         try:
-            results = client.search_municipality(search_term)
+            results = client.find_municipality(search_term)
 
             print(f"Found {len(results)} result(s):\n")
 
@@ -53,8 +53,8 @@ def search_and_display(search_term: str) -> None:
 
 
 def main() -> None:
-    """Run municipality search examples."""
-    print("Croatian Cadastral API - Municipality Search Example")
+    """Run municipality find examples."""
+    print("Croatian Cadastral API - Municipality Find Example")
     print("=" * 80)
 
     # Test different search patterns
@@ -70,7 +70,7 @@ def main() -> None:
         search_and_display(term)
 
     print(f"\n{'='*80}")
-    print("Municipality search examples completed!")
+    print("Municipality find examples completed!")
     print(f"{'='*80}\n")
 
 

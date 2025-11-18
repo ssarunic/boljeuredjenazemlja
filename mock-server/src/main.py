@@ -124,13 +124,13 @@ async def list_offices():
 
 
 @app.get("/search-cad-parcels/municipalities")
-async def search_municipalities(
+async def find_municipalities(
     search: Optional[str] = Query(None, description="Municipality name or code to search"),
     officeId: Optional[str] = Query(None, description="Filter by cadastral office ID"),
     departmentId: Optional[str] = Query(None, description="Filter by department ID"),
 ):
     """
-    Search municipalities by name, code, office, or department.
+    Find municipalities by name, code, office, or department.
 
     Args:
         search: Municipality name or registration code (optional)
@@ -164,12 +164,12 @@ async def search_municipalities(
 
 
 @app.get("/search-cad-parcels/parcel-numbers")
-async def search_parcel_numbers(
+async def find_parcel_numbers(
     search: str = Query(..., description="Parcel number to search"),
     municipalityRegNum: str = Query(..., description="Municipality registration number"),
 ):
     """
-    Search for parcel numbers in a municipality.
+    Find parcel numbers in a municipality.
 
     Supports partial matching (e.g., "114" will match "114", "1140/1", "1141", etc.)
 

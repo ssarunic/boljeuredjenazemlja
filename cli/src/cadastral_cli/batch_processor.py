@@ -118,8 +118,8 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
     if municipality.isdigit() and len(municipality) == 6:
         return municipality
 
-    # Search for municipality
-    results = client.search_municipality(search_term=municipality)
+    # Find municipality
+    results = client.find_municipality(search_term=municipality)
 
     if not results:
         raise CadastralAPIError(

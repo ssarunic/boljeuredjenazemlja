@@ -142,8 +142,8 @@ def search_municipality(
 
     try:
         with CadastralAPIClient() as client:
-            with console.status(_("Searching municipalities...")):
-                results = client.search_municipality(
+            with console.status(_("Finding municipalities...")):
+                results = client.find_municipality(
                     search_term=search_term,
                     office_id=office,
                     department_id=department
@@ -229,9 +229,9 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
     if municipality.isdigit():
         return municipality
 
-    # Search by name
+    # Find by name
     try:
-        results = client.search_municipality(municipality)
+        results = client.find_municipality(municipality)
         if not results:
             print_error(_("Municipality '{municipality}' not found").format(
                 municipality=municipality
