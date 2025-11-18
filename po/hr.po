@@ -324,7 +324,7 @@ msgstr "Koristite --show-encumbrances za prikaz tereta"
 
 #: cli/src/cadastral_cli/commands/registry.py:251
 msgid "OWNERSHIP SHEET (LIST B)"
-msgstr "LIST VLASNIŠTVA (LIST B)"
+msgstr "VLASNIČKI LIST (LIST B)"
 
 #: cli/src/cadastral_cli/commands/registry.py:252
 msgid "Share"

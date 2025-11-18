@@ -34,7 +34,7 @@ The author is available to advise the Croatian government on AI and API moderniz
 ## Document Purpose
 
 This document outlines the architecture and implementation plan for adding support for the `/lr/lr-unit` endpoint to the **mock server and SDK**, which provides detailed land registry information including:
-- Complete ownership data (Sheet B - List vlasništva)
+- Complete ownership data (Sheet B - Vlasnički list)
 - Parcel listings (Sheet A - List čestica)
 - Legal encumbrances (Sheet C - List tereta)
 - Land registry entries and history
@@ -123,7 +123,7 @@ class Party(BaseModel):
 class SheetType(str, Enum):
     """Land registry sheet type"""
     A = "A"  # Parcel list (List čestica)
-    B = "B"  # Ownership (List vlasništva)
+    B = "B"  # Ownership (Vlasnički list)
     C = "C"  # Encumbrances (List tereta)
 
 class ActionType(str, Enum):
@@ -234,7 +234,7 @@ class OwnerInShare(BaseModel):
 ```python
 class OwnershipSheetB(BaseModel):
     """
-    Ownership sheet (List B - List vlasništva).
+    Ownership sheet (List B - Vlasnički list).
 
     This is a DTO/view that aggregates all ownership shares and entries
     for a land registry unit. It represents the current state of ownership.

@@ -479,7 +479,7 @@ class SheetType(str, Enum):
     """Land registry sheet type (List u zemljišnoj knjizi)."""
 
     A = "A"  # Parcel list (List čestica)
-    B = "B"  # Ownership (List vlasništva)
+    B = "B"  # Ownership (Vlasnički list)
     C = "C"  # Encumbrances (List tereta)
 
 
@@ -591,7 +591,7 @@ class LRShare(BaseModel):
 
 class OwnershipSheetB(BaseModel):
     """
-    Ownership sheet (List B - List vlasništva).
+    Ownership sheet (List B - Vlasnički list).
 
     This is a DTO/view that aggregates all ownership shares and entries
     for a land registry unit. It represents the current state of ownership.

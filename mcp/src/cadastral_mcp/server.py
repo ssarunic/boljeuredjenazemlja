@@ -185,7 +185,7 @@ def create_mcp_server() -> FastMCP:
 
         A land registry unit contains:
         - Sheet A (Posjedovni list): All parcels in the unit
-        - Sheet B (List vlasništva): Ownership information with shares
+        - Sheet B (Vlasnički list): Ownership information with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
         Args:
