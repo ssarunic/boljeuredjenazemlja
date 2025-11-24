@@ -50,7 +50,7 @@ The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
 - **`find_parcel`** - Find parcels by number and municipality
-- **`batch_fetch_parcels`** - Process multiple parcels efficiently
+- **`batch_fetch_parcels`** - Process multiple parcels efficiently in a single operation (use when querying multiple parcels in the same cadastral municipality/K.O., or when analyzing property portfolios)
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 
 **Land Registry Operations:**
@@ -60,6 +60,28 @@ The AI decides when to invoke these based on user queries:
 **Lookup Operations:**
 - **`resolve_municipality`** - Convert municipality names to codes
 - **`list_cadastral_offices`** - List available cadastral offices
+
+#### When to Use Batch Operations
+
+Use `batch_fetch_parcels` instead of multiple `find_parcel` calls when:
+
+- **Multiple parcels mentioned**: User asks about "parcels 103/2, 45, and 396/1"
+- **Same cadastral municipality (K.O.)**: Multiple parcels in the same area/municipality
+- **Property portfolios**: Analyzing multiple properties owned by same entity
+- **Comparison queries**: "Compare these parcels..." or "Show me information for..."
+- **Land consolidation**: Research involving adjacent or related parcels
+
+**Performance Benefits:**
+- Single API operation instead of multiple sequential calls
+- Automatic rate limiting between parcel requests
+- Aggregated statistics (total, successful, failed)
+- Continue-on-error behavior (one failure doesn't stop others)
+
+**Example Use Cases:**
+- "Get info about parcels 103/2, 45, 396/1 in SAVAR" → Use batch
+- "Compare parcels in cadastral municipality LUKA" → Use batch
+- "Show me all properties owned by [person]" → Use batch
+- "Find parcel 103/2 in SAVAR" → Use single find_parcel
 
 ### Prompts (User-selected templates)
 
@@ -226,6 +248,44 @@ Returns full parcel details with ownership records.
 
 **Claude** (invokes `get_parcel_geometry` tool):
 Returns GeoJSON or WKT geometry data.
+
+**User**: "Get information about parcels 103/2, 45, and 396/1 in SAVAR"
+
+**Claude** (invokes `batch_fetch_parcels` tool):
+```json
+{
+  "results": [
+    {
+      "status": "success",
+      "data": {
+        "parcel_number": "103/2",
+        "municipality": "SAVAR",
+        "area": "1234",
+        "...": "..."
+      }
+    },
+    {
+      "status": "success",
+      "data": {
+        "parcel_number": "45",
+        "...": "..."
+      }
+    },
+    {
+      "status": "success",
+      "data": {
+        "parcel_number": "396/1",
+        "...": "..."
+      }
+    }
+  ],
+  "total": 3,
+  "successful": 3,
+  "failed": 0
+}
+```
+
+Claude then presents all three parcels in a formatted response, comparing their areas, land use, and ownership information.
 
 ### Using Prompts
 

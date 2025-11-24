@@ -85,6 +85,16 @@ The API follows a three-step workflow for retrieving complete parcel information
 - `area`: Total area in square meters
 - `hasBuildingRight`: Boolean indicating if construction is permitted
 
+**Land Registry Unit (Zemljišnoknjižni uložak) Response:**
+- **Sheet A (Posjedovni list)**: All parcels included in the land registry unit
+  - Parcel numbers, cadastral municipalities, areas
+- **Sheet B (Vlasnički list)**: Ownership information
+  - Owner names, addresses, ownership shares/fractions
+  - Ownership type (e.g., full ownership, co-ownership)
+- **Sheet C (Teretni list)**: Encumbrances and charges
+  - Mortgages, liens, easements, usage rights
+  - Registration dates and amounts
+
 ## Known Municipality Codes
 
 - SAVAR: `334979`
@@ -143,6 +153,20 @@ with CadastralAPIClient(base_url="http://test-server:9000") as client:
 # Specify cache directory for GIS data
 with CadastralAPIClient(cache_dir="./my_gis_cache") as client:
     geometry = client.get_parcel_geometry("103/2", "334979")
+
+# Get land registry unit from parcel
+with CadastralAPIClient() as client:
+    lr_unit = client.get_lr_unit_from_parcel("279/6", "334979")
+    print(f"Unit: {lr_unit.lr_unit_number}")
+    print(f"Owners: {len(lr_unit.ownership_sheet_b.owners)}")
+    print(f"Parcels: {len(lr_unit.possession_sheet_a1.parcels)}")
+
+# Get land registry unit by unit number and main book ID
+with CadastralAPIClient() as client:
+    lr_unit = client.get_lr_unit_detailed("769", 21277)
+    summary = lr_unit.summary()
+    print(f"Total area: {summary['total_area_m2']} m²")
+    print(f"Number of owners: {summary['num_owners']}")
 ```
 
 ## CLI Features
@@ -153,6 +177,7 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 
 - **`cadastral search`** - Quick parcel search with basic information
 - **`cadastral get-parcel`** - Detailed parcel information with owners
+- **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances
 - **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input)
 - **`cadastral search-municipality`** - Search and filter municipalities
 - **`cadastral list-offices`** - List all cadastral offices
@@ -168,6 +193,12 @@ cadastral search 103/2 --municipality SAVAR
 
 # Get detailed info with owners
 cadastral get-parcel 103/2 -m 334979 --show-owners
+
+# Get land registry unit from parcel
+cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
+
+# Get land registry unit by unit number and main book ID
+cadastral get-lr-unit --unit-number 769 --main-book 21277 --show-owners
 
 # Batch processing from CLI list
 cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR

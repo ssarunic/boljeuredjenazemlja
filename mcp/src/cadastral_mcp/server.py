@@ -111,6 +111,17 @@ def create_mcp_server() -> FastMCP:
         """
         Fetch multiple parcels in a single operation.
 
+        Use this tool when the user requests information about multiple parcels,
+        especially when they are in the same cadastral municipality (K.O.).
+        This is more efficient than calling find_parcel multiple times as it
+        handles rate limiting and returns aggregated statistics.
+
+        Ideal for:
+        - Multiple parcel numbers mentioned in one query (e.g., "parcels 103/2, 45, and 396/1")
+        - Comparing parcels in the same area or municipality
+        - Analyzing property portfolios or multiple properties owned by same entity
+        - Land consolidation research involving adjacent or related parcels
+
         Args:
             parcels: List of parcel specifications with parcel_number + municipality OR parcel_id
             include_owners: Whether to include ownership information (default: False)
