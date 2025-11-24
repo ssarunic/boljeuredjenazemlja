@@ -127,7 +127,13 @@ def create_mcp_server() -> FastMCP:
             include_owners: Whether to include ownership information (default: False)
 
         Returns:
-            Dictionary with results array and summary statistics
+            Dictionary with results array and summary statistics.
+            Each successful result includes:
+            - parcel_number, municipality, area, etc.
+            - lr_unit (land registry reference with lr_unit_number and main_book_id)
+
+            The lr_unit reference can be used with batch_lr_units to get detailed
+            land registry information including ownership shares and encumbrances.
         """
         logger.info(f"Tool invoked: batch_fetch_parcels({len(parcels)} parcels)")
         return await tools_handler.batch_fetch_parcels(parcels, include_owners)
@@ -228,6 +234,41 @@ def create_mcp_server() -> FastMCP:
         logger.info(f"Tool invoked: get_lr_unit_from_parcel({parcel_number}, {municipality})")
         return await tools_handler.get_lr_unit_from_parcel(parcel_number, municipality, include_full_details)
 
+    @mcp.tool()
+    async def batch_lr_units(
+        lr_units: list[dict[str, Any]],
+        include_full_details: bool = True
+    ) -> dict[str, Any]:
+        """
+        Fetch multiple land registry units in a single operation.
+
+        Use this after batch_fetch_parcels to get detailed LR unit information
+        for multiple parcels. Each parcel result from batch_fetch_parcels includes
+        lr_unit.lr_unit_number and lr_unit.main_book_id which can be passed here.
+
+        This tool automatically deduplicates LR units - if multiple parcels belong
+        to the same LR unit, it will only be fetched once.
+
+        Ideal for:
+        - Getting detailed ownership info after batch parcel fetch
+        - Comparing ownership structures across multiple properties
+        - Analyzing encumbrances (mortgages, liens) for property portfolios
+
+        Args:
+            lr_units: List of LR unit specs with lr_unit_number and main_book_id
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with results array and summary statistics:
+            - results: List with status, data (or error), lr_unit_number, main_book_id
+            - total: Total input count
+            - unique: Unique LR units (after deduplication)
+            - successful: Successful fetches
+            - failed: Failed fetches
+        """
+        logger.info(f"Tool invoked: batch_lr_units({len(lr_units)} units)")
+        return await tools_handler.batch_lr_units(lr_units, include_full_details)
+
     # ========================================================================
     # PROMPTS - User-selected templates
     # ========================================================================
@@ -290,7 +331,8 @@ def create_mcp_server() -> FastMCP:
 
     logger.info("MCP server initialized successfully")
     logger.info("Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
-                "get_parcel_geometry, list_cadastral_offices, get_lr_unit, get_lr_unit_from_parcel")
+                "get_parcel_geometry, list_cadastral_offices, get_lr_unit, get_lr_unit_from_parcel, "
+                "batch_lr_units")
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")
     logger.info("Available resources: cadastral://parcel/{id}, cadastral://municipality/{code}, "

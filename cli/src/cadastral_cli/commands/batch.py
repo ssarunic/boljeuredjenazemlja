@@ -303,6 +303,7 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
     results_table.add_column(_("Municipality"))
     results_table.add_column(_("Area (m²)"), justify="right")
     results_table.add_column(_("Parcel ID"))
+    results_table.add_column(_("LR Unit"))
 
     if show_owners:
         results_table.add_column(_("Owners"), justify="right")
@@ -325,9 +326,14 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
             municipality = f"{result.parcel_data.municipality_name} ({result.parcel_data.municipality_reg_num})"
             area = f"{result.parcel_data.area_numeric:,}" if result.parcel_data.area_numeric else "N/A"
             parcel_id = str(result.parcel_data.parcel_id)
+            # Format LR unit reference
+            if result.parcel_data.lr_unit:
+                lr_unit = result.parcel_data.lr_unit.lr_unit_number
+            else:
+                lr_unit = "-"
             owners = str(result.parcel_data.total_owners) if show_owners else ""
 
-            row = [str(i), status, parcel_display, municipality, area, parcel_id]
+            row = [str(i), status, parcel_display, municipality, area, parcel_id, lr_unit]
             if show_owners:
                 row.append(owners)
             results_table.add_row(*row)
@@ -336,7 +342,7 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
             municipality = result.input.municipality or "N/A"
             error_msg = f"[red]{result.error_type or 'error'}[/red]"
 
-            row = [str(i), status, parcel_display, municipality, error_msg, "-"]
+            row = [str(i), status, parcel_display, municipality, error_msg, "-", "-"]
             if show_owners:
                 row.append("-")
             results_table.add_row(*row)

@@ -20,7 +20,7 @@ from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _, get_current_language, set_language, SUPPORTED_LANGUAGES
 from cadastral_cli import __version__
-from .commands import batch, cache, discovery, gis, parcel, registry, search
+from .commands import batch, batch_lr_unit, cache, discovery, gis, parcel, registry, search
 
 console = Console()
 
@@ -70,6 +70,7 @@ cli.add_command(search.search_municipality)
 cli.add_command(parcel.get_parcel)
 cli.add_command(registry.get_lr_unit)
 cli.add_command(batch.batch_fetch)
+cli.add_command(batch_lr_unit.batch_lr_unit)
 cli.add_command(gis.get_geometry)
 cli.add_command(gis.download_gis)
 cli.add_command(discovery.list_offices)

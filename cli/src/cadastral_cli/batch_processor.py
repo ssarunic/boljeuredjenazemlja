@@ -47,6 +47,14 @@ class BatchResult:
             result["building_permitted"] = self.parcel_data.has_building_right
             result["total_owners"] = self.parcel_data.total_owners
 
+            # Include LR unit references (always included when available)
+            if self.parcel_data.lr_unit:
+                result["lr_unit_number"] = self.parcel_data.lr_unit.lr_unit_number
+                result["main_book_id"] = self.parcel_data.lr_unit.main_book_id
+            else:
+                result["lr_unit_number"] = None
+                result["main_book_id"] = None
+
             if include_full_data:
                 result["full_data"] = {
                     "address": self.parcel_data.address,

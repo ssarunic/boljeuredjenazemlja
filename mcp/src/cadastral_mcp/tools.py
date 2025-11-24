@@ -424,6 +424,125 @@ class CadastralTools:
                 f"Please verify the parcel number and municipality."
             ) from e
 
+    async def batch_lr_units(
+        self,
+        lr_units: list[dict[str, Any]],
+        include_full_details: bool = True,
+    ) -> dict[str, Any]:
+        """
+        Fetch multiple land registry units in a single operation.
+
+        This is useful for:
+        - Processing LR unit references from batch_fetch_parcels output
+        - Comparing multiple LR units side by side
+        - Analyzing property portfolios with complete ownership info
+
+        Args:
+            lr_units: List of LR unit specifications, each with:
+                - lr_unit_number: LR unit number (e.g., "769")
+                - main_book_id: Main book ID (e.g., 21277)
+            include_full_details: Include all sheets (default: True)
+
+        Returns:
+            Dictionary with results array and summary statistics:
+            - results: List of {status, data/error, lr_unit_number, main_book_id}
+            - total: Total LR units processed
+            - successful: Number of successful fetches
+            - failed: Number of failed fetches
+
+        Example:
+            >>> await batch_lr_units([
+            ...     {"lr_unit_number": "769", "main_book_id": 21277},
+            ...     {"lr_unit_number": "123", "main_book_id": 45678}
+            ... ])
+            {
+                "results": [...],
+                "total": 2,
+                "successful": 2,
+                "failed": 0
+            }
+        """
+        try:
+            logger.info(f"Batch fetching {len(lr_units)} LR units")
+
+            results: list[dict[str, Any]] = []
+            successful = 0
+            failed = 0
+
+            # Deduplicate LR units by (unit_number, main_book_id)
+            seen: set[tuple[str, int]] = set()
+            unique_lr_units: list[dict[str, Any]] = []
+
+            for spec in lr_units:
+                lr_unit_number = str(spec.get("lr_unit_number", ""))
+                main_book_id = spec.get("main_book_id")
+
+                if not lr_unit_number or main_book_id is None:
+                    results.append({
+                        "status": "error",
+                        "error": "lr_unit_number and main_book_id are required",
+                        "spec": spec,
+                    })
+                    failed += 1
+                    continue
+
+                key = (lr_unit_number, main_book_id)
+                if key in seen:
+                    continue  # Skip duplicates
+                seen.add(key)
+                unique_lr_units.append(spec)
+
+            for spec in unique_lr_units:
+                try:
+                    lr_unit_number = str(spec["lr_unit_number"])
+                    main_book_id = int(spec["main_book_id"])
+
+                    # Fetch LR unit
+                    lr_unit = self.client.get_lr_unit_detailed(lr_unit_number, main_book_id)
+
+                    # Convert to dict
+                    result_data = lr_unit.model_dump(mode="json")
+                    result_data["summary"] = lr_unit.summary()
+
+                    # Optionally simplify
+                    if not include_full_details:
+                        result_data = {
+                            "lr_unit_number": lr_unit.lr_unit_number,
+                            "main_book_name": lr_unit.main_book_name,
+                            "institution_name": lr_unit.institution_name,
+                            "summary": result_data["summary"],
+                        }
+
+                    results.append({
+                        "status": "success",
+                        "lr_unit_number": lr_unit_number,
+                        "main_book_id": main_book_id,
+                        "data": result_data,
+                    })
+                    successful += 1
+
+                except Exception as e:
+                    logger.error(f"Failed to fetch LR unit {spec}: {e}")
+                    results.append({
+                        "status": "error",
+                        "lr_unit_number": spec.get("lr_unit_number"),
+                        "main_book_id": spec.get("main_book_id"),
+                        "error": str(e),
+                    })
+                    failed += 1
+
+            return {
+                "results": results,
+                "total": len(lr_units),
+                "unique": len(unique_lr_units),
+                "successful": successful,
+                "failed": failed,
+            }
+
+        except Exception as e:
+            logger.error(f"Batch LR unit operation failed: {e}", exc_info=True)
+            raise ValueError(f"Batch LR unit operation failed: {e}") from e
+
     async def _resolve_municipality(self, name_or_code: str) -> str:
         """
         Internal helper to resolve municipality name to code.

@@ -178,7 +178,8 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 - **`cadastral search`** - Quick parcel search with basic information
 - **`cadastral get-parcel`** - Detailed parcel information with owners
 - **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances
-- **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input)
+- **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input). Returns LR unit references for each parcel.
+- **`cadastral batch-lr-unit`** - Process multiple land registry units (from file or batch-fetch output)
 - **`cadastral search-municipality`** - Search and filter municipalities
 - **`cadastral list-offices`** - List all cadastral offices
 - **`cadastral get-geometry`** - Retrieve parcel boundary coordinates
@@ -200,11 +201,18 @@ cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
 # Get land registry unit by unit number and main book ID
 cadastral get-lr-unit --unit-number 769 --main-book 21277 --show-owners
 
-# Batch processing from CLI list
+# Batch processing from CLI list (returns LR unit refs)
 cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
 
 # Batch processing from file
 cadastral batch-fetch --input parcels.csv --format json --output results.json
+
+# Pipeline: batch parcels → batch LR units
+cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
+cadastral batch-lr-unit --from-batch-output parcels.json
+
+# Direct LR unit batch processing
+cadastral batch-lr-unit --input lr_units.csv --show-owners
 
 # Get parcel geometry in WKT format
 cadastral get-geometry 103/2 -m 334979 --format wkt
@@ -298,12 +306,12 @@ with CadastralAPIClient() as client:
 
 ## Batch Processing
 
-Process multiple parcels efficiently:
+Process multiple parcels and land registry units efficiently:
 
 ### CLI Batch Mode
 
 ```bash
-# Comma-separated list
+# Comma-separated list (returns LR unit refs for each parcel)
 cadastral batch-fetch "103/2,45,396/1" -m SAVAR
 
 # From CSV file
@@ -317,11 +325,24 @@ cadastral batch-fetch --input parcels.csv --stop-on-error
 
 # Include full parcel details
 cadastral batch-fetch "103/2,45" -m SAVAR --detail full --show-owners
+
+# Pipeline: Parcels → LR Units (for detailed ownership/encumbrances)
+cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
+cadastral batch-lr-unit --from-batch-output parcels.json --show-owners
+
+# Direct LR unit batch (from CSV with lr_unit_number,main_book_id)
+cadastral batch-lr-unit --input lr_units.csv --format json -o lr_results.json
 ```
+
+**batch-fetch output now includes:**
+- `lr_unit_number` - Land registry unit number
+- `main_book_id` - Main book ID
+
+These can be passed to `batch-lr-unit` for detailed ownership and encumbrance info.
 
 ### Input File Formats
 
-**CSV format:**
+**Parcel CSV format:**
 ```csv
 parcel_number,municipality
 103/2,334979
@@ -329,12 +350,27 @@ parcel_number,municipality
 396/1,334979
 ```
 
-**JSON format:**
+**Parcel JSON format:**
 ```json
 [
   {"parcel_number": "103/2", "municipality": "334979"},
   {"parcel_number": "45", "municipality": "SAVAR"},
   {"parcel_id": "direct_parcel_id_if_known"}
+]
+```
+
+**LR Unit CSV format (for batch-lr-unit):**
+```csv
+lr_unit_number,main_book_id
+769,21277
+123,45678
+```
+
+**LR Unit JSON format (for batch-lr-unit):**
+```json
+[
+  {"lr_unit_number": "769", "main_book_id": 21277},
+  {"lr_unit_number": "123", "main_book_id": 45678}
 ]
 ```
 

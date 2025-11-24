@@ -50,12 +50,13 @@ The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
 - **`find_parcel`** - Find parcels by number and municipality
-- **`batch_fetch_parcels`** - Process multiple parcels efficiently in a single operation (use when querying multiple parcels in the same cadastral municipality/K.O., or when analyzing property portfolios)
+- **`batch_fetch_parcels`** - Process multiple parcels efficiently in a single operation (use when querying multiple parcels in the same cadastral municipality/K.O., or when analyzing property portfolios). Returns LR unit references for each parcel.
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 
 **Land Registry Operations:**
 - **`get_lr_unit`** - Get detailed land registry unit by unit number and main book ID
 - **`get_lr_unit_from_parcel`** - Get land registry unit information from a parcel number
+- **`batch_lr_units`** - Fetch multiple land registry units in a single operation (use after batch_fetch_parcels to get detailed ownership and encumbrance info)
 
 **Lookup Operations:**
 - **`resolve_municipality`** - Convert municipality names to codes
@@ -72,16 +73,48 @@ Use `batch_fetch_parcels` instead of multiple `find_parcel` calls when:
 - **Land consolidation**: Research involving adjacent or related parcels
 
 **Performance Benefits:**
+
 - Single API operation instead of multiple sequential calls
 - Automatic rate limiting between parcel requests
 - Aggregated statistics (total, successful, failed)
 - Continue-on-error behavior (one failure doesn't stop others)
 
 **Example Use Cases:**
+
 - "Get info about parcels 103/2, 45, 396/1 in SAVAR" → Use batch
 - "Compare parcels in cadastral municipality LUKA" → Use batch
 - "Show me all properties owned by [person]" → Use batch
 - "Find parcel 103/2 in SAVAR" → Use single find_parcel
+
+#### Pipeline: From Parcels to Land Registry Units
+
+The `batch_fetch_parcels` tool now returns LR unit references (`lr_unit.lr_unit_number` and `lr_unit.main_book_id`) for each parcel. Use `batch_lr_units` to get detailed ownership and encumbrance information:
+
+**Two-Step Workflow:**
+
+1. **Fetch parcels**: Get basic parcel info with LR unit references
+2. **Fetch LR units**: Get detailed ownership, all parcels in unit, and encumbrances
+
+**Example:**
+
+```text
+User: "Get detailed ownership info for parcels 103/2, 45, and 396/1 in SAVAR"
+
+Step 1: batch_fetch_parcels([
+  {"parcel_number": "103/2", "municipality": "SAVAR"},
+  {"parcel_number": "45", "municipality": "SAVAR"},
+  {"parcel_number": "396/1", "municipality": "SAVAR"}
+])
+→ Returns parcels with lr_unit references
+
+Step 2: batch_lr_units([
+  {"lr_unit_number": "657", "main_book_id": 21277},
+  {"lr_unit_number": "123", "main_book_id": 21277}
+])
+→ Returns detailed ownership sheets, all parcels in each unit, encumbrances
+```
+
+**Note:** Multiple parcels may belong to the same LR unit. `batch_lr_units` automatically deduplicates, so you can pass all LR refs from step 1 without worrying about duplicates.
 
 ### Prompts (User-selected templates)
 

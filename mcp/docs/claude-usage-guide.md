@@ -23,7 +23,7 @@ Find parcel 103/2 in SAVAR
 ---
 
 ### 2. `batch_fetch_parcels` - Fetch multiple parcels
-**Status:** ✅ Working (after fix)
+**Status:** ✅ Working
 
 Fetches detailed information for multiple parcels in one operation.
 
@@ -51,9 +51,16 @@ Fetches detailed information for multiple parcels in one operation.
 }
 ```
 
+**New:** Each successful result now includes **LR unit references**:
+- `lr_unit.lr_unit_number` - Land registry unit number
+- `lr_unit.main_book_id` - Main book ID
+
+These can be used with `batch_lr_units` to get detailed ownership and encumbrance information.
+
 **Recommended workflow:**
 1. First use `search_parcel` to get the `parcel_id`
 2. Then use `batch_fetch_parcels` with the `parcel_id`
+3. (Optional) Use `batch_lr_units` with the LR refs for detailed ownership
 
 ---
 
@@ -155,6 +162,43 @@ Gets land registry unit information directly if you already know the unit number
 ```
 
 **Note:** Usually it's easier to use `get_lr_unit_from_parcel` instead, which handles the lookup for you.
+
+---
+
+### 8. `batch_lr_units` - Fetch multiple LR units (NEW)
+**Status:** ✅ Working (added 2025-11-24)
+
+Fetches multiple land registry units in a single operation. Use this after `batch_fetch_parcels` to get detailed ownership and encumbrance information.
+
+**Example:**
+```json
+{
+  "lr_units": [
+    {"lr_unit_number": "657", "main_book_id": 21277},
+    {"lr_unit_number": "123", "main_book_id": 21277}
+  ],
+  "include_full_details": true
+}
+```
+
+**What you'll get for each LR unit:**
+
+- **Sheet A (Posjedovni list)**: All parcels in the unit
+- **Sheet B (Vlasnički list)**: Ownership with shares
+- **Sheet C (Teretni list)**: Encumbrances (mortgages, liens)
+- **Summary**: Total area, number of owners, encumbrance status
+
+**Key features:**
+
+- Automatic deduplication (if multiple parcels share an LR unit)
+- Returns `unique` count showing how many were actually fetched
+- Continue-on-error behavior
+
+**Recommended workflow:**
+
+1. Use `batch_fetch_parcels` to get parcel info with LR refs
+2. Extract `lr_unit.lr_unit_number` and `lr_unit.main_book_id` from each result
+3. Pass those to `batch_lr_units` for detailed ownership info
 
 ---
 
@@ -349,12 +393,19 @@ else:
 **All Tools Working:** ✅
 
 - ✅ find_parcel
-- ✅ batch_fetch_parcels (use parcel_id)
+- ✅ batch_fetch_parcels (use parcel_id) - now returns LR unit refs
 - ✅ resolve_municipality
 - ✅ list_cadastral_offices
 - ✅ get_parcel_geometry
-- ✅ **get_lr_unit_from_parcel** (FIXED 2025-11-18)
-- ✅ **get_lr_unit** (FIXED 2025-11-18)
+- ✅ get_lr_unit_from_parcel (FIXED 2025-11-18)
+- ✅ get_lr_unit (FIXED 2025-11-18)
+- ✅ **batch_lr_units** (NEW 2025-11-24)
 
-**What was fixed:**
+**What's new (2025-11-24):**
+
+- `batch_fetch_parcels` now returns LR unit references (`lr_unit.lr_unit_number`, `lr_unit.main_book_id`) for each parcel
+- New `batch_lr_units` tool for fetching multiple LR units with automatic deduplication
+- Pipeline workflow: parcels → LR refs → detailed ownership info
+
+**Previously fixed (2025-11-18):**
 The Pydantic validation error for LR units has been resolved. The `shareOrderNumber` field is now optional, allowing the API to return encumbrance data even when this field is missing.

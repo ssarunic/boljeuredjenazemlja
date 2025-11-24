@@ -1,0 +1,108 @@
+{
+  "lrUnitId": 13122441,
+  "lrUnitNumber": "657",
+  "mainBookId": 21277,
+  "mainBookName": "SAVAR",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Test Land Registry Office SAVAR",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": false,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-12345/2024",
+  "activePlumbs": [],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "1. Suvlasnički dio: 1/2",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930401,
+            "name": "IVIĆ MARKO, SIN PETRA",
+            "address": "TESTNA ULICA 15, SPLIT",
+            "lrEntry": {
+              "description": "Zaprimljeno 10.06.2018.g. pod brojem Z-5678/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>RJEŠENJE O NASLJEĐIVANJU",
+              "orderNumber": "1.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503801,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "1"
+      },
+      {
+        "description": "2. Suvlasnički dio: 1/2",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930402,
+            "name": "IVIĆ ANA, KĆI PETRA",
+            "address": "SAVAR",
+            "lrEntry": {
+              "description": "Zaprimljeno 10.06.2018.g. pod brojem Z-5678/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>RJEŠENJE O NASLJEĐIVANJU",
+              "orderNumber": "2.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503802,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "2"
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "cadParcels": [
+      {
+        "parcelId": 6564817,
+        "parcelNumber": "103/2",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "POLJE",
+        "area": "1200",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74357391,
+            "name": "MASLINJAK",
+            "area": "1200",
+            "possessionSheetId": 14823725,
+            "possessionSheetNumber": "657",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823725,
+            "possessionSheetNumber": "657",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": true
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": []
+  }
+}
