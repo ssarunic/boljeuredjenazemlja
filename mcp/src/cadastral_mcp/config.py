@@ -12,7 +12,7 @@ class MCPConfig:
     # API Configuration
     api_base_url: str = os.getenv("CADASTRAL_API_BASE_URL", "http://localhost:8000")
     api_timeout: float = float(os.getenv("CADASTRAL_API_TIMEOUT", "10.0"))
-    api_rate_limit: float = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.75"))
+    api_rate_limit: float = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.375"))
 
     # Language Configuration
     language: str = os.getenv("CADASTRAL_LANG", "hr")

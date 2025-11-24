@@ -51,7 +51,7 @@ class CadastralAPIClient:
     # Default to localhost test server (production API requires authorization)
     BASE_URL = os.getenv("CADASTRAL_API_BASE_URL", "http://localhost:8000")
     DEFAULT_TIMEOUT = float(os.getenv("CADASTRAL_API_TIMEOUT", "10.0"))
-    DEFAULT_RATE_LIMIT = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.75"))
+    DEFAULT_RATE_LIMIT = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.375"))
     MAX_RETRIES = 3
 
     def __init__(
