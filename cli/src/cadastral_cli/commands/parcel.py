@@ -134,8 +134,7 @@ def print_parcel_details(
     # Optional batch mode header
     if parcel_index is not None and total_parcels is not None:
         console.print(
-            f"\n[bold green]━━━ {_('Parcel')} {parcel_index}/{total_parcels}: "
-            f"✓ {parcel.parcel_number} ━━━[/bold green]"
+            f"\n[bold green]━━━ {_('Parcel')} {parcel_index}/{total_parcels} ━━━[/bold green]"
         )
 
     # Basic info

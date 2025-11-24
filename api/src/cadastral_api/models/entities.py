@@ -866,12 +866,12 @@ class LandRegistryUnitDetailed(BaseModel):
         alias="ownershipSheetB", description="Ownership sheet (List B)"
     )
 
-    # Sheet A: Parcels
-    possession_sheet_a1: SheetAParcelList = Field(
-        alias="possessionSheetA1", description="Parcel list (Sheet A1)"
+    # Sheet A: Parcels (Possessory sheet / Popis čestica)
+    possessory_sheet_a1: SheetAParcelList = Field(
+        alias="possessionSheetA1", description="Parcel list (Possessory Sheet A1)"
     )
-    possession_sheet_a2: SheetAAdditionalInfo = Field(
-        alias="possessionSheetA2", description="Additional info (Sheet A2)"
+    possessory_sheet_a2: SheetAAdditionalInfo = Field(
+        alias="possessionSheetA2", description="Additional info (Possessory Sheet A2)"
     )
 
     # Sheet C: Encumbrances
@@ -886,7 +886,7 @@ class LandRegistryUnitDetailed(BaseModel):
 
     def get_all_parcels(self) -> list[LRUnitParcel]:
         """Get all parcels in this unit."""
-        return self.possession_sheet_a1.cad_parcels
+        return self.possessory_sheet_a1.cad_parcels
 
     def has_encumbrances(self) -> bool:
         """Check if unit has any encumbrances."""
@@ -902,8 +902,8 @@ class LandRegistryUnitDetailed(BaseModel):
         return {
             "unit_number": self.lr_unit_number,
             "main_book": self.main_book_name,
-            "total_parcels": len(self.possession_sheet_a1.cad_parcels),
-            "total_area_m2": self.possession_sheet_a1.total_area(),
+            "total_parcels": len(self.possessory_sheet_a1.cad_parcels),
+            "total_area_m2": self.possessory_sheet_a1.total_area(),
             "num_owners": len(self.get_all_owners()),
             "has_encumbrances": self.has_encumbrances(),
         }

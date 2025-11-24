@@ -134,7 +134,7 @@ Get the land registry unit for parcel 103/2 in SAVAR
 ```
 
 **What you'll get:**
-- **Sheet A (Posjedovni list)**: All parcels in the LR unit (not just the one searched)
+- **Sheet A (Popis čestica)**: All parcels in the LR unit (not just the one searched)
 - **Sheet B (Vlasnički list)**: Complete ownership information with co-owners and shares
 - **Sheet C (Teretni list)**: All encumbrances (mortgages, easements, liens, restrictions)
 - Comprehensive summary (total area, number of owners, encumbrances)
@@ -183,7 +183,7 @@ Fetches multiple land registry units in a single operation. Use this after `batc
 
 **What you'll get for each LR unit:**
 
-- **Sheet A (Posjedovni list)**: All parcels in the unit
+- **Sheet A (Popis čestica)**: All parcels in the unit
 - **Sheet B (Vlasnički list)**: Ownership with shares
 - **Sheet C (Teretni list)**: Encumbrances (mortgages, liens)
 - **Summary**: Total area, number of owners, encumbrance status
@@ -217,7 +217,7 @@ Get the land registry unit for parcel 103/2 in SAVAR
 
 **What you'll get:**
 - Complete land registry unit information (LR unit - "zemljišnoknjižni uložak")
-- **Sheet A (Posjedovni list)**: All parcels in the unit
+- **Sheet A (Popis čestica)**: All parcels in the unit
 - **Sheet B (Vlasnički list)**: Ownership information with shares
 - **Sheet C (Teretni list)**: Encumbrances (mortgages, easements, liens)
 - Comprehensive summary with total area, number of owners, etc.

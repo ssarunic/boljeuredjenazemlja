@@ -102,7 +102,7 @@ def main():
             )
 
         # Add total
-        total_area = lr_unit.possession_sheet_a1.total_area()
+        total_area = lr_unit.possessory_sheet_a1.total_area()
         parcel_table.add_section()
         parcel_table.add_row("TOTAL", "", f"[bold green]{total_area}[/bold green]")
 

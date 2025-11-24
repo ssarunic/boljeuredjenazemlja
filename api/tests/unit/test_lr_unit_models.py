@@ -238,7 +238,7 @@ def main():
 
         print("Test 6: Total Area Calculation")
         print("-" * 70)
-        total_area = lr_unit.possession_sheet_a1.total_area()
+        total_area = lr_unit.possessory_sheet_a1.total_area()
         print(f"✓ Total area calculated")
         print(f"  Total: {total_area} m²")
         print()

@@ -314,7 +314,7 @@ def _process_lr_unit_batch(
             TaskProgressColumn(),
             console=console,
         )
-        task = progress.add_task("Processing LR units...", total=len(inputs))
+        task = progress.add_task(_("Processing LR units..."), total=len(inputs))
         progress.start()
     else:
         progress = None
@@ -325,7 +325,9 @@ def _process_lr_unit_batch(
             if progress and task is not None:
                 progress.update(
                     task,
-                    description=f"Processing {i}/{len(inputs)}: LR unit {lr_input.lr_unit_number}",
+                    description=_("Processing {current}/{total}: LR unit {unit}").format(
+                        current=i, total=len(inputs), unit=lr_input.lr_unit_number
+                    ),
                     completed=i - 1,
                 )
 

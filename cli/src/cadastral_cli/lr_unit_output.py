@@ -102,7 +102,7 @@ def print_lr_unit_parcel_list(lr_unit: LandRegistryUnitDetailed) -> None:
         )
 
     # Add total
-    total_area = lr_unit.possession_sheet_a1.total_area()
+    total_area = lr_unit.possessory_sheet_a1.total_area()
     table.add_section()
     table.add_row(_("TOTAL"), "", f"[bold green]{total_area}[/bold green]")
 
@@ -135,22 +135,28 @@ def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
 
 def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
     """Print encumbrance sheet (Sheet C)."""
-    if not lr_unit.has_encumbrances():
-        console.print(f"[green]{_('No encumbrances found')}[/green]")
-        return
-
     table = Table(title=_("ENCUMBRANCES SHEET (LIST C)"), box=None)
     table.add_column(_("Description"), style="yellow")
     table.add_column(_("Details"))
 
-    for group in lr_unit.encumbrance_sheet_c.lr_entry_groups:
-        entries_text = "\n".join(
-            f"• {entry.order_number}: {clean_html(entry.description)[:150]}..."
-            for entry in group.lr_entries
-        )
-        table.add_row(group.description, entries_text)
+    if not lr_unit.has_encumbrances():
+        table.add_row(f"[green]{_('No encumbrances found')}[/green]", "")
+    else:
+        for group in lr_unit.encumbrance_sheet_c.lr_entry_groups:
+            entries_text = "\n".join(
+                _format_encumbrance_entry(entry.order_number, clean_html(entry.description))
+                for entry in group.lr_entries
+            )
+            table.add_row(group.description, entries_text)
 
     console.print(table)
+
+
+def _format_encumbrance_entry(order_number: str, description: str, max_length: int = 2000) -> str:
+    """Format a single encumbrance entry, truncating if needed."""
+    if len(description) > max_length:
+        return f"• {order_number}: {description[:max_length]}..."
+    return f"• {order_number}: {description}"
 
 
 def print_lr_unit_full(

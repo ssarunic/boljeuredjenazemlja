@@ -348,7 +348,7 @@ msgstr ""
 
 #: cli/src/cadastral_cli/commands/registry.py:272
 msgid "PARCEL LIST (SHEET A)"
-msgstr "POSJEDOVNI LIST (LIST A)"
+msgstr "POPIS ČESTICA (LIST A)"
 
 # Table headers and field names
 #: cli/src/cadastral_cli/commands/registry.py:273
@@ -365,11 +365,11 @@ msgstr "Površina (m²)"
 
 #: cli/src/cadastral_cli/commands/registry.py:287
 msgid "TOTAL"
-msgstr ""
+msgstr "UKUPNO"
 
 #: cli/src/cadastral_cli/commands/registry.py:295
 msgid "No encumbrances found"
-msgstr ""
+msgstr "Nema tereta"
 
 #: cli/src/cadastral_cli/commands/registry.py:298
 msgid "ENCUMBRANCES SHEET (LIST C)"
@@ -382,6 +382,24 @@ msgstr "Opis"
 #: cli/src/cadastral_cli/commands/registry.py:300
 msgid "Details"
 msgstr "Detalji"
+
+#: cli/src/cadastral_cli/batch_processor.py:181
+msgid "Processing parcels..."
+msgstr "Obrađujem čestice..."
+
+#: cli/src/cadastral_cli/batch_processor.py:193
+#, python-brace-format
+msgid "Processing {current}/{total}: {input}"
+msgstr "Obrađujem {current}/{total}: {input}"
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:317
+msgid "Processing LR units..."
+msgstr "Obrađujem zemljišnoknjižne uloške..."
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:328
+#, python-brace-format
+msgid "Processing {current}/{total}: LR unit {unit}"
+msgstr "Obrađujem {current}/{total}: ZK uložak {unit}"
 
 #: cli/src/cadastral_cli/commands/batch.py:131
 msgid "Must provide either PARCELS argument or --input file"

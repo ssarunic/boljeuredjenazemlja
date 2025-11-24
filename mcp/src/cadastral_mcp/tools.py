@@ -301,7 +301,7 @@ class CadastralTools:
         Get detailed land registry unit (zemljišnoknjižni uložak) information.
 
         A land registry unit contains:
-        - Sheet A (Posjedovni list): All parcels in the unit
+        - Sheet A (Popis čestica): All parcels in the unit
         - Sheet B (Vlasnički list): Ownership information with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
@@ -319,7 +319,7 @@ class CadastralTools:
                 "lr_unit_number": "769",
                 "main_book_name": "SAVAR",
                 "ownership_sheet_b": {...},
-                "possession_sheet_a1": {...},
+                "possessory_sheet_a1": {...},
                 "encumbrance_sheet_c": {...},
                 "summary": {
                     "total_parcels": 3,

@@ -311,7 +311,7 @@ Description                     Details
 ```
 
 **Land Registry Sheets:**
-- **Sheet A (Posjedovni list)** - List of all parcels in the LR unit
+- **Sheet A (Popis čestica)** - List of all parcels in the LR unit
 - **Sheet B (Vlasnički list)** - Ownership information with shares
 - **Sheet C (Teretn list)** - Encumbrances (mortgages, liens, easements)
 

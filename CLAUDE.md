@@ -86,7 +86,8 @@ The API follows a three-step workflow for retrieving complete parcel information
 - `hasBuildingRight`: Boolean indicating if construction is permitted
 
 **Land Registry Unit (Zemljišnoknjižni uložak) Response:**
-- **Sheet A (Posjedovni list)**: All parcels included in the land registry unit
+
+- **Sheet A (Popis čestica)**: All parcels included in the land registry unit
   - Parcel numbers, cadastral municipalities, areas
 - **Sheet B (Vlasnički list)**: Ownership information
   - Owner names, addresses, ownership shares/fractions
@@ -159,7 +160,7 @@ with CadastralAPIClient() as client:
     lr_unit = client.get_lr_unit_from_parcel("279/6", "334979")
     print(f"Unit: {lr_unit.lr_unit_number}")
     print(f"Owners: {len(lr_unit.ownership_sheet_b.owners)}")
-    print(f"Parcels: {len(lr_unit.possession_sheet_a1.parcels)}")
+    print(f"Parcels: {len(lr_unit.possessory_sheet_a1.cad_parcels)}")
 
 # Get land registry unit by unit number and main book ID
 with CadastralAPIClient() as client:

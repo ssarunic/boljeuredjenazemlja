@@ -8,6 +8,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.i18n import _
 from cadastral_api.models.entities import ParcelInfo
 from .input_parsers import ParcelInput
 
@@ -177,7 +178,7 @@ def process_batch(
             TaskProgressColumn(),
             console=console,
         )
-        task = progress.add_task("Processing parcels...", total=len(parcels))
+        task = progress.add_task(_("Processing parcels..."), total=len(parcels))
         progress.start()
     else:
         progress = None
@@ -189,7 +190,9 @@ def process_batch(
             if progress and task is not None:
                 progress.update(
                     task,
-                    description=f"Processing {i}/{len(parcels)}: {parcel_input}",
+                    description=_("Processing {current}/{total}: {input}").format(
+                        current=i, total=len(parcels), input=parcel_input
+                    ),
                     completed=i - 1,
                 )
 
