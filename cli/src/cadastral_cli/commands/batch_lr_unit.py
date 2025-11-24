@@ -16,6 +16,7 @@ from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import LandRegistryUnitDetailed
 from cadastral_cli.formatters import print_error, print_success, print_output
+from cadastral_cli.lr_unit_output import print_lr_unit_full
 
 console = Console()
 
@@ -385,67 +386,26 @@ def _process_lr_unit_batch(
 
 
 def _print_table_output(summary: LRUnitBatchSummary, show_owners: bool) -> None:
-    """Print results as rich formatted tables."""
-    # Print summary
-    header = _("BATCH LR UNIT PROCESSING SUMMARY")
-    console.print(f"\n{header}", style="bold cyan")
-    console.print("=" * len(header), style="bold cyan")
+    """Print results as rich formatted tables - same format as get-lr-unit --all."""
+    # Track if we've printed any successful LR units
+    printed_count = 0
 
-    summary_table = Table(show_header=False, box=None, padding=(0, 2))
-    summary_table.add_column(_("Field"), style="bold")
-    summary_table.add_column(_("Value"))
-
-    summary_table.add_row(_("Total LR Units"), str(summary.total))
-    summary_table.add_row(_("Successful"), f"[green]{summary.successful}[/green]")
-    summary_table.add_row(_("Failed"), f"[red]{summary.failed}[/red]")
-    summary_table.add_row(_("Success Rate"), f"{summary.success_rate:.1f}%")
-
-    console.print(summary_table)
-    console.print()
-
-    # Print results table
-    header = _("RESULTS")
-    console.print(f"\n{header}", style="bold cyan")
-    console.print("=" * len(header), style="bold cyan")
-
-    results_table = Table(show_header=True, box=None, padding=(0, 2))
-    results_table.add_column("#", justify="right", style="dim")
-    results_table.add_column(_("Status"), justify="center")
-    results_table.add_column(_("LR Unit"), style="bold")
-    results_table.add_column(_("Main Book"))
-    results_table.add_column(_("Parcels"), justify="right")
-    results_table.add_column(_("Area (m²)"), justify="right")
-    results_table.add_column(_("Owners"), justify="right")
-
-    for i, result in enumerate(summary.results, 1):
-        if result.status == "success":
-            status = "[green]✓[/green]"
-        else:
-            status = "[red]✗[/red]"
-
+    # Print each successful LR unit in full detail
+    for result in summary.results:
         if result.status == "success" and result.lr_unit_data:
-            lr_summary = result.lr_unit_data.summary()
-            main_book = result.lr_unit_data.main_book_name or str(result.input.main_book_id)
-            parcels = str(lr_summary["total_parcels"])
-            area = f"{lr_summary['total_area_m2']:,}"
-            owners = str(lr_summary["num_owners"])
+            if printed_count > 0:
+                console.print("\n---\n")
 
-            results_table.add_row(
-                str(i), status, result.input.lr_unit_number, main_book, parcels, area, owners
-            )
-        else:
-            error_msg = f"[red]{result.error_type or 'error'}[/red]"
-            results_table.add_row(
-                str(i), status, result.input.lr_unit_number, str(result.input.main_book_id),
-                error_msg, "-", "-"
-            )
-
-    console.print(results_table)
+            # Use shared print function with show_all=True
+            print_lr_unit_full(result.lr_unit_data, show_all=True)
+            printed_count += 1
 
     # Print errors if any
     if summary.failed > 0:
+        if printed_count > 0:
+            console.print("\n---\n")
         header = _("ERRORS")
-        console.print(f"\n{header}", style="bold red")
+        console.print(f"{header}", style="bold red")
         console.print("=" * len(header), style="bold red")
 
         error_table = Table(show_header=True, box=None, padding=(0, 2))
@@ -454,10 +414,12 @@ def _print_table_output(summary: LRUnitBatchSummary, show_owners: bool) -> None:
         error_table.add_column(_("Error Type"))
         error_table.add_column(_("Error Message"))
 
-        for i, result in enumerate(summary.results, 1):
+        error_num = 0
+        for result in summary.results:
             if result.status == "error":
+                error_num += 1
                 error_table.add_row(
-                    str(i),
+                    str(error_num),
                     f"{result.input.lr_unit_number} (book: {result.input.main_book_id})",
                     result.error_type or _("unknown"),
                     result.error_message or _("No error message"),
