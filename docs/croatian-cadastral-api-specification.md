@@ -600,6 +600,7 @@ Content-Type: application/json
 **Endpoint:** `GET /search-cad-parcels/possession-sheet-numbers`
 
 **Parameters:**
+
 - `search` (string): Possession sheet number
 - `municipalityRegNum` (string): Municipality registration number
 
@@ -607,6 +608,159 @@ Content-Type: application/json
 ```
 GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municipalityRegNum=334979
 ```
+
+### 8. Land Registry Unit Detailed Information
+
+**Purpose:** Get complete land registry unit (zemljišnoknjižni uložak) with ownership sheets
+
+**Endpoint:** `GET /lr/lr-unit-data`
+
+**Status:** ✅ **WORKING**
+
+**Parameters:**
+
+- `lrUnitNumber` (string): Land registry unit number (e.g., "769")
+- `mainBookId` (integer): Main book ID (e.g., 21277)
+
+**Example Request:**
+```
+GET /oss/public/lr/lr-unit-data?lrUnitNumber=13998&mainBookId=30783
+```
+
+**Response Structure:**
+The response contains detailed information organized into three "sheets":
+
+- **Sheet A (possessionSheetA1)**: List of all parcels in the unit
+- **Sheet B (ownershipSheetB)**: Ownership information with shares
+- **Sheet C (encumbranceSheetC)**: Encumbrances (mortgages, liens, easements)
+
+**Example Response (Condominium Unit):**
+```json
+{
+  "lrUnitId": 6644000,
+  "lrUnitNumber": "13998",
+  "mainBookId": 30783,
+  "mainBookName": "SPLIT",
+  "institutionId": 269,
+  "institutionName": "Zemljišnoknjižni odjel Split",
+  "status": "0",
+  "statusName": "Aktivan",
+  "condominiums": false,
+  "lrUnitTypeId": 3,
+  "lrUnitTypeName": "ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA",
+  "lastDiaryNumber": "Z-47245/2025",
+  "ownershipSheetB": {
+    "lrUnitShares": [...]
+  },
+  "possessionSheetA1": {
+    "cadParcels": [...]
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": [...]
+  }
+}
+```
+
+#### Ownership Sheet B - LRShare Object
+
+Each share in `ownershipSheetB.lrUnitShares` represents an ownership portion:
+
+```json
+{
+  "lrUnitShareId": 32618214,
+  "description": "16. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-16)",
+  "condominiumNumber": "E-16",
+  "condominiums": ["STAN na PR (prizemlju), označen br. 1, površine 61,27 m2..."],
+  "lrOwners": [...],
+  "subSharesAndEntries": [...],
+  "status": 0,
+  "orderNumber": "16"
+}
+```
+
+**Standard Fields:**
+
+- `lrUnitShareId` (integer): Unique share identifier
+- `description` (string): Full share description with fraction
+- `lrOwners` (array): Direct owners of this share (see Party object below)
+- `subSharesAndEntries` (array): Nested co-ownership entries (for shared apartments)
+- `status` (integer): Status code (0 = active)
+- `orderNumber` (string): Order number in the ownership sheet
+
+**Condominium-specific Fields:**
+
+- `condominiumNumber` (string, optional): Apartment identifier (e.g., "E-16", "E-35")
+- `condominiums` (array of strings, optional): Detailed apartment descriptions including:
+  - Floor level (e.g., "na III. (trećem) katu")
+  - Unit number (e.g., "označen br. 13")
+  - Area (e.g., "površine 59,08 m2")
+  - Room composition
+
+**Example Apartment Description:**
+```
+"STAN na III. (trećem) katu, označen br. 13, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, kupaonice, hodnika i lođe, s pripadajućom drvarnicom."
+```
+
+#### Nested Co-ownership (subSharesAndEntries)
+
+For condominiums with shared apartments (e.g., married couples), ownership is nested:
+
+```json
+{
+  "description": "22.3. Suvlasnički dio etaže: 1/2",
+  "lrOwners": [
+    {
+      "lrOwnerId": 41225328,
+      "name": "Co-Owner A",
+      "address": "Address A",
+      "taxNumber": "11111111111"
+    }
+  ],
+  "subSharesAndEntries": [],
+  "status": 0,
+  "orderNumber": "3"
+}
+```
+
+**Note:** When a share has no direct `lrOwners` but has `subSharesAndEntries`, the actual owners are found in the nested entries.
+
+#### Party (lrOwners) Object
+
+```json
+{
+  "lrOwnerId": 43484805,
+  "name": "Test Owner",
+  "address": "Test Address",
+  "taxNumber": "12345678901",
+  "lrEntry": {
+    "description": "UKNJIŽBA, PRAVO VLASNIŠTVA",
+    "orderNumber": "16.4"
+  }
+}
+```
+
+**Fields:**
+
+- `lrOwnerId` (integer): Unique owner identifier
+- `name` (string): Owner's full name
+- `address` (string, optional): Owner's address
+- `taxNumber` (string, optional): OIB (Croatian tax identification number)
+- `lrEntry` (object, optional): Registration entry details
+
+#### Detecting Condominiums
+
+**⚠️ Important:** The `condominiums` boolean field at the unit level is **unreliable** (often `false` for actual condominiums).
+
+**Reliable detection method:**
+```python
+def is_condominium(lr_unit):
+    return "ETAŽN" in lr_unit.get("lrUnitTypeName", "").upper()
+```
+
+**Condominium unit types:**
+
+- `ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA` - Condominium with defined shares
+- `ETAŽNI` - Simple condominium
 
 ## Data Structure Details
 
@@ -680,11 +834,29 @@ Individual owner information:
 ```
 
 **Fields:**
+
 - `name` (string): Owner's full name
 - `ownership` (string, **optional**): Ownership fraction (e.g., "1/1", "1/4")
   - ⚠️ **Note:** This field is frequently missing in API responses
   - When present, format is always "numerator/denominator"
 - `address` (string): Owner's address
+
+**Condominium-specific fields** (appear for possessors in condominium units):
+
+- `condominiumShareNumber` (string, optional): Apartment/unit number in the condominium (e.g., "35", "0" for common areas)
+- `condominiumShareOwnership` (string, optional): Share of common areas (e.g., "61/4651")
+
+**Example condominium possessor:**
+
+```json
+{
+  "name": "GRAD SPLIT",
+  "ownership": "1/1",
+  "address": "SPLIT, OBALA KNEZA BRANIMIRA 17",
+  "condominiumShareNumber": "0",
+  "condominiumShareOwnership": "4531/4651"
+}
+```
 
 **Important:** Many parcels have possessors without the `ownership` field. Handle this as optional in code.
 
@@ -720,9 +892,17 @@ Land registry book information:
 - `status` (string): Status code
 - `statusName` (string, optional): Status name (e.g., "Aktivan")
 - `verificated` (boolean): Verification status
-- `condominiums` (boolean): Condominium flag
+- `condominiums` (boolean): Condominium flag (⚠️ **unreliable** - often `false` for actual condominiums)
 - `lrUnitTypeId` (integer, optional): Type ID
-- `lrUnitTypeName` (string, optional): Type name (e.g., "VLASNIČKI")
+- `lrUnitTypeName` (string, optional): Type name (see Unit Types below)
+
+**Unit Types (lrUnitTypeName):**
+
+- `VLASNIČKI` - Standard ownership (single owner or co-owners)
+- `ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA` - Condominium with defined shares (apartments)
+- `ETAŽNI` - Condominium (etažno vlasništvo)
+
+**⚠️ Important:** To detect condominiums, check `lrUnitTypeName` containing "ETAŽN" rather than the `condominiums` boolean flag, which is unreliable.
 
 **Note:** Many fields in lrUnit are optional and only appear in certain contexts.
 

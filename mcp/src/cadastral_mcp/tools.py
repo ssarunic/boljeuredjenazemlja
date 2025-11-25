@@ -305,6 +305,11 @@ class CadastralTools:
         - Sheet B (Vlasnički list): Ownership information with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
+        For condominiums (etažno vlasništvo), each share represents an individual
+        apartment/unit with additional fields:
+        - condominium_number: Apartment identifier (e.g., "E-16")
+        - condominium_descriptions: Detailed descriptions (floor, rooms, area)
+
         Args:
             unit_number: LR unit number (e.g., "769")
             main_book_id: Main book ID (e.g., 21277)
@@ -325,7 +330,8 @@ class CadastralTools:
                     "total_parcels": 3,
                     "total_area_m2": 2621,
                     "num_owners": 5,
-                    "has_encumbrances": True
+                    "has_encumbrances": True,
+                    "is_condominium": False
                 }
             }
         """
@@ -338,18 +344,27 @@ class CadastralTools:
             # Convert to dict
             result = lr_unit.model_dump(mode="json")
 
-            # Add summary
+            # Add summary (includes is_condominium and condominium_units)
             result["summary"] = lr_unit.summary()
+
+            # Add condominium-specific info if applicable
+            if lr_unit.is_condominium():
+                result["is_condominium"] = True
+                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
 
             # Optionally simplify if not full details
             if not include_full_details:
                 # Keep only summary and basic info
-                return {
+                simple_result = {
                     "lr_unit_number": lr_unit.lr_unit_number,
                     "main_book_name": lr_unit.main_book_name,
                     "institution_name": lr_unit.institution_name,
                     "summary": result["summary"],
                 }
+                if lr_unit.is_condominium():
+                    simple_result["is_condominium"] = True
+                    simple_result["condominium_units_count"] = lr_unit.get_condominium_units_count()
+                return simple_result
 
             return result
 
@@ -374,13 +389,19 @@ class CadastralTools:
         2. Extracts the LR unit reference
         3. Fetches the complete LR unit data
 
+        For condominiums (etažno vlasništvo), the response includes additional
+        fields for each ownership share:
+        - condominium_number: Apartment identifier (e.g., "E-16")
+        - condominium_descriptions: Detailed descriptions (floor, rooms, area)
+
         Args:
             parcel_number: Cadastral parcel number (e.g., "279/6")
             municipality: Municipality name or code
             include_full_details: Include all sheets (default: True)
 
         Returns:
-            Dictionary with LR unit data including all sheets
+            Dictionary with LR unit data including all sheets.
+            For condominiums, includes is_condominium and condominium_units_count.
 
         Example:
             >>> await get_lr_unit_from_parcel("279/6", "SAVAR")
@@ -388,6 +409,10 @@ class CadastralTools:
                 "lr_unit_number": "769",
                 "main_book_name": "SAVAR",
                 "ownership_sheet_b": {...},
+                "summary": {
+                    "is_condominium": False,
+                    ...
+                },
                 ...
             }
         """
@@ -403,17 +428,26 @@ class CadastralTools:
             # Convert to dict
             result = lr_unit.model_dump(mode="json")
 
-            # Add summary
+            # Add summary (includes is_condominium and condominium_units)
             result["summary"] = lr_unit.summary()
+
+            # Add condominium-specific info if applicable
+            if lr_unit.is_condominium():
+                result["is_condominium"] = True
+                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
 
             # Optionally simplify if not full details
             if not include_full_details:
-                return {
+                simple_result = {
                     "lr_unit_number": lr_unit.lr_unit_number,
                     "main_book_name": lr_unit.main_book_name,
                     "institution_name": lr_unit.institution_name,
                     "summary": result["summary"],
                 }
+                if lr_unit.is_condominium():
+                    simple_result["is_condominium"] = True
+                    simple_result["condominium_units_count"] = lr_unit.get_condominium_units_count()
+                return simple_result
 
             return result
 
@@ -436,6 +470,12 @@ class CadastralTools:
         - Processing LR unit references from batch_fetch_parcels output
         - Comparing multiple LR units side by side
         - Analyzing property portfolios with complete ownership info
+        - Batch processing of condominium buildings
+
+        For condominiums (etažno vlasništvo), each result includes:
+        - is_condominium: True if this is a condominium unit
+        - condominium_units_count: Number of individual apartments/units
+        - Each ownership share has condominium_number and condominium_descriptions
 
         Args:
             lr_units: List of LR unit specifications, each with:
@@ -445,21 +485,23 @@ class CadastralTools:
 
         Returns:
             Dictionary with results array and summary statistics:
-            - results: List of {status, data/error, lr_unit_number, main_book_id}
+            - results: List of {status, data/error, lr_unit_number, main_book_id, is_condominium}
             - total: Total LR units processed
             - successful: Number of successful fetches
             - failed: Number of failed fetches
+            - condominiums_found: Number of condominium units found
 
         Example:
             >>> await batch_lr_units([
             ...     {"lr_unit_number": "769", "main_book_id": 21277},
-            ...     {"lr_unit_number": "123", "main_book_id": 45678}
+            ...     {"lr_unit_number": "13998", "main_book_id": 30783}
             ... ])
             {
                 "results": [...],
                 "total": 2,
                 "successful": 2,
-                "failed": 0
+                "failed": 0,
+                "condominiums_found": 1
             }
         """
         try:
@@ -468,6 +510,7 @@ class CadastralTools:
             results: list[dict[str, Any]] = []
             successful = 0
             failed = 0
+            condominiums_found = 0
 
             # Deduplicate LR units by (unit_number, main_book_id)
             seen: set[tuple[str, int]] = set()
@@ -504,6 +547,13 @@ class CadastralTools:
                     result_data = lr_unit.model_dump(mode="json")
                     result_data["summary"] = lr_unit.summary()
 
+                    # Check if condominium
+                    is_condo = lr_unit.is_condominium()
+                    if is_condo:
+                        condominiums_found += 1
+                        result_data["is_condominium"] = True
+                        result_data["condominium_units_count"] = lr_unit.get_condominium_units_count()
+
                     # Optionally simplify
                     if not include_full_details:
                         result_data = {
@@ -512,13 +562,20 @@ class CadastralTools:
                             "institution_name": lr_unit.institution_name,
                             "summary": result_data["summary"],
                         }
+                        if is_condo:
+                            result_data["is_condominium"] = True
+                            result_data["condominium_units_count"] = lr_unit.get_condominium_units_count()
 
-                    results.append({
+                    result_entry = {
                         "status": "success",
                         "lr_unit_number": lr_unit_number,
                         "main_book_id": main_book_id,
                         "data": result_data,
-                    })
+                    }
+                    if is_condo:
+                        result_entry["is_condominium"] = True
+
+                    results.append(result_entry)
                     successful += 1
 
                 except Exception as e:
@@ -537,6 +594,7 @@ class CadastralTools:
                 "unique": len(unique_lr_units),
                 "successful": successful,
                 "failed": failed,
+                "condominiums_found": condominiums_found,
             }
 
         except Exception as e:

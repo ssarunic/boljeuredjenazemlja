@@ -240,21 +240,32 @@ def _print_ownership_info(parcel) -> None:
             console.print(f"  {_('No possessors listed')}", style="dim")
             continue
 
+        # Check if any possessor has condominium info
+        has_condo_info = any(p.condominium_share_number for p in sheet.possessors)
+
         table = Table(show_header=True, box=None, padding=(0, 2))
         table.add_column(_("Name"), style="bold")
         table.add_column(_("Ownership"), justify="right")
         table.add_column(_("Address"))
+        if has_condo_info:
+            table.add_column(_("Unit"), justify="center", style="dim")
+            table.add_column(_("Common Share"), justify="right", style="dim")
 
         for possessor in sheet.possessors:
             ownership_str = possessor.ownership or _("N/A")
             if possessor.ownership_decimal is not None:
                 ownership_str = f"{possessor.ownership} ({possessor.ownership_decimal * 100:.1f}%)"
 
-            table.add_row(
+            row = [
                 possessor.name,
                 ownership_str,
-                possessor.address
-            )
+                possessor.address or "-",
+            ]
+            if has_condo_info:
+                row.append(possessor.condominium_share_number or "-")
+                row.append(possessor.condominium_share_ownership or "-")
+
+            table.add_row(*row)
 
         console.print(table)
 
@@ -382,6 +393,9 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
                         "ownership": p.ownership,
                         "ownership_decimal": p.ownership_decimal,
                         "address": p.address,
+                        # Condominium-specific fields (included when present)
+                        **({"condominium_unit": p.condominium_share_number} if p.condominium_share_number else {}),
+                        **({"condominium_common_share": p.condominium_share_ownership} if p.condominium_share_ownership else {}),
                     }
                     for p in sheet.possessors
                 ]

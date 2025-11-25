@@ -96,6 +96,21 @@ The API follows a three-step workflow for retrieving complete parcel information
   - Mortgages, liens, easements, usage rights
   - Registration dates and amounts
 
+**Condominium Support (Etažno vlasništvo):**
+
+Condominiums (apartment buildings) have a special structure in the land registry:
+
+- **Unit Types**: `lrUnitTypeName` indicates property type:
+  - `VLASNIČKI` - Standard ownership
+  - `ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA` - Condominium with defined shares
+- **Detection**: Use `lr_unit.is_condominium()` method (checks `lrUnitTypeName` for "ETAŽN")
+  - ⚠️ The `condominiums` boolean flag is **unreliable** (often `false` for actual condominiums)
+- **Ownership Shares**: Each apartment is a separate share with:
+  - `condominium_number`: Apartment identifier (e.g., "E-16")
+  - `condominium_descriptions`: Detailed apartment info (floor, area, rooms)
+- **Nested Co-ownership**: Shared apartments use `subSharesAndEntries` for co-owners
+- **Possessor Fields**: `condominiumShareNumber` and `condominiumShareOwnership` for common area shares
+
 ## Known Municipality Codes
 
 - SAVAR: `334979`
@@ -168,6 +183,15 @@ with CadastralAPIClient() as client:
     summary = lr_unit.summary()
     print(f"Total area: {summary['total_area_m2']} m²")
     print(f"Number of owners: {summary['num_owners']}")
+
+# Working with condominiums (etažno vlasništvo)
+with CadastralAPIClient() as client:
+    lr_unit = client.get_lr_unit_detailed("13998", 30783)  # Split condominium
+    if lr_unit.is_condominium():
+        print(f"Condominium with {lr_unit.get_condominium_units_count()} units")
+        for share in lr_unit.ownership_sheet_b.lr_unit_shares:
+            if share.is_condominium_share():
+                print(f"  {share.condominium_number}: {share.get_apartment_description()}")
 ```
 
 ## CLI Features

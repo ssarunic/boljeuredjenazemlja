@@ -68,6 +68,11 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
     table.add_column("Metric", style="bold yellow")
     table.add_column("Value", style="green")
 
+    # Show condominium info if applicable
+    if summary.get("is_condominium"):
+        table.add_row(_("Property Type"), _("Condominium (Etažno vlasništvo)"))
+        table.add_row(_("Number of Units"), str(summary.get("condominium_units", 0)))
+
     table.add_row(_("Total Parcels"), str(summary["total_parcels"]))
     table.add_row(_("Total Area"), f"{summary['total_area_m2']} m²")
     table.add_row(_("Number of Owners"), str(summary["num_owners"]))
@@ -110,27 +115,106 @@ def print_lr_unit_parcel_list(lr_unit: LandRegistryUnitDetailed) -> None:
 
 
 def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
-    """Print ownership sheet (Sheet B)."""
+    """Print ownership sheet (Sheet B).
+
+    For condominiums, also shows apartment descriptions and handles nested co-owners.
+    """
+    is_condo = lr_unit.is_condominium()
+
     table = Table(title=_("OWNERSHIP SHEET (LIST B)"), box=None)
     table.add_column(_("Share"), style="cyan")
     table.add_column(_("Owner"), style="bold")
     table.add_column(_("Address"))
     table.add_column(_("OIB"))
 
+    # Add apartment description column for condominiums
+    if is_condo:
+        table.add_column(_("Apartment"), style="dim", max_width=50)
+
     for share in lr_unit.ownership_sheet_b.lr_unit_shares:
         if share.is_active:
-            for owner in share.owners:
-                # Extract just the fraction from description (e.g., "1. Suvlasnički dio: 4/8" -> "4/8")
-                share_text = share.description.split(":")[-1].strip() if ":" in share.description else share.description
+            # Extract share text (fraction + condominium number if present)
+            share_text = share.description.split(":")[-1].strip() if ":" in share.description else share.description
 
-                table.add_row(
-                    share_text,
-                    owner.name,
-                    owner.address or "-",
-                    owner.tax_number or "-",
-                )
+            # Get apartment description for condominiums
+            apt_desc = ""
+            if is_condo and share.condominium_descriptions:
+                apt_desc = _format_apartment_description(share.condominium_descriptions[0])
+
+            # Handle direct owners
+            if share.owners:
+                for owner in share.owners:
+                    row = [
+                        share_text,
+                        owner.name,
+                        owner.address or "-",
+                        owner.tax_number or "-",
+                    ]
+                    if is_condo:
+                        row.append(apt_desc)
+                    table.add_row(*row)
+
+            # Handle nested co-owners (subSharesAndEntries) - common in condominiums
+            elif share.has_sub_owners():
+                # First, add a row for the share itself with the apartment description
+                for sub in share.sub_shares_and_entries:
+                    sub_desc = sub.get("description", "")
+                    # Extract sub-share fraction
+                    sub_share_text = sub_desc.split(":")[-1].strip() if ":" in sub_desc else sub_desc
+                    sub_owners = sub.get("lrOwners", [])
+
+                    for owner_data in sub_owners:
+                        row = [
+                            f"  {sub_share_text}",  # Indent sub-share
+                            owner_data.get("name", "-"),
+                            owner_data.get("address", "-") or "-",
+                            owner_data.get("taxNumber", "-") or "-",
+                        ]
+                        if is_condo:
+                            row.append(apt_desc if sub == share.sub_shares_and_entries[0] else "")
+                        table.add_row(*row)
 
     console.print(table)
+
+
+def _format_apartment_description(description: str, max_length: int = 60) -> str:
+    """Format apartment description, extracting key info and truncating if needed.
+
+    Args:
+        description: Full apartment description from API
+        max_length: Maximum length before truncation
+
+    Returns:
+        Shortened, formatted description
+    """
+    if not description:
+        return ""
+
+    # Try to extract floor and area info
+    # Example: "STAN na III. (trećem) katu, označen br. 13, površine 59,08 m2..."
+    import re
+
+    # Extract floor
+    floor_match = re.search(r'na\s+(\w+\.?\s*(?:\([^)]+\))?\s*katu)', description, re.IGNORECASE)
+    floor_info = floor_match.group(1) if floor_match else ""
+
+    # Extract area
+    area_match = re.search(r'površine\s+([\d,\.]+)\s*m2', description, re.IGNORECASE)
+    area_info = f"{area_match.group(1)} m²" if area_match else ""
+
+    # Extract apartment number
+    apt_match = re.search(r'označen\s+br\.?\s*(\d+)', description, re.IGNORECASE)
+    apt_num = f"#{apt_match.group(1)}" if apt_match else ""
+
+    # Build short description
+    parts = [p for p in [apt_num, floor_info, area_info] if p]
+    if parts:
+        return ", ".join(parts)
+
+    # Fallback: truncate original
+    if len(description) > max_length:
+        return description[:max_length] + "..."
+    return description
 
 
 def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:

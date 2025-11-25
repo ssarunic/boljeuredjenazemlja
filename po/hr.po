@@ -269,6 +269,31 @@ msgstr "Status"
 msgid "Unit Type"
 msgstr "Tip uloška"
 
+# Condominium (Etažno vlasništvo) support
+#: cli/src/cadastral_cli/lr_unit_output.py:73
+msgid "Property Type"
+msgstr "Vrsta nekretnine"
+
+#: cli/src/cadastral_cli/lr_unit_output.py:73
+msgid "Condominium (Etažno vlasništvo)"
+msgstr "Etažno vlasništvo"
+
+#: cli/src/cadastral_cli/lr_unit_output.py:74
+msgid "Number of Units"
+msgstr "Broj jedinica"
+
+#: cli/src/cadastral_cli/lr_unit_output.py:132
+msgid "Apartment"
+msgstr "Stan"
+
+#: cli/src/cadastral_cli/commands/parcel.py:251
+msgid "Unit"
+msgstr "Jedinica"
+
+#: cli/src/cadastral_cli/commands/parcel.py:252
+msgid "Common Share"
+msgstr "Udio u zajedničkim dijelovima"
+
 #: cli/src/cadastral_cli/commands/registry.py:217
 msgid "Last Diary Number"
 msgstr "Zadnji broj dnevnika"

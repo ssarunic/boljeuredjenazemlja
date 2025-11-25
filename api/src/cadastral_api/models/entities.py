@@ -96,9 +96,12 @@ class Possessor(BaseModel):
 
     IMPORTANT: The 'ownership' and 'address' fields are frequently missing in API responses.
     Many parcels do not include ownership fractions or owner addresses.
+
+    For condominiums (etažno vlasništvo), additional fields indicate the apartment/unit
+    number and the share of common areas.
     """
 
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     name: str = Field(description="Owner's full name")
     ownership: str | None = Field(
@@ -106,6 +109,18 @@ class Possessor(BaseModel):
     )
     address: str | None = Field(
         default=None, description="Owner's address"
+    )
+
+    # Condominium-specific fields
+    condominium_share_number: str | None = Field(
+        default=None,
+        alias="condominiumShareNumber",
+        description="Apartment/unit number in condominium (e.g., '35', '0' for common areas)",
+    )
+    condominium_share_ownership: str | None = Field(
+        default=None,
+        alias="condominiumShareOwnership",
+        description="Share of common areas (e.g., '61/4651')",
     )
 
     @computed_field  # type: ignore[misc]
@@ -541,6 +556,9 @@ class LRShare(BaseModel):
     Represents one owner's fractional ownership (e.g., "4/8 share").
     Sub-shares are modeled as separate LRShare objects.
 
+    For condominiums (etažno vlasništvo), each share represents an apartment/unit
+    with additional fields for apartment identifier and descriptions.
+
     Design principle: One share = one owner. Don't nest sub-shares inside.
     """
 
@@ -562,11 +580,23 @@ class LRShare(BaseModel):
     numerator: int | None = Field(None, description="Numerator of ownership fraction")
     denominator: int | None = Field(None, description="Denominator of ownership fraction")
 
-    # Sub-shares (if any)
+    # Sub-shares (if any) - for co-ownership within a condominium unit
     sub_shares_and_entries: list[dict] = Field(
         default_factory=list,
         alias="subSharesAndEntries",
-        description="Sub-shares if this share is divided",
+        description="Sub-shares if this share is divided (nested co-owners)",
+    )
+
+    # Condominium-specific fields
+    condominium_number: str | None = Field(
+        default=None,
+        alias="condominiumNumber",
+        description="Apartment identifier (e.g., 'E-16', 'E-35')",
+    )
+    condominium_descriptions: list[str] = Field(
+        default_factory=list,
+        alias="condominiums",
+        description="Apartment descriptions (floor, rooms, area)",
     )
 
     @computed_field  # type: ignore[misc]
@@ -587,6 +617,38 @@ class LRShare(BaseModel):
         if self.numerator is not None and self.denominator and self.denominator > 0:
             return self.numerator / self.denominator
         return None
+
+    def is_condominium_share(self) -> bool:
+        """Check if this share represents a condominium unit (apartment)."""
+        return self.condominium_number is not None
+
+    def get_apartment_description(self) -> str | None:
+        """Get the first apartment description if available."""
+        return self.condominium_descriptions[0] if self.condominium_descriptions else None
+
+    def has_sub_owners(self) -> bool:
+        """Check if this share has nested co-owners (subSharesAndEntries)."""
+        return len(self.sub_shares_and_entries) > 0
+
+    def get_all_owners(self) -> list[Party]:
+        """
+        Get all owners including those in sub-shares.
+
+        For simple ownership, returns the direct owners.
+        For co-owned apartments, also extracts owners from subSharesAndEntries.
+        """
+        all_owners = list(self.owners)
+
+        # Extract owners from sub-shares (co-ownership within apartment)
+        for sub in self.sub_shares_and_entries:
+            sub_owners = sub.get("lrOwners", [])
+            for owner_data in sub_owners:
+                try:
+                    all_owners.append(Party.model_validate(owner_data))
+                except Exception:
+                    pass  # Skip invalid owner data
+
+        return all_owners
 
 
 class OwnershipSheetB(BaseModel):
@@ -892,6 +954,32 @@ class LandRegistryUnitDetailed(BaseModel):
         """Check if unit has any encumbrances."""
         return self.encumbrance_sheet_c.has_encumbrances()
 
+    def is_condominium(self) -> bool:
+        """
+        Check if this is a condominium (etažno vlasništvo) unit.
+
+        Note: The `condominiums` boolean flag from API is often unreliable (returns False
+        even for condominium units). This method checks both the flag and the type name.
+
+        Returns:
+            True if unit is a condominium (apartment building), False otherwise
+        """
+        return self.condominiums or "ETAŽN" in self.lr_unit_type_name.upper()
+
+    def get_condominium_units_count(self) -> int:
+        """
+        Get the number of individual units (apartments) in this condominium.
+
+        Returns:
+            Number of shares that have a condominium number, or 0 if not a condominium
+        """
+        if not self.is_condominium():
+            return 0
+        return sum(
+            1 for share in self.ownership_sheet_b.lr_unit_shares
+            if share.is_condominium_share()
+        )
+
     def summary(self) -> dict:
         """
         Get summary statistics for this land registry unit.
@@ -899,11 +987,15 @@ class LandRegistryUnitDetailed(BaseModel):
         Returns:
             Dictionary with key statistics
         """
-        return {
+        result = {
             "unit_number": self.lr_unit_number,
             "main_book": self.main_book_name,
             "total_parcels": len(self.possessory_sheet_a1.cad_parcels),
             "total_area_m2": self.possessory_sheet_a1.total_area(),
             "num_owners": len(self.get_all_owners()),
             "has_encumbrances": self.has_encumbrances(),
+            "is_condominium": self.is_condominium(),
         }
+        if self.is_condominium():
+            result["condominium_units"] = self.get_condominium_units_count()
+        return result
