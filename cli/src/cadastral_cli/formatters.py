@@ -2,7 +2,6 @@
 
 import csv
 import json
-import sys
 from io import StringIO
 from typing import Any
 
@@ -16,7 +15,9 @@ from cadastral_api.i18n import _
 console = Console()
 
 
-def format_table(data: dict[str, Any] | list[dict[str, Any]], headers: list[str] | None = None) -> str:
+def format_table(
+    data: dict[str, Any] | list[dict[str, Any]], headers: list[str] | None = None
+) -> str:
     """Format data as table using tabulate."""
     if isinstance(data, dict):
         # Single item - format as key-value pairs
@@ -53,11 +54,11 @@ def format_csv(data: list[dict[str, Any]]) -> str:
     return output.getvalue()
 
 
-def print_output(data: Any, format: str = "table", file: str | None = None) -> None:
+def print_output(data: Any, output_format: str = "table", file: str | None = None) -> None:
     """Print output in specified format."""
-    if format == "json":
+    if output_format == "json":
         output = format_json(data)
-    elif format == "csv":
+    elif output_format == "csv":
         if not isinstance(data, list):
             data = [data]
         output = format_csv(data)

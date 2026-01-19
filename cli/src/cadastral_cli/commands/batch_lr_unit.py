@@ -12,7 +12,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from rich.table import Table
 
 from cadastral_api import CadastralAPIClient
-from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import LandRegistryUnitDetailed
 from cadastral_cli.formatters import print_error, print_success, print_output
@@ -565,7 +565,7 @@ def batch_lr_unit(
 
         except (ValueError, FileNotFoundError) as e:
             print_error(_("Input parsing error: {error}").format(error=str(e)))
-            raise SystemExit(1)
+            raise SystemExit(1) from e
 
         unit_count_msg = ngettext(
             "📊 Found {count} LR unit to process\n",
@@ -588,10 +588,10 @@ def batch_lr_unit(
             _print_table_output(summary, show_owners)
         elif output_format == "json":
             data = summary.to_dict(include_full_data=show_owners)
-            print_output(data, format="json", file=output)
+            print_output(data, output_format="json", file=output)
         elif output_format == "csv":
             data = _format_csv_data(summary, show_owners)
-            print_output(data, format="csv", file=output)
+            print_output(data, output_format="csv", file=output)
 
         # Print summary
         console.print()
@@ -625,9 +625,9 @@ def batch_lr_unit(
         print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
         if hasattr(e, 'details') and e.details:
             console.print(f"   Details: {e.details}", style="dim red")
-        raise SystemExit(1)
+        raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Unexpected error: {error}").format(error=str(e)))
         if ctx.obj.get("verbose"):
             raise
-        raise SystemExit(1)
+        raise SystemExit(1) from e

@@ -143,20 +143,25 @@ Add to `.vscode/settings.json`:
 ## Interpreting Results
 
 ### Ruff Output
-```
+
+```text
 api/src/cadastral_api/client.py:45:10: F401 [*] `httpx.HTTPError` imported but unused
 ```
+
 - `F401`: Error code (F = pyflakes)
 - `[*]`: Auto-fixable with `--fix`
 
 ### Mypy Output
-```
+
+```text
 api/src/cadastral_api/models.py:23: error: Argument 1 to "get" has incompatible type "str | None"; expected "str"
 ```
+
 - Clear type mismatch errors with line numbers
 
 ### Pylint Output
-```
+
+```text
 ************* Module cadastral_api.client
 api/src/cadastral_api/client.py:67:0: C0116: Missing function or method docstring (missing-function-docstring)
 api/src/cadastral_api/client.py:89:8: W0612: Unused variable 'response' (unused-variable)

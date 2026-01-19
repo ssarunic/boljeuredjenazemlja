@@ -374,7 +374,7 @@ Claude compares multiple parcels across:
 
 ### Project Structure
 
-```
+```text
 src/mcp/
 ├── __init__.py          # Package exports
 ├── config.py            # Configuration from environment
@@ -388,7 +388,7 @@ src/mcp/
 
 ### Data Flow
 
-```
+```text
 User Query
     ↓
 Claude Desktop (MCP Host)
@@ -439,7 +439,7 @@ async def my_new_tool(param: str) -> dict[str, Any]:
     return await tools_handler.my_new_tool(param)
 ```
 
-3. FastMCP automatically generates JSON schema from type annotations
+1. FastMCP automatically generates JSON schema from type annotations
 
 ### Adding New Prompts
 
@@ -542,9 +542,9 @@ Modify `config.http_cors_origins` for custom origins.
 
 ## Resources
 
-- **MCP Specification**: https://spec.modelcontextprotocol.io/
-- **FastMCP Framework**: https://github.com/modelcontextprotocol/python-sdk
-- **Claude Desktop**: https://claude.ai/download
+- **MCP Specification**: <https://spec.modelcontextprotocol.io/>
+- **FastMCP Framework**: <https://github.com/modelcontextprotocol/python-sdk>
+- **Claude Desktop**: <https://claude.ai/download>
 - **Project Documentation**: [../README.md](../README.md)
 - **API Documentation**: [../specs/Croatian_Cadastral_API_Specification.md](../specs/Croatian_Cadastral_API_Specification.md)
 

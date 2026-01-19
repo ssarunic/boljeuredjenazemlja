@@ -12,7 +12,7 @@ This project includes a **mock server** that mimics the functionality of a cadas
 - **NOT ALLOWED**: Accessing real cadastral data without proper authorization
 - **REASON**: Sensitive nature of land ownership data and terms of service restrictions
 
-This is purely a theoretical exercise demonstrating modern API design patterns for land registry systems. The author is available to advise the Croatian government on AI and API implementation if requested.
+This is purely a theoretical exercise demonstrating modern API design patterns for land registry systems.
 
 **For testing and learning only - use the included mock server, not production systems.**
 
@@ -42,7 +42,7 @@ Python client library demonstrating modern API access patterns for cadastral sys
 - 💡 User-friendly with helpful error messages
 - 🎨 Rich formatted output with colors
 
-See [docs/CLI.md](docs/CLI.md) for complete CLI documentation.
+See [docs/cli-reference.md](docs/cli-reference.md) for complete CLI documentation.
 
 ### MCP Server (AI Integration)
 - 🤖 **Model Context Protocol** server for AI agents
@@ -52,7 +52,7 @@ See [docs/CLI.md](docs/CLI.md) for complete CLI documentation.
 - 💬 **Prompts**: Reusable templates for common workflows
 - 🎯 **Stateless design**: Horizontally scalable, serverless-ready
 
-See [docs/MCP_SERVER.md](docs/MCP_SERVER.md) for complete MCP server documentation.
+See [docs/mcp-usage-guide.md](docs/mcp-usage-guide.md) for complete MCP server documentation.
 
 ## Installation
 
@@ -89,7 +89,7 @@ cadastral list-offices
 cadastral download-gis 334979 --output ./gis_data
 ```
 
-See [docs/CLI.md](docs/CLI.md) for complete command reference.
+See [docs/cli-reference.md](docs/cli-reference.md) for complete command reference.
 
 ### MCP Server (AI Integration)
 
@@ -119,7 +119,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-See [docs/MCP_SERVER.md](docs/MCP_SERVER.md) for complete documentation.
+See [docs/mcp-usage-guide.md](docs/mcp-usage-guide.md) for complete documentation.
 
 ### Python SDK
 
@@ -313,12 +313,12 @@ except APITimeoutError as e:
 
 ## Examples
 
-See [examples/basic_usage.py](examples/basic_usage.py) for a complete working example.
+See [api/examples/basic_usage.py](api/examples/basic_usage.py) for a complete working example.
 
 Run the example:
 
 ```bash
-python examples/basic_usage.py
+python api/examples/basic_usage.py
 ```
 
 ## API Rate Limiting
@@ -344,6 +344,22 @@ All models use Pydantic V2 with strict validation. Invalid data will raise `Vali
 
 ### User Documentation
 
+- [docs/](docs/) - User guides and documentation
+  - [cli-reference.md](docs/cli-reference.md) - Complete CLI command reference
+  - [mcp-usage-guide.md](docs/mcp-usage-guide.md) - MCP server usage guide
+
+### Technical Specifications
+
+- [specs/](specs/) - Technical specifications and implementation docs
+  - [croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md) - Complete API documentation
+  - [pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md) - Pydantic models specification
+  - [i18n-guide.md](specs/i18n-guide.md) - Internationalization developer guide
+
+### Project Information
+
+- [CLAUDE.md](CLAUDE.md) - Repository guidance for AI assistants
+- [api/examples/](api/examples/) - Python code examples
+
 ## Development
 
 ### Setup
@@ -364,7 +380,7 @@ ruff check src/
 
 ### Project Structure
 
-```
+```text
 src/cadastral_api/
 ├── __init__.py           # Package exports
 ├── client/
@@ -381,17 +397,9 @@ src/cadastral_api/
 
 MIT License
 
-## Contributing
-
-Contributions welcome! Please ensure:
-- Type hints on all functions
-- Pydantic models for all API responses
-- Tests for new features
-- Documentation updates
-
 ## Legal Disclaimer
 
-**DEMO PROJECT - NOT FOR PRODUCTION USE**
+### Demo Project - Not for Production Use
 
 This is an **unofficial, educational demonstration project** showing how a modern cadastral API could theoretically work. It is:
 
@@ -409,27 +417,4 @@ Due to the sensitive nature of land ownership data and the terms of service of o
 3. This is a theoretical demonstration only
 4. All examples should use the included mock server
 
-### Author's Note
-
-This project demonstrates modern API architecture patterns that could be applied to cadastral systems. If the Croatian government is interested in AI integration or API modernization, the author is available for consultation.
-
 **Use responsibly and only for educational purposes with the mock server.**
-
----
-
-**Tested with real API data from SAVAR municipality (November 2025)**
-
-### User Documentation
-- **[docs/](docs/)** - User guides and CLI documentation
-  - [CLI.md](docs/CLI.md) - Complete CLI command reference with examples
-
-### Technical Specifications
-- **[specs/](specs/)** - Technical specifications and implementation docs
-  - [Croatian_Cadastral_API_Specification.md](specs/Croatian_Cadastral_API_Specification.md) - Complete API documentation
-  - [Pydantic_Business_Entities_Implementation.md](specs/Pydantic_Business_Entities_Implementation.md) - Pydantic models specification
-  - [I18N_GUIDE.md](specs/I18N_GUIDE.md) - Internationalization developer guide
-  - [I18N_IMPLEMENTATION_STATUS.md](specs/I18N_IMPLEMENTATION_STATUS.md) - i18n implementation status
-
-### Project Information
-- [CLAUDE.md](CLAUDE.md) - Repository guidance for AI assistants
-- [Examples](examples/) - Python code examples

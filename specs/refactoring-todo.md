@@ -3,6 +3,7 @@
 This checklist guides the refactoring of the current structure into a clean monorepo with separate projects.
 
 **Status Legend:**
+
 - [ ] Not started
 - [x] Completed
 - [~] In progress
@@ -23,6 +24,7 @@ This checklist guides the refactoring of the current structure into a clean mono
 ### 1.2 Create Standard Subdirectories for Each Project ✅
 
 **For `api/` project:**
+
 - [x] Create `api/src/`
 - [x] Create `api/tests/`
 - [x] Create `api/tests/unit/`
@@ -31,16 +33,19 @@ This checklist guides the refactoring of the current structure into a clean mono
 - [x] Create `api/examples/`
 
 **For `cli/` project:**
+
 - [x] Create `cli/src/`
 - [x] Create `cli/tests/`
 - [x] Create `cli/docs/`
 
 **For `mcp/` project:**
+
 - [x] Create `mcp/src/`
 - [x] Create `mcp/tests/`
 - [x] Create `mcp/docs/`
 
 **For `mock-server/`:**
+
 - [x] Create `mock-server/src/`
 - [x] Create `mock-server/docs/`
 - [x] Keep `mock-server/data/` (already exists)
@@ -87,6 +92,7 @@ This checklist guides the refactoring of the current structure into a clean mono
 ### 2.4 Move API Documentation ✅
 
 Project-specific docs go to `api/docs/`:
+
 - [x] Move `specs/Pydantic_Business_Entities_Implementation.md` → `api/docs/pydantic-entities-implementation.md` (in docs/)
 - [x] Create `api/docs/README.md` (API documentation index)
 - [x] Create `api/README.md` (API project README with quick start)
@@ -112,6 +118,7 @@ Project-specific docs go to `api/docs/`:
 - [x] Rename package internally from `cadastral_api.cli` to `cadastral_cli`
 
 **Files to move:**
+
 - [x] `cli/main.py` → `cli/src/cadastral_cli/main.py`
 - [x] `cli/formatters.py` → `cli/src/cadastral_cli/formatters.py`
 - [x] `cli/input_parsers.py` → `cli/src/cadastral_cli/input_parsers.py`
@@ -121,6 +128,7 @@ Project-specific docs go to `api/docs/`:
 ### 3.2 Update CLI Imports ✅
 
 **In all CLI files, update imports:**
+
 - [x] Change `from ...client import` → `from cadastral_api.client import`
 - [x] Change `from ...exceptions import` → `from cadastral_api.exceptions import`
 - [x] Change `from ...models import` → `from cadastral_api.models import`
@@ -128,6 +136,7 @@ Project-specific docs go to `api/docs/`:
 - [x] Update internal CLI imports to use `cadastral_cli` package
 
 **Files to update:**
+
 - [x] `cli/src/cadastral_cli/main.py`
 - [x] `cli/src/cadastral_cli/formatters.py`
 - [x] `cli/src/cadastral_cli/input_parsers.py`
@@ -176,6 +185,7 @@ Project-specific docs go to `api/docs/`:
 ### 4.2 Update MCP Imports ✅
 
 **In all MCP files, update imports:**
+
 - [x] Change `from cadastral_api import` to explicit imports
 - [x] Update internal imports to use `cadastral_mcp` package
 - [x] Verify all imports work with new structure
@@ -222,6 +232,7 @@ Project-specific docs go to `api/docs/`:
 ### 6.1 Organize Shared Documentation ✅
 
 **Keep in root `docs/` (applies to multiple projects):**
+
 - [x] Move/copy `specs/Croatian_Cadastral_API_Specification.md` → `docs/croatian-cadastral-api-specification.md`
 - [x] Create `docs/README.md` (documentation index)
 - [ ] Create `docs/architecture.md` (monorepo architecture overview) - **PENDING**
@@ -229,6 +240,7 @@ Project-specific docs go to `api/docs/`:
 - [ ] Create `docs/development-guide.md` (dev environment setup) - **PENDING**
 
 **Merged into `docs/`:**
+
 - [x] Decided to merge specs into docs
 - [x] Renamed files to kebab-case:
   - [x] `I18N_GUIDE.md` → `docs/i18n-guide.md`
@@ -241,6 +253,7 @@ Project-specific docs go to `api/docs/`:
 ### 6.2 Organize Translation Files ✅
 
 **Option A: Shared in root** (CHOSEN)
+
 - [x] Keep `po/` in root
 - [x] Keep translation scripts in root `scripts/`
 - [x] Translations compiled to `api/src/cadastral_api/locale/`
@@ -258,11 +271,13 @@ Project-specific docs go to `api/docs/`:
 ### 6.4 Clean Up Root Directory ✅
 
 **Remove old structure:**
+
 - [x] Remove `src/` directory (after moving all content)
 - [x] Remove `examples/` directory (after moving to `api/examples/`)
 - [x] Remove old empty directories
 
 **Keep in root:**
+
 - [x] `README.md` (repository main README)
 - [x] `CLAUDE.md` (AI assistant instructions)
 - [x] Moved to docs: `NAMING_CONVENTIONS.md`
@@ -273,6 +288,7 @@ Project-specific docs go to `api/docs/`:
 - [x] `.claude/` (shared settings)
 
 **Removed from root:**
+
 - [x] Delete `test_exception.py` (moved to `api/tests/unit/`)
 - [x] Delete `test_validation.py` (moved to `api/tests/unit/`)
 - [x] All old structure removed
@@ -284,18 +300,21 @@ Project-specific docs go to `api/docs/`:
 ### 7.1 Update Root Configuration ✅
 
 **Update root `README.md`:**
+
 - [x] Update to reflect monorepo structure
 - [x] Add links to each project's README
 - [x] Explain overall architecture
 - [x] Update installation instructions
 
 **Update `.gitignore`:**
+
 - [x] Update paths for new structure
 - [x] Add `*/build/`, `*/dist/`, `*/.egg-info/`
 - [x] Add `*/__pycache__/`, `*/.pytest_cache/`
 - [x] Verify all build artifacts are ignored
 
 **Update `CLAUDE.md`:**
+
 - [x] Update project structure section
 - [x] Update file paths in examples
 - [x] Update cross-references to documentation
@@ -303,18 +322,21 @@ Project-specific docs go to `api/docs/`:
 ### 7.2 Create Project-Specific pyproject.toml Files ✅
 
 **For `api/pyproject.toml`:**
+
 - [x] Package name: `croatian-cadastral-api`
 - [x] Dependencies: Core SDK dependencies only
 - [x] No CLI entry point
 - [x] Export Python package: `cadastral_api`
 
 **For `cli/pyproject.toml`:**
+
 - [x] Package name: `cadastral-cli`
 - [x] Dependencies: Include `cadastral-api`, `click`, `rich`
 - [x] Entry point: `cadastral = cadastral_cli.main:cli`
 - [x] Export Python package: `cadastral_cli`
 
 **For `mcp/pyproject.toml`:**
+
 - [x] Package name: `cadastral-mcp-server`
 - [x] Dependencies: Include `cadastral-api`, `fastmcp`
 - [x] Entry point: `cadastral-mcp = cadastral_mcp.main:main`
@@ -323,6 +345,7 @@ Project-specific docs go to `api/docs/`:
 ### 7.3 Environment Configuration ✅
 
 **Update `.env.example`:**
+
 - [x] Verify it works for all projects
 - [x] Add project-specific sections if needed
 - [x] Document which projects use which variables
@@ -334,6 +357,7 @@ Project-specific docs go to `api/docs/`:
 ### 8.1 Create Missing Tests ⏳
 
 **API tests:**
+
 - [x] Move `api/tests/unit/test_exceptions.py`
 - [x] Move `api/tests/unit/test_validation.py`
 - [ ] Create `api/tests/unit/test_api_client.py` - **TODO**
@@ -343,11 +367,13 @@ Project-specific docs go to `api/docs/`:
 - [ ] Create `api/tests/integration/test_full_workflow.py` - **TODO**
 
 **CLI tests:**
+
 - [ ] Create `cli/tests/test_cli_commands.py` - **TODO**
 - [ ] Create `cli/tests/test_formatters.py` - **TODO**
 - [ ] Create `cli/tests/test_integration.py` - **TODO**
 
 **MCP tests:**
+
 - [ ] Create `mcp/tests/test_mcp_server.py` - **TODO**
 - [ ] Create `mcp/tests/test_mcp_tools.py` - **TODO**
 
@@ -397,30 +423,35 @@ Project-specific docs go to `api/docs/`:
 ### 10.1 Update All READMEs ✅
 
 **Root `README.md`:**
+
 - [x] Overview of monorepo
 - [x] Links to each project
 - [x] Quick start for contributors
 - [x] Architecture overview
 
 **`api/README.md`:**
+
 - [x] API package description
 - [x] Installation instructions
 - [x] Quick start examples
 - [x] Link to full docs
 
 **`cli/README.md`:**
+
 - [x] CLI tool description
 - [x] Installation instructions
 - [x] Basic command examples
 - [x] Link to command reference
 
 **`mcp/README.md`:**
+
 - [x] MCP server description
 - [x] Installation and setup
 - [x] Usage examples
 - [x] Link to protocol docs
 
 **`mock-server/README.md`:**
+
 - [x] Mock server description
 - [x] How to run
 - [x] Available endpoints
@@ -448,23 +479,27 @@ Project-specific docs go to `api/docs/`:
 
 ## Priority Order
 
-### Do First (Foundation):
+### Do First (Foundation)
+
 1. **Phase 1**: Create new directory structure
 2. **Phase 2**: Move API code (most critical)
 3. **Phase 5**: Reorganize mock server (needed for testing)
 
-### Then (Projects):
-4. **Phase 3**: Move CLI code
-5. **Phase 4**: Move MCP code
+### Then (Projects)
 
-### Next (Organization):
-6. **Phase 6**: Organize shared resources
-7. **Phase 7**: Update configuration files
+1. **Phase 3**: Move CLI code
+2. **Phase 4**: Move MCP code
 
-### Finally (Polish):
-8. **Phase 8**: Testing & validation
-9. **Phase 10**: Documentation finalization
-10. **Phase 9**: Git initialization (very last step)
+### Next (Organization)
+
+1. **Phase 6**: Organize shared resources
+2. **Phase 7**: Update configuration files
+
+### Finally (Polish)
+
+1. **Phase 8**: Testing & validation
+2. **Phase 10**: Documentation finalization
+3. **Phase 9**: Git initialization (very last step)
 
 ---
 
@@ -481,15 +516,18 @@ Project-specific docs go to `api/docs/`:
 ## Summary
 
 ### ✅ Completed (90%+)
+
 - **Phases 1-7**: Monorepo structure fully implemented
 - **Phase 9**: Git repository setup complete
 - **Phase 10**: Documentation mostly complete
 
 ### 🔄 Partially Complete
+
 - **Phase 8**: Testing infrastructure needs expansion
 - **Phase 10.2-10.3**: Optional documentation (architecture.md, contributing.md)
 
 ### ⏳ Remaining Work (Optional)
+
 1. **Comprehensive test suite** - Add more unit and integration tests
 2. **Architecture documentation** - Create visual diagrams
 3. **Contributing guide** - Formalize contribution process
@@ -498,4 +536,4 @@ Project-specific docs go to `api/docs/`:
 ---
 
 **Status**: ✅ **REFACTORING COMPLETE** (Core work done, optional items remain)
-**Last Updated**: 2025-11-14
+**Last Updated**: 2026-01-19

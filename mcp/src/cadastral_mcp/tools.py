@@ -5,9 +5,6 @@ from typing import Any
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
-from cadastral_api.models.entities import ParcelSearchResult
-
-from .config import config
 
 logger = logging.getLogger(__name__)
 

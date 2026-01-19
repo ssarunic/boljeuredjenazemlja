@@ -64,7 +64,7 @@ This document outlines the architecture and implementation plan for adding suppo
 
 ### API Endpoint (Mock Server)
 
-```
+```text
 GET http://localhost:8000/lr/lr-unit
 Query Parameters:
   - lrUnitNumber: string (required) - Land registry unit number
@@ -601,7 +601,7 @@ Create new command file for land registry operations:
 
 Add translation strings to `po/cadastral.pot`:
 
-```
+```po
 # Land Registry Unit
 msgid "Land registry unit"
 msgid "Land registry unit not found"

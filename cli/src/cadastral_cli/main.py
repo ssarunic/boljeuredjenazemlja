@@ -16,7 +16,6 @@ See README.md for full disclaimer.
 import click
 from rich.console import Console
 
-from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _, get_current_language, set_language, SUPPORTED_LANGUAGES
 from cadastral_cli import __version__
@@ -59,7 +58,7 @@ def cli(ctx: click.Context, verbose: bool, lang: str | None) -> None:
             ctx.obj["lang"] = lang
         except ValueError as e:
             console.print(_("✗ Error: {error}").format(error=str(e)), style="bold red")
-            raise SystemExit(1)
+            raise SystemExit(1) from e
     else:
         ctx.obj["lang"] = get_current_language()
 
@@ -85,10 +84,10 @@ def main() -> None:
         cli(obj={})
     except CadastralAPIError as e:
         console.print(_("\n✗ Error: {error}").format(error=e), style="bold red")
-        raise SystemExit(1)
-    except KeyboardInterrupt:
+        raise SystemExit(1) from e
+    except KeyboardInterrupt as exc:
         console.print(_("\n\nOperation cancelled by user."), style="yellow")
-        raise SystemExit(130)
+        raise SystemExit(130) from exc
     except Exception as e:
         console.print(_("\n✗ Unexpected error: {error}").format(error=e), style="bold red")
         try:
@@ -96,7 +95,7 @@ def main() -> None:
                 raise
         except RuntimeError:
             pass  # No context available
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 if __name__ == "__main__":

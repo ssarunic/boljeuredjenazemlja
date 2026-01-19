@@ -1,12 +1,9 @@
 """MCP Prompts - Reusable templates for common workflows."""
 
 import logging
-from typing import Any
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
-
-from .config import config
 
 logger = logging.getLogger(__name__)
 

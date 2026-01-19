@@ -132,7 +132,7 @@ def get_geometry(
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 @click.command("download-gis")
@@ -206,7 +206,7 @@ def download_gis(
 
                 # Try to count parcels
                 try:
-                    from cadastral_apigis import GMLParser
+                    from cadastral_api.gis import GMLParser
                     parcel_file = output_path / "katastarske_cestice.gml"
                     if parcel_file.exists():
                         parser = GMLParser(parcel_file)
@@ -226,10 +226,10 @@ def download_gis(
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Error downloading GIS data: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def _print_geometry_stats(geometry) -> None:

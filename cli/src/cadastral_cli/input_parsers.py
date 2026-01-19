@@ -3,9 +3,6 @@
 import csv
 import json
 from pathlib import Path
-from typing import Any
-
-from cadastral_api.exceptions import CadastralAPIError, ErrorType
 
 
 class ParcelInput:
@@ -309,8 +306,7 @@ def parse_input_file(file_path: str | Path) -> list[ParcelInput]:
 
     if suffix == ".csv":
         return parse_csv_file(file_path)
-    elif suffix == ".json":
+    if suffix == ".json":
         return parse_json_file(file_path)
-    else:
-        msg = f"Unsupported file format: {suffix} (use .csv or .json)"
-        raise ValueError(msg)
+    msg = f"Unsupported file format: {suffix} (use .csv or .json)"
+    raise ValueError(msg)

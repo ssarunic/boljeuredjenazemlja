@@ -1,26 +1,26 @@
-# Documentation Index
+# User Documentation
 
-This directory contains repository-wide documentation for the Croatian Cadastral API monorepo.
+This directory contains user-facing documentation for installing, configuring, and using the Croatian Cadastral API tools.
 
-## Project Status & Planning
+## Getting Started
 
-- [refactoring-todo.md](refactoring-todo.md) - Monorepo refactoring checklist (✅ 90% complete)
-- [naming-conventions.md](naming-conventions.md) - File and directory naming standards
+See the main [README](../README.md) for installation instructions and quick start guide.
 
-## Technical Documentation
+## Command-Line Interface
 
-- [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md) - Complete API specification
-- [documentation-structure.md](documentation-structure.md) - Documentation organization
+- [cli-reference.md](cli-reference.md) - Complete CLI command reference with examples
 
-## Internationalization (i18n)
+## MCP Server (AI Integration)
 
-- [i18n-guide.md](i18n-guide.md) - Developer guide for adding translations
-- [i18n-status.md](i18n-status.md) - Implementation and translation status (85% complete)
-- [localization_example.py](localization_example.py) - Code example for localizing commands
+- [mcp-usage-guide.md](mcp-usage-guide.md) - Guide for using the MCP server with Claude Desktop
 
-## Project-Specific Documentation
+## Project READMEs
 
-- [../api/README.md](../api/README.md) - Python SDK documentation
-- [../cli/README.md](../cli/README.md) - CLI application documentation
-- [../mcp/README.md](../mcp/README.md) - MCP server documentation
-- [../mock-server/README.md](../mock-server/README.md) - Mock server documentation
+- [api/](../api/README.md) - Python SDK overview
+- [cli/](../cli/README.md) - CLI application overview
+- [mcp/](../mcp/README.md) - MCP server overview
+- [mock-server/](../mock-server/README.md) - Mock server setup
+
+## Developer Documentation
+
+For technical specifications, architecture docs, and implementation details, see [specs/](../specs/).

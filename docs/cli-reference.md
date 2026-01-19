@@ -79,7 +79,8 @@ cadastral search 103/2 -m 334979 --format csv --output parcel.csv
 - `--output, -o` - Save output to file
 
 **Output:**
-```
+
+```text
 Parcel Number      103/2
 Municipality       SAVAR (334979)
 Address            POLJE
@@ -163,7 +164,8 @@ cadastral get-parcel 103/2 -m 334979 --format yaml -o parcel.yaml
 **Detail Levels:**
 
 **basic** - Core information:
-```
+
+```text
 Parcel Number: 103/2
 Area: 1,200 m²
 Address: POLJE
@@ -171,7 +173,8 @@ Municipality: SAVAR (334979)
 ```
 
 **full** (default) - Complete information:
-```
+
+```text
 === PARCEL INFORMATION ===
 [Core details]
 
@@ -189,7 +192,8 @@ Municipality: SAVAR (334979)
 ```
 
 **owners** - Focus on ownership:
-```
+
+```text
 === OWNERSHIP (2 owners) ===
 Possession Sheet 1
 Name             Ownership    Address
@@ -199,7 +203,8 @@ Marija Šarunić   1/2 (50%)    Zadar, Ulica 123
 ```
 
 **landuse** - Land use analysis:
-```
+
+```text
 === LAND USE ===
 Type          Area (m²)    Percentage   Buildings
 -----------   ---------    ----------   ---------
@@ -207,7 +212,8 @@ MASLINJAK     1,200        100.00%      No
 ```
 
 **geometry** - Include spatial data:
-```
+
+```text
 [Full parcel info]
 
 === GEOMETRY ===
@@ -258,7 +264,8 @@ cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
 - `--lang` - Language for output (hr, en)
 
 **Output (default - summary):**
-```
+
+```text
 === LAND REGISTRY UNIT ===
 Unit Number        769
 Main Book          TESTMUNICIPALITY
@@ -279,7 +286,8 @@ Has Encumbrances   Yes
 ```
 
 **Output (with --show-owners):**
-```
+
+```text
 === OWNERSHIP SHEET (LIST B) ===
 Share              Owner          Address                    OIB
 --------------     -----------    ----------------------     -----------
@@ -291,7 +299,8 @@ Share              Owner          Address                    OIB
 ```
 
 **Output (with --show-parcels):**
-```
+
+```text
 === PARCEL LIST (SHEET A) ===
 Parcel Number  Address          Area (m²)
 -------------  --------------   ---------
@@ -303,7 +312,8 @@ TOTAL                           2621
 ```
 
 **Output (with --show-encumbrances):**
-```
+
+```text
 === ENCUMBRANCES SHEET (LIST C) ===
 Description                     Details
 -----------------------------   --------------------------------
@@ -352,11 +362,13 @@ cadastral get-geometry 103/2 -m 334979 --show-stats
 **Output Formats:**
 
 **WKT:**
-```
+
+```text
 POLYGON((380455.97 4882138.52, 380459.6 4882133.45, ...))
 ```
 
 **GeoJSON:**
+
 ```json
 {
   "type": "Feature",
@@ -373,6 +385,7 @@ POLYGON((380455.97 4882138.52, 380459.6 4882133.45, ...))
 ```
 
 **CSV:**
+
 ```csv
 x,y,vertex
 380455.97,4882138.52,1
@@ -406,7 +419,8 @@ cadastral download-gis 334979 -o ./data --clear-cache
 - `--clear-cache` - Clear cached data first
 
 **Output:**
-```
+
+```text
 Downloading GIS data for municipality 334979...
 ✓ Downloaded: ko-334979.zip (224 KB)
 ✓ Extracted to: ./gis_data
@@ -443,7 +457,8 @@ cadastral list-offices --format csv --output offices.csv
 - `--output, -o` - Save to file
 
 **Output:**
-```
+
+```text
 21 Cadastral Offices in Croatia:
 
 ID   Name
@@ -500,7 +515,8 @@ cadastral info
 ```
 
 **Output:**
-```
+
+```text
 === Croatian Cadastral CLI ===
 Version: 0.1.0
 API Base: https://oss.uredjenazemlja.hr/oss/public
@@ -530,7 +546,8 @@ cadastral cache list
 ```
 
 **Output:**
-```
+
+```text
 Cached GIS Data (12 municipalities):
 
 Municipality  Size      Last Modified
@@ -575,7 +592,8 @@ cadastral cache info
 ```
 
 **Output:**
-```
+
+```text
 === CACHE INFORMATION ===
 Location: /Users/user/.cadastral_api_cache
 Status: Active

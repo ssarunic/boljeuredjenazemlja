@@ -22,7 +22,6 @@ def cache_group() -> None:
       cadastral cache clear --municipality 334979
       cadastral cache clear --all
     """
-    pass
 
 
 @cache_group.command("list")
@@ -36,7 +35,6 @@ def cache_list(ctx: click.Context) -> None:
       cadastral cache list
     """
     try:
-        import os
         from datetime import datetime
 
         with CadastralAPIClient() as client:
@@ -108,7 +106,7 @@ def cache_list(ctx: click.Context) -> None:
 
     except Exception as e:
         print_error(_("Error listing cache: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 @cache_group.command("clear")
@@ -147,7 +145,6 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
                     return
 
                 # Calculate size before clearing
-                import os
                 total_size = sum(
                     f.stat().st_size for f in cache_dir.rglob('*') if f.is_file()
                 )
@@ -186,11 +183,9 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
                     size=f"{dir_size / 1024:.1f}"
                 ))
 
-    except SystemExit:
-        raise
     except Exception as e:
         print_error(_("Error clearing cache: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 @cache_group.command("info")
@@ -217,7 +212,6 @@ def cache_info(ctx: click.Context) -> None:
                 return
 
             # Count files and calculate sizes
-            import os
             total_size = 0
             zip_count = 0
             gml_count = 0
@@ -250,4 +244,4 @@ def cache_info(ctx: click.Context) -> None:
 
     except Exception as e:
         print_error(_("Error getting cache info: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e

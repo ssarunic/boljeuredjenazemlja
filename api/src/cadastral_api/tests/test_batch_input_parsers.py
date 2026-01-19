@@ -1,13 +1,12 @@
 """Tests for batch input parsers."""
 
-import csv
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import pytest
 
-from cadastral_api.cli.input_parsers import (
+from cadastral_cli.input_parsers import (
     ParcelInput,
     parse_cli_list,
     parse_csv_file,

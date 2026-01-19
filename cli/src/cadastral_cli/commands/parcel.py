@@ -69,7 +69,7 @@ def get_parcel(
             if output_format != "table":
                 # For non-table formats, output structured data
                 data = _format_structured_data(parcel, geometry, detail, show_owners)
-                print_output(data, format=output_format, file=output)
+                print_output(data, output_format=output_format, file=output)
             else:
                 # Rich formatted table output
                 _print_table_output(parcel, geometry, detail, show_owners, show_geometry)
@@ -84,7 +84,7 @@ def get_parcel(
             ))
         else:
             print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def _print_table_output(parcel, geometry, detail: str, show_owners: bool, show_geometry: bool) -> None:

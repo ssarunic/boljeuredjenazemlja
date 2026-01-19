@@ -4,12 +4,12 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from cadastral_api.cli.batch_processor import (
+from cadastral_cli.batch_processor import (
     BatchResult,
     BatchSummary,
     process_batch,
 )
-from cadastral_api.cli.input_parsers import ParcelInput
+from cadastral_cli.input_parsers import ParcelInput
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.models.entities import ParcelInfo
 
@@ -34,6 +34,8 @@ def mock_parcel_info():
     parcel.possession_sheets = []
     parcel.land_use_summary = {}
     parcel.address = "Test Address"
+    # LR unit reference (may be None if not available)
+    parcel.lr_unit = None
     return parcel
 
 

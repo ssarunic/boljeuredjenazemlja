@@ -152,7 +152,7 @@ def batch_fetch(
 
         except ValueError as e:
             print_error(_("Input parsing error: {error}").format(error=str(e)))
-            raise SystemExit(1)
+            raise SystemExit(1) from e
 
         parcel_count_msg = ngettext(
             "📊 Found {count} parcel to process\n",
@@ -175,10 +175,10 @@ def batch_fetch(
             _print_table_output(summary, detail, show_owners)
         elif output_format == "json":
             data = summary.to_dict(include_full_data=(show_owners or detail == "full"))
-            print_output(data, format="json", file=output)
+            print_output(data, output_format="json", file=output)
         elif output_format == "csv":
             data = _format_csv_data(summary, show_owners)
-            print_output(data, format="csv", file=output)
+            print_output(data, output_format="csv", file=output)
 
         # Print summary
         console.print()
@@ -212,12 +212,12 @@ def batch_fetch(
         print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
         if hasattr(e, 'details') and e.details:
             console.print(f"   Details: {e.details}", style="dim red")
-        raise SystemExit(1)
+        raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Unexpected error: {error}").format(error=str(e)))
         if ctx.obj.get("verbose"):
             raise
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def _print_detailed_parcels(summary, show_owners: bool) -> None:

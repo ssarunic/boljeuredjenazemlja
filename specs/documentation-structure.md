@@ -4,7 +4,7 @@ This document describes the organization of documentation in this repository.
 
 ## Directory Structure
 
-```
+```text
 Croatian Cadastral API/
 │
 ├── README.md                  # Main project documentation (Python SDK + CLI overview)

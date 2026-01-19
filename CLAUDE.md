@@ -18,8 +18,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This project demonstrates modern API architecture patterns that could be applied to cadastral systems. It includes a **mock server** for safe testing and learning. Due to the sensitive nature of land ownership data and Croatian government terms of service, this code **must not** be used against production systems.
 
-The author is available to advise the Croatian government on AI and API modernization if requested.
-
 ---
 
 ## Project Overview
@@ -44,7 +42,7 @@ This is a **monorepo** containing multiple related projects demonstrating modern
 - **GIS Integration**: Parcel geometry parsing and local caching from GML files
 - **Batch Processing**: Process multiple parcels in a single operation (CLI list or file input)
 - **Internationalization**: Croatian (default) and English support via gettext
-- **Rate Limiting**: Automatic request throttling (0.75s default, configurable)
+- **Rate Limiting**: Automatic request throttling (0.375s default, configurable)
 - **Error Handling**: Comprehensive error types with user-friendly messages
 
 ## API Integration Architecture
@@ -68,17 +66,20 @@ The API follows a three-step workflow for retrieving complete parcel information
 ### Key Data Structures
 
 **Municipality Search Response:**
+
 - `key1`: Municipality registration number (required for parcel searches)
 - `name`: Short municipality name
 - `fullName`: Full official name
 
 **Parcel Search Response:**
+
 - `key1`: Parcel ID (critical - needed for detailed info)
 - `parcelNumber`: Confirmed parcel number
 - `municipalityName`: Municipality name
 - `address`: Parcel location
 
 **Parcel Detailed Info Response:**
+
 - `possessionSheets[]`: Array of ownership records
   - Each sheet contains `possessors[]` with name, ownership fraction, and address
 - `parcelParts[]`: Land use classification (Pašnjak/Pasture, Oranica/Arable, Šuma/Forest, etc.)
@@ -116,12 +117,13 @@ Condominiums (apartment buildings) have a special structure in the land registry
 - SAVAR: `334979`
 - LUKA: `334731`
 
-(See [specs/Croatian_Cadastral_API_Specification.md](specs/Croatian_Cadastral_API_Specification.md) for complete API documentation)
+(See [specs/croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md) for complete API documentation)
 
 ## Map Integration
 
 Interactive map URL format:
-```
+
+```text
 https://oss.uredjenazemlja.hr/map?cad_parcel_id=PARCELID
 ```
 
@@ -132,17 +134,20 @@ Coordinate system: EPSG:3765 (HTRS96 / Croatia TM)
 The API client can be configured via environment variables or a `.env` file:
 
 **Environment Variables:**
+
 - `CADASTRAL_API_BASE_URL`: API base URL (default: `http://localhost:8000`)
 - `CADASTRAL_API_TIMEOUT`: Request timeout in seconds (default: `10.0`)
-- `CADASTRAL_API_RATE_LIMIT`: Rate limit between requests in seconds (default: `0.75`)
+- `CADASTRAL_API_RATE_LIMIT`: Rate limit between requests in seconds (default: `0.375`)
 - `CADASTRAL_LANG`: Language for CLI output (`hr`, `en`) - Croatian is default
 
 **Setup:**
+
 1. Copy `.env.example` to `.env`
 2. Configure the API base URL (defaults to localhost test server)
 3. Only set production URL if you have proper authorization
 
 **Example `.env` file:**
+
 ```bash
 # Use local test server (default)
 CADASTRAL_API_BASE_URL=http://localhost:8000
@@ -155,6 +160,7 @@ CADASTRAL_API_BASE_URL=http://localhost:8000
 ```
 
 **Python API Usage:**
+
 ```python
 from cadastral_api import CadastralAPIClient
 
@@ -205,11 +211,12 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 - **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances
 - **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input). Returns LR unit references for each parcel.
 - **`cadastral batch-lr-unit`** - Process multiple land registry units (from file or batch-fetch output)
-- **`cadastral search-municipality`** - Search and filter municipalities
+- **`cadastral list-municipalities`** - List and filter municipalities
 - **`cadastral list-offices`** - List all cadastral offices
+- **`cadastral info`** - Display system information, cache status, and API settings
 - **`cadastral get-geometry`** - Retrieve parcel boundary coordinates
 - **`cadastral download-gis`** - Download GIS data for a municipality
-- **`cadastral cache-clear`** - Clear local GIS cache
+- **`cadastral cache clear`** - Clear local GIS cache
 
 ### CLI Usage Examples
 
@@ -360,6 +367,7 @@ cadastral batch-lr-unit --input lr_units.csv --format json -o lr_results.json
 ```
 
 **batch-fetch output now includes:**
+
 - `lr_unit_number` - Land registry unit number
 - `main_book_id` - Main book ID
 
@@ -368,6 +376,7 @@ These can be passed to `batch-lr-unit` for detailed ownership and encumbrance in
 ### Input File Formats
 
 **Parcel CSV format:**
+
 ```csv
 parcel_number,municipality
 103/2,334979
@@ -376,6 +385,7 @@ parcel_number,municipality
 ```
 
 **Parcel JSON format:**
+
 ```json
 [
   {"parcel_number": "103/2", "municipality": "334979"},
@@ -385,6 +395,7 @@ parcel_number,municipality
 ```
 
 **LR Unit CSV format (for batch-lr-unit):**
+
 ```csv
 lr_unit_number,main_book_id
 769,21277
@@ -392,6 +403,7 @@ lr_unit_number,main_book_id
 ```
 
 **LR Unit JSON format (for batch-lr-unit):**
+
 ```json
 [
   {"lr_unit_number": "769", "main_book_id": 21277},
@@ -402,8 +414,8 @@ lr_unit_number,main_book_id
 ### Python Batch Processing
 
 ```python
-from cadastral_api.cli.batch_processor import process_batch
-from cadastral_api.cli.input_parsers import ParcelInput
+from cadastral_cli.batch_processor import process_batch
+from cadastral_cli.input_parsers import ParcelInput
 
 inputs = [
     ParcelInput(parcel_number="103/2", municipality="334979"),
@@ -421,11 +433,11 @@ for result in results:
 
 ## Monorepo Structure
 
-**Note:** This repository has been refactored to a monorepo structure. See [refactoring-todo.md](docs/refactoring-todo.md) for the migration checklist.
+**Note:** This repository has been refactored to a monorepo structure. See [specs/refactoring-todo.md](specs/refactoring-todo.md) for the migration checklist.
 
 ### Target Structure (Monorepo)
 
-```
+```text
 boljeuredjenazemlja/
 ├── api/                          # Python SDK project
 │   ├── src/cadastral_api/
@@ -450,15 +462,18 @@ boljeuredjenazemlja/
 │   ├── src/cadastral_cli/
 │   │   ├── main.py              # CLI entry point
 │   │   ├── commands/            # Command modules
-│   │   │   ├── search.py
-│   │   │   ├── parcel.py
-│   │   │   ├── batch.py
-│   │   │   ├── discovery.py
-│   │   │   ├── gis.py
-│   │   │   └── cache.py
+│   │   │   ├── search.py        # search, search-municipality
+│   │   │   ├── parcel.py        # get-parcel
+│   │   │   ├── registry.py      # get-lr-unit
+│   │   │   ├── batch.py         # batch-fetch
+│   │   │   ├── batch_lr_unit.py # batch-lr-unit
+│   │   │   ├── discovery.py     # list-offices, list-municipalities, info
+│   │   │   ├── gis.py           # get-geometry, download-gis
+│   │   │   └── cache.py         # cache-clear
 │   │   ├── formatters.py        # Output formatting
 │   │   ├── input_parsers.py     # Input parsing
-│   │   └── batch_processor.py   # Batch processing
+│   │   ├── batch_processor.py   # Batch processing
+│   │   └── lr_unit_output.py    # Shared LR unit output formatting
 │   ├── tests/                   # CLI tests
 │   ├── docs/                    # CLI documentation
 │   └── pyproject.toml
@@ -508,7 +523,7 @@ boljeuredjenazemlja/
 
 ### Naming Conventions
 
-**IMPORTANT:** All new code must follow the naming conventions in [naming-conventions.md](docs/naming-conventions.md):
+**IMPORTANT:** All new code must follow the naming conventions in [specs/naming-conventions.md](specs/naming-conventions.md):
 
 - **Top-level projects**: `kebab-case/` (e.g., `api/`, `mock-server/`)
 - **Python packages**: `snake_case/` (e.g., `cadastral_api/`, `cadastral_cli/`)
@@ -524,7 +539,7 @@ boljeuredjenazemlja/
 4. **Localization**: Wrap user-facing strings in `_()` from `i18n` module
 5. **Error handling**: Use typed exceptions from `exceptions.py`
 6. **Testing**: Add tests for new features
-7. **File naming**: Follow [naming-conventions.md](docs/naming-conventions.md)
+7. **File naming**: Follow [specs/naming-conventions.md](specs/naming-conventions.md)
 
 ### Internationalization Workflow
 
@@ -544,6 +559,7 @@ label = pgettext("table_header", "Name")
 ```
 
 After adding strings:
+
 ```bash
 # Extract strings to template
 ./scripts/generate_pot.sh
@@ -575,31 +591,40 @@ ruff check src/
 
 ## Documentation
 
-### Repository Documentation
-- **[README.md](README.md)** - Main repository README
-- **[CLAUDE.md](CLAUDE.md)** - This file (AI assistant instructions)
-- **[docs/naming-conventions.md](docs/naming-conventions.md)** - File and folder naming standards
-- **[docs/refactoring-todo.md](docs/refactoring-todo.md)** - Monorepo refactoring checklist
+### User Documentation
 
-### Project Documentation
+- **[README.md](README.md)** - Main repository README
+- **[docs/](docs/)** - User guides and documentation
+  - **[docs/cli-reference.md](docs/cli-reference.md)** - Complete CLI command reference
+  - **[docs/mcp-usage-guide.md](docs/mcp-usage-guide.md)** - MCP server usage guide
+
+### Project READMEs
+
 - **[api/README.md](api/README.md)** - Python SDK documentation
-- **[api/docs/pydantic-entities-implementation.md](api/docs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[cli/README.md](cli/README.md)** - CLI application documentation
-- **[cli/docs/command-reference.md](cli/docs/command-reference.md)** - Complete CLI command reference
 - **[mcp/README.md](mcp/README.md)** - MCP server documentation
-- **[mcp/docs/mcp-server.md](mcp/docs/mcp-server.md)** - MCP protocol details
 - **[mock-server/README.md](mock-server/README.md)** - Mock server documentation
 
-### Technical Specifications
-- **[docs/croatian-cadastral-api-specification.md](docs/croatian-cadastral-api-specification.md)** - Complete API specification
-- **[docs/i18n-guide.md](docs/i18n-guide.md)** - Internationalization developer guide
-- **[docs/i18n-implementation-status.md](docs/i18n-implementation-status.md)** - i18n implementation status
-- **[docs/translation-status.md](docs/translation-status.md)** - Translation progress tracking
+### Technical Specifications (specs/)
+
+- **[specs/croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md)** - Complete API specification
+- **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
+- **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
+- **[specs/naming-conventions.md](specs/naming-conventions.md)** - File and folder naming standards
+- **[specs/i18n-guide.md](specs/i18n-guide.md)** - Internationalization developer guide
+- **[specs/i18n-status.md](specs/i18n-status.md)** - i18n implementation status
+- **[specs/refactoring-todo.md](specs/refactoring-todo.md)** - Monorepo refactoring checklist
 
 ### Examples
+
 - **[api/examples/basic_usage.py](api/examples/basic_usage.py)** - Basic SDK usage
 - **[api/examples/municipality_search.py](api/examples/municipality_search.py)** - Municipality search
 - **[api/examples/gis_parcel_geometry.py](api/examples/gis_parcel_geometry.py)** - GIS geometry examples
+- **[api/examples/lr_unit_example.py](api/examples/lr_unit_example.py)** - Land registry unit examples
+
+### AI Assistant
+
+- **[CLAUDE.md](CLAUDE.md)** - This file (AI assistant instructions)
 
 ## Related Services
 
@@ -610,17 +635,20 @@ ruff check src/
 ## Important Notes
 
 ### Python Version
+
 Requires Python 3.12+ for modern type hint syntax (`str | None`, `list[T]`, etc.)
 
 ### Data Inconsistencies
+
 Based on live API testing:
 - **Ownership fractions are optional** - Many parcels don't include the `ownership` field
 - **Area is string type** - API returns area as string, automatically converted in models
 - **Multiple possession sheets** - A single parcel can have multiple ownership records
 
 ### Translation Status
-The i18n infrastructure is complete, but translation files are still being populated:
+
+The i18n infrastructure is complete with full translations:
 - Core i18n module: ✅ Complete
 - Translation scripts: ✅ Complete
-- CLI commands: 🔄 Partially localized (ongoing work)
-- Translation files (.po): 🔄 In progress
+- CLI commands: ✅ Fully localized
+- Translation files (.po): ✅ Complete (Croatian and English)

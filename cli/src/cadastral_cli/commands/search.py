@@ -90,7 +90,7 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
                     "total_owners": parcel.total_owners,
                     "parcel_id": parcel.parcel_id,
                 }
-                print_output(export_data, format=output_format, file=output)
+                print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
         if e.error_type == ErrorType.PARCEL_NOT_FOUND:
@@ -187,7 +187,7 @@ def search_municipality(
                     ),
                     style="green"
                 )
-                print_output(data, format="table")
+                print_output(data, output_format="table")
             else:
                 # For JSON/CSV export
                 export_data = [
@@ -200,7 +200,7 @@ def search_municipality(
                     }
                     for m in results
                 ]
-                print_output(export_data, format=output_format, file=output)
+                print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
         if e.error_type == ErrorType.MUNICIPALITY_NOT_FOUND:
@@ -208,7 +208,7 @@ def search_municipality(
             print_error(_("No municipalities found for '{search}'").format(search=search))
         else:
             print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
@@ -264,4 +264,4 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
             print_error(_("Failed to resolve municipality: {error_type}").format(
                 error_type=e.error_type.value
             ))
-        raise SystemExit(1)
+        raise SystemExit(1) from e

@@ -157,7 +157,8 @@ Address any bugs found during testing
 ### Plural Forms
 
 Croatian has 3 plural forms:
-```
+
+```text
 n%10==1 && n%100!=11 ? 0     # 1, 21, 31, 41, ...
 n%10>=2 && n%10<=4 && ... ? 1 # 2-4, 22-24, 32-34, ...
 : 2                           # 0, 5-20, 25-30, ...
@@ -208,7 +209,7 @@ Examples:
 - Testing: **2-3 hours** ⏳
 - Bug fixes: **0-1 hours** ⏳
 
-**Total remaining: 2-4 hours**
+Total remaining: 2-4 hours
 
 ---
 

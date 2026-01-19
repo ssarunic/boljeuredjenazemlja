@@ -20,7 +20,7 @@ Shared repository-level resources go in the root.
 
 ## 1. Top-Level Directory Structure
 
-```
+```text
 boljeuredjenazemlja/
 ├── api/                    # Python SDK project
 │   ├── src/
@@ -143,7 +143,7 @@ Examples:
 
 ### Configuration Files
 
-**Convention: Follow standard conventions**
+Follow standard conventions for configuration files:
 
 - ✅ `pyproject.toml` - Python standard
 - ✅ `requirements.txt` - Python standard
@@ -226,8 +226,10 @@ Examples:
 
 ## 5. Singular vs Plural
 
-### Use Plural:
-When directory contains **multiple items of the same type**
+### Use Plural
+
+When directory contains **multiple items of the same type**:
+
 - ✅ `tests/` - Multiple test files
 - ✅ `examples/` - Multiple example files
 - ✅ `docs/` - Multiple documentation files
@@ -235,8 +237,9 @@ When directory contains **multiple items of the same type**
 - ✅ `models/` - Multiple model files
 - ✅ `commands/` - Multiple command files
 
-### Use Singular:
-When directory represents **a category or single concept**
+### Use Singular
+
+When directory represents **a category or single concept**:
 - ✅ `src/` - Source code (category)
 - ✅ `data/` - Data (category)
 - ✅ `config/` - Configuration (category)
@@ -248,7 +251,8 @@ When directory represents **a category or single concept**
 ## 6. Project-Specific Structure Examples
 
 ### API Project (`api/`)
-```
+
+```text
 api/
 ├── src/
 │   └── cadastral_api/          # Python package (snake_case)
@@ -278,7 +282,8 @@ api/
 ```
 
 ### CLI Project (`cli/`)
-```
+
+```text
 cli/
 ├── src/
 │   └── cadastral_cli/          # Python package (snake_case)
@@ -298,7 +303,8 @@ cli/
 ```
 
 ### MCP Project (`mcp/`)
-```
+
+```text
 mcp/
 ├── src/
 │   └── cadastral_mcp/          # Python package (snake_case)
@@ -315,7 +321,8 @@ mcp/
 ```
 
 ### Mock Server (`mock-server/`)
-```
+
+```text
 mock-server/
 ├── src/
 │   └── main.py                # FastAPI application
@@ -331,7 +338,8 @@ mock-server/
 ```
 
 ### Repository Root
-```
+
+```text
 boljeuredjenazemlja/
 ├── api/                        # API project
 ├── cli/                        # CLI project
@@ -378,7 +386,8 @@ Documentation **specific to one project**:
 - API library usage (in `api/docs/`)
 - MCP protocol details (in `mcp/docs/`)
 
-### When in Doubt:
+### When in Doubt
+
 - If it mentions multiple projects → root `docs/`
 - If it's specific to one project → `{project}/docs/`
 - If it's for end users → `{project}/docs/`

@@ -72,7 +72,7 @@ MCP_HTTP_PORT=8080                             # HTTP port
 
 ## Project Structure
 
-```
+```text
 src/mcp/
 ├── config.py         # Configuration
 ├── server.py         # Main FastMCP server

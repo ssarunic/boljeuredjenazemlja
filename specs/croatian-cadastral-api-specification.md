@@ -10,7 +10,8 @@ The Croatian cadastral system (Uređena zemlja) provides public APIs for accessi
 - **Response Format:** JSON
 
 ## Required Headers
-```
+
+```http
 Accept: application/json, text/plain, */*
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15
 ```
@@ -30,7 +31,8 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15
 - `departmentId` (string, optional): Filter by department ID
 
 **Example Requests:**
-```
+
+```http
 # Search by name
 GET /oss/public/search-cad-parcels/municipalities?search=SAVAR
 
@@ -93,7 +95,8 @@ GET /oss/public/search-cad-parcels/municipalities?search=SAVAR&officeId=114
 **Parameters:** None
 
 **Example Request:**
-```
+
+```http
 GET /oss/public/search-cad-parcels/offices
 ```
 
@@ -141,12 +144,14 @@ GET /oss/public/search-cad-parcels/offices
 **Status:** ✅ **WORKING - NO AUTHENTICATION REQUIRED**
 
 **URL Pattern:**
-```
+
+```text
 https://oss.uredjenazemlja.hr/oss/public/atom/ko-{municipalityRegNum}.zip
 ```
 
 **Example URLs:**
-```
+
+```text
 # SAVAR municipality (334979) - 224 KB
 https://oss.uredjenazemlja.hr/oss/public/atom/ko-334979.zip
 
@@ -197,7 +202,8 @@ with open(f"municipality_{municipality_code}.zip", "wb") as f:
 - `municipalityRegNum` (string): Municipality registration number
 
 **Example Request:**
-```
+
+```http
 GET /oss/public/search-cad-parcels/parcel-numbers?search=103/2&municipalityRegNum=334979
 ```
 
@@ -238,7 +244,8 @@ GET /oss/public/search-cad-parcels/parcel-numbers?search=103/2&municipalityRegNu
 - `parcelId` (string): Parcel ID obtained from parcel search
 
 **Example Request:**
-```
+
+```http
 GET /oss/public/cad/parcel-info?parcelId=6564817
 ```
 
@@ -303,7 +310,7 @@ GET /oss/public/cad/parcel-info?parcelId=6564817
 
 **Complete Field Documentation:**
 
-#### Root Level Fields:
+#### Root Level Fields
 - `parcelId` (integer): Unique parcel identifier
 - `parcelNumber` (string): Cadastral parcel number
 - `cadMunicipalityId` (integer): Municipality internal ID
@@ -336,7 +343,8 @@ GET /oss/public/cad/parcel-info?parcelId=6564817
 - `institutionName` (string, optional): Filter by institution name
 
 **Example Requests:**
-```
+
+```http
 # Get all main books (returns thousands of results)
 GET /oss/public/search-lr-parcels/main-books?search=&officeId=&institutionName=
 
@@ -419,7 +427,8 @@ GET /oss/public/search-lr-parcels/main-books?search=ZAPREŠIĆ&officeId=&institu
 - `institutionName` (string, optional): Filter by institution name
 
 **Example Requests:**
-```
+
+```http
 # Get all books of DC (returns thousands of results)
 GET /oss/public/search-lr-parcels/books-of-dc?search=&officeId=&institutionName=
 
@@ -605,7 +614,8 @@ Content-Type: application/json
 - `municipalityRegNum` (string): Municipality registration number
 
 **Example Request:**
-```
+
+```http
 GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municipalityRegNum=334979
 ```
 
@@ -623,7 +633,8 @@ GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municip
 - `mainBookId` (integer): Main book ID (e.g., 21277)
 
 **Example Request:**
-```
+
+```http
 GET /oss/public/lr/lr-unit-data?lrUnitNumber=13998&mainBookId=30783
 ```
 
@@ -697,7 +708,8 @@ Each share in `ownershipSheetB.lrUnitShares` represents an ownership portion:
   - Room composition
 
 **Example Apartment Description:**
-```
+
+```text
 "STAN na III. (trećem) katu, označen br. 13, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, kupaonice, hodnika i lođe, s pripadajućom drvarnicom."
 ```
 
@@ -935,20 +947,26 @@ Links to related or historical parcels:
 ## Usage Workflow
 
 ### Complete Parcel Information Retrieval
+
 1. **Get Municipality Code** (if not known):
-   ```
+
+   ```http
    GET /search-cad-parcels/municipalities?search=MUNICIPALITYNAME
    ```
+
    Extract `key2` from response as `municipalityRegNum`
 
 2. **Search for Parcel ID**:
-   ```
+
+   ```http
    GET /search-cad-parcels/parcel-numbers?search=PARCELNUMBER&municipalityRegNum=MUNICIPALITYCODE
    ```
+
    Extract `key1` from response as `parcelId`
 
 3. **Get Detailed Information**:
-   ```
+
+   ```http
    GET /cad/parcel-info?parcelId=PARCELID
    ```
 
@@ -1012,8 +1030,10 @@ class CadastralAPI:
 ## Map Integration
 
 ### Share URL Format
+
 Parcels can be viewed on the interactive map using:
-```
+
+```text
 https://oss.uredjenazemlja.hr/map?cad_parcel_id=PARCELID
 ```
 
@@ -1093,7 +1113,8 @@ The following parcels have been tested and verified (Court: Zadar):
    - Owners: 18 (no ownership fractions listed)
    - Example of complex multi-owner parcel
 
-### Key Observations:
+### Key Observations
+
 - **Municipality search working**: Use `/search-cad-parcels/municipalities` endpoint (the old `/search-municipalities` returns 404)
 - **Ownership fractions are inconsistent**: Only some parcels include the `ownership` field
 - **Multiple possession sheets**: A single parcel can have multiple possession sheets (e.g., parcel 45)

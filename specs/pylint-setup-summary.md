@@ -167,7 +167,7 @@ max-args = 10        # Increase if needed
 
 - 📖 Full guide: [docs/linting-guide.md](linting-guide.md)
 - ⚡ Quick reference: [docs/quick-lint-reference.md](quick-lint-reference.md)
-- 🔗 Pylint docs: https://pylint.readthedocs.io/
+- 🔗 Pylint docs: <https://pylint.readthedocs.io/>
 
 ## Summary
 

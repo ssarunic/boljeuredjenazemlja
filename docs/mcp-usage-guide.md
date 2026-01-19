@@ -10,7 +10,8 @@ This guide helps Claude (the AI assistant) use the Cadastral MCP server correctl
 Finds a parcel and returns basic information including parcel_id.
 
 **Example:**
-```
+
+```text
 Find parcel 103/2 in SAVAR
 ```
 
@@ -70,7 +71,8 @@ These can be used with `batch_lr_units` to get detailed ownership and encumbranc
 Resolves a municipality name to its registration code.
 
 **Example:**
-```
+
+```text
 What is the municipality code for SAVAR?
 ```
 
@@ -91,7 +93,8 @@ What is the municipality code for SAVAR?
 Lists all cadastral offices in Croatia, optionally filtered by name.
 
 **Example:**
-```
+
+```text
 List all cadastral offices
 ```
 
@@ -110,7 +113,8 @@ List all cadastral offices
 Gets parcel boundary coordinates in various formats.
 
 **Example:**
-```
+
+```text
 Get the geometry for parcel 103/2 in SAVAR as GeoJSON
 ```
 
@@ -129,7 +133,8 @@ Get the geometry for parcel 103/2 in SAVAR as GeoJSON
 Gets complete land registry unit (LR unit) information starting from a parcel number.
 
 **Example:**
-```
+
+```text
 Get the land registry unit for parcel 103/2 in SAVAR
 ```
 
@@ -211,7 +216,8 @@ Fetches multiple land registry units in a single operation. Use this after `batc
 The `shareOrderNumber` field in the `EncumbranceGroup` Pydantic model is now optional (`str | None`) instead of required. This handles cases where the Croatian government API returns encumbrance data without this field.
 
 **Example usage:**
-```
+
+```text
 Get the land registry unit for parcel 103/2 in SAVAR
 ```
 
@@ -235,9 +241,10 @@ Currently no known issues! All tools are working.
 ## 💡 Usage Tips
 
 ### Tip 1: Always use municipality codes when you have them
+
 Municipality codes are more reliable than names. Once you've resolved a name to a code, use the code.
 
-```
+```python
 # Good
 find_parcel("103/2", "334979")
 
@@ -357,20 +364,23 @@ else:
 ## 🎯 Common Query Patterns
 
 ### Pattern 1: Find parcel and show ownership
-```
+
+```text
 1. Find parcel 103/2 in SAVAR
 2. Get detailed information with owners for that parcel
 ```
 
 ### Pattern 2: Compare multiple parcels
-```
+
+```text
 1. Find parcels 103/2, 45, and 396/1 in SAVAR
 2. Fetch full details for all of them
 3. Compare their areas and ownership
 ```
 
 ### Pattern 3: Explore municipality
-```
+
+```text
 1. Resolve SAVAR to get municipality code
 2. List some common parcel numbers
 3. Get details for each

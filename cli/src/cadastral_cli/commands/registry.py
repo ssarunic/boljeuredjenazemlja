@@ -97,7 +97,7 @@ def get_lr_unit(
             if output_format != "table":
                 # Structured output
                 data = _format_structured_data(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
-                print_output(data, format=output_format, file=output)
+                print_output(data, output_format=output_format, file=output)
             else:
                 # Rich table output
                 print_lr_unit_full(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
@@ -109,7 +109,7 @@ def get_lr_unit(
             print_error(_("Parcel not found"))
         else:
             print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 def _format_structured_data(
@@ -169,5 +169,3 @@ def _format_structured_data(
         data["encumbrances"] = encumbrances
 
     return data
-
-

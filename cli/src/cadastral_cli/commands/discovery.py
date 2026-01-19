@@ -46,7 +46,7 @@ def list_offices(ctx: click.Context, output_format: str, output: str | None) -> 
                 console.print(_("\n{count} Cadastral Offices in Croatia:\n").format(
                     count=len(offices)
                 ), style="green")
-                print_output(data, format="table")
+                print_output(data, output_format="table")
             else:
                 export_data = [
                     {
@@ -55,11 +55,11 @@ def list_offices(ctx: click.Context, output_format: str, output: str | None) -> 
                     }
                     for office in offices
                 ]
-                print_output(export_data, format=output_format, file=output)
+                print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 @click.command("list-municipalities")
@@ -139,7 +139,7 @@ def list_municipalities(
                     count=len(municipalities),
                     filter_desc=filter_desc
                 ), style="green")
-                print_output(data, format="table")
+                print_output(data, output_format="table")
             else:
                 export_data = [
                     {
@@ -151,11 +151,11 @@ def list_municipalities(
                     }
                     for m in municipalities
                 ]
-                print_output(export_data, format=output_format, file=output)
+                print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e
 
 
 @click.command("info")
@@ -184,9 +184,6 @@ def info(ctx: click.Context) -> None:
             console.print(_("Cache Directory: {cache_dir}").format(cache_dir=cache_dir))
 
             # Check cache size and cached municipalities
-            import os
-            from pathlib import Path
-
             if cache_dir.exists():
                 total_size = 0
                 cached_munis = []
@@ -236,4 +233,4 @@ def info(ctx: click.Context) -> None:
 
     except Exception as e:
         print_error(_("Error getting system info: {error}").format(error=str(e)))
-        raise SystemExit(1)
+        raise SystemExit(1) from e

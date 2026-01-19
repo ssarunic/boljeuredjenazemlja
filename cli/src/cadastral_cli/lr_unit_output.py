@@ -192,8 +192,6 @@ def _format_apartment_description(description: str, max_length: int = 60) -> str
 
     # Try to extract floor and area info
     # Example: "STAN na III. (trećem) katu, označen br. 13, površine 59,08 m2..."
-    import re
-
     # Extract floor
     floor_match = re.search(r'na\s+(\w+\.?\s*(?:\([^)]+\))?\s*katu)', description, re.IGNORECASE)
     floor_info = floor_match.group(1) if floor_match else ""

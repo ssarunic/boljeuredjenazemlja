@@ -7,23 +7,26 @@ cd mock_server
 python3 main.py
 ```
 
-The server will start on http://localhost:8000
+The server will start on `http://localhost:8000`
 
 ## Test the Server
 
 ### Check server status
+
 ```bash
 curl http://localhost:8000
 ```
 
 ### Test all endpoints
 
-**1. List Cadastral Offices**
+#### 1. List Cadastral Offices
+
 ```bash
 curl "http://localhost:8000/search-cad-parcels/offices" | python3 -m json.tool
 ```
 
-**2. Search Municipalities**
+#### 2. Search Municipalities
+
 ```bash
 # By name
 curl "http://localhost:8000/search-cad-parcels/municipalities?search=SAVAR" | python3 -m json.tool
@@ -32,7 +35,8 @@ curl "http://localhost:8000/search-cad-parcels/municipalities?search=SAVAR" | py
 curl "http://localhost:8000/search-cad-parcels/municipalities?officeId=114" | python3 -m json.tool
 ```
 
-**3. Search for Parcels**
+#### 3. Search for Parcels
+
 ```bash
 # Exact match
 curl "http://localhost:8000/search-cad-parcels/parcel-numbers?search=103/2&municipalityRegNum=334979" | python3 -m json.tool
@@ -41,7 +45,8 @@ curl "http://localhost:8000/search-cad-parcels/parcel-numbers?search=103/2&munic
 curl "http://localhost:8000/search-cad-parcels/parcel-numbers?search=114&municipalityRegNum=334979" | python3 -m json.tool
 ```
 
-**4. Get Detailed Parcel Info**
+#### 4. Get Detailed Parcel Info
+
 ```bash
 curl "http://localhost:8000/cad/parcel-info?parcelId=6564817" | python3 -m json.tool
 ```
@@ -82,8 +87,8 @@ cadastral get-parcel 103/2 -m 334979 --show-owners
 
 Visit these URLs while the server is running:
 
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- Swagger UI: <http://localhost:8000/docs>
+- ReDoc: <http://localhost:8000/redoc>
 
 ## Stop the Server
 
