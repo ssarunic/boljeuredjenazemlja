@@ -541,6 +541,12 @@ boljeuredjenazemlja/
 6. **Testing**: Add tests for new features
 7. **File naming**: Follow [specs/naming-conventions.md](specs/naming-conventions.md)
 
+### Documentation Style
+
+**Emoji usage in documentation:**
+- **User docs** (`docs/`, READMEs): Emojis are acceptable for visual clarity
+- **Technical specs** (`specs/`): No emojis - keep specs formal and technical
+
 ### Internationalization Workflow
 
 When adding user-facing text:
