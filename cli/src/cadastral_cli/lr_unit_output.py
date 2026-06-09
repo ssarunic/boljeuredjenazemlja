@@ -68,8 +68,19 @@ def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
     table.add_row(_("Status"), lr_unit.status_name)
     table.add_row(_("Unit Type"), lr_unit.lr_unit_type_name)
     table.add_row(_("Last Diary Number"), lr_unit.last_diary_number)
+    # Pending entries (plombe) are shown here, in the always-printed basic info,
+    # so they are never hidden behind the absence of a --show flag.
+    if lr_unit.has_pending_plombe():
+        plombe = ", ".join(p.file_number for p in lr_unit.active_plumbs)
+        table.add_row(_("Pending entries (plombe)"), f"[bold red]{plombe}[/bold red]")
 
     console.print(table)
+
+    if lr_unit.has_pending_plombe():
+        console.print(
+            f"⚠️  {_('This unit has pending entries (plombe) - a change may be in progress.')}",
+            style="yellow",
+        )
 
 
 def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
@@ -92,19 +103,8 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
         _("Has Encumbrances"),
         _("Yes") if summary["has_encumbrances"] else _("No")
     )
-    if summary.get("has_pending_plombe"):
-        table.add_row(
-            _("Pending entries (plombe)"),
-            "[bold red]" + ", ".join(summary["pending_plombe"]) + "[/bold red]",
-        )
 
     console.print(table)
-
-    if summary.get("has_pending_plombe"):
-        console.print(
-            f"\n⚠️  {_('This unit has pending entries (plombe) - a change may be in progress.')}",
-            style="yellow",
-        )
 
     # Hint for detailed view
     if summary["num_owners"] > 0:
