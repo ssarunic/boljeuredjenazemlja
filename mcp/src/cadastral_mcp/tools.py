@@ -80,37 +80,93 @@ class CadastralTools:
                 f"and municipality."
             ) from e
 
+    #: Valid register sources for parcel-level ownership data.
+    VALID_SOURCES = ("cadastre", "land_registry", "none")
+
+    @staticmethod
+    def _lr_unit_hint(parcel: Any) -> dict[str, Any]:
+        """Build a routing hint to the land-registry owners for a parcel.
+
+        The direct ``lr_unit`` may be null while the unit is still reachable via
+        parcel links; surface whichever is available so the caller can chain to
+        get_lr_unit_from_parcel / batch_lr_units for the true owners.
+        """
+        ref = None
+        derived_from_links = False
+        lr_unit = getattr(parcel, "lr_unit", None)
+        if lr_unit is not None:
+            ref = {
+                "lr_unit_number": lr_unit.lr_unit_number,
+                "main_book_id": lr_unit.main_book_id,
+            }
+        else:
+            links = getattr(parcel, "lr_units_from_parcel_links", None) or []
+            if links:
+                ref = {
+                    "lr_unit_number": links[0].lr_unit_number,
+                    "main_book_id": links[0].main_book_id,
+                }
+                derived_from_links = True
+        return {
+            "message": (
+                "Cadastre possessors omitted. For registered owners "
+                "(vlasnici / vlastovnica B-list), call get_lr_unit_from_parcel "
+                "or batch_lr_units with this reference."
+            ),
+            "lr_unit_ref": ref,
+            "in_land_registry": ref is not None,
+            "lr_unit_derived_from_links": derived_from_links,
+        }
+
     async def batch_fetch_parcels(
-        self, parcels: list[dict[str, str]], include_owners: bool = False
+        self,
+        parcels: list[dict[str, str]],
+        source: str = "cadastre",
+        include_owners: bool | None = None,
     ) -> dict[str, Any]:
         """
         Fetch multiple parcels in a single operation.
 
+        ⚠️ Cadastre possessors (posjedovni list) and land-registry owners
+        (vlasnici / vlastovnica / B-list) are DIFFERENT registers and frequently
+        list different people. Every person record is tagged with a ``register``
+        field so the two can never be confused.
+
+        Register selection (``source``):
+        - "cadastre" (default): include the possession sheet (posjedovni list),
+          i.e. cadastre POSSESSORS - NOT necessarily the registered owners.
+        - "land_registry": omit possessors and instead return, per parcel, the
+          land-registry unit reference plus a hint to fetch the true owners via
+          get_lr_unit_from_parcel / batch_lr_units.
+        - "none": parcel metadata only.
+
         Args:
-            parcels: List of parcel specifications, each with:
-                - parcel_number: Cadastral number (e.g., "103/2")
-                - municipality: Municipality name or code
-                OR
-                - parcel_id: Direct parcel ID if already known
-            include_owners: Whether to include ownership information
+            parcels: List of parcel specs, each with parcel_number + municipality
+                OR a direct parcel_id.
+            source: One of "cadastre", "land_registry", "none".
+            include_owners: DEPRECATED - use ``source``. True maps to
+                source="cadastre", False to source="none".
 
         Returns:
-            Dictionary with results array and summary statistics
-
-        Example:
-            >>> await batch_fetch_parcels([
-            ...     {"parcel_number": "103/2", "municipality": "SAVAR"},
-            ...     {"parcel_number": "45", "municipality": "LUKA"}
-            ... ])
-            {
-                "results": [...],
-                "total": 2,
-                "successful": 2,
-                "failed": 0
-            }
+            Dictionary with results array, summary statistics, and the resolved
+            ``source``. Includes ``deprecation_notice`` when include_owners is used.
         """
+        deprecation_notice = None
+        if include_owners is not None:
+            source = "cadastre" if include_owners else "none"
+            deprecation_notice = (
+                "'include_owners' is deprecated; use source='cadastre' (cadastre "
+                "possessors) or source='land_registry' (registered owners). "
+                f"include_owners={include_owners} was mapped to source='{source}'."
+            )
+
+        if source not in self.VALID_SOURCES:
+            raise ValueError(
+                f"Invalid source '{source}'. Expected one of {self.VALID_SOURCES}."
+            )
+
         try:
-            logger.info(f"Batch fetching {len(parcels)} parcels (include_owners={include_owners})")
+            logger.info(f"Batch fetching {len(parcels)} parcels (source={source})")
 
             results: list[dict[str, Any]] = []
             successful = 0
@@ -137,12 +193,16 @@ class CadastralTools:
 
                     result_data = parcel.model_dump(mode="json")
 
-                    # Optionally filter out ownership data
-                    if not include_owners:
+                    # Possession sheets are CADASTRE data; only include them when
+                    # cadastre possessors were explicitly requested.
+                    if source != "cadastre":
                         result_data.pop("possession_sheets", None)
+                    if source == "land_registry":
+                        result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
 
                     results.append({
                         "status": "success",
+                        "register": source,
                         "data": result_data,
                     })
                     successful += 1
@@ -156,12 +216,16 @@ class CadastralTools:
                     })
                     failed += 1
 
-            return {
+            response: dict[str, Any] = {
                 "results": results,
                 "total": len(parcels),
                 "successful": successful,
                 "failed": failed,
+                "source": source,
             }
+            if deprecation_notice:
+                response["deprecation_notice"] = deprecation_notice
+            return response
 
         except Exception as e:
             logger.error(f"Batch fetch operation failed: {e}", exc_info=True)

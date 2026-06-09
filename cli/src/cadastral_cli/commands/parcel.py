@@ -217,16 +217,26 @@ def _print_landuse_info(parcel) -> None:
 
 
 def _print_ownership_info(parcel) -> None:
-    """Print ownership information."""
-    owners_text = ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
+    """Print cadastre possession-sheet data (posjedovni list).
+
+    These are cadastre POSSESSORS, which are frequently NOT the registered
+    land-registry owners. Registered owners (vlasnici) come from the land
+    registry B-list - use ``cadastral get-lr-unit`` for those.
+    """
+    possessors_text = ngettext("{count} possessor", "{count} possessors", parcel.total_owners).format(
         count=parcel.total_owners
     )
-    header = f"{_('OWNERSHIP')} ({owners_text})"
+    header = f"{_('POSSESSION SHEET (cadastre / posjedovni list)')} ({possessors_text})"
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
+    console.print(
+        _("Note: cadastre possessors may differ from registered owners. "
+          "For land-registry owners (vlasnici), use: cadastral get-lr-unit"),
+        style="dim",
+    )
 
     if not parcel.possession_sheets:
-        console.print(_("No ownership data available"), style="dim")
+        console.print(_("No possession data available"), style="dim")
         return
 
     for i, sheet in enumerate(parcel.possession_sheets, 1):

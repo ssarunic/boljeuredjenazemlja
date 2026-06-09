@@ -106,15 +106,16 @@ def create_mcp_server() -> FastMCP:
 
     @mcp.tool()
     async def batch_fetch_parcels(
-        parcels: list[dict[str, str]], include_owners: bool = False
+        parcels: list[dict[str, str]],
+        source: str = "cadastre",
+        include_owners: bool | None = None,
     ) -> dict[str, Any]:
         """
-        Fetch multiple parcels in a single operation.
+        Fetch multiple parcels (čestice) in a single operation.
 
         Use this tool when the user requests information about multiple parcels,
-        especially when they are in the same cadastral municipality (K.O.).
-        This is more efficient than calling find_parcel multiple times as it
-        handles rate limiting and returns aggregated statistics.
+        especially when they are in the same cadastral municipality (katastarska
+        općina, K.O.). More efficient than calling find_parcel repeatedly.
 
         Ideal for:
         - Multiple parcel numbers mentioned in one query (e.g., "parcels 103/2, 45, and 396/1")
@@ -122,21 +123,33 @@ def create_mcp_server() -> FastMCP:
         - Analyzing property portfolios or multiple properties owned by same entity
         - Land consolidation research involving adjacent or related parcels
 
+        ⚠️ Register matters: cadastre POSSESSORS (posjedovni list) are often NOT
+        the registered land-registry OWNERS (vlasnici / vlastovnica / B-list).
+        Choose the register explicitly via ``source``:
+        - source="cadastre" (default): include possession-sheet possessors.
+        - source="land_registry": omit possessors; return the land-registry unit
+          reference + a hint to fetch true owners via get_lr_unit_from_parcel /
+          batch_lr_units (use this for "vlasnik", "prema zemljišnim knjigama").
+        - source="none": parcel metadata only.
+
+        Every person record carries a ``register`` field ("cadastre" |
+        "land_registry") so the two can never be confused.
+
         Args:
             parcels: List of parcel specifications with parcel_number + municipality OR parcel_id
-            include_owners: Whether to include ownership information (default: False)
+            source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
+            include_owners: DEPRECATED - use ``source`` (True -> "cadastre", False -> "none")
 
         Returns:
-            Dictionary with results array and summary statistics.
-            Each successful result includes:
-            - parcel_number, municipality, area, etc.
-            - lr_unit (land registry reference with lr_unit_number and main_book_id)
-
-            The lr_unit reference can be used with batch_lr_units to get detailed
-            land registry information including ownership shares and encumbrances.
+            Dictionary with results array and summary statistics, including the
+            resolved ``source``. Each successful result is tagged with its
+            ``register`` and includes the lr_unit reference, which can be passed
+            to batch_lr_units for detailed ownership shares and encumbrances.
         """
-        logger.info(f"Tool invoked: batch_fetch_parcels({len(parcels)} parcels)")
-        return await tools_handler.batch_fetch_parcels(parcels, include_owners)
+        logger.info(f"Tool invoked: batch_fetch_parcels({len(parcels)} parcels, source={source})")
+        return await tools_handler.batch_fetch_parcels(
+            parcels, source=source, include_owners=include_owners
+        )
 
     @mcp.tool()
     async def resolve_municipality(name_or_code: str) -> dict[str, Any]:

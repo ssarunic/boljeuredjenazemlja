@@ -132,6 +132,17 @@ class Possessor(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def register(self) -> str:
+        """Source register: cadastre (kataster / posjedovni list).
+
+        A possessor is NOT necessarily the land-registry owner; the registered
+        owner (vlasnik) lives in the land registry B-list (vlastovnica). See
+        the Party model, tagged ``land_registry``.
+        """
+        return "cadastre"
+
+    @computed_field  # type: ignore[misc]
+    @property
     def ownership_decimal(self) -> float | None:
         """
         Parse ownership fraction to decimal.
@@ -495,6 +506,16 @@ class Party(BaseModel):
     party_type: PartyType = Field(
         PartyType.UNKNOWN, description="Type of legal person"
     )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def register(self) -> str:
+        """Source register: land registry (zemljišne knjige / vlastovnica B-list).
+
+        Distinguishes a registered land-registry party from a cadastre
+        possessor (see the Possessor model, tagged ``cadastre``).
+        """
+        return "land_registry"
 
 
 class SheetType(str, Enum):
