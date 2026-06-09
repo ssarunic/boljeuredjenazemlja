@@ -27,6 +27,12 @@ def test_parcel_info_parses(parcel_1122_1: ParcelInfo) -> None:
     assert parcel_1122_1.parcel_number == "1122/1"
 
 
+def test_cadastre_lr_harmonization_flag(parcel_1122_1: ParcelInfo) -> None:
+    """1122/1 is NOT harmonized - the signal that cadastre and ZK may differ
+    (and indeed its possessors differ from its registered owners)."""
+    assert parcel_1122_1.is_harmonized is False
+
+
 def test_lr_unit_null_but_resolvable_via_links(parcel_1122_1: ParcelInfo) -> None:
     """F3 scenario: no direct lr_unit, but parcel_links carry the LR unit."""
     assert parcel_1122_1.lr_unit is None

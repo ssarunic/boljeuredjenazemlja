@@ -191,6 +191,7 @@ class CadastralTools:
                     results.append({
                         "status": "success",
                         "register": source,
+                        "cadastre_lr_harmonized": parcel.is_harmonized,
                         "data": result_data,
                     })
                     successful += 1

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: your.email@example.com\n"
-"POT-Creation-Date: 2026-06-09 13:05+0100\n"
+"POT-Creation-Date: 2026-06-09 13:16+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -33,7 +33,7 @@ msgstr "Nema pronađenih rezultata."
 #: cli/src/cadastral_cli/formatters.py:71
 #, python-brace-format
 msgid "✓ Output saved to: {file}"
-msgstr "✓ Izlaz spremljen u: {file}"
+msgstr "✓ Ispis spremljen u: {file}"
 
 #: cli/src/cadastral_cli/formatters.py:78
 #, python-brace-format
@@ -45,23 +45,23 @@ msgid "LAND REGISTRY UNIT"
 msgstr "ZEMLJIŠNOKNJIŽNI ULOŽAK"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:65
-#: cli/src/cadastral_cli/commands/parcel.py:298
+#: cli/src/cadastral_cli/commands/parcel.py:309
 msgid "Unit Number"
 msgstr "Broj uloška"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:66
-#: cli/src/cadastral_cli/commands/parcel.py:300
+#: cli/src/cadastral_cli/commands/parcel.py:311
 msgid "Main Book"
 msgstr "Glavna knjiga"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:67
-#: cli/src/cadastral_cli/commands/parcel.py:303
+#: cli/src/cadastral_cli/commands/parcel.py:314
 msgid "Institution"
 msgstr "Institucija"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:68
 #: cli/src/cadastral_cli/commands/batch.py:301
-#: cli/src/cadastral_cli/commands/parcel.py:304
+#: cli/src/cadastral_cli/commands/parcel.py:315
 msgid "Status"
 msgstr "Status"
 
@@ -110,16 +110,18 @@ msgstr "Ima terete"
 #: cli/src/cadastral_cli/lr_unit_output.py:93
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
-#: cli/src/cadastral_cli/commands/parcel.py:213
-#: cli/src/cadastral_cli/commands/parcel.py:305
+#: cli/src/cadastral_cli/commands/parcel.py:183
+#: cli/src/cadastral_cli/commands/parcel.py:224
+#: cli/src/cadastral_cli/commands/parcel.py:316
 msgid "Yes"
 msgstr "Da"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:93
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
-#: cli/src/cadastral_cli/commands/parcel.py:213
-#: cli/src/cadastral_cli/commands/parcel.py:305
+#: cli/src/cadastral_cli/commands/parcel.py:183
+#: cli/src/cadastral_cli/commands/parcel.py:224
+#: cli/src/cadastral_cli/commands/parcel.py:316
 msgid "No"
 msgstr "Ne"
 
@@ -160,13 +162,13 @@ msgstr "Broj čestice"
 #: cli/src/cadastral_cli/lr_unit_output.py:150
 #: cli/src/cadastral_cli/commands/search.py:60
 #: cli/src/cadastral_cli/commands/parcel.py:178
-#: cli/src/cadastral_cli/commands/parcel.py:259
+#: cli/src/cadastral_cli/commands/parcel.py:270
 msgid "Address"
 msgstr "Adresa"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:123
 #: cli/src/cadastral_cli/commands/batch.py:304
-#: cli/src/cadastral_cli/commands/parcel.py:197
+#: cli/src/cadastral_cli/commands/parcel.py:208
 msgid "Area (m²)"
 msgstr "Površina (m²)"
 
@@ -226,7 +228,7 @@ msgstr "ID"
 #: cli/src/cadastral_cli/commands/discovery.py:40
 #: cli/src/cadastral_cli/commands/discovery.py:129
 #: cli/src/cadastral_cli/commands/search.py:167
-#: cli/src/cadastral_cli/commands/parcel.py:257
+#: cli/src/cadastral_cli/commands/parcel.py:268
 msgid "Name"
 msgstr "Naziv"
 
@@ -291,11 +293,11 @@ msgstr "Odjel"
 #: cli/src/cadastral_cli/commands/search.py:169
 #: cli/src/cadastral_cli/commands/parcel.py:178
 #: cli/src/cadastral_cli/commands/parcel.py:179
-#: cli/src/cadastral_cli/commands/parcel.py:265
-#: cli/src/cadastral_cli/commands/parcel.py:298
-#: cli/src/cadastral_cli/commands/parcel.py:301
-#: cli/src/cadastral_cli/commands/parcel.py:303
-#: cli/src/cadastral_cli/commands/parcel.py:367
+#: cli/src/cadastral_cli/commands/parcel.py:276
+#: cli/src/cadastral_cli/commands/parcel.py:309
+#: cli/src/cadastral_cli/commands/parcel.py:312
+#: cli/src/cadastral_cli/commands/parcel.py:314
+#: cli/src/cadastral_cli/commands/parcel.py:378
 msgid "N/A"
 msgstr "N/D"
 
@@ -541,9 +543,9 @@ msgstr "⚠️  Obrađeno {successful}/{total} čestica ({rate}% stopa uspjeha)"
 #, python-brace-format
 msgid "   {count} parcel failed - see output for details"
 msgid_plural "   {count} parcels failed - see output for details"
-msgstr[0] "   {count} čestica nije uspjela - pogledajte izlaz za detalje"
-msgstr[1] "   {count} čestice nisu uspjele - pogledajte izlaz za detalje"
-msgstr[2] "   {count} čestica nije uspjelo - pogledajte izlaz za detalje"
+msgstr[0] "   {count} čestica nije uspjela - pogledajte ispis za detalje"
+msgstr[1] "   {count} čestice nisu uspjele - pogledajte ispis za detalje"
+msgstr[2] "   {count} čestica nije uspjelo - pogledajte ispis za detalje"
 
 #: cli/src/cadastral_cli/commands/batch.py:232
 #: cli/src/cadastral_cli/commands/batch.py:236
@@ -579,18 +581,18 @@ msgstr "SAŽETAK GRUPNE OBRADE"
 
 #: cli/src/cadastral_cli/commands/batch.py:277
 #: cli/src/cadastral_cli/commands/parcel.py:172
-#: cli/src/cadastral_cli/commands/parcel.py:294
-#: cli/src/cadastral_cli/commands/parcel.py:317
-#: cli/src/cadastral_cli/commands/parcel.py:348
+#: cli/src/cadastral_cli/commands/parcel.py:305
+#: cli/src/cadastral_cli/commands/parcel.py:328
+#: cli/src/cadastral_cli/commands/parcel.py:359
 #: cli/src/cadastral_cli/commands/gis.py:242
 msgid "Field"
 msgstr "Polje"
 
 #: cli/src/cadastral_cli/commands/batch.py:278
 #: cli/src/cadastral_cli/commands/parcel.py:173
-#: cli/src/cadastral_cli/commands/parcel.py:295
-#: cli/src/cadastral_cli/commands/parcel.py:318
-#: cli/src/cadastral_cli/commands/parcel.py:349
+#: cli/src/cadastral_cli/commands/parcel.py:306
+#: cli/src/cadastral_cli/commands/parcel.py:329
+#: cli/src/cadastral_cli/commands/parcel.py:360
 #: cli/src/cadastral_cli/commands/gis.py:243
 msgid "Value"
 msgstr "Vrijednost"
@@ -912,27 +914,39 @@ msgstr "Dohvaćam geometriju..."
 msgid "PARCEL INFORMATION"
 msgstr "INFORMACIJE O ČESTICI"
 
-#: cli/src/cadastral_cli/commands/parcel.py:187
+#: cli/src/cadastral_cli/commands/parcel.py:182
+msgid "Cadastre/LR harmonized"
+msgstr "Katastar/ZK usklađeni"
+
+#: cli/src/cadastral_cli/commands/parcel.py:190
+msgid ""
+"⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
+"possessors (kataster) and registered owners (ZK) may differ."
+msgstr ""
+"⚠️  Katastar i zemljišna knjiga NISU usklađeni za ovu česticu - posjednici "
+"(katastar) i upisani vlasnici (ZK) mogu se razlikovati."
+
+#: cli/src/cadastral_cli/commands/parcel.py:198
 msgid "LAND USE"
 msgstr "NAMJENA ZEMLJIŠTA"
 
-#: cli/src/cadastral_cli/commands/parcel.py:192
+#: cli/src/cadastral_cli/commands/parcel.py:203
 msgid "No land use data available"
 msgstr "Nema dostupnih podataka o namjeni zemljišta"
 
-#: cli/src/cadastral_cli/commands/parcel.py:196
+#: cli/src/cadastral_cli/commands/parcel.py:207
 msgid "Type"
 msgstr "Vrsta"
 
-#: cli/src/cadastral_cli/commands/parcel.py:198
+#: cli/src/cadastral_cli/commands/parcel.py:209
 msgid "Percentage"
 msgstr "Postotak"
 
-#: cli/src/cadastral_cli/commands/parcel.py:199
+#: cli/src/cadastral_cli/commands/parcel.py:210
 msgid "Buildings"
 msgstr "Zgrade"
 
-#: cli/src/cadastral_cli/commands/parcel.py:226
+#: cli/src/cadastral_cli/commands/parcel.py:237
 #, python-brace-format
 msgid "{count} possessor"
 msgid_plural "{count} possessors"
@@ -940,11 +954,11 @@ msgstr[0] "{count} posjednik"
 msgstr[1] "{count} posjednika"
 msgstr[2] "{count} posjednika"
 
-#: cli/src/cadastral_cli/commands/parcel.py:229
+#: cli/src/cadastral_cli/commands/parcel.py:240
 msgid "POSSESSION SHEET (cadastre / posjedovni list)"
 msgstr "POSJEDOVNI LIST (katastar)"
 
-#: cli/src/cadastral_cli/commands/parcel.py:233
+#: cli/src/cadastral_cli/commands/parcel.py:244
 msgid ""
 "Note: cadastre possessors may differ from registered owners. For land-"
 "registry owners (vlasnici), use: cadastral get-lr-unit"
@@ -952,96 +966,96 @@ msgstr ""
 "Napomena: posjednici u katastru mogu se razlikovati od upisanih vlasnika. Za "
 "vlasnike iz zemljišnih knjiga koristite: cadastral get-lr-unit"
 
-#: cli/src/cadastral_cli/commands/parcel.py:239
+#: cli/src/cadastral_cli/commands/parcel.py:250
 msgid "No possession data available"
 msgstr "Nema podataka o posjedu"
 
-#: cli/src/cadastral_cli/commands/parcel.py:245
+#: cli/src/cadastral_cli/commands/parcel.py:256
 msgid "Possession Sheet"
 msgstr "Posjedovni list"
 
-#: cli/src/cadastral_cli/commands/parcel.py:250
+#: cli/src/cadastral_cli/commands/parcel.py:261
 msgid "No possessors listed"
 msgstr "Nema navedenih posjednika"
 
-#: cli/src/cadastral_cli/commands/parcel.py:258
+#: cli/src/cadastral_cli/commands/parcel.py:269
 msgid "Ownership"
 msgstr "Vlasništvo"
 
-#: cli/src/cadastral_cli/commands/parcel.py:261
+#: cli/src/cadastral_cli/commands/parcel.py:272
 msgid "Unit"
 msgstr "Jedinica"
 
-#: cli/src/cadastral_cli/commands/parcel.py:262
+#: cli/src/cadastral_cli/commands/parcel.py:273
 msgid "Common Share"
 msgstr "Udio u zajedničkim dijelovima"
 
-#: cli/src/cadastral_cli/commands/parcel.py:285
+#: cli/src/cadastral_cli/commands/parcel.py:296
 msgid "LAND REGISTRY"
 msgstr "ZEMLJIŠNA KNJIGA"
 
-#: cli/src/cadastral_cli/commands/parcel.py:290
+#: cli/src/cadastral_cli/commands/parcel.py:301
 msgid "No land registry data available"
 msgstr "Nema dostupnih zemljišnoknjižnih podataka"
 
-#: cli/src/cadastral_cli/commands/parcel.py:304
+#: cli/src/cadastral_cli/commands/parcel.py:315
 msgid "Active"
 msgstr "Aktivno"
 
-#: cli/src/cadastral_cli/commands/parcel.py:304
+#: cli/src/cadastral_cli/commands/parcel.py:315
 msgid "Inactive"
 msgstr "Neaktivno"
 
-#: cli/src/cadastral_cli/commands/parcel.py:305
+#: cli/src/cadastral_cli/commands/parcel.py:316
 msgid "Verified"
 msgstr "Provjereno"
 
-#: cli/src/cadastral_cli/commands/parcel.py:312
+#: cli/src/cadastral_cli/commands/parcel.py:323
 msgid "GEOMETRY"
 msgstr "GEOMETRIJA"
 
-#: cli/src/cadastral_cli/commands/parcel.py:320
+#: cli/src/cadastral_cli/commands/parcel.py:331
 #: cli/src/cadastral_cli/commands/gis.py:246
 msgid "Coordinate System"
 msgstr "Koordinatni sustav"
 
-#: cli/src/cadastral_cli/commands/parcel.py:321
+#: cli/src/cadastral_cli/commands/parcel.py:332
 #: cli/src/cadastral_cli/commands/gis.py:247
 msgid "Vertices"
 msgstr "Vrhovi"
 
-#: cli/src/cadastral_cli/commands/parcel.py:322
+#: cli/src/cadastral_cli/commands/parcel.py:333
 msgid "GIS Area"
 msgstr "GIS površina"
 
-#: cli/src/cadastral_cli/commands/parcel.py:325
+#: cli/src/cadastral_cli/commands/parcel.py:336
 #: cli/src/cadastral_cli/commands/gis.py:252
 msgid "Bounding Box"
 msgstr "Granični okvir"
 
-#: cli/src/cadastral_cli/commands/parcel.py:330
+#: cli/src/cadastral_cli/commands/parcel.py:341
 #: cli/src/cadastral_cli/commands/gis.py:257
 msgid "  Width"
 msgstr "  Širina"
 
-#: cli/src/cadastral_cli/commands/parcel.py:331
+#: cli/src/cadastral_cli/commands/parcel.py:342
 #: cli/src/cadastral_cli/commands/gis.py:258
 msgid "  Height"
 msgstr "  Visina"
 
-#: cli/src/cadastral_cli/commands/parcel.py:335
+#: cli/src/cadastral_cli/commands/parcel.py:346
 msgid "To export coordinates"
 msgstr "Za izvoz koordinata"
 
-#: cli/src/cadastral_cli/commands/parcel.py:343
+#: cli/src/cadastral_cli/commands/parcel.py:354
 msgid "ADDITIONAL INFO"
 msgstr "DODATNE INFORMACIJE"
 
-#: cli/src/cadastral_cli/commands/parcel.py:366
+#: cli/src/cadastral_cli/commands/parcel.py:377
 msgid "Map URL"
 msgstr "URL karte"
 
-#: cli/src/cadastral_cli/commands/parcel.py:367
+#: cli/src/cadastral_cli/commands/parcel.py:378
 msgid "Detail Sheet"
 msgstr "List pregleda"
 
@@ -1179,11 +1193,11 @@ msgstr "  Max Y"
 # Common UI strings
 #: cli/src/cadastral_cli/main.py:29
 msgid "Verbose output"
-msgstr "Opširni izlaz"
+msgstr "Opširni ispis"
 
 #: cli/src/cadastral_cli/main.py:33
 msgid "Language for output (overrides system locale)"
-msgstr "Jezik za izlaz (nadjačava postavke sustava)"
+msgstr "Jezik za ispis (nadjačava postavke sustava)"
 
 #: cli/src/cadastral_cli/main.py:60
 #, python-brace-format

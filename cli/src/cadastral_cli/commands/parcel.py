@@ -178,8 +178,19 @@ def _print_basic_info(parcel) -> None:
     table.add_row(_("Address"), parcel.address or _("N/A"))
     table.add_row(_("Area"), f"{parcel.area_numeric:,} m²" if parcel.area_numeric else _("N/A"))
     table.add_row(_("Building Permitted"), _("Yes") if parcel.has_building_right else _("No"))
+    table.add_row(
+        _("Cadastre/LR harmonized"),
+        _("Yes") if parcel.is_harmonized else "[bold red]" + _("No") + "[/bold red]",
+    )
 
     console.print(table)
+
+    if not parcel.is_harmonized:
+        console.print(
+            _("⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
+              "possessors (kataster) and registered owners (ZK) may differ."),
+            style="yellow",
+        )
 
 
 def _print_landuse_info(parcel) -> None:
@@ -379,6 +390,7 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
         "address": parcel.address,
         "area_m2": parcel.area_numeric,
         "building_permitted": parcel.has_building_right,
+        "cadastre_lr_harmonized": parcel.is_harmonized,
     }
 
     if detail in ["full", "landuse"]:
