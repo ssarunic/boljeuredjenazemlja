@@ -109,19 +109,13 @@
     "lrEntries": []
   },
   "possessionSheetA1": {
-    "cadParcels": [
+    "lrParcels": [
       {
         "parcelId": 6564837,
         "parcelNumber": "118/4",
-        "cadMunicipalityId": 2387,
-        "cadMunicipalityRegNum": "334979",
-        "cadMunicipalityName": "TESTMUNICIPALITY",
-        "institutionId": 114,
         "address": "TEST FIELD",
         "area": "409",
-        "buildingRemark": 0,
-        "detailSheetNumber": "4",
-        "hasBuildingRight": false,
+        "statusInLrUnit": 0,
         "parcelParts": [
           {
             "parcelPartId": 74358714,
@@ -131,37 +125,14 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ],
-        "possessionSheets": [
-          {
-            "possessionSheetId": 14823991,
-            "possessionSheetNumber": "769",
-            "cadMunicipalityId": 2387,
-            "cadMunicipalityRegNum": "334979",
-            "cadMunicipalityName": "TESTMUNICIPALITY",
-            "possessors": []
-          }
-        ],
-        "isAdditionalDataSet": false,
-        "legalRegime": false,
-        "graphic": true,
-        "alphaNumeric": true,
-        "status": 0,
-        "resourceCode": 0,
-        "isHarmonized": false
+        ]
       },
       {
         "parcelId": 6564918,
         "parcelNumber": "192/3",
-        "cadMunicipalityId": 2387,
-        "cadMunicipalityRegNum": "334979",
-        "cadMunicipalityName": "TESTMUNICIPALITY",
-        "institutionId": 114,
         "address": "TEST AREA",
         "area": "322",
-        "buildingRemark": 0,
-        "detailSheetNumber": "4",
-        "hasBuildingRight": false,
+        "statusInLrUnit": 0,
         "parcelParts": [
           {
             "parcelPartId": 74358715,
@@ -171,37 +142,14 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ],
-        "possessionSheets": [
-          {
-            "possessionSheetId": 14823991,
-            "possessionSheetNumber": "769",
-            "cadMunicipalityId": 2387,
-            "cadMunicipalityRegNum": "334979",
-            "cadMunicipalityName": "TESTMUNICIPALITY",
-            "possessors": []
-          }
-        ],
-        "isAdditionalDataSet": false,
-        "legalRegime": false,
-        "graphic": true,
-        "alphaNumeric": true,
-        "status": 0,
-        "resourceCode": 0,
-        "isHarmonized": false
+        ]
       },
       {
         "parcelId": 6565030,
         "parcelNumber": "279/6",
-        "cadMunicipalityId": 2387,
-        "cadMunicipalityRegNum": "334979",
-        "cadMunicipalityName": "TESTMUNICIPALITY",
-        "institutionId": 114,
         "address": "TEST LOCATION",
         "area": "1890",
-        "buildingRemark": 0,
-        "detailSheetNumber": "1",
-        "hasBuildingRight": false,
+        "statusInLrUnit": 0,
         "parcelParts": [
           {
             "parcelPartId": 74358720,
@@ -219,24 +167,7 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ],
-        "possessionSheets": [
-          {
-            "possessionSheetId": 14823991,
-            "possessionSheetNumber": "769",
-            "cadMunicipalityId": 2387,
-            "cadMunicipalityRegNum": "334979",
-            "cadMunicipalityName": "TESTMUNICIPALITY",
-            "possessors": []
-          }
-        ],
-        "isAdditionalDataSet": false,
-        "legalRegime": false,
-        "graphic": true,
-        "alphaNumeric": true,
-        "status": 0,
-        "resourceCode": 0,
-        "isHarmonized": false
+        ]
       }
     ]
   },

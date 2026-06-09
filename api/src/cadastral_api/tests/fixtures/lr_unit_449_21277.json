@@ -1,0 +1,195 @@
+[
+  {
+    "lrUnitId": 12337536,
+    "lrUnitNumber": "449",
+    "mainBookId": 21277,
+    "mainBookName": "SAVAR",
+    "cadastreMunicipalityId": 2387,
+    "institutionId": 284,
+    "institutionName": "Zemljišnoknjižni odjel Zadar",
+    "status": "0",
+    "statusName": "Aktivan",
+    "verificated": true,
+    "condominiums": false,
+    "lrUnitTypeId": 1,
+    "lrUnitTypeName": "VLASNIČKI",
+    "lastDiaryNumber": "Z-15677/2026",
+    "activePlumbs": [
+      {
+        "cadPlumb": false,
+        "fileNumber": "Z-12564/2026"
+      },
+      {
+        "cadPlumb": false,
+        "fileNumber": "Z-18444/2026"
+      }
+    ],
+    "ownershipSheetB": {
+      "lrUnitShares": [
+        {
+          "description": "127. Suvlasnički dio: 1/4",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66778199,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 14.05.2026.g. pod brojem Z-15677/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OVJEREN KOD JAVNE BILJEŽNICE SUZANE HRABRA U ZADRU POD BROJEM OV-4019/2026 14.05.2026",
+                "orderNumber": "127.2"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128496,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "127"
+        },
+        {
+          "description": "128. Suvlasnički dio: 1/4",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66513445,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+                "orderNumber": "128.1"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128497,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "128"
+        },
+        {
+          "description": "129. Suvlasnički dio: 1/4",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66513446,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+                "orderNumber": "129.1"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128498,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "129"
+        },
+        {
+          "description": "130. Suvlasnički dio: 1/12",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66513447,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+                "orderNumber": "130.1"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128499,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "130"
+        },
+        {
+          "description": "131. Suvlasnički dio: 1/12",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66513448,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+                "orderNumber": "131.1"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128500,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "131"
+        },
+        {
+          "description": "132. Suvlasnički dio: 1/12",
+          "lrOwners": [
+            {
+              "lrOwnerId": 66513449,
+              "name": "REDACTED",
+              "address": "REDACTED",
+              "taxNumber": "00000000000",
+              "lrEntry": {
+                "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+                "orderNumber": "132.1"
+              }
+            }
+          ],
+          "lrUnitShareId": 51128501,
+          "subSharesAndEntries": [],
+          "status": 0,
+          "orderNumber": "132"
+        }
+      ],
+      "lrEntries": []
+    },
+    "possessionSheetA1": {
+      "lrParcels": [
+        {
+          "parcelId": 36370854,
+          "parcelNumber": "1122/1",
+          "address": "OVČJA",
+          "area": "3291",
+          "statusInLrUnit": 0,
+          "parcelParts": [
+            {
+              "name": "MASLINIK",
+              "area": "3095",
+              "building": false
+            },
+            {
+              "parcelPartId": 14470654,
+              "name": "STAMBENA ZGRADA, Savar, Savar 103",
+              "type": "Zgrada",
+              "area": "158",
+              "buildingRight": 0,
+              "building": true
+            },
+            {
+              "parcelPartId": 14470655,
+              "name": "POMOĆNA ZGRADA",
+              "type": "Zgrada",
+              "area": "16",
+              "buildingRight": 0,
+              "building": true
+            },
+            {
+              "parcelPartId": 14470656,
+              "name": "POMOĆNA ZGRADA",
+              "type": "Zgrada",
+              "area": "22",
+              "buildingRight": 0,
+              "building": true
+            }
+          ]
+        }
+      ]
+    },
+    "possessionSheetA2": {
+      "lrEntries": []
+    },
+    "encumbranceSheetC": {
+      "lrEntryGroups": []
+    }
+  }
+]

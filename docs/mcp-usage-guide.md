@@ -37,7 +37,7 @@ Fetches detailed information for multiple parcels in one operation.
     {"parcel_id": "6564817"},
     {"parcel_id": "1234567"}
   ],
-  "include_owners": true
+  "source": "cadastre"
 }
 ```
 
@@ -48,11 +48,24 @@ Fetches detailed information for multiple parcels in one operation.
     {"parcel_number": "103/2", "municipality": "SAVAR"},
     {"parcel_number": "45", "municipality": "334979"}
   ],
-  "include_owners": true
+  "source": "cadastre"
 }
 ```
 
-**New:** Each successful result now includes **LR unit references**:
+**Register selection (`source`):** cadastre POSSESSORS (posjedovni list) are
+often NOT the registered land-registry OWNERS (vlasnici / vlastovnica / B-list).
+Choose explicitly:
+
+- `"cadastre"` (default) - include possession-sheet possessors.
+- `"land_registry"` - omit possessors; return the LR unit reference + a hint to
+  fetch true owners via `get_lr_unit_from_parcel` / `batch_lr_units`. Use this
+  for "vlasnik" / "prema zemljišnim knjigama".
+- `"none"` - parcel metadata only.
+
+Every person record is tagged with a `register` field (`"cadastre"` |
+`"land_registry"`) so the two can never be confused.
+
+**LR unit references:** Each successful result includes:
 - `lr_unit.lr_unit_number` - Land registry unit number
 - `lr_unit.main_book_id` - Main book ID
 
@@ -162,11 +175,19 @@ Gets land registry unit information directly if you already know the unit number
 {
   "unit_number": "657",
   "main_book_id": 21277,
-  "include_full_details": true
+  "detail": "ownership"
 }
 ```
 
-**Note:** Usually it's easier to use `get_lr_unit_from_parcel` instead, which handles the lookup for you.
+**Response shaping (`detail`):** `"summary"` | `"ownership"` (default) | `"full"`.
+`"ownership"` returns B-list owners with structured shares (`share = {num, den,
+decimal}`) plus a summary, and fits in context; `"full"` returns every sheet
+(geometry, A2, C-sheet, raw IDs). Pass `owners_limit` to cap owner rows on large
+units (`total_owners` / `owners_truncated` report what was capped).
+
+**Note:** Usually it's easier to use `get_lr_unit_from_parcel` instead, which
+handles the lookup for you - and it resolves the unit even when the parcel has
+no direct lr_unit (reporting `lr_unit_derived_from_links`).
 
 ---
 
@@ -182,7 +203,7 @@ Fetches multiple land registry units in a single operation. Use this after `batc
     {"lr_unit_number": "657", "main_book_id": 21277},
     {"lr_unit_number": "123", "main_book_id": 21277}
   ],
-  "include_full_details": true
+  "detail": "ownership"
 }
 ```
 
@@ -261,8 +282,8 @@ find_parcel("103/2", "SAVAR")
 result = find_parcel("103/2", "SAVAR")
 parcel_id = result["parcel_id"]
 
-# Step 2: Get details
-details = batch_fetch_parcels([{"parcel_id": parcel_id}], include_owners=True)
+# Step 2: Get details (cadastre possessors)
+details = batch_fetch_parcels([{"parcel_id": parcel_id}], source="cadastre")
 ```
 
 ### Tip 3: Batch operations are efficient
@@ -274,7 +295,7 @@ batch_fetch_parcels([
     {"parcel_id": "6564817"},
     {"parcel_id": "7891234"},
     {"parcel_id": "5678901"}
-], include_owners=True)
+], source="cadastre")
 
 # Avoid - multiple calls
 # (This would be slower and hit rate limits)
@@ -350,9 +371,11 @@ else:
 - Try searching with municipality code instead of name
 
 ### "Could not retrieve land registry unit"
-- This is the known Pydantic validation issue
-- Use `batch_fetch_parcels` with `include_owners=true` instead
-- This gives you possession sheet data (similar to ownership)
+- Verify the parcel/unit number and municipality
+- `get_lr_unit_from_parcel` resolves the unit even when the parcel has no direct
+  lr_unit (via parcel links); a genuine `parcel_not_in_land_registry` means the
+  parcel is cadastre-only - use `source="cadastre"` on `batch_fetch_parcels` for
+  its possessors (note: possessors are NOT the registered owners)
 
 ### Rate limiting
 - The API has rate limits (0.75s between requests by default)

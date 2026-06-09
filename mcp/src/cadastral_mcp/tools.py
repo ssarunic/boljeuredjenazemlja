@@ -80,37 +80,81 @@ class CadastralTools:
                 f"and municipality."
             ) from e
 
+    #: Valid register sources for parcel-level ownership data.
+    VALID_SOURCES = ("cadastre", "land_registry", "none")
+
+    @staticmethod
+    def _lr_unit_hint(parcel: Any) -> dict[str, Any]:
+        """Build a routing hint to the land-registry owners for a parcel.
+
+        The direct ``lr_unit`` may be null while the unit is still reachable via
+        parcel links; surface whichever is available so the caller can chain to
+        get_lr_unit_from_parcel / batch_lr_units for the true owners.
+        """
+        ref = None
+        derived_from_links = False
+        lr_unit = getattr(parcel, "lr_unit", None)
+        if lr_unit is not None:
+            ref = {
+                "lr_unit_number": lr_unit.lr_unit_number,
+                "main_book_id": lr_unit.main_book_id,
+            }
+        else:
+            links = getattr(parcel, "lr_units_from_parcel_links", None) or []
+            if links:
+                ref = {
+                    "lr_unit_number": links[0].lr_unit_number,
+                    "main_book_id": links[0].main_book_id,
+                }
+                derived_from_links = True
+        return {
+            "message": (
+                "Cadastre possessors omitted. For registered owners "
+                "(vlasnici / vlastovnica B-list), call get_lr_unit_from_parcel "
+                "or batch_lr_units with this reference."
+            ),
+            "lr_unit_ref": ref,
+            "in_land_registry": ref is not None,
+            "lr_unit_derived_from_links": derived_from_links,
+        }
+
     async def batch_fetch_parcels(
-        self, parcels: list[dict[str, str]], include_owners: bool = False
+        self,
+        parcels: list[dict[str, str]],
+        source: str = "cadastre",
     ) -> dict[str, Any]:
         """
         Fetch multiple parcels in a single operation.
 
+        ⚠️ Cadastre possessors (posjedovni list) and land-registry owners
+        (vlasnici / vlastovnica / B-list) are DIFFERENT registers and frequently
+        list different people. Every person record is tagged with a ``register``
+        field so the two can never be confused.
+
+        Register selection (``source``):
+        - "cadastre" (default): include the possession sheet (posjedovni list),
+          i.e. cadastre POSSESSORS - NOT necessarily the registered owners.
+        - "land_registry": omit possessors and instead return, per parcel, the
+          land-registry unit reference plus a hint to fetch the true owners via
+          get_lr_unit_from_parcel / batch_lr_units.
+        - "none": parcel metadata only.
+
         Args:
-            parcels: List of parcel specifications, each with:
-                - parcel_number: Cadastral number (e.g., "103/2")
-                - municipality: Municipality name or code
-                OR
-                - parcel_id: Direct parcel ID if already known
-            include_owners: Whether to include ownership information
+            parcels: List of parcel specs, each with parcel_number + municipality
+                OR a direct parcel_id.
+            source: One of "cadastre", "land_registry", "none".
 
         Returns:
-            Dictionary with results array and summary statistics
-
-        Example:
-            >>> await batch_fetch_parcels([
-            ...     {"parcel_number": "103/2", "municipality": "SAVAR"},
-            ...     {"parcel_number": "45", "municipality": "LUKA"}
-            ... ])
-            {
-                "results": [...],
-                "total": 2,
-                "successful": 2,
-                "failed": 0
-            }
+            Dictionary with results array, summary statistics, and the resolved
+            ``source``.
         """
+        if source not in self.VALID_SOURCES:
+            raise ValueError(
+                f"Invalid source '{source}'. Expected one of {self.VALID_SOURCES}."
+            )
+
         try:
-            logger.info(f"Batch fetching {len(parcels)} parcels (include_owners={include_owners})")
+            logger.info(f"Batch fetching {len(parcels)} parcels (source={source})")
 
             results: list[dict[str, Any]] = []
             successful = 0
@@ -137,12 +181,17 @@ class CadastralTools:
 
                     result_data = parcel.model_dump(mode="json")
 
-                    # Optionally filter out ownership data
-                    if not include_owners:
+                    # Possession sheets are CADASTRE data; only include them when
+                    # cadastre possessors were explicitly requested.
+                    if source != "cadastre":
                         result_data.pop("possession_sheets", None)
+                    if source == "land_registry":
+                        result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
 
                     results.append({
                         "status": "success",
+                        "register": source,
+                        "cadastre_lr_harmonized": parcel.is_harmonized,
                         "data": result_data,
                     })
                     successful += 1
@@ -161,6 +210,7 @@ class CadastralTools:
                 "total": len(parcels),
                 "successful": successful,
                 "failed": failed,
+                "source": source,
             }
 
         except Exception as e:
@@ -288,82 +338,121 @@ class CadastralTools:
             logger.error(f"Failed to list cadastral offices: {e}", exc_info=True)
             raise ValueError("Could not retrieve cadastral offices.") from e
 
+    #: Valid detail levels for land-registry unit output.
+    VALID_DETAIL = ("summary", "ownership", "full")
+
+    @staticmethod
+    def _ownership_rows(
+        lr_unit: Any, owners_limit: int | None
+    ) -> tuple[list[dict[str, Any]], int, bool]:
+        """Owner rows for an LR unit, capped at owners_limit.
+
+        Returns (rows, total_owners, truncated). The canonical row shape comes
+        from OwnershipSheetB.owner_rows() (shared with the CLI).
+        """
+        rows = lr_unit.ownership_sheet_b.owner_rows()
+        total = len(rows)
+        truncated = owners_limit is not None and total > owners_limit
+        if truncated:
+            rows = rows[:owners_limit]
+        return rows, total, truncated
+
+    @classmethod
+    def _shape_lr_unit(
+        cls, lr_unit: Any, detail: str, owners_limit: int | None
+    ) -> dict[str, Any]:
+        """Shape an LR unit for output at the requested detail level.
+
+        - "summary": identity + summary statistics only.
+        - "ownership" (default): B-list owners (with structured shares) + summary;
+          drops geometry, Sheet A2, the C-sheet, and raw internal IDs.
+        - "full": every sheet (raw model dump) + summary.
+        """
+        if detail not in cls.VALID_DETAIL:
+            raise ValueError(
+                f"Invalid detail '{detail}'. Expected one of {cls.VALID_DETAIL}."
+            )
+        summary = lr_unit.summary()
+        is_condo = lr_unit.is_condominium()
+
+        if detail == "full":
+            result = lr_unit.model_dump(mode="json")
+            result["summary"] = summary
+            if is_condo:
+                result["is_condominium"] = True
+                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
+            return result
+
+        if detail == "summary":
+            result = {
+                "lr_unit_number": lr_unit.lr_unit_number,
+                "main_book_name": lr_unit.main_book_name,
+                "institution_name": lr_unit.institution_name,
+                "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+                "summary": summary,
+            }
+            if is_condo:
+                result["is_condominium"] = True
+                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
+            return result
+
+        # detail == "ownership"
+        owners, total, truncated = cls._ownership_rows(lr_unit, owners_limit)
+        return {
+            "lr_unit_number": lr_unit.lr_unit_number,
+            "main_book_id": lr_unit.main_book_id,
+            "main_book_name": lr_unit.main_book_name,
+            "institution_name": lr_unit.institution_name,
+            "in_land_registry": True,
+            "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+            "is_condominium": is_condo,
+            "owners": owners,
+            "total_owners": total,
+            "owners_truncated": truncated,
+            "summary": summary,
+        }
+
     async def get_lr_unit(
         self,
         unit_number: str,
         main_book_id: int,
-        include_full_details: bool = True,
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
-        Get detailed land registry unit (zemljišnoknjižni uložak) information.
+        Get land registry unit (zemljišnoknjižni uložak) information.
 
         A land registry unit contains:
         - Sheet A (Popis čestica): All parcels in the unit
-        - Sheet B (Vlasnički list): Ownership information with shares
+        - Sheet B (Vlasnički list): Ownership (vlasnici) with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
         For condominiums (etažno vlasništvo), each share represents an individual
-        apartment/unit with additional fields:
-        - condominium_number: Apartment identifier (e.g., "E-16")
-        - condominium_descriptions: Detailed descriptions (floor, rooms, area)
+        apartment/unit (condominium_number, condominium_descriptions).
 
         Args:
             unit_number: LR unit number (e.g., "769")
             main_book_id: Main book ID (e.g., 21277)
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full" (default "ownership" -
+                B-list owners with structured shares + summary, no geometry/C-sheet).
+            owners_limit: Cap the number of owner rows returned (ownership detail);
+                total_owners and owners_truncated report the full count.
 
         Returns:
-            Dictionary with LR unit data including all sheets
-
-        Example:
-            >>> await get_lr_unit("769", 21277)
-            {
-                "lr_unit_number": "769",
-                "main_book_name": "SAVAR",
-                "ownership_sheet_b": {...},
-                "possessory_sheet_a1": {...},
-                "encumbrance_sheet_c": {...},
-                "summary": {
-                    "total_parcels": 3,
-                    "total_area_m2": 2621,
-                    "num_owners": 5,
-                    "has_encumbrances": True,
-                    "is_condominium": False
-                }
-            }
+            Dictionary shaped per ``detail``; owners carry a structured
+            ``share`` ({num, den, decimal}) and a ``register`` tag.
         """
+        if detail not in self.VALID_DETAIL:
+            raise ValueError(
+                f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
+            )
+
         try:
-            logger.info(f"Fetching LR unit {unit_number} from main book {main_book_id}")
-
-            # Fetch LR unit
+            logger.info(
+                f"Fetching LR unit {unit_number} from main book {main_book_id} (detail={detail})"
+            )
             lr_unit = self.client.get_lr_unit_detailed(unit_number, main_book_id)
-
-            # Convert to dict
-            result = lr_unit.model_dump(mode="json")
-
-            # Add summary (includes is_condominium and condominium_units)
-            result["summary"] = lr_unit.summary()
-
-            # Add condominium-specific info if applicable
-            if lr_unit.is_condominium():
-                result["is_condominium"] = True
-                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
-
-            # Optionally simplify if not full details
-            if not include_full_details:
-                # Keep only summary and basic info
-                simple_result = {
-                    "lr_unit_number": lr_unit.lr_unit_number,
-                    "main_book_name": lr_unit.main_book_name,
-                    "institution_name": lr_unit.institution_name,
-                    "summary": result["summary"],
-                }
-                if lr_unit.is_condominium():
-                    simple_result["is_condominium"] = True
-                    simple_result["condominium_units_count"] = lr_unit.get_condominium_units_count()
-                return simple_result
-
-            return result
+            return self._shape_lr_unit(lr_unit, detail, owners_limit)
 
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
@@ -376,77 +465,44 @@ class CadastralTools:
         self,
         parcel_number: str,
         municipality: str,
-        include_full_details: bool = True,
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
-        Get land registry unit information from a parcel number.
+        Get the land registry unit (and registered owners) for a parcel.
 
-        This is a convenience method that:
-        1. Searches for the parcel
-        2. Extracts the LR unit reference
-        3. Fetches the complete LR unit data
+        Convenience method that searches the parcel, resolves its LR unit
+        reference - falling back to parcel links when the parcel has no direct
+        lr_unit - and fetches the unit. The result reports
+        ``lr_unit_derived_from_links`` so callers know how it was resolved.
 
-        For condominiums (etažno vlasništvo), the response includes additional
-        fields for each ownership share:
-        - condominium_number: Apartment identifier (e.g., "E-16")
-        - condominium_descriptions: Detailed descriptions (floor, rooms, area)
+        Use this for "vlasnik" / "prema zemljišnim knjigama" questions; it
+        returns true land-registry owners (vlastovnica / B-list), not cadastre
+        possessors.
 
         Args:
             parcel_number: Cadastral parcel number (e.g., "279/6")
             municipality: Municipality name or code
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full" (default "ownership").
+            owners_limit: Cap owner rows (ownership detail); total_owners and
+                owners_truncated report the full count.
 
         Returns:
-            Dictionary with LR unit data including all sheets.
-            For condominiums, includes is_condominium and condominium_units_count.
-
-        Example:
-            >>> await get_lr_unit_from_parcel("279/6", "SAVAR")
-            {
-                "lr_unit_number": "769",
-                "main_book_name": "SAVAR",
-                "ownership_sheet_b": {...},
-                "summary": {
-                    "is_condominium": False,
-                    ...
-                },
-                ...
-            }
+            Dictionary shaped per ``detail``; owners carry a structured
+            ``share`` and a ``register`` tag.
         """
+        if detail not in self.VALID_DETAIL:
+            raise ValueError(
+                f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
+            )
+
         try:
-            logger.info(f"Fetching LR unit for parcel {parcel_number} in {municipality}")
-
-            # Resolve municipality
+            logger.info(
+                f"Fetching LR unit for parcel {parcel_number} in {municipality} (detail={detail})"
+            )
             muni_code = await self._resolve_municipality(municipality)
-
-            # Use API client's convenience method
             lr_unit = self.client.get_lr_unit_from_parcel(parcel_number, muni_code)
-
-            # Convert to dict
-            result = lr_unit.model_dump(mode="json")
-
-            # Add summary (includes is_condominium and condominium_units)
-            result["summary"] = lr_unit.summary()
-
-            # Add condominium-specific info if applicable
-            if lr_unit.is_condominium():
-                result["is_condominium"] = True
-                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
-
-            # Optionally simplify if not full details
-            if not include_full_details:
-                simple_result = {
-                    "lr_unit_number": lr_unit.lr_unit_number,
-                    "main_book_name": lr_unit.main_book_name,
-                    "institution_name": lr_unit.institution_name,
-                    "summary": result["summary"],
-                }
-                if lr_unit.is_condominium():
-                    simple_result["is_condominium"] = True
-                    simple_result["condominium_units_count"] = lr_unit.get_condominium_units_count()
-                return simple_result
-
-            return result
+            return self._shape_lr_unit(lr_unit, detail, owners_limit)
 
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch LR unit from parcel {parcel_number}: {e}", exc_info=True)
@@ -458,7 +514,8 @@ class CadastralTools:
     async def batch_lr_units(
         self,
         lr_units: list[dict[str, Any]],
-        include_full_details: bool = True,
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
         Fetch multiple land registry units in a single operation.
@@ -478,7 +535,9 @@ class CadastralTools:
             lr_units: List of LR unit specifications, each with:
                 - lr_unit_number: LR unit number (e.g., "769")
                 - main_book_id: Main book ID (e.g., 21277)
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full" (default "ownership"),
+                applied to every unit.
+            owners_limit: Cap owner rows per unit (ownership detail).
 
         Returns:
             Dictionary with results array and summary statistics:
@@ -501,8 +560,13 @@ class CadastralTools:
                 "condominiums_found": 1
             }
         """
+        if detail not in self.VALID_DETAIL:
+            raise ValueError(
+                f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
+            )
+
         try:
-            logger.info(f"Batch fetching {len(lr_units)} LR units")
+            logger.info(f"Batch fetching {len(lr_units)} LR units (detail={detail})")
 
             results: list[dict[str, Any]] = []
             successful = 0
@@ -540,28 +604,12 @@ class CadastralTools:
                     # Fetch LR unit
                     lr_unit = self.client.get_lr_unit_detailed(lr_unit_number, main_book_id)
 
-                    # Convert to dict
-                    result_data = lr_unit.model_dump(mode="json")
-                    result_data["summary"] = lr_unit.summary()
+                    # Shape per requested detail level
+                    result_data = self._shape_lr_unit(lr_unit, detail, owners_limit)
 
-                    # Check if condominium
                     is_condo = lr_unit.is_condominium()
                     if is_condo:
                         condominiums_found += 1
-                        result_data["is_condominium"] = True
-                        result_data["condominium_units_count"] = lr_unit.get_condominium_units_count()
-
-                    # Optionally simplify
-                    if not include_full_details:
-                        result_data = {
-                            "lr_unit_number": lr_unit.lr_unit_number,
-                            "main_book_name": lr_unit.main_book_name,
-                            "institution_name": lr_unit.institution_name,
-                            "summary": result_data["summary"],
-                        }
-                        if is_condo:
-                            result_data["is_condominium"] = True
-                            result_data["condominium_units_count"] = lr_unit.get_condominium_units_count()
 
                     result_entry = {
                         "status": "success",

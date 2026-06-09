@@ -178,8 +178,27 @@ def _print_basic_info(parcel) -> None:
     table.add_row(_("Address"), parcel.address or _("N/A"))
     table.add_row(_("Area"), f"{parcel.area_numeric:,} m²" if parcel.area_numeric else _("N/A"))
     table.add_row(_("Building Permitted"), _("Yes") if parcel.has_building_right else _("No"))
+    table.add_row(
+        _("Cadastre/LR harmonized"),
+        _("Yes") if parcel.is_harmonized else "[bold red]" + _("No") + "[/bold red]",
+    )
 
     console.print(table)
+
+    if not parcel.is_harmonized:
+        console.print(
+            _("⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
+              "possessors (kataster) and registered owners (ZK) may differ."),
+            style="yellow",
+        )
+        drill = (
+            f"cadastral get-lr-unit --from-parcel {parcel.parcel_number} "
+            f"-m {parcel.municipality_reg_num} --show-owners"
+        )
+        console.print(
+            "   " + _("To see the other register, run: {command}").format(command=drill),
+            style="dim",
+        )
 
 
 def _print_landuse_info(parcel) -> None:
@@ -217,16 +236,26 @@ def _print_landuse_info(parcel) -> None:
 
 
 def _print_ownership_info(parcel) -> None:
-    """Print ownership information."""
-    owners_text = ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
+    """Print cadastre possession-sheet data (posjedovni list).
+
+    These are cadastre POSSESSORS, which are frequently NOT the registered
+    land-registry owners. Registered owners (vlasnici) come from the land
+    registry B-list - use ``cadastral get-lr-unit`` for those.
+    """
+    possessors_text = ngettext("{count} possessor", "{count} possessors", parcel.total_owners).format(
         count=parcel.total_owners
     )
-    header = f"{_('OWNERSHIP')} ({owners_text})"
+    header = f"{_('POSSESSION SHEET (cadastre / posjedovni list)')} ({possessors_text})"
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
+    console.print(
+        _("Note: cadastre possessors may differ from registered owners. "
+          "For land-registry owners (vlasnici), use: cadastral get-lr-unit"),
+        style="dim",
+    )
 
     if not parcel.possession_sheets:
-        console.print(_("No ownership data available"), style="dim")
+        console.print(_("No possession data available"), style="dim")
         return
 
     for i, sheet in enumerate(parcel.possession_sheets, 1):
@@ -276,15 +305,24 @@ def _print_registry_info(parcel) -> None:
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
 
-    if not parcel.lr_unit:
-        console.print(_("No land registry data available"), style="dim")
+    lr = parcel.resolved_lr_unit()
+    if lr is None:
+        console.print(
+            _("This parcel is not in the land registry (cadastre only)"), style="dim"
+        )
         return
+
+    if parcel.lr_unit_from_links:
+        console.print(
+            _("(land registry unit resolved via related parcels - this parcel has "
+              "no direct unit)"),
+            style="dim",
+        )
 
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(_("Field"), style="bold")
     table.add_column(_("Value"))
 
-    lr = parcel.lr_unit
     table.add_row(_("Unit Number"), lr.lr_unit_number or _("N/A"))
     table.add_row(
         _("Main Book"),
@@ -369,6 +407,7 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
         "address": parcel.address,
         "area_m2": parcel.area_numeric,
         "building_permitted": parcel.has_building_right,
+        "cadastre_lr_harmonized": parcel.is_harmonized,
     }
 
     if detail in ["full", "landuse"]:

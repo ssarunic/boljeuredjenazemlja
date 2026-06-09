@@ -1,10 +1,13 @@
 """Land registry unit commands for CLI."""
 
+from typing import Any
+
 import click
 from rich.console import Console
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.models.entities import LandRegistryUnitDetailed
 from cadastral_api.i18n import _
 from cadastral_cli.formatters import print_error, print_output
 from cadastral_cli.lr_unit_output import print_lr_unit_full
@@ -102,6 +105,24 @@ def get_lr_unit(
                 # Rich table output
                 print_lr_unit_full(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
 
+                # Disclose cadastre/ZK divergence and offer the cadastre drill-down
+                # (only meaningful when we came from a specific parcel).
+                if from_parcel and lr_unit.cadastre_harmonized is False:
+                    console.print(
+                        _("⚠️  Cadastre and land registry are NOT harmonized for this "
+                          "parcel - possessors (kataster) and registered owners (ZK) "
+                          "may differ."),
+                        style="yellow",
+                    )
+                    drill = (
+                        f"cadastral get-parcel {from_parcel} "
+                        f"-m {municipality} --show-owners"
+                    )
+                    console.print(
+                        "   " + _("To see the other register, run: {command}").format(command=drill),
+                        style="dim",
+                    )
+
     except CadastralAPIError as e:
         if e.error_type == ErrorType.LR_UNIT_NOT_FOUND:
             print_error(_("Land registry unit not found"))
@@ -113,12 +134,12 @@ def get_lr_unit(
 
 
 def _format_structured_data(
-    lr_unit,
+    lr_unit: LandRegistryUnitDetailed,
     show_owners: bool,
     show_parcels: bool,
     show_encumbrances: bool,
     show_all: bool,
-) -> dict:
+) -> dict[str, Any]:
     """Format LR unit data for JSON/CSV output."""
     data = {
         "lr_unit_number": lr_unit.lr_unit_number,
@@ -127,6 +148,8 @@ def _format_structured_data(
         "status": lr_unit.status_name,
         "unit_type": lr_unit.lr_unit_type_name,
         "last_diary_number": lr_unit.last_diary_number,
+        "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
+        "cadastre_harmonized": lr_unit.cadastre_harmonized,
     }
 
     # Add summary
@@ -135,17 +158,7 @@ def _format_structured_data(
 
     # Add owners if requested
     if show_owners or show_all:
-        owners = []
-        for share in lr_unit.ownership_sheet_b.lr_unit_shares:
-            if share.is_active:
-                for owner in share.owners:
-                    owners.append({
-                        "name": owner.name,
-                        "address": owner.address,
-                        "tax_number": owner.tax_number,
-                        "share": share.description,
-                    })
-        data["owners"] = owners
+        data["owners"] = lr_unit.ownership_sheet_b.owner_rows()
 
     # Add parcels if requested
     if show_parcels or show_all:

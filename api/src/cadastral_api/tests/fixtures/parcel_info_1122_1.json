@@ -1,0 +1,652 @@
+{
+  "parcelId": 6566195,
+  "parcelNumber": "1122/1",
+  "cadMunicipalityId": 2387,
+  "cadMunicipalityRegNum": "334979",
+  "cadMunicipalityName": "SAVAR",
+  "institutionId": 114,
+  "address": "REDACTED",
+  "area": "1618",
+  "buildingRemark": 0,
+  "detailSheetNumber": "7",
+  "hasBuildingRight": false,
+  "parcelParts": [
+    {
+      "parcelPartId": 64022942,
+      "name": "REDACTED",
+      "area": "809",
+      "possessionSheetId": 11731543,
+      "possessionSheetNumber": "363",
+      "lastChangeLogFileNum": "UP/I 932-07/2026-02/1217",
+      "lastChangeLogNumber": "13/2026",
+      "building": false
+    },
+    {
+      "parcelPartId": 64022943,
+      "name": "REDACTED",
+      "area": "809",
+      "possessionSheetId": 11731543,
+      "possessionSheetNumber": "363",
+      "lastChangeLogFileNum": "UP/I 932-07/2026-02/1217",
+      "lastChangeLogNumber": "13/2026",
+      "building": false
+    }
+  ],
+  "possessionSheets": [
+    {
+      "possessionSheetId": 11731543,
+      "possessionSheetNumber": "363",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "REDACTED",
+          "ownership": "1/128"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/600",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/128"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "5/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/192",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/1152",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/48",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/144",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "32/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "160/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/112"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/112"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "240/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "60/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/1792",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "2/80",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/128"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/288",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/1152",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/144",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "32/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/80"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/360"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "3/1920",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "27/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/256",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/240"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "2/240",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/240",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/48",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "80/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/192",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/224",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/144",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/1152",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/144",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "60/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/480",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/112"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/320",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "60/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "120/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/576",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/128"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "3/120"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/960"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1728",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/36",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/320",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/320",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "60/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/192",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/1600"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "3/1600"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/48"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/48"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "240/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "80/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "5/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1728",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/1152",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/80"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/896"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "27/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/240"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1728",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/768",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/192",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1080",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1080",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/576",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/1600"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/120",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/120"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/600",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/720"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "2/48"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/256",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/224",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1728",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "32/7680"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/80",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "3/1920",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "3/200",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "15/1792",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "27/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/2160"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/480"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/240"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/96"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "80/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/576",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "1/256",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "9/6400",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "32/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "32/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "40/7680",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "5/3584",
+          "address": "REDACTED"
+        },
+        {
+          "name": "REDACTED",
+          "ownership": "7/1080",
+          "address": "REDACTED"
+        }
+      ]
+    }
+  ],
+  "parcelLinks": [
+    {
+      "parcelId": 36370854,
+      "parcelNumber": "1122/1",
+      "address": "REDACTED",
+      "area": "3291",
+      "lrUnit": {
+        "lrUnitId": 12337536,
+        "lrUnitNumber": "449",
+        "mainBookId": 21277,
+        "mainBookName": "SAVAR",
+        "cadastreMunicipalityId": 2387,
+        "status": "0",
+        "verificated": false,
+        "condominiums": false
+      },
+      "parcelParts": []
+    }
+  ],
+  "lrUnitsFromParcelLinks": [
+    {
+      "lrUnitId": 12337536,
+      "lrUnitNumber": "449",
+      "mainBookId": 21277,
+      "mainBookName": "SAVAR",
+      "cadastreMunicipalityId": 2387,
+      "institutionId": 284,
+      "institutionName": "Zemljišnoknjižni odjel Zadar",
+      "status": "0",
+      "statusName": "Aktivan",
+      "verificated": false,
+      "condominiums": false,
+      "lrUnitTypeId": 1,
+      "lrUnitTypeName": "VLASNIČKI"
+    }
+  ],
+  "isAdditionalDataSet": false,
+  "legalRegime": false,
+  "graphic": true,
+  "alphaNumeric": true,
+  "status": 0,
+  "resourceCode": 0,
+  "isHarmonized": false
+}

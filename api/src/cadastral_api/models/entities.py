@@ -21,7 +21,17 @@ from fractions import Fraction
 from enum import Enum
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
+
+from ..utils import normalize_name, parse_fraction
 
 
 class MunicipalitySearchResult(BaseModel):
@@ -122,6 +132,33 @@ class Possessor(BaseModel):
         alias="condominiumShareOwnership",
         description="Share of common areas (e.g., '61/4651')",
     )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def register(self) -> str:
+        """Source register: cadastre (kataster / posjedovni list).
+
+        A possessor is NOT necessarily the land-registry owner; the registered
+        owner (vlasnik) lives in the land registry B-list (vlastovnica). See
+        the Party model, tagged ``land_registry``.
+        """
+        return "cadastre"
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def name_normalized(self) -> str:
+        """Display/matching-normalized form of ``name`` (raw value preserved)."""
+        return normalize_name(self.name)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def ownership_fraction(self) -> dict | None:
+        """Structured ownership fraction ``{num, den, decimal}`` or None."""
+        parsed = parse_fraction(self.ownership)
+        if parsed is None:
+            return None
+        num, den = parsed
+        return {"num": num, "den": den, "decimal": num / den}
 
     @computed_field  # type: ignore[misc]
     @property
@@ -434,6 +471,28 @@ class ParcelInfo(BaseModel):
         """Convenience property for cad_municipality_reg_num."""
         return self.cad_municipality_reg_num
 
+    def resolved_lr_unit(self) -> "LandRegistryUnit | None":
+        """The parcel's land-registry unit, falling back to parcel links.
+
+        Returns the direct ``lr_unit`` when present, otherwise the first unit
+        reachable via ``lr_units_from_parcel_links`` / ``parcel_links``. Returns
+        None only when the parcel is genuinely not in the land registry. A null
+        direct ``lr_unit`` does NOT mean "no land registry data".
+        """
+        if self.lr_unit is not None:
+            return self.lr_unit
+        for unit in self.lr_units_from_parcel_links or []:
+            return unit
+        for link in self.parcel_links or []:
+            if link.lr_unit is not None:
+                return link.lr_unit
+        return None
+
+    @property
+    def lr_unit_from_links(self) -> bool:
+        """True if the LR unit is reachable only via parcel links (no direct lr_unit)."""
+        return self.lr_unit is None and self.resolved_lr_unit() is not None
+
     @field_validator("area")
     @classmethod
     def validate_area(cls, v: str) -> str:
@@ -488,6 +547,22 @@ class Party(BaseModel):
     party_type: PartyType = Field(
         PartyType.UNKNOWN, description="Type of legal person"
     )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def register(self) -> str:
+        """Source register: land registry (zemljišne knjige / vlastovnica B-list).
+
+        Distinguishes a registered land-registry party from a cadastre
+        possessor (see the Possessor model, tagged ``cadastre``).
+        """
+        return "land_registry"
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def name_normalized(self) -> str:
+        """Display/matching-normalized form of ``name`` (raw value preserved)."""
+        return normalize_name(self.name)
 
 
 class SheetType(str, Enum):
@@ -599,6 +674,20 @@ class LRShare(BaseModel):
         description="Apartment descriptions (floor, rooms, area)",
     )
 
+    @model_validator(mode="after")
+    def _populate_fraction_from_description(self) -> "LRShare":
+        """Fill numerator/denominator from the description string.
+
+        The API leaves these structured fields empty and embeds the fraction in
+        the description (e.g. "127. Suvlasnički dio: 1/4"). Parsing it here
+        revives ``fraction_decimal`` and ``total_ownership_accounted``.
+        """
+        if self.numerator is None or self.denominator is None:
+            parsed = parse_fraction(self.description)
+            if parsed is not None:
+                self.numerator, self.denominator = parsed
+        return self
+
     @computed_field  # type: ignore[misc]
     @property
     def is_active(self) -> bool:
@@ -618,6 +707,18 @@ class LRShare(BaseModel):
             return self.numerator / self.denominator
         return None
 
+    @computed_field  # type: ignore[misc]
+    @property
+    def share_fraction(self) -> dict | None:
+        """Structured ownership fraction ``{num, den, decimal}`` or None."""
+        if self.numerator is not None and self.denominator:
+            return {
+                "num": self.numerator,
+                "den": self.denominator,
+                "decimal": self.fraction_decimal,
+            }
+        return None
+
     def is_condominium_share(self) -> bool:
         """Check if this share represents a condominium unit (apartment)."""
         return self.condominium_number is not None
@@ -630,25 +731,52 @@ class LRShare(BaseModel):
         """Check if this share has nested co-owners (subSharesAndEntries)."""
         return len(self.sub_shares_and_entries) > 0
 
+    def _sub_shares(self) -> "list[LRShare]":
+        """Parse sub-shares (raw dicts) into LRShare objects, skipping invalid ones."""
+        subs: list[LRShare] = []
+        for sub in self.sub_shares_and_entries:
+            try:
+                subs.append(LRShare.model_validate(sub))
+            except Exception:
+                pass  # Skip malformed sub-share data
+        return subs
+
     def get_all_owners(self) -> list[Party]:
         """
-        Get all owners including those in sub-shares.
+        Get all owners, including co-owners nested in sub-shares.
 
-        For simple ownership, returns the direct owners.
-        For co-owned apartments, also extracts owners from subSharesAndEntries.
+        For simple ownership, returns the direct owners. For co-owned apartments
+        (etažno vlasništvo), recurses into subSharesAndEntries.
         """
         all_owners = list(self.owners)
-
-        # Extract owners from sub-shares (co-ownership within apartment)
-        for sub in self.sub_shares_and_entries:
-            sub_owners = sub.get("lrOwners", [])
-            for owner_data in sub_owners:
-                try:
-                    all_owners.append(Party.model_validate(owner_data))
-                except Exception:
-                    pass  # Skip invalid owner data
-
+        for sub in self._sub_shares():
+            all_owners.extend(sub.get_all_owners())
         return all_owners
+
+    def owner_rows(self, condominium_number: str | None = None) -> list[dict]:
+        """Flatten this share (and its sub-shares) into per-owner dicts.
+
+        Direct owners carry this share's fraction; co-owners of a sub-share carry
+        that sub-share's own fraction. The condominium number propagates from the
+        parent apartment share.
+        """
+        cn = self.condominium_number or condominium_number
+        rows = [
+            {
+                "name": owner.name,
+                "name_normalized": owner.name_normalized,
+                "tax_number": owner.tax_number,
+                "address": owner.address,
+                "register": owner.register,
+                "share": self.share_fraction,
+                "share_description": self.description,
+                "condominium_number": cn,
+            }
+            for owner in self.owners
+        ]
+        for sub in self._sub_shares():
+            rows.extend(sub.owner_rows(condominium_number=cn))
+        return rows
 
 
 class OwnershipSheetB(BaseModel):
@@ -673,11 +801,11 @@ class OwnershipSheetB(BaseModel):
     )
 
     def get_current_owners(self) -> list[Party]:
-        """Get all parties with active ownership shares."""
+        """Get all parties with active ownership shares, including sub-share co-owners."""
         owners = []
         for share in self.lr_unit_shares:
             if share.is_active:
-                owners.extend(share.owners)
+                owners.extend(share.get_all_owners())
         return owners
 
     def total_ownership_accounted(self) -> float | None:
@@ -696,6 +824,18 @@ class OwnershipSheetB(BaseModel):
                 has_fractions = True
 
         return total if has_fractions else None
+
+    def owner_rows(self) -> list[dict]:
+        """Flatten active shares (and their sub-share co-owners) into per-owner dicts.
+
+        A single canonical owner shape shared by the MCP response shaper and the
+        CLI output builders, so they cannot drift apart.
+        """
+        rows: list[dict] = []
+        for share in self.lr_unit_shares:
+            if share.is_active:
+                rows.extend(share.owner_rows())
+        return rows
 
 
 class RightType(str, Enum):
@@ -777,16 +917,21 @@ class LRUnitParcel(BaseModel):
 
     parcel_id: int = Field(alias="parcelId", description="Parcel identifier")
     parcel_number: str = Field(alias="parcelNumber", description="Cadastral parcel number")
-    cad_municipality_id: int = Field(
-        alias="cadMunicipalityId", description="Municipality internal ID"
+    # These fields are present on the standalone cadastral-parcel shape but are
+    # omitted from the leaner Sheet A1 (lrParcels) shape returned by the LR-unit
+    # endpoint, so they must be optional.
+    cad_municipality_id: int | None = Field(
+        None, alias="cadMunicipalityId", description="Municipality internal ID"
     )
-    cad_municipality_reg_num: str = Field(
-        alias="cadMunicipalityRegNum", description="Municipality registration number"
+    cad_municipality_reg_num: str | None = Field(
+        None, alias="cadMunicipalityRegNum", description="Municipality registration number"
     )
-    cad_municipality_name: str = Field(
-        alias="cadMunicipalityName", description="Municipality name"
+    cad_municipality_name: str | None = Field(
+        None, alias="cadMunicipalityName", description="Municipality name"
     )
-    institution_id: int = Field(alias="institutionId", description="Cadastral institution ID")
+    institution_id: int | None = Field(
+        None, alias="institutionId", description="Cadastral institution ID"
+    )
 
     # Parcel details
     address: str | None = Field(None, description="Parcel address")
@@ -819,6 +964,11 @@ class LRUnitParcel(BaseModel):
     graphic: bool = Field(True, description="Graphical data available")
     alpha_numeric: bool = Field(True, alias="alphaNumeric", description="Alphanumeric data available")
     status: int = Field(0, description="Parcel status code")
+    # Sheet A1 (lrParcels) reports the parcel's status within the LR unit under
+    # this distinct key; without an explicit field it is silently dropped.
+    status_in_lr_unit: int | None = Field(
+        None, alias="statusInLrUnit", description="Status of the parcel within the LR unit"
+    )
     resource_code: int = Field(0, alias="resourceCode", description="Resource code")
     is_harmonized: bool = Field(False, alias="isHarmonized", description="Data harmonization status")
 
@@ -844,8 +994,14 @@ class SheetAParcelList(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
+    # The live API returns the parcel list under "lrParcels". Some hand-authored
+    # mock fixtures use the legacy "cadParcels" key, so accept both. Mismatching
+    # this alias silently yields an empty list (and total_parcels == 0).
     cad_parcels: list[LRUnitParcel] = Field(
-        default_factory=list, alias="cadParcels", description="List of cadastral parcels"
+        default_factory=list,
+        validation_alias=AliasChoices("lrParcels", "cadParcels"),
+        serialization_alias="lrParcels",
+        description="List of cadastral parcels",
     )
 
     def total_area(self) -> int:
@@ -869,6 +1025,24 @@ class SheetAAdditionalInfo(BaseModel):
 
     lr_entries: list[LREntry] = Field(
         default_factory=list, alias="lrEntries", description="Additional entries"
+    )
+
+
+class Plumb(BaseModel):
+    """A pending land-registry entry (plomba).
+
+    A plomba marks an unresolved/in-progress request on the unit (e.g. an
+    ownership transfer or mortgage being processed). Its presence means the
+    current ownership/encumbrance picture may be about to change.
+    """
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+    file_number: str = Field(
+        alias="fileNumber", description="Diary/file number, e.g. 'Z-12564/2026'"
+    )
+    cad_plumb: bool = Field(
+        False, alias="cadPlumb", description="True if a cadastre plomba (else land registry)"
     )
 
 
@@ -918,9 +1092,9 @@ class LandRegistryUnitDetailed(BaseModel):
     # Last activity
     last_diary_number: str = Field(alias="lastDiaryNumber", description="Last diary number")
 
-    # Active plumbs (liens/restrictions)
-    active_plumbs: list[dict] = Field(
-        default_factory=list, alias="activePlumbs", description="Active plumbs/liens"
+    # Active plombe - pending/unresolved entries on the unit
+    active_plumbs: list[Plumb] = Field(
+        default_factory=list, alias="activePlumbs", description="Pending entries (plombe)"
     )
 
     # Sheet B: Ownership
@@ -941,6 +1115,18 @@ class LandRegistryUnitDetailed(BaseModel):
         alias="encumbranceSheetC", description="Encumbrance sheet (List C)"
     )
 
+    # Resolution provenance (not from the API): set by get_lr_unit_from_parcel
+    # when the unit was reached via parcel links because the parcel had no
+    # direct lr_unit.
+    lr_unit_derived_from_links: bool = Field(
+        False, description="True if resolved via parcel links rather than a direct lr_unit"
+    )
+    # Cadastre/LR harmonization of the source parcel (set by get_lr_unit_from_parcel);
+    # None when fetched directly by unit number (no parcel context).
+    cadastre_harmonized: bool | None = Field(
+        None, description="Source parcel's cadastre/LR harmonization status, if known"
+    )
+
     # Convenience methods
     def get_all_owners(self) -> list[Party]:
         """Get all current owners."""
@@ -953,6 +1139,10 @@ class LandRegistryUnitDetailed(BaseModel):
     def has_encumbrances(self) -> bool:
         """Check if unit has any encumbrances."""
         return self.encumbrance_sheet_c.has_encumbrances()
+
+    def has_pending_plombe(self) -> bool:
+        """Whether the unit has any pending entries (plombe) - changes in progress."""
+        return len(self.active_plumbs) > 0
 
     def is_condominium(self) -> bool:
         """
@@ -994,6 +1184,8 @@ class LandRegistryUnitDetailed(BaseModel):
             "total_area_m2": self.possessory_sheet_a1.total_area(),
             "num_owners": len(self.get_all_owners()),
             "has_encumbrances": self.has_encumbrances(),
+            "has_pending_plombe": self.has_pending_plombe(),
+            "pending_plombe": [p.file_number for p in self.active_plumbs],
             "is_condominium": self.is_condominium(),
         }
         if self.is_condominium():
