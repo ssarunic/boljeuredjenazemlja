@@ -471,6 +471,28 @@ class ParcelInfo(BaseModel):
         """Convenience property for cad_municipality_reg_num."""
         return self.cad_municipality_reg_num
 
+    def resolved_lr_unit(self) -> "LandRegistryUnit | None":
+        """The parcel's land-registry unit, falling back to parcel links.
+
+        Returns the direct ``lr_unit`` when present, otherwise the first unit
+        reachable via ``lr_units_from_parcel_links`` / ``parcel_links``. Returns
+        None only when the parcel is genuinely not in the land registry. A null
+        direct ``lr_unit`` does NOT mean "no land registry data".
+        """
+        if self.lr_unit is not None:
+            return self.lr_unit
+        for unit in self.lr_units_from_parcel_links or []:
+            return unit
+        for link in self.parcel_links or []:
+            if link.lr_unit is not None:
+                return link.lr_unit
+        return None
+
+    @property
+    def lr_unit_from_links(self) -> bool:
+        """True if the LR unit is reachable only via parcel links (no direct lr_unit)."""
+        return self.lr_unit is None and self.resolved_lr_unit() is not None
+
     @field_validator("area")
     @classmethod
     def validate_area(cls, v: str) -> str:

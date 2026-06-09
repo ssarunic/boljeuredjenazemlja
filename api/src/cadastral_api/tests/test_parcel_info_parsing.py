@@ -40,6 +40,15 @@ def test_lr_unit_null_but_resolvable_via_links(parcel_1122_1: ParcelInfo) -> Non
     assert parcel_1122_1.lr_units_from_parcel_links, "expected link-derived LR units"
 
 
+def test_resolved_lr_unit_does_not_falsely_report_no_data(parcel_1122_1: ParcelInfo) -> None:
+    """A null direct lr_unit must NOT be read as 'not in land registry' - the unit
+    is resolvable via parcel links (this drives the get-parcel display)."""
+    resolved = parcel_1122_1.resolved_lr_unit()
+    assert resolved is not None
+    assert resolved.lr_unit_number == "449"
+    assert parcel_1122_1.lr_unit_from_links is True
+
+
 def test_possession_sheet_possessors_parse(parcel_1122_1: ParcelInfo) -> None:
     """Cadastre possessors (posjedovni list) must parse, with their shares."""
     sheets = parcel_1122_1.possession_sheets

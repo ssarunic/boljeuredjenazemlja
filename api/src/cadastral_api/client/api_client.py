@@ -699,11 +699,7 @@ class CadastralAPIClient:
         carried by parcel links. Returns None when the parcel is not in the
         land registry at all.
         """
-        if parcel_info.lr_unit is not None:
-            return parcel_info.lr_unit.lr_unit_number, parcel_info.lr_unit.main_book_id
-        for unit in parcel_info.lr_units_from_parcel_links or []:
-            return unit.lr_unit_number, unit.main_book_id
-        for link in parcel_info.parcel_links or []:
-            if link.lr_unit is not None:
-                return link.lr_unit.lr_unit_number, link.lr_unit.main_book_id
-        return None
+        unit = parcel_info.resolved_lr_unit()
+        if unit is None:
+            return None
+        return unit.lr_unit_number, unit.main_book_id

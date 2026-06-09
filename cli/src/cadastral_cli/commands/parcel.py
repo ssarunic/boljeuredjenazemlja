@@ -297,15 +297,24 @@ def _print_registry_info(parcel) -> None:
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
 
-    if not parcel.lr_unit:
-        console.print(_("No land registry data available"), style="dim")
+    lr = parcel.resolved_lr_unit()
+    if lr is None:
+        console.print(
+            _("This parcel is not in the land registry (cadastre only)"), style="dim"
+        )
         return
+
+    if parcel.lr_unit_from_links:
+        console.print(
+            _("(land registry unit resolved via related parcels - this parcel has "
+              "no direct unit)"),
+            style="dim",
+        )
 
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(_("Field"), style="bold")
     table.add_column(_("Value"))
 
-    lr = parcel.lr_unit
     table.add_row(_("Unit Number"), lr.lr_unit_number or _("N/A"))
     table.add_row(
         _("Main Book"),
