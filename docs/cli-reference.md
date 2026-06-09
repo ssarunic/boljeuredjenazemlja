@@ -758,12 +758,14 @@ cadastral download-gis 334979 --output ./data --clear-cache
 
 ## Future Features (Phase 2+)
 
-- Batch operations with file input
 - Parallel processing
 - Configuration file support
 - Interactive mode
 - Shell completion (bash/zsh)
-- MCP server integration for LLMs
+
+> Batch operations with file input (`batch-fetch`, `batch-lr-unit`) and MCP
+> server integration are already implemented - see the batch commands above and
+> [mcp-usage-guide.md](mcp-usage-guide.md).
 
 ---
 
