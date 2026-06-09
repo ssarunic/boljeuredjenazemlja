@@ -90,8 +90,11 @@ def create_mcp_server() -> FastMCP:
     @mcp.tool()
     async def find_parcel(parcel_number: str, municipality: str) -> dict[str, Any]:
         """
-        Find a parcel and return basic information.
+        Find a cadastral parcel (čestica / katastarska čestica, k.č.) and return
+        basic information.
 
+        Use for a single parcel in the Croatian/Serbian cadastre (katastar) by
+        parcel number within a cadastral municipality (katastarska općina, k.o.).
         Aggregates the 3-step API workflow: resolve municipality, find parcel, return info.
 
         Args:
@@ -150,7 +153,8 @@ def create_mcp_server() -> FastMCP:
     @mcp.tool()
     async def resolve_municipality(name_or_code: str) -> dict[str, Any]:
         """
-        Resolve municipality name to registration code.
+        Resolve a cadastral municipality (katastarska općina, k.o.) name to its
+        registration number.
 
         Args:
             name_or_code: Municipality name (e.g., "SAVAR") or code (e.g., "334979")
@@ -166,9 +170,10 @@ def create_mcp_server() -> FastMCP:
         parcel_number: str, municipality: str, format: str = "geojson"
     ) -> dict[str, Any] | str:
         """
-        Get parcel boundary geometry.
+        Get a parcel's boundary geometry (granice čestice) as GeoJSON/WKT.
 
-        Downloads and caches GML data if needed, then extracts geometry.
+        For mapping cadastral parcels (katastarska čestica) - coordinates,
+        outline, area. Downloads and caches GML data if needed, then extracts geometry.
 
         Args:
             parcel_number: Cadastral parcel number (e.g., "103/2")
@@ -184,7 +189,8 @@ def create_mcp_server() -> FastMCP:
     @mcp.tool()
     async def list_cadastral_offices(filter_name: str | None = None) -> dict[str, Any]:
         """
-        List all cadastral offices, optionally filtered by name.
+        List cadastral offices (katastarski uredi / područni uredi), optionally
+        filtered by name.
 
         Args:
             filter_name: Optional filter string to match office names
