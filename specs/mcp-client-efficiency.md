@@ -18,8 +18,13 @@ Related: [mcp-server.md](mcp-server.md), [croatian-cadastral-api-specification.m
   The pre-existing `include_full_details` boolean was removed.
 - **F5 (structured data)** - shipped. Fractions parsed from the share
   description into `{num, den, decimal}`; `name_normalized` added.
-- **F1 (discovery)** - the remaining item (bilingual tool descriptions +
-  routing Skill).
+- **F1 (discovery)** - shipped. Bilingual (Croatian/English) trigger vocabulary
+  on all MCP tool descriptions, plus a routing skill at
+  `.claude/skills/cadastral-lookup/SKILL.md` that advertises the capability and
+  encodes the register/tool/shaping playbook.
+
+All of F1-F5 are now implemented (Phases 0-3 on branch
+`fix/lr-unit-a1-parsing-drift`).
 
 The section bodies below are the original design; where they differ from the
 as-built notes above, the as-built notes win.
