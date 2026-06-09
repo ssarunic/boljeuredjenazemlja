@@ -666,23 +666,44 @@ class CadastralAPIClient:
                 },
             )
 
-        if not parcel_info.lr_unit:
+        # Resolve the LR unit reference, falling back to parcel links when the
+        # parcel has no direct lr_unit (a common case - the unit is still
+        # reachable via lr_units_from_parcel_links / parcel_links).
+        ref = self._resolve_lr_unit_ref(parcel_info)
+        if ref is None:
             raise CadastralAPIError(
                 error_type=ErrorType.LR_UNIT_NOT_FOUND,
                 details={
                     "parcel_number": parcel_number,
                     "municipality": municipality,
-                    "reason": "parcel_has_no_lr_unit",
+                    "reason": "parcel_not_in_land_registry",
                 },
             )
-
-        # Extract LR unit details from parcel info
-        lr_unit_number = parcel_info.lr_unit.lr_unit_number
-        main_book_id = parcel_info.lr_unit.main_book_id
+        lr_unit_number, main_book_id = ref
+        derived_from_links = parcel_info.lr_unit is None
 
         # Get detailed LR unit information
-        return self.get_lr_unit_detailed(
+        lr_unit = self.get_lr_unit_detailed(
             lr_unit_number=lr_unit_number,
             main_book_id=main_book_id,
             historical_overview=historical_overview,
         )
+        lr_unit.lr_unit_derived_from_links = derived_from_links
+        return lr_unit
+
+    @staticmethod
+    def _resolve_lr_unit_ref(parcel_info: ParcelInfo) -> tuple[str, int] | None:
+        """Resolve an (lr_unit_number, main_book_id) reference from a parcel.
+
+        Prefers the direct ``lr_unit``; otherwise falls back to the units
+        carried by parcel links. Returns None when the parcel is not in the
+        land registry at all.
+        """
+        if parcel_info.lr_unit is not None:
+            return parcel_info.lr_unit.lr_unit_number, parcel_info.lr_unit.main_book_id
+        for unit in parcel_info.lr_units_from_parcel_links or []:
+            return unit.lr_unit_number, unit.main_book_id
+        for link in parcel_info.parcel_links or []:
+            if link.lr_unit is not None:
+                return link.lr_unit.lr_unit_number, link.lr_unit.main_book_id
+        return None

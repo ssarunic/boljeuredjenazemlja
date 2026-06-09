@@ -1,10 +1,13 @@
 """Land registry unit commands for CLI."""
 
+from typing import Any
+
 import click
 from rich.console import Console
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.models.entities import LandRegistryUnitDetailed
 from cadastral_api.i18n import _
 from cadastral_cli.formatters import print_error, print_output
 from cadastral_cli.lr_unit_output import print_lr_unit_full
@@ -113,12 +116,12 @@ def get_lr_unit(
 
 
 def _format_structured_data(
-    lr_unit,
+    lr_unit: LandRegistryUnitDetailed,
     show_owners: bool,
     show_parcels: bool,
     show_encumbrances: bool,
     show_all: bool,
-) -> dict:
+) -> dict[str, Any]:
     """Format LR unit data for JSON/CSV output."""
     data = {
         "lr_unit_number": lr_unit.lr_unit_number,
@@ -135,17 +138,7 @@ def _format_structured_data(
 
     # Add owners if requested
     if show_owners or show_all:
-        owners = []
-        for share in lr_unit.ownership_sheet_b.lr_unit_shares:
-            if share.is_active:
-                for owner in share.owners:
-                    owners.append({
-                        "name": owner.name,
-                        "address": owner.address,
-                        "tax_number": owner.tax_number,
-                        "share": share.description,
-                    })
-        data["owners"] = owners
+        data["owners"] = lr_unit.ownership_sheet_b.owner_rows()
 
     # Add parcels if requested
     if show_parcels or show_all:

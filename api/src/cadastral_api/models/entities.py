@@ -28,7 +28,10 @@ from pydantic import (
     Field,
     computed_field,
     field_validator,
+    model_validator,
 )
+
+from ..utils import normalize_name, parse_fraction
 
 
 class MunicipalitySearchResult(BaseModel):
@@ -140,6 +143,22 @@ class Possessor(BaseModel):
         the Party model, tagged ``land_registry``.
         """
         return "cadastre"
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def name_normalized(self) -> str:
+        """Display/matching-normalized form of ``name`` (raw value preserved)."""
+        return normalize_name(self.name)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def ownership_fraction(self) -> dict | None:
+        """Structured ownership fraction ``{num, den, decimal}`` or None."""
+        parsed = parse_fraction(self.ownership)
+        if parsed is None:
+            return None
+        num, den = parsed
+        return {"num": num, "den": den, "decimal": num / den}
 
     @computed_field  # type: ignore[misc]
     @property
@@ -517,6 +536,12 @@ class Party(BaseModel):
         """
         return "land_registry"
 
+    @computed_field  # type: ignore[misc]
+    @property
+    def name_normalized(self) -> str:
+        """Display/matching-normalized form of ``name`` (raw value preserved)."""
+        return normalize_name(self.name)
+
 
 class SheetType(str, Enum):
     """Land registry sheet type (List u zemljišnoj knjizi)."""
@@ -627,6 +652,20 @@ class LRShare(BaseModel):
         description="Apartment descriptions (floor, rooms, area)",
     )
 
+    @model_validator(mode="after")
+    def _populate_fraction_from_description(self) -> "LRShare":
+        """Fill numerator/denominator from the description string.
+
+        The API leaves these structured fields empty and embeds the fraction in
+        the description (e.g. "127. Suvlasnički dio: 1/4"). Parsing it here
+        revives ``fraction_decimal`` and ``total_ownership_accounted``.
+        """
+        if self.numerator is None or self.denominator is None:
+            parsed = parse_fraction(self.description)
+            if parsed is not None:
+                self.numerator, self.denominator = parsed
+        return self
+
     @computed_field  # type: ignore[misc]
     @property
     def is_active(self) -> bool:
@@ -644,6 +683,18 @@ class LRShare(BaseModel):
         """
         if self.numerator is not None and self.denominator and self.denominator > 0:
             return self.numerator / self.denominator
+        return None
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def share_fraction(self) -> dict | None:
+        """Structured ownership fraction ``{num, den, decimal}`` or None."""
+        if self.numerator is not None and self.denominator:
+            return {
+                "num": self.numerator,
+                "den": self.denominator,
+                "decimal": self.fraction_decimal,
+            }
         return None
 
     def is_condominium_share(self) -> bool:
@@ -724,6 +775,29 @@ class OwnershipSheetB(BaseModel):
                 has_fractions = True
 
         return total if has_fractions else None
+
+    def owner_rows(self) -> list[dict]:
+        """Flatten active shares into per-owner dicts with structured shares.
+
+        A single canonical owner shape shared by the MCP response shaper and the
+        CLI output builders, so they cannot drift apart.
+        """
+        rows: list[dict] = []
+        for share in self.lr_unit_shares:
+            if not share.is_active:
+                continue
+            for owner in share.owners:
+                rows.append({
+                    "name": owner.name,
+                    "name_normalized": owner.name_normalized,
+                    "tax_number": owner.tax_number,
+                    "address": owner.address,
+                    "register": owner.register,
+                    "share": share.share_fraction,
+                    "share_description": share.description,
+                    "condominium_number": share.condominium_number,
+                })
+        return rows
 
 
 class RightType(str, Enum):
@@ -983,6 +1057,13 @@ class LandRegistryUnitDetailed(BaseModel):
     # Sheet C: Encumbrances
     encumbrance_sheet_c: EncumbranceSheetC = Field(
         alias="encumbranceSheetC", description="Encumbrance sheet (List C)"
+    )
+
+    # Resolution provenance (not from the API): set by get_lr_unit_from_parcel
+    # when the unit was reached via parcel links because the parcel had no
+    # direct lr_unit.
+    lr_unit_derived_from_links: bool = Field(
+        False, description="True if resolved via parcel links rather than a direct lr_unit"
     )
 
     # Convenience methods

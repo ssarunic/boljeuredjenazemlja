@@ -108,7 +108,6 @@ def create_mcp_server() -> FastMCP:
     async def batch_fetch_parcels(
         parcels: list[dict[str, str]],
         source: str = "cadastre",
-        include_owners: bool | None = None,
     ) -> dict[str, Any]:
         """
         Fetch multiple parcels (čestice) in a single operation.
@@ -138,7 +137,6 @@ def create_mcp_server() -> FastMCP:
         Args:
             parcels: List of parcel specifications with parcel_number + municipality OR parcel_id
             source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
-            include_owners: DEPRECATED - use ``source`` (True -> "cadastre", False -> "none")
 
         Returns:
             Dictionary with results array and summary statistics, including the
@@ -147,9 +145,7 @@ def create_mcp_server() -> FastMCP:
             to batch_lr_units for detailed ownership shares and encumbrances.
         """
         logger.info(f"Tool invoked: batch_fetch_parcels({len(parcels)} parcels, source={source})")
-        return await tools_handler.batch_fetch_parcels(
-            parcels, source=source, include_owners=include_owners
-        )
+        return await tools_handler.batch_fetch_parcels(parcels, source=source)
 
     @mcp.tool()
     async def resolve_municipality(name_or_code: str) -> dict[str, Any]:
@@ -203,54 +199,72 @@ def create_mcp_server() -> FastMCP:
     async def get_lr_unit(
         unit_number: str,
         main_book_id: int,
-        include_full_details: bool = True
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
-        Get detailed land registry unit (zemljišnoknjižni uložak) information.
+        Get land registry unit (zemljišnoknjižni uložak) information.
 
         A land registry unit contains:
         - Sheet A (Popis čestica): All parcels in the unit
-        - Sheet B (Vlasnički list): Ownership information with shares
+        - Sheet B (Vlasnički list): Ownership (vlasnici) with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
         Args:
             unit_number: LR unit number (e.g., "769")
             main_book_id: Main book ID (e.g., 21277)
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full". Default "ownership" returns
+                B-list owners with structured shares + summary (no geometry/C-sheet),
+                which fits in context; "full" returns every sheet.
+            owners_limit: Cap owner rows (ownership detail); total_owners and
+                owners_truncated report the full count.
 
         Returns:
-            Dictionary with LR unit data including all sheets and summary
+            Dictionary shaped per ``detail``; owners carry a structured ``share``
+            ({num, den, decimal}) and a ``register`` tag.
         """
-        logger.info(f"Tool invoked: get_lr_unit({unit_number}, {main_book_id})")
-        return await tools_handler.get_lr_unit(unit_number, main_book_id, include_full_details)
+        logger.info(f"Tool invoked: get_lr_unit({unit_number}, {main_book_id}, detail={detail})")
+        return await tools_handler.get_lr_unit(unit_number, main_book_id, detail, owners_limit)
 
     @mcp.tool()
     async def get_lr_unit_from_parcel(
         parcel_number: str,
         municipality: str,
-        include_full_details: bool = True
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
-        Get land registry unit information from a parcel number.
+        Get the land registry unit (and registered owners) for a parcel.
 
-        This is a convenience method that searches for the parcel and retrieves
-        its complete land registry unit data.
+        Searches the parcel and resolves its LR unit - falling back to parcel
+        links when the parcel has no direct lr_unit - then returns the unit.
+        Reports ``lr_unit_derived_from_links`` so callers know how it resolved.
+        Use this for "vlasnik" / "prema zemljišnim knjigama" questions: it returns
+        registered owners (vlastovnica / B-list), not cadastre possessors.
 
         Args:
             parcel_number: Cadastral parcel number (e.g., "279/6")
             municipality: Municipality name or code
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full" (default "ownership").
+            owners_limit: Cap owner rows (ownership detail).
 
         Returns:
-            Dictionary with LR unit data including all sheets and summary
+            Dictionary shaped per ``detail``; owners carry a structured ``share``
+            and a ``register`` tag.
         """
-        logger.info(f"Tool invoked: get_lr_unit_from_parcel({parcel_number}, {municipality})")
-        return await tools_handler.get_lr_unit_from_parcel(parcel_number, municipality, include_full_details)
+        logger.info(
+            "Tool invoked: get_lr_unit_from_parcel(%s, %s, detail=%s)",
+            parcel_number, municipality, detail,
+        )
+        return await tools_handler.get_lr_unit_from_parcel(
+            parcel_number, municipality, detail, owners_limit
+        )
 
     @mcp.tool()
     async def batch_lr_units(
         lr_units: list[dict[str, Any]],
-        include_full_details: bool = True
+        detail: str = "ownership",
+        owners_limit: int | None = None,
     ) -> dict[str, Any]:
         """
         Fetch multiple land registry units in a single operation.
@@ -269,18 +283,19 @@ def create_mcp_server() -> FastMCP:
 
         Args:
             lr_units: List of LR unit specs with lr_unit_number and main_book_id
-            include_full_details: Include all sheets (default: True)
+            detail: "summary" | "ownership" | "full" (default "ownership"), applied
+                to every unit.
+            owners_limit: Cap owner rows per unit (ownership detail).
 
         Returns:
             Dictionary with results array and summary statistics:
-            - results: List with status, data (or error), lr_unit_number, main_book_id
+            - results: List with status, data (shaped per detail), lr_unit_number, main_book_id
             - total: Total input count
             - unique: Unique LR units (after deduplication)
-            - successful: Successful fetches
-            - failed: Failed fetches
+            - successful / failed: counts
         """
-        logger.info(f"Tool invoked: batch_lr_units({len(lr_units)} units)")
-        return await tools_handler.batch_lr_units(lr_units, include_full_details)
+        logger.info(f"Tool invoked: batch_lr_units({len(lr_units)} units, detail={detail})")
+        return await tools_handler.batch_lr_units(lr_units, detail, owners_limit)
 
     # ========================================================================
     # PROMPTS - User-selected templates

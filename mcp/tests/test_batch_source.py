@@ -79,13 +79,6 @@ def test_none_source_drops_possessors(tools) -> None:
     assert "land_registry_hint" not in data
 
 
-def test_include_owners_deprecated_maps_to_cadastre(tools) -> None:
-    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], include_owners=True))
-    assert res["source"] == "cadastre"
-    assert "deprecation_notice" in res
-    assert "possession_sheets" in res["results"][0]["data"]
-
-
 def test_invalid_source_raises(tools) -> None:
     with pytest.raises(ValueError):
         _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="bogus"))

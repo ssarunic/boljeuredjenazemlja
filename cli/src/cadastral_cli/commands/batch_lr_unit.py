@@ -63,16 +63,7 @@ class LRUnitResult:
 
             if include_full_data:
                 # Include detailed ownership and parcel information
-                result["owners"] = []
-                for share in self.lr_unit_data.ownership_sheet_b.lr_unit_shares:
-                    if share.is_active:
-                        for owner in share.owners:
-                            result["owners"].append({
-                                "name": owner.name,
-                                "address": owner.address,
-                                "tax_number": owner.tax_number,
-                                "share": share.description,
-                            })
+                result["owners"] = self.lr_unit_data.ownership_sheet_b.owner_rows()
 
                 result["parcels"] = []
                 for parcel in self.lr_unit_data.get_all_parcels():
