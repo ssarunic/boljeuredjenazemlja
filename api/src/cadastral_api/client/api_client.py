@@ -689,6 +689,7 @@ class CadastralAPIClient:
             historical_overview=historical_overview,
         )
         lr_unit.lr_unit_derived_from_links = derived_from_links
+        lr_unit.cadastre_harmonized = parcel_info.is_harmonized
         return lr_unit
 
     @staticmethod

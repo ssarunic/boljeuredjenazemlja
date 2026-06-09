@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: your.email@example.com\n"
-"POT-Creation-Date: 2026-06-09 13:24+0100\n"
+"POT-Creation-Date: 2026-06-09 13:36+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -44,23 +44,23 @@ msgid "LAND REGISTRY UNIT"
 msgstr ""
 
 #: cli/src/cadastral_cli/lr_unit_output.py:65
-#: cli/src/cadastral_cli/commands/parcel.py:318
+#: cli/src/cadastral_cli/commands/parcel.py:326
 msgid "Unit Number"
 msgstr ""
 
 #: cli/src/cadastral_cli/lr_unit_output.py:66
-#: cli/src/cadastral_cli/commands/parcel.py:320
+#: cli/src/cadastral_cli/commands/parcel.py:328
 msgid "Main Book"
 msgstr ""
 
 #: cli/src/cadastral_cli/lr_unit_output.py:67
-#: cli/src/cadastral_cli/commands/parcel.py:323
+#: cli/src/cadastral_cli/commands/parcel.py:331
 msgid "Institution"
 msgstr ""
 
 #: cli/src/cadastral_cli/lr_unit_output.py:68
 #: cli/src/cadastral_cli/commands/batch.py:301
-#: cli/src/cadastral_cli/commands/parcel.py:324
+#: cli/src/cadastral_cli/commands/parcel.py:332
 msgid "Status"
 msgstr ""
 
@@ -109,8 +109,8 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
 #: cli/src/cadastral_cli/commands/parcel.py:183
-#: cli/src/cadastral_cli/commands/parcel.py:224
-#: cli/src/cadastral_cli/commands/parcel.py:325
+#: cli/src/cadastral_cli/commands/parcel.py:232
+#: cli/src/cadastral_cli/commands/parcel.py:333
 msgid "Yes"
 msgstr ""
 
@@ -118,8 +118,8 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
 #: cli/src/cadastral_cli/commands/parcel.py:183
-#: cli/src/cadastral_cli/commands/parcel.py:224
-#: cli/src/cadastral_cli/commands/parcel.py:325
+#: cli/src/cadastral_cli/commands/parcel.py:232
+#: cli/src/cadastral_cli/commands/parcel.py:333
 msgid "No"
 msgstr ""
 
@@ -157,13 +157,13 @@ msgstr ""
 #: cli/src/cadastral_cli/lr_unit_output.py:150
 #: cli/src/cadastral_cli/commands/search.py:60
 #: cli/src/cadastral_cli/commands/parcel.py:178
-#: cli/src/cadastral_cli/commands/parcel.py:270
+#: cli/src/cadastral_cli/commands/parcel.py:278
 msgid "Address"
 msgstr ""
 
 #: cli/src/cadastral_cli/lr_unit_output.py:123
 #: cli/src/cadastral_cli/commands/batch.py:304
-#: cli/src/cadastral_cli/commands/parcel.py:208
+#: cli/src/cadastral_cli/commands/parcel.py:216
 msgid "Area (m²)"
 msgstr ""
 
@@ -222,7 +222,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/discovery.py:40
 #: cli/src/cadastral_cli/commands/discovery.py:129
 #: cli/src/cadastral_cli/commands/search.py:167
-#: cli/src/cadastral_cli/commands/parcel.py:268
+#: cli/src/cadastral_cli/commands/parcel.py:276
 msgid "Name"
 msgstr ""
 
@@ -285,11 +285,11 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/search.py:169
 #: cli/src/cadastral_cli/commands/parcel.py:178
 #: cli/src/cadastral_cli/commands/parcel.py:179
-#: cli/src/cadastral_cli/commands/parcel.py:276
-#: cli/src/cadastral_cli/commands/parcel.py:318
-#: cli/src/cadastral_cli/commands/parcel.py:321
-#: cli/src/cadastral_cli/commands/parcel.py:323
-#: cli/src/cadastral_cli/commands/parcel.py:387
+#: cli/src/cadastral_cli/commands/parcel.py:284
+#: cli/src/cadastral_cli/commands/parcel.py:326
+#: cli/src/cadastral_cli/commands/parcel.py:329
+#: cli/src/cadastral_cli/commands/parcel.py:331
+#: cli/src/cadastral_cli/commands/parcel.py:395
 msgid "N/A"
 msgstr ""
 
@@ -394,15 +394,30 @@ msgstr ""
 msgid "Fetching land registry unit {unit}..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:110
+#: cli/src/cadastral_cli/commands/registry.py:112
+#: cli/src/cadastral_cli/commands/parcel.py:190
+msgid ""
+"⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
+"possessors (kataster) and registered owners (ZK) may differ."
+msgstr ""
+"⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
+"possessors (kataster) and registered owners (ZK) may differ."
+
+#: cli/src/cadastral_cli/commands/registry.py:122
+#: cli/src/cadastral_cli/commands/parcel.py:199
+#, python-brace-format
+msgid "To see the other register, run: {command}"
+msgstr "To see the other register, run: {command}"
+
+#: cli/src/cadastral_cli/commands/registry.py:128
 msgid "Land registry unit not found"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:112
+#: cli/src/cadastral_cli/commands/registry.py:130
 msgid "Parcel not found"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:114
+#: cli/src/cadastral_cli/commands/registry.py:132
 #: cli/src/cadastral_cli/commands/batch_lr_unit.py:616
 #: cli/src/cadastral_cli/commands/batch.py:212
 #: cli/src/cadastral_cli/commands/search.py:107
@@ -567,18 +582,18 @@ msgstr "BATCH PROCESSING SUMMARY"
 
 #: cli/src/cadastral_cli/commands/batch.py:277
 #: cli/src/cadastral_cli/commands/parcel.py:172
-#: cli/src/cadastral_cli/commands/parcel.py:315
-#: cli/src/cadastral_cli/commands/parcel.py:337
-#: cli/src/cadastral_cli/commands/parcel.py:368
+#: cli/src/cadastral_cli/commands/parcel.py:323
+#: cli/src/cadastral_cli/commands/parcel.py:345
+#: cli/src/cadastral_cli/commands/parcel.py:376
 #: cli/src/cadastral_cli/commands/gis.py:242
 msgid "Field"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/batch.py:278
 #: cli/src/cadastral_cli/commands/parcel.py:173
-#: cli/src/cadastral_cli/commands/parcel.py:316
-#: cli/src/cadastral_cli/commands/parcel.py:338
-#: cli/src/cadastral_cli/commands/parcel.py:369
+#: cli/src/cadastral_cli/commands/parcel.py:324
+#: cli/src/cadastral_cli/commands/parcel.py:346
+#: cli/src/cadastral_cli/commands/parcel.py:377
 #: cli/src/cadastral_cli/commands/gis.py:243
 msgid "Value"
 msgstr ""
@@ -892,46 +907,38 @@ msgstr ""
 msgid "Cadastre/LR harmonized"
 msgstr "Cadastre/LR harmonized"
 
-#: cli/src/cadastral_cli/commands/parcel.py:190
-msgid ""
-"⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
-"possessors (kataster) and registered owners (ZK) may differ."
-msgstr ""
-"⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
-"possessors (kataster) and registered owners (ZK) may differ."
-
-#: cli/src/cadastral_cli/commands/parcel.py:198
+#: cli/src/cadastral_cli/commands/parcel.py:206
 msgid "LAND USE"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:203
+#: cli/src/cadastral_cli/commands/parcel.py:211
 msgid "No land use data available"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:207
+#: cli/src/cadastral_cli/commands/parcel.py:215
 msgid "Type"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:209
+#: cli/src/cadastral_cli/commands/parcel.py:217
 msgid "Percentage"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:210
+#: cli/src/cadastral_cli/commands/parcel.py:218
 msgid "Buildings"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:237
+#: cli/src/cadastral_cli/commands/parcel.py:245
 #, python-brace-format
 msgid "{count} possessor"
 msgid_plural "{count} possessors"
 msgstr[0] "{count} possessor"
 msgstr[1] "{count} possessors"
 
-#: cli/src/cadastral_cli/commands/parcel.py:240
+#: cli/src/cadastral_cli/commands/parcel.py:248
 msgid "POSSESSION SHEET (cadastre / posjedovni list)"
 msgstr "POSSESSION SHEET (cadastre / posjedovni list)"
 
-#: cli/src/cadastral_cli/commands/parcel.py:244
+#: cli/src/cadastral_cli/commands/parcel.py:252
 msgid ""
 "Note: cadastre possessors may differ from registered owners. For land-"
 "registry owners (vlasnici), use: cadastral get-lr-unit"
@@ -939,39 +946,39 @@ msgstr ""
 "Note: cadastre possessors may differ from registered owners. For land-"
 "registry owners (vlasnici), use: cadastral get-lr-unit"
 
-#: cli/src/cadastral_cli/commands/parcel.py:250
+#: cli/src/cadastral_cli/commands/parcel.py:258
 msgid "No possession data available"
 msgstr "No possession data available"
 
-#: cli/src/cadastral_cli/commands/parcel.py:256
+#: cli/src/cadastral_cli/commands/parcel.py:264
 msgid "Possession Sheet"
 msgstr "Possession Sheet"
 
-#: cli/src/cadastral_cli/commands/parcel.py:261
+#: cli/src/cadastral_cli/commands/parcel.py:269
 msgid "No possessors listed"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:269
+#: cli/src/cadastral_cli/commands/parcel.py:277
 msgid "Ownership"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:272
+#: cli/src/cadastral_cli/commands/parcel.py:280
 msgid "Unit"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:273
+#: cli/src/cadastral_cli/commands/parcel.py:281
 msgid "Common Share"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:296
+#: cli/src/cadastral_cli/commands/parcel.py:304
 msgid "LAND REGISTRY"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:303
+#: cli/src/cadastral_cli/commands/parcel.py:311
 msgid "This parcel is not in the land registry (cadastre only)"
 msgstr "This parcel is not in the land registry (cadastre only)"
 
-#: cli/src/cadastral_cli/commands/parcel.py:309
+#: cli/src/cadastral_cli/commands/parcel.py:317
 msgid ""
 "(land registry unit resolved via related parcels - this parcel has no direct "
 "unit)"
@@ -979,64 +986,64 @@ msgstr ""
 "(land registry unit resolved via related parcels - this parcel has no direct "
 "unit)"
 
-#: cli/src/cadastral_cli/commands/parcel.py:324
+#: cli/src/cadastral_cli/commands/parcel.py:332
 msgid "Active"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:324
+#: cli/src/cadastral_cli/commands/parcel.py:332
 msgid "Inactive"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:325
+#: cli/src/cadastral_cli/commands/parcel.py:333
 msgid "Verified"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:332
+#: cli/src/cadastral_cli/commands/parcel.py:340
 msgid "GEOMETRY"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:340
+#: cli/src/cadastral_cli/commands/parcel.py:348
 #: cli/src/cadastral_cli/commands/gis.py:246
 msgid "Coordinate System"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:341
+#: cli/src/cadastral_cli/commands/parcel.py:349
 #: cli/src/cadastral_cli/commands/gis.py:247
 msgid "Vertices"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:342
+#: cli/src/cadastral_cli/commands/parcel.py:350
 msgid "GIS Area"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:345
+#: cli/src/cadastral_cli/commands/parcel.py:353
 #: cli/src/cadastral_cli/commands/gis.py:252
 msgid "Bounding Box"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:350
+#: cli/src/cadastral_cli/commands/parcel.py:358
 #: cli/src/cadastral_cli/commands/gis.py:257
 msgid "  Width"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:351
+#: cli/src/cadastral_cli/commands/parcel.py:359
 #: cli/src/cadastral_cli/commands/gis.py:258
 msgid "  Height"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:355
+#: cli/src/cadastral_cli/commands/parcel.py:363
 msgid "To export coordinates"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:363
+#: cli/src/cadastral_cli/commands/parcel.py:371
 msgid "ADDITIONAL INFO"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:386
+#: cli/src/cadastral_cli/commands/parcel.py:394
 msgid "Map URL"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/parcel.py:387
+#: cli/src/cadastral_cli/commands/parcel.py:395
 msgid "Detail Sheet"
 msgstr ""
 

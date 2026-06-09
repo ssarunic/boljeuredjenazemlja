@@ -105,6 +105,24 @@ def get_lr_unit(
                 # Rich table output
                 print_lr_unit_full(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
 
+                # Disclose cadastre/ZK divergence and offer the cadastre drill-down
+                # (only meaningful when we came from a specific parcel).
+                if from_parcel and lr_unit.cadastre_harmonized is False:
+                    console.print(
+                        _("⚠️  Cadastre and land registry are NOT harmonized for this "
+                          "parcel - possessors (kataster) and registered owners (ZK) "
+                          "may differ."),
+                        style="yellow",
+                    )
+                    drill = (
+                        f"cadastral get-parcel {from_parcel} "
+                        f"-m {municipality} --show-owners"
+                    )
+                    console.print(
+                        "   " + _("To see the other register, run: {command}").format(command=drill),
+                        style="dim",
+                    )
+
     except CadastralAPIError as e:
         if e.error_type == ErrorType.LR_UNIT_NOT_FOUND:
             print_error(_("Land registry unit not found"))
@@ -131,6 +149,7 @@ def _format_structured_data(
         "unit_type": lr_unit.lr_unit_type_name,
         "last_diary_number": lr_unit.last_diary_number,
         "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
+        "cadastre_harmonized": lr_unit.cadastre_harmonized,
     }
 
     # Add summary

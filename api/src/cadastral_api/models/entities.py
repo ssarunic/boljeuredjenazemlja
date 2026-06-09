@@ -1121,6 +1121,11 @@ class LandRegistryUnitDetailed(BaseModel):
     lr_unit_derived_from_links: bool = Field(
         False, description="True if resolved via parcel links rather than a direct lr_unit"
     )
+    # Cadastre/LR harmonization of the source parcel (set by get_lr_unit_from_parcel);
+    # None when fetched directly by unit number (no parcel context).
+    cadastre_harmonized: bool | None = Field(
+        None, description="Source parcel's cadastre/LR harmonization status, if known"
+    )
 
     # Convenience methods
     def get_all_owners(self) -> list[Party]:

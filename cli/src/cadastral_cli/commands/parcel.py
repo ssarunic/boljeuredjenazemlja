@@ -191,6 +191,14 @@ def _print_basic_info(parcel) -> None:
               "possessors (kataster) and registered owners (ZK) may differ."),
             style="yellow",
         )
+        drill = (
+            f"cadastral get-lr-unit --from-parcel {parcel.parcel_number} "
+            f"-m {parcel.municipality_reg_num} --show-owners"
+        )
+        console.print(
+            "   " + _("To see the other register, run: {command}").format(command=drill),
+            style="dim",
+        )
 
 
 def _print_landuse_info(parcel) -> None:

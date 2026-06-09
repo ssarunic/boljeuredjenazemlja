@@ -75,3 +75,6 @@ def test_get_lr_unit_from_parcel_integration_sets_derived_flag(monkeypatch) -> N
 
     assert result.lr_unit_number == "449"
     assert result.lr_unit_derived_from_links is True
+    # The source parcel (1122/1) is not harmonized; this must propagate so the ZK
+    # view can disclose the cadastre divergence.
+    assert result.cadastre_harmonized is False
