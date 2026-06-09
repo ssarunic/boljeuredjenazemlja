@@ -50,3 +50,28 @@ def test_derived_flag_defaults_false() -> None:
     payload = raw[0] if isinstance(raw, list) else raw
     unit = LandRegistryUnitDetailed.model_validate(payload)
     assert unit.lr_unit_derived_from_links is False
+
+
+def test_get_lr_unit_from_parcel_integration_sets_derived_flag(monkeypatch) -> None:
+    """End-to-end (network mocked): a parcel with lr_unit=null resolves via links
+    and the returned unit is flagged lr_unit_derived_from_links=True."""
+    parcel = _parcel()  # 1122/1: lr_unit=null, link-derived unit 449
+    raw = json.loads(
+        (FIXTURE.parent / "lr_unit_449_21277.json").read_text(encoding="utf-8")
+    )
+    unit = LandRegistryUnitDetailed.model_validate(raw[0] if isinstance(raw, list) else raw)
+
+    client = CadastralAPIClient(base_url="http://localhost:0")
+    monkeypatch.setattr(client, "get_parcel_by_number", lambda pn, muni: parcel)
+    monkeypatch.setattr(
+        client,
+        "get_lr_unit_detailed",
+        lambda lr_unit_number, main_book_id, historical_overview=False: unit,
+    )
+    try:
+        result = client.get_lr_unit_from_parcel("1122/1", "334979")
+    finally:
+        client.close()
+
+    assert result.lr_unit_number == "449"
+    assert result.lr_unit_derived_from_links is True

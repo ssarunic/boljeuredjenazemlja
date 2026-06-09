@@ -429,13 +429,13 @@ def _format_csv_data(summary: LRUnitBatchSummary, show_owners: bool) -> list[dic
         row = result.to_dict(include_full_data=False)
 
         if result.status == "success" and result.lr_unit_data and show_owners:
-            # Add ownership summary
+            # Add ownership summary (canonical rows include sub-share co-owners
+            # and structured fractions).
             owners = []
-            for share in result.lr_unit_data.ownership_sheet_b.lr_unit_shares:
-                if share.is_active:
-                    for owner in share.owners:
-                        share_text = share.description.split(":")[-1].strip() if ":" in share.description else share.description
-                        owners.append(f"{owner.name} ({share_text})")
+            for owner_row in result.lr_unit_data.ownership_sheet_b.owner_rows():
+                frac = owner_row["share"]
+                share_text = f"{frac['num']}/{frac['den']}" if frac else owner_row["share_description"]
+                owners.append(f"{owner_row['name']} ({share_text})")
             row["owners_list"] = "; ".join(owners)
 
         rows.append(row)

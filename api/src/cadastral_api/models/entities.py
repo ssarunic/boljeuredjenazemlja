@@ -709,25 +709,52 @@ class LRShare(BaseModel):
         """Check if this share has nested co-owners (subSharesAndEntries)."""
         return len(self.sub_shares_and_entries) > 0
 
+    def _sub_shares(self) -> "list[LRShare]":
+        """Parse sub-shares (raw dicts) into LRShare objects, skipping invalid ones."""
+        subs: list[LRShare] = []
+        for sub in self.sub_shares_and_entries:
+            try:
+                subs.append(LRShare.model_validate(sub))
+            except Exception:
+                pass  # Skip malformed sub-share data
+        return subs
+
     def get_all_owners(self) -> list[Party]:
         """
-        Get all owners including those in sub-shares.
+        Get all owners, including co-owners nested in sub-shares.
 
-        For simple ownership, returns the direct owners.
-        For co-owned apartments, also extracts owners from subSharesAndEntries.
+        For simple ownership, returns the direct owners. For co-owned apartments
+        (etažno vlasništvo), recurses into subSharesAndEntries.
         """
         all_owners = list(self.owners)
-
-        # Extract owners from sub-shares (co-ownership within apartment)
-        for sub in self.sub_shares_and_entries:
-            sub_owners = sub.get("lrOwners", [])
-            for owner_data in sub_owners:
-                try:
-                    all_owners.append(Party.model_validate(owner_data))
-                except Exception:
-                    pass  # Skip invalid owner data
-
+        for sub in self._sub_shares():
+            all_owners.extend(sub.get_all_owners())
         return all_owners
+
+    def owner_rows(self, condominium_number: str | None = None) -> list[dict]:
+        """Flatten this share (and its sub-shares) into per-owner dicts.
+
+        Direct owners carry this share's fraction; co-owners of a sub-share carry
+        that sub-share's own fraction. The condominium number propagates from the
+        parent apartment share.
+        """
+        cn = self.condominium_number or condominium_number
+        rows = [
+            {
+                "name": owner.name,
+                "name_normalized": owner.name_normalized,
+                "tax_number": owner.tax_number,
+                "address": owner.address,
+                "register": owner.register,
+                "share": self.share_fraction,
+                "share_description": self.description,
+                "condominium_number": cn,
+            }
+            for owner in self.owners
+        ]
+        for sub in self._sub_shares():
+            rows.extend(sub.owner_rows(condominium_number=cn))
+        return rows
 
 
 class OwnershipSheetB(BaseModel):
@@ -752,11 +779,11 @@ class OwnershipSheetB(BaseModel):
     )
 
     def get_current_owners(self) -> list[Party]:
-        """Get all parties with active ownership shares."""
+        """Get all parties with active ownership shares, including sub-share co-owners."""
         owners = []
         for share in self.lr_unit_shares:
             if share.is_active:
-                owners.extend(share.owners)
+                owners.extend(share.get_all_owners())
         return owners
 
     def total_ownership_accounted(self) -> float | None:
@@ -777,26 +804,15 @@ class OwnershipSheetB(BaseModel):
         return total if has_fractions else None
 
     def owner_rows(self) -> list[dict]:
-        """Flatten active shares into per-owner dicts with structured shares.
+        """Flatten active shares (and their sub-share co-owners) into per-owner dicts.
 
         A single canonical owner shape shared by the MCP response shaper and the
         CLI output builders, so they cannot drift apart.
         """
         rows: list[dict] = []
         for share in self.lr_unit_shares:
-            if not share.is_active:
-                continue
-            for owner in share.owners:
-                rows.append({
-                    "name": owner.name,
-                    "name_normalized": owner.name_normalized,
-                    "tax_number": owner.tax_number,
-                    "address": owner.address,
-                    "register": owner.register,
-                    "share": share.share_fraction,
-                    "share_description": share.description,
-                    "condominium_number": share.condominium_number,
-                })
+            if share.is_active:
+                rows.extend(share.owner_rows())
         return rows
 
 
@@ -990,6 +1006,24 @@ class SheetAAdditionalInfo(BaseModel):
     )
 
 
+class Plumb(BaseModel):
+    """A pending land-registry entry (plomba).
+
+    A plomba marks an unresolved/in-progress request on the unit (e.g. an
+    ownership transfer or mortgage being processed). Its presence means the
+    current ownership/encumbrance picture may be about to change.
+    """
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+    file_number: str = Field(
+        alias="fileNumber", description="Diary/file number, e.g. 'Z-12564/2026'"
+    )
+    cad_plumb: bool = Field(
+        False, alias="cadPlumb", description="True if a cadastre plomba (else land registry)"
+    )
+
+
 class LandRegistryUnitDetailed(BaseModel):
     """
     Complete land registry unit with all sheets (A, B, C).
@@ -1036,9 +1070,9 @@ class LandRegistryUnitDetailed(BaseModel):
     # Last activity
     last_diary_number: str = Field(alias="lastDiaryNumber", description="Last diary number")
 
-    # Active plumbs (liens/restrictions)
-    active_plumbs: list[dict] = Field(
-        default_factory=list, alias="activePlumbs", description="Active plumbs/liens"
+    # Active plombe - pending/unresolved entries on the unit
+    active_plumbs: list[Plumb] = Field(
+        default_factory=list, alias="activePlumbs", description="Pending entries (plombe)"
     )
 
     # Sheet B: Ownership
@@ -1078,6 +1112,10 @@ class LandRegistryUnitDetailed(BaseModel):
     def has_encumbrances(self) -> bool:
         """Check if unit has any encumbrances."""
         return self.encumbrance_sheet_c.has_encumbrances()
+
+    def has_pending_plombe(self) -> bool:
+        """Whether the unit has any pending entries (plombe) - changes in progress."""
+        return len(self.active_plumbs) > 0
 
     def is_condominium(self) -> bool:
         """
@@ -1119,6 +1157,8 @@ class LandRegistryUnitDetailed(BaseModel):
             "total_area_m2": self.possessory_sheet_a1.total_area(),
             "num_owners": len(self.get_all_owners()),
             "has_encumbrances": self.has_encumbrances(),
+            "has_pending_plombe": self.has_pending_plombe(),
+            "pending_plombe": [p.file_number for p in self.active_plumbs],
             "is_condominium": self.is_condominium(),
         }
         if self.is_condominium():

@@ -7,8 +7,20 @@ from rich.table import Table
 
 from cadastral_api.i18n import _
 from cadastral_api.models.entities import LandRegistryUnitDetailed
+from cadastral_api.utils import parse_fraction
 
 console = Console()
+
+
+def _fraction_text(description: str) -> str:
+    """Render the share fraction as 'num/den' via the structured parser.
+
+    Falls back to the substring after the last colon when no fraction is found.
+    """
+    parsed = parse_fraction(description)
+    if parsed is not None:
+        return f"{parsed[0]}/{parsed[1]}"
+    return description.split(":")[-1].strip() if ":" in description else description
 
 
 def clean_html(text: str) -> str:
@@ -80,8 +92,19 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
         _("Has Encumbrances"),
         _("Yes") if summary["has_encumbrances"] else _("No")
     )
+    if summary.get("has_pending_plombe"):
+        table.add_row(
+            _("Pending entries (plombe)"),
+            "[bold red]" + ", ".join(summary["pending_plombe"]) + "[/bold red]",
+        )
 
     console.print(table)
+
+    if summary.get("has_pending_plombe"):
+        console.print(
+            f"\n⚠️  {_('This unit has pending entries (plombe) - a change may be in progress.')}",
+            style="yellow",
+        )
 
     # Hint for detailed view
     if summary["num_owners"] > 0:
@@ -133,8 +156,8 @@ def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
 
     for share in lr_unit.ownership_sheet_b.lr_unit_shares:
         if share.is_active:
-            # Extract share text (fraction + condominium number if present)
-            share_text = share.description.split(":")[-1].strip() if ":" in share.description else share.description
+            # Structured fraction (e.g. "1/4") from the share description.
+            share_text = _fraction_text(share.description)
 
             # Get apartment description for condominiums
             apt_desc = ""
@@ -159,8 +182,7 @@ def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
                 # First, add a row for the share itself with the apartment description
                 for sub in share.sub_shares_and_entries:
                     sub_desc = sub.get("description", "")
-                    # Extract sub-share fraction
-                    sub_share_text = sub_desc.split(":")[-1].strip() if ":" in sub_desc else sub_desc
+                    sub_share_text = _fraction_text(sub_desc)
                     sub_owners = sub.get("lrOwners", [])
 
                     for owner_data in sub_owners:

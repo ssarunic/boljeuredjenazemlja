@@ -130,6 +130,7 @@ def _format_structured_data(
         "status": lr_unit.status_name,
         "unit_type": lr_unit.lr_unit_type_name,
         "last_diary_number": lr_unit.last_diary_number,
+        "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
     }
 
     # Add summary
