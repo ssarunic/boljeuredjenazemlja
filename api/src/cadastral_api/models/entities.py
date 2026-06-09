@@ -21,7 +21,14 @@ from fractions import Fraction
 from enum import Enum
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    field_validator,
+)
 
 
 class MunicipalitySearchResult(BaseModel):
@@ -777,16 +784,21 @@ class LRUnitParcel(BaseModel):
 
     parcel_id: int = Field(alias="parcelId", description="Parcel identifier")
     parcel_number: str = Field(alias="parcelNumber", description="Cadastral parcel number")
-    cad_municipality_id: int = Field(
-        alias="cadMunicipalityId", description="Municipality internal ID"
+    # These fields are present on the standalone cadastral-parcel shape but are
+    # omitted from the leaner Sheet A1 (lrParcels) shape returned by the LR-unit
+    # endpoint, so they must be optional.
+    cad_municipality_id: int | None = Field(
+        None, alias="cadMunicipalityId", description="Municipality internal ID"
     )
-    cad_municipality_reg_num: str = Field(
-        alias="cadMunicipalityRegNum", description="Municipality registration number"
+    cad_municipality_reg_num: str | None = Field(
+        None, alias="cadMunicipalityRegNum", description="Municipality registration number"
     )
-    cad_municipality_name: str = Field(
-        alias="cadMunicipalityName", description="Municipality name"
+    cad_municipality_name: str | None = Field(
+        None, alias="cadMunicipalityName", description="Municipality name"
     )
-    institution_id: int = Field(alias="institutionId", description="Cadastral institution ID")
+    institution_id: int | None = Field(
+        None, alias="institutionId", description="Cadastral institution ID"
+    )
 
     # Parcel details
     address: str | None = Field(None, description="Parcel address")
@@ -819,6 +831,11 @@ class LRUnitParcel(BaseModel):
     graphic: bool = Field(True, description="Graphical data available")
     alpha_numeric: bool = Field(True, alias="alphaNumeric", description="Alphanumeric data available")
     status: int = Field(0, description="Parcel status code")
+    # Sheet A1 (lrParcels) reports the parcel's status within the LR unit under
+    # this distinct key; without an explicit field it is silently dropped.
+    status_in_lr_unit: int | None = Field(
+        None, alias="statusInLrUnit", description="Status of the parcel within the LR unit"
+    )
     resource_code: int = Field(0, alias="resourceCode", description="Resource code")
     is_harmonized: bool = Field(False, alias="isHarmonized", description="Data harmonization status")
 
@@ -844,8 +861,14 @@ class SheetAParcelList(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
+    # The live API returns the parcel list under "lrParcels". Some hand-authored
+    # mock fixtures use the legacy "cadParcels" key, so accept both. Mismatching
+    # this alias silently yields an empty list (and total_parcels == 0).
     cad_parcels: list[LRUnitParcel] = Field(
-        default_factory=list, alias="cadParcels", description="List of cadastral parcels"
+        default_factory=list,
+        validation_alias=AliasChoices("lrParcels", "cadParcels"),
+        serialization_alias="lrParcels",
+        description="List of cadastral parcels",
     )
 
     def total_area(self) -> int:

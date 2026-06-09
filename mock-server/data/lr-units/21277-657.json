@@ -56,19 +56,13 @@
     "lrEntries": []
   },
   "possessionSheetA1": {
-    "cadParcels": [
+    "lrParcels": [
       {
         "parcelId": 6564817,
         "parcelNumber": "103/2",
-        "cadMunicipalityId": 2387,
-        "cadMunicipalityRegNum": "334979",
-        "cadMunicipalityName": "SAVAR",
-        "institutionId": 114,
         "address": "POLJE",
         "area": "1200",
-        "buildingRemark": 0,
-        "detailSheetNumber": "4",
-        "hasBuildingRight": false,
+        "statusInLrUnit": 0,
         "parcelParts": [
           {
             "parcelPartId": 74357391,
@@ -78,24 +72,7 @@
             "possessionSheetNumber": "657",
             "building": false
           }
-        ],
-        "possessionSheets": [
-          {
-            "possessionSheetId": 14823725,
-            "possessionSheetNumber": "657",
-            "cadMunicipalityId": 2387,
-            "cadMunicipalityRegNum": "334979",
-            "cadMunicipalityName": "SAVAR",
-            "possessors": []
-          }
-        ],
-        "isAdditionalDataSet": false,
-        "legalRegime": false,
-        "graphic": true,
-        "alphaNumeric": true,
-        "status": 0,
-        "resourceCode": 0,
-        "isHarmonized": true
+        ]
       }
     ]
   },
