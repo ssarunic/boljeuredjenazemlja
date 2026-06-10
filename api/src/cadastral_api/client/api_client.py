@@ -29,12 +29,14 @@ from ..exceptions import CadastralAPIError, ErrorType
 from ..gis import GISCache, GMLParser
 from ..models import (
     CadastralOffice,
+    FileStatus,
     LandRegistryUnitDetailed,
     MunicipalitySearchResult,
     ParcelInfo,
     ParcelSearchResult,
 )
 from ..models.gis_entities import ParcelGeometry
+from ..utils import parse_file_number
 
 # Load environment variables from .env file
 load_dotenv()
@@ -173,6 +175,81 @@ class CadastralAPIClient:
                 )
 
             # Raise for other error codes
+            response.raise_for_status()
+
+            return response.json()
+
+        except httpx.TimeoutException as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.TIMEOUT,
+                details={"timeout_seconds": self.timeout, "endpoint": endpoint},
+                cause=e,
+            ) from e
+        except httpx.ConnectError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.CONNECTION,
+                details={"endpoint": endpoint},
+                cause=e,
+            ) from e
+        except httpx.HTTPError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.CONNECTION,
+                details={"endpoint": endpoint},
+                cause=e,
+            ) from e
+        except ValueError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={"endpoint": endpoint},
+                cause=e,
+            ) from e
+
+    def _make_post_request(
+        self, endpoint: str, json_body: dict, retry_count: int = 0
+    ) -> dict:
+        """Make a POST request with rate limiting and retry logic.
+
+        Mirrors :meth:`_make_request` (GET) for the few endpoints that require a
+        JSON body, e.g. ``/lr/file-status``.
+
+        Args:
+            endpoint: API endpoint path
+            json_body: JSON request body
+            retry_count: Current retry attempt number
+
+        Returns:
+            JSON response as a dictionary
+
+        Raises:
+            CadastralAPIError: Any API error occurred
+        """
+        self._wait_for_rate_limit()
+
+        try:
+            response = self.client.post(endpoint, json=json_body)
+
+            if response.status_code == 429:
+                if retry_count < self.MAX_RETRIES:
+                    time.sleep(2 ** retry_count)
+                    return self._make_post_request(endpoint, json_body, retry_count + 1)
+                raise CadastralAPIError(
+                    error_type=ErrorType.RATE_LIMIT,
+                    details={"retry_count": retry_count, "max_retries": self.MAX_RETRIES},
+                )
+
+            if 500 <= response.status_code < 600:
+                if retry_count < self.MAX_RETRIES:
+                    time.sleep(1.5 ** retry_count)
+                    return self._make_post_request(endpoint, json_body, retry_count + 1)
+                raise CadastralAPIError(
+                    error_type=ErrorType.SERVER_ERROR,
+                    details={
+                        "status_code": response.status_code,
+                        "response_text": response.text,
+                        "retry_count": retry_count,
+                    },
+                )
+
             response.raise_for_status()
 
             return response.json()
@@ -704,3 +781,96 @@ class CadastralAPIClient:
         if unit is None:
             return None
         return unit.lr_unit_number, unit.main_book_id
+
+    def get_file_status(
+        self, file_number: str, institution_id: int
+    ) -> FileStatus | None:
+        """Get the processing status (detail) of a single land-registry file.
+
+        A unit's ``activePlumbs`` only carry the bare file number (e.g.
+        ``"Z-12564/2026"``). This resolves that number to its full status -
+        what the request is, its processing stage, and key dates - via
+        ``POST /lr/file-status``.
+
+        The endpoint wants the number split into parts plus the owning
+        institution; the institution comes from the unit
+        (``lr_unit.institution_id``). Without it the endpoint returns an empty
+        body, which is treated as "no detail available" (``None``).
+
+        Args:
+            file_number: Rendered file number, e.g. ``"Z-12564/2026"``.
+            institution_id: Owning land-registry office ID (e.g. 284 for Zadar).
+
+        Returns:
+            A :class:`FileStatus`, or ``None`` when the number cannot be parsed
+            or the endpoint has no record for it.
+
+        Raises:
+            CadastralAPIError: A transport/server error occurred.
+
+        Note:
+            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+        """
+        parts = parse_file_number(file_number)
+        if parts is None:
+            return None
+        code, order_number, year = parts
+
+        response_data = self._make_post_request(
+            "/lr/file-status",
+            {
+                "lrFileCode": code,
+                "lrFileOrderNumber": order_number,
+                "lrFileYear": year,
+                "institutionId": institution_id,
+            },
+        )
+
+        # The endpoint answers an unknown file with an empty object, not a 404.
+        if not response_data:
+            return None
+
+        try:
+            return FileStatus.model_validate(response_data)
+        except ValidationError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={
+                    "endpoint": "/lr/file-status",
+                    "file_number": file_number,
+                    "reason": "validation_failed",
+                },
+                cause=e,
+            ) from e
+
+    def get_plombe_details(
+        self, lr_unit: LandRegistryUnitDetailed
+    ) -> dict[str, FileStatus]:
+        """Resolve detail for each pending plomba on a land-registry unit.
+
+        Iterates the unit's ``active_plumbs`` and fetches each one's status,
+        using the unit's own ``institution_id``. Cadastre plombe
+        (``cad_plumb=True``) are skipped - ``/lr/file-status`` is a
+        land-registry endpoint and does not resolve them. Plombe with no
+        retrievable record are likewise omitted.
+
+        Each extra plomba costs one rate-limited request, so this is opt-in at
+        the call sites (CLI ``--plombe-detail`` / MCP ``include_plombe_detail``).
+
+        Args:
+            lr_unit: The unit whose pending plombe should be detailed.
+
+        Returns:
+            Mapping of ``file_number`` -> :class:`FileStatus` for the
+            land-registry plombe that resolved. Consumers iterate
+            ``lr_unit.active_plumbs`` and look up by ``file_number`` so that
+            skipped/unresolved plombe remain visible as "detail unavailable".
+        """
+        details: dict[str, FileStatus] = {}
+        for plumb in lr_unit.active_plumbs:
+            if plumb.cad_plumb:
+                continue
+            status = self.get_file_status(plumb.file_number, lr_unit.institution_id)
+            if status is not None:
+                details[plumb.file_number] = status
+        return details

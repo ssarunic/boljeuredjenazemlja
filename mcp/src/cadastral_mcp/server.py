@@ -207,6 +207,7 @@ def create_mcp_server() -> FastMCP:
         main_book_id: int,
         detail: str = "ownership",
         owners_limit: int | None = None,
+        include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
         Get land registry unit (zemljišnoknjižni uložak) information.
@@ -224,13 +225,19 @@ def create_mcp_server() -> FastMCP:
                 which fits in context; "full" returns every sheet.
             owners_limit: Cap owner rows (ownership detail); total_owners and
                 owners_truncated report the full count.
+            include_plombe_detail: Resolve what each pending plomba (zaprimljena
+                neriješena prijava) actually is - the request type, processing
+                status, and dates. Adds a ``plombe_detail`` map (file_number ->
+                detail). Costs one extra request per plomba; off by default.
 
         Returns:
             Dictionary shaped per ``detail``; owners carry a structured ``share``
             ({num, den, decimal}) and a ``register`` tag.
         """
         logger.info(f"Tool invoked: get_lr_unit({unit_number}, {main_book_id}, detail={detail})")
-        return await tools_handler.get_lr_unit(unit_number, main_book_id, detail, owners_limit)
+        return await tools_handler.get_lr_unit(
+            unit_number, main_book_id, detail, owners_limit, include_plombe_detail
+        )
 
     @mcp.tool()
     async def get_lr_unit_from_parcel(
@@ -238,6 +245,7 @@ def create_mcp_server() -> FastMCP:
         municipality: str,
         detail: str = "ownership",
         owners_limit: int | None = None,
+        include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
         Get the land registry unit (and registered owners) for a parcel.
@@ -253,6 +261,10 @@ def create_mcp_server() -> FastMCP:
             municipality: Municipality name or code
             detail: "summary" | "ownership" | "full" (default "ownership").
             owners_limit: Cap owner rows (ownership detail).
+            include_plombe_detail: Resolve what each pending plomba actually is
+                (request type, status, dates). Adds a ``plombe_detail`` map
+                (file_number -> detail). One extra request per plomba; off by
+                default.
 
         Returns:
             Dictionary shaped per ``detail``; owners carry a structured ``share``
@@ -263,7 +275,7 @@ def create_mcp_server() -> FastMCP:
             parcel_number, municipality, detail,
         )
         return await tools_handler.get_lr_unit_from_parcel(
-            parcel_number, municipality, detail, owners_limit
+            parcel_number, municipality, detail, owners_limit, include_plombe_detail
         )
 
     @mcp.tool()

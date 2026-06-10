@@ -526,15 +526,38 @@ GET /oss/public/search-lr-parcels/books-of-dc?search=BELI+MANASTIR&officeId=&ins
 
 **Method:** POST (requires JSON request body)
 
-**Request Body:**
+**Request Body:** The endpoint takes the file (plomba) number split into its
+parts plus the owning institution - **not** a `fileId`:
 ```json
 {
-  "fileId": 44682477
+  "lrFileCode": "Z",
+  "lrFileOrderNumber": 12564,
+  "lrFileYear": 2026,
+  "institutionId": 284
 }
 ```
 
 **Parameters:**
-- `fileId` (integer, required): The land registry file ID
+- `lrFileCode` (string, required): Alphabetic prefix of the file number (the `Z`
+  in `Z-12564/2026`)
+- `lrFileOrderNumber` (integer, required): Order number (the `12564`)
+- `lrFileYear` (integer, required): Year (the `2026`)
+- `institutionId` (integer, required in practice): Owning land-registry office.
+  Omitting it (or sending a wrong one) makes the endpoint return an empty object
+  `{}` even for a real file.
+
+**Obtaining the parameters:** a unit's pending entries come from
+`GET /lr/lr-unit` as `activePlumbs[]`, each carrying only
+`{ fileNumber, cadPlumb }` (e.g. `"Z-12564/2026"`). Split that number into the
+three parts above; the `institutionId` is the unit's own top-level
+`institutionId`. (`cadPlumb: true` marks a cadastre plomba - this land-registry
+endpoint does not resolve those.)
+
+> ⚠️ **Outdated form:** earlier this endpoint was documented as accepting a bare
+> `{ "fileId": <int> }`. Live testing shows the production endpoint now requires
+> the split-number + `institutionId` body above and returns `400 BAD_REQUEST`
+> (`lrFileCode/lrFileYear/lrFileOrderNumber: ne smije bit blank`) without the
+> parts. The `fileId` is returned in the response but is not the lookup key.
 
 **Example Request:**
 ```bash
@@ -542,52 +565,77 @@ POST /oss/public/lr/file-status
 Content-Type: application/json
 
 {
-  "fileId": 44682477
+  "lrFileCode": "Z",
+  "lrFileOrderNumber": 12564,
+  "lrFileYear": 2026,
+  "institutionId": 284
 }
 ```
 
-**Actual Response:**
+**Actual Response (resolved file):**
 ```json
 {
-  "fileId": 44682477,
-  "lrFileNumber": "Z-27985/2025",
+  "fileId": 45835794,
+  "lrFileNumber": "Z-15677/2026",
   "institution": {
     "institutionId": 284,
     "institutionName": "Zemljišnoknjižni odjel Zadar"
   },
-  "statusDescription": "AUTOMATSKA OBRADA PODATAKA",
-  "applicationContent": "Pojedinačno prevođenje u BZP Automatsko prevođenje u BZP",
-  "infoDate": "2025-11-10T18:42:42.000+01:00",
-  "receivingDate": "2025-09-01T17:00:00.000+02:00",
-  "solvingDate": "2025-09-01",
-  "executionDate": "2025-09-01T17:00:26.000+02:00"
+  "resolutionTypeName": "Udovoljeno",
+  "statusDescription": "OTPREMA",
+  "applicationContent": "Uknjižba prava vlasništva temeljem Ugovor o darovanju",
+  "registrationNumber": "OV-4021/2026",
+  "infoDate": "2026-06-10T14:28:15.000+02:00",
+  "receivingDate": "2026-05-14T13:51:39.000+02:00",
+  "solvingDate": "2026-05-18T12:58:14.000+02:00",
+  "executionDate": "2026-05-18T13:00:11.000+02:00",
+  "fileShipmentDate": "2026-05-18T13:00:49.000+02:00"
+}
+```
+
+A still-pending file omits the resolution/execution fields:
+```json
+{
+  "fileId": 45936213,
+  "lrFileNumber": "Z-18444/2026",
+  "institution": { "institutionId": 284, "institutionName": "Zemljišnoknjižni odjel Zadar" },
+  "statusDescription": "IZRADA NACRTA RJEŠENJA",
+  "applicationContent": "Uknjižba prava vlasništva",
+  "infoDate": "2026-06-10T14:28:15.000+02:00",
+  "receivingDate": "2026-06-09T09:48:21.000+02:00"
 }
 ```
 
 **Response Fields:**
-- `fileId` (integer): Land registry file ID (matches request)
-- `lrFileNumber` (string): File reference number (e.g., "Z-27985/2025")
+- `fileId` (integer): Internal land registry file ID (returned, not used for lookup)
+- `lrFileNumber` (string): File reference number (e.g., "Z-12564/2026")
 - `institution` (object): Land registry office information
   - `institutionId` (integer): Office ID (matches those from `/search-lr-parcels` endpoints)
   - `institutionName` (string): Full office name
-- `statusDescription` (string): Current status of the file (e.g., "AUTOMATSKA OBRADA PODATAKA")
-- `applicationContent` (string): Description of the application/request content
+- `statusDescription` (string): Processing stage (e.g., "IZRADA NACRTA RJEŠENJA", "OTPREMA")
+- `applicationContent` (string): What the request is (e.g., "Uknjižba prava vlasništva")
+- `registrationNumber` (string, optional): External reference - court/notary (e.g., "OV-4021/2026")
+- `resolutionTypeName` (string, optional): Outcome once resolved (e.g., "Udovoljeno")
 - `infoDate` (string, ISO 8601): Last information update timestamp
 - `receivingDate` (string, ISO 8601): Date when file was received
-- `solvingDate` (string, ISO date): Date when file was resolved/processed
-- `executionDate` (string, ISO 8601): Date and time when action was executed
+- `solvingDate` (string, ISO date/datetime): Date when file was resolved/processed
+- `executionDate` (string, ISO 8601): Date and time when the action was executed
+- `fileShipmentDate` (string, ISO 8601, optional): Dispatch timestamp
 
 **Important Notes:**
 - This is a POST endpoint, not GET
 - Requires Content-Type: application/json header
 - Returns information about land registry administrative files (spis)
-- File IDs are likely obtained from other land registry endpoints
+- The lookup key is the split file number **plus** `institutionId`; an unknown
+  file (or missing institution) yields an empty object `{}` (not a 404)
 - Institution ID (284) corresponds to "Zemljišnoknjižni odjel Zadar" (Zadar Land Registry Office)
 - Timestamps include timezone information (e.g., +01:00 for CET, +02:00 for CEST)
 - Status descriptions are in Croatian
 
 **Common Status Values:**
 - `AUTOMATSKA OBRADA PODATAKA` - Automatic data processing
+- `IZRADA NACRTA RJEŠENJA` - Drafting the decision (in progress)
+- `OTPREMA` - Dispatch (typically resolved; see `resolutionTypeName`)
 - (Other statuses to be documented as discovered)
 
 **Relationship to Other Endpoints:**
@@ -623,9 +671,14 @@ GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municip
 
 **Purpose:** Get complete land registry unit (zemljišnoknjižni uložak) with ownership sheets
 
-**Endpoint:** `GET /lr/lr-unit-data`
+**Endpoint:** `GET /lr/lr-unit` (see endpoint #5 above)
 
-**Status:** ✅ **WORKING**
+**Status:** ✅ **WORKING** (use `/lr/lr-unit`)
+
+> ⚠️ **`GET /lr/lr-unit-data` is no longer available** - live testing returns
+> `404 Not Found`. Use `GET /lr/lr-unit` instead; it returns the same three-sheet
+> structure documented below (the response shape is unchanged). This section is
+> kept for the sheet/field reference.
 
 **Parameters:**
 
@@ -635,7 +688,7 @@ GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municip
 **Example Request:**
 
 ```http
-GET /oss/public/lr/lr-unit-data?lrUnitNumber=13998&mainBookId=30783
+GET /oss/public/lr/lr-unit?lrUnitNumber=13998&mainBookId=30783
 ```
 
 **Response Structure:**

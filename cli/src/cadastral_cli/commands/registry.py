@@ -7,7 +7,7 @@ from rich.console import Console
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
-from cadastral_api.models.entities import LandRegistryUnitDetailed
+from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.i18n import _
 from cadastral_cli.formatters import print_error, print_output
 from cadastral_cli.lr_unit_output import print_lr_unit_full
@@ -24,6 +24,7 @@ console = Console()
 @click.option("--show-owners", "-o", is_flag=True, help="Display ownership details (Sheet B)")
 @click.option("--show-parcels", "-P", is_flag=True, help="Display all parcels in unit (Sheet A)")
 @click.option("--show-encumbrances", "-e", is_flag=True, help="Display encumbrances (Sheet C)")
+@click.option("--plombe-detail", "-D", is_flag=True, help="Resolve detail of pending entries (plombe) - one extra request per plomba")
 @click.option("--all", "-a", "show_all", is_flag=True, help="Show all sheets")
 @click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
 @click.option("--output", type=click.Path(), help="Save output to file")
@@ -38,6 +39,7 @@ def get_lr_unit(
     show_owners: bool,
     show_parcels: bool,
     show_encumbrances: bool,
+    plombe_detail: bool,
     show_all: bool,
     output_format: str,
     output: str | None,
@@ -96,14 +98,24 @@ def get_lr_unit(
                 )):
                     lr_unit = client.get_lr_unit_detailed(unit_number, main_book)
 
+            # Resolve plomba detail on request (one extra request per plomba).
+            plombe_details = None
+            if plombe_detail and lr_unit.has_pending_plombe():
+                with console.status(_("Resolving pending entries (plombe) detail...")):
+                    plombe_details = client.get_plombe_details(lr_unit)
+
             # Format output
             if output_format != "table":
                 # Structured output
-                data = _format_structured_data(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
+                data = _format_structured_data(
+                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                )
                 print_output(data, output_format=output_format, file=output)
             else:
                 # Rich table output
-                print_lr_unit_full(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
+                print_lr_unit_full(
+                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                )
 
                 # Disclose cadastre/ZK divergence and offer the cadastre drill-down
                 # (only meaningful when we came from a specific parcel).
@@ -139,6 +151,7 @@ def _format_structured_data(
     show_parcels: bool,
     show_encumbrances: bool,
     show_all: bool,
+    plombe_details: dict[str, FileStatus] | None = None,
 ) -> dict[str, Any]:
     """Format LR unit data for JSON/CSV output."""
     data = {
@@ -151,6 +164,13 @@ def _format_structured_data(
         "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
         "cadastre_harmonized": lr_unit.cadastre_harmonized,
     }
+
+    # Plomba detail (only when --plombe-detail was requested and resolved).
+    if plombe_details is not None:
+        data["plombe_detail"] = {
+            file_number: status.model_dump(mode="json", by_alias=False)
+            for file_number, status in plombe_details.items()
+        }
 
     # Add summary
     summary = lr_unit.summary()

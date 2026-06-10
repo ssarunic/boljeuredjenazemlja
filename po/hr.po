@@ -1495,3 +1495,34 @@ msgstr ""
 #~ msgstr[0] "Pronađena {count} općina"
 #~ msgstr[1] "Pronađene {count} općine"
 #~ msgstr[2] "Pronađeno {count} općina"
+
+# Plomba (pending entry) detail - get-lr-unit --plombe-detail
+msgid "PENDING ENTRIES DETAIL (PLOMBE)"
+msgstr "DETALJ PLOMBI (ZAPRIMLJENE PRIJAVE)"
+
+msgid "File Number"
+msgstr "Broj plombe"
+
+msgid "Request"
+msgstr "Prijava"
+
+msgid "Received"
+msgstr "Zaprimljeno"
+
+msgid "Outcome"
+msgstr "Ishod"
+
+msgid "Resolved"
+msgstr "Riješeno"
+
+msgid "In progress"
+msgstr "U tijeku"
+
+msgid "cadastre plomba (no land-registry detail)"
+msgstr "katastarska plomba (nema zk detalja)"
+
+msgid "detail unavailable"
+msgstr "detalj nedostupan"
+
+msgid "Resolving pending entries (plombe) detail..."
+msgstr "Dohvaćam detalje plombi..."

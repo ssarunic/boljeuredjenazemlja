@@ -6,6 +6,7 @@ from .gis import GISCache, GMLParser
 from .models import (
     CadastralOffice,
     Coordinate,
+    FileStatus,
     LandRegistryUnit,
     MunicipalitySearchResult,
     ParcelGeometry,
@@ -13,6 +14,7 @@ from .models import (
     ParcelLink,
     ParcelPart,
     ParcelSearchResult,
+    Plumb,
     Possessor,
     PossessionSheet,
 )
@@ -31,6 +33,7 @@ __all__ = [
     # Models
     "CadastralOffice",
     "Coordinate",
+    "FileStatus",
     "LandRegistryUnit",
     "MunicipalitySearchResult",
     "ParcelGeometry",
@@ -38,6 +41,7 @@ __all__ = [
     "ParcelLink",
     "ParcelPart",
     "ParcelSearchResult",
+    "Plumb",
     "Possessor",
     "PossessionSheet",
 ]
