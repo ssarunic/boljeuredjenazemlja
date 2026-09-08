@@ -27,12 +27,12 @@ Ništa. Ova naredba ne traži unos i ništa ne mijenja.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral cache info
+   uz predmemorija info
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral cache info -->
+   <!-- BEGIN GENERATED: output uz predmemorija info -->
    ```text
    INFORMACIJE O PREDMEMORIJI
    ==========================
@@ -67,22 +67,22 @@ pokrenite bilo koji dohvat granice i mapa će biti stvorena.
 
 ## Povezane stranice
 
-- [cache-list](cache-list.md) ispisuje općine.
-- [cache-clear](cache-clear.md) briše pohranjene podatke.
+- [predmemorija popis](cache-list.md) ispisuje općine.
+- [predmemorija obriši](cache-clear.md) briše pohranjene podatke.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral cache info --help`:
+Ovo ispisuje `uz predmemorija info --help`:
 
 ```text
-Uporaba: cadastral cache info [OPTIONS]
+Uporaba: uz predmemorija info [OPCIJE]
 
   Prikaz detaljnih informacija o predmemoriji.
 
   Primjer:
-    cadastral cache info
+    uz predmemorija info
 
 Opcije:
   --help  Prikaži ovu poruku i izađi.

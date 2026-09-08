@@ -20,8 +20,8 @@ uredu, po odjelu ili po dijelu naziva.
 
 ## Prije nego počnete
 
-Trebate broj katastarskog ureda. Stranica [list-offices](list-offices.md)
-prikazuje sve urede.
+Trebate broj katastarskog ureda. Stranica [uredi](list-offices.md) prikazuje sve
+urede.
 
 ## Korak po korak
 
@@ -29,12 +29,12 @@ prikazuje sve urede.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral list-municipalities --office 114
+   uz općine --ured 114
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral list-municipalities --office 114 -->
+   <!-- BEGIN GENERATED: output uz općine --ured 114 -->
    ```text
    9 općina (office=114):
 
@@ -62,76 +62,76 @@ prikazuje sve urede.
    ```
    <!-- END GENERATED: output -->
 
-4. **Šifra** je matični broj općine koji u ostalim naredbama upisujete iza `-m`.
-   Prvi redak kaže koliko općina ured ima.
+4. **Šifra** je matični broj općine koji u ostalim naredbama upisujete iza
+   `-ko`. Prvi redak kaže koliko općina ured ima.
 
 ## Što možete odabrati
 
-Dodajte `--department` da popis suzite na jedan odjel ureda, ili `--search` s
-dijelom naziva da potražite jednu općinu:
+Dodajte `--odjel` da popis suzite na jedan odjel ureda, ili `--traži` s dijelom
+naziva da potražite jednu općinu:
 
 ```bash
-cadastral list-municipalities --office 114 --search KALI
+uz općine --ured 114 --traži KALI
 ```
 
 Bez ikakvog filtra alat ispisuje sve općine koje poznaje, a to je dug popis.
-Dodajte `--count-only` da dobijete samo broj, ili `--format csv` s `--output` da
+Dodajte `--samo-broj` da dobijete samo broj, ili `--oblik csv` s `--datoteka` da
 popis spremite kao datoteku za tablice.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--office`, `-o` `TEXT` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
-| `--department`, `-d` `TEXT` | Filtriraj po ID-u odjela | Ne koristi se |
-| `--search`, `-s` `TEXT` | Pretraži po nazivu | Ne koristi se |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--output`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--count-only` | Prikaži samo broj | Nije uključeno |
+| `--ured`, `-o` `TEXT` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
+| `--odjel`, `-d` `TEXT` | Filtriraj po ID-u odjela | Ne koristi se |
+| `--traži`, `-s` `TEXT` | Pretraži po nazivu | Ne koristi se |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--samo-broj` | Prikaži samo broj | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako je broj ureda pogrešan, vidjet ćete ovo:
 
-<!-- BEGIN GENERATED: output cadastral list-municipalities --office 999 -->
+<!-- BEGIN GENERATED: output uz općine --ured 999 -->
 ```text
 ✗ Greška: API greška: Općina nije pronađena (office_id=999)
 ```
 <!-- END GENERATED: output -->
 
-Provjerite broj na stranici [list-offices](list-offices.md). Ostale poruke
-objašnjene su na [stranici o greškama](../errors.md).
+Provjerite broj na stranici [uredi](list-offices.md). Ostale poruke objašnjene
+su na [stranici o greškama](../errors.md).
 
 ## Povezane stranice
 
-- [search-municipality](search-municipality.md) pretražuje po nazivu.
-- [list-offices](list-offices.md) daje brojeve ureda.
+- [traži-općinu](search-municipality.md) pretražuje po nazivu.
+- [uredi](list-offices.md) daje brojeve ureda.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral list-municipalities --help`:
+Ovo ispisuje `uz općine --help`:
 
 ```text
-Uporaba: cadastral list-municipalities [OPTIONS]
+Uporaba: uz općine [OPCIJE]
 
   Popis općina uz mogućnost filtriranja.
 
   Primjeri:
-    cadastral list-municipalities
-    cadastral list-municipalities --office 114
-    cadastral list-municipalities --office 114 --department 116
-    cadastral list-municipalities --search ZADAR
+    uz općine
+    uz općine --ured 114
+    uz općine --ured 114 --odjel 116
+    uz općine --traži ZADAR
 
 Opcije:
-  -o, --office TEXT              Filtriraj po ID-u katastarskog ureda
-  -d, --department TEXT          Filtriraj po ID-u odjela
-  -s, --search TEXT              Pretraži po nazivu
-  -f, --format [table|json|csv]  Format izlaza
-  -out, --output PUTANJA         Spremi izlaz u datoteku
-  --count-only                   Prikaži samo broj
-  --help                         Prikaži ovu poruku i izađi.
+  -o, --ured TEXT                 Filtriraj po ID-u katastarskog ureda
+  -d, --odjel TEXT                Filtriraj po ID-u odjela
+  -s, --traži TEXT                Pretraži po nazivu
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  -out, --datoteka PUTANJA        Spremi izlaz u datoteku
+  --samo-broj                     Prikaži samo broj
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

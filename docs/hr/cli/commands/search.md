@@ -34,12 +34,12 @@ Općinu možete zadati nazivom (SAVAR) ili šifrom (334979). Alat prihvaća oboj
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral search 103/2 -m SAVAR
+   uz pretraži 103/2 -ko SAVAR
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral search 103/2 -m SAVAR -->
+   <!-- BEGIN GENERATED: output uz pretraži 103/2 -ko SAVAR -->
    ```text
    Broj čestice         103/2
    Općina               SAVAR (334979)
@@ -66,40 +66,40 @@ Općinu možete zadati nazivom (SAVAR) ili šifrom (334979). Alat prihvaća oboj
 
 ## Što možete odabrati
 
-Dio iza `-m` je općina. Može biti naziv ili šifra. Ako dvije općine dijele
+Dio iza `-ko` je općina. Može biti naziv ili šifra. Ako dvije općine dijele
 naziv, upotrijebite šifru, koju možete pronaći naredbom
-[search-municipality](search-municipality.md).
+[traži-općinu](search-municipality.md).
 
-Ako znate samo početak broja čestice, dodajte `--partial` da vidite sve čestice
-koje počinju onim što ste upisali:
+Ako znate samo početak broja čestice, dodajte `--djelomično` da vidite sve
+čestice koje počinju onim što ste upisali:
 
 ```bash
-cadastral search 1 -m SAVAR --partial
+uz pretraži 1 -ko SAVAR --djelomično
 ```
 
-Da rezultat spremite u datoteku umjesto čitanja na zaslonu, dodajte `--format
-json` ili `--format csv` i `--output` s nazivom datoteke. JSON datoteku mogu
+Da rezultat spremite u datoteku umjesto čitanja na zaslonu, dodajte `--oblik
+json` ili `--oblik csv` i `--datoteka` s nazivom datoteke. JSON datoteku mogu
 čitati drugi programi; CSV datoteka otvara se u programu za tablice.
 
 ```bash
-cadastral search 103/2 -m SAVAR --format csv --output parcel.csv
+uz pretraži 103/2 -ko SAVAR --oblik csv --datoteka parcel.csv
 ```
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `PARCEL_NUMBER` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--municipality`, `-m` `TEXT` | Naziv ili šifra općine (npr. SAVAR ili 334979) | Obavezno |
-| `--exact` / `--partial` | Točno podudaranje ili djelomična pretraga | Koristi se `--exact` |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
+| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine (npr. SAVAR ili 334979) | Obavezno |
+| `--točno` / `--djelomično` | Točno podudaranje ili djelomična pretraga | Koristi se `--točno` |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako broj čestice ne postoji u toj općini, alat to kaže i staje:
 
-<!-- BEGIN GENERATED: output cadastral search 999 -m SAVAR -->
+<!-- BEGIN GENERATED: output uz pretraži 999 -ko SAVAR -->
 ```text
 ✗ Greška: Čestica '999' nije pronađena u općini 334979
 ```
@@ -114,36 +114,35 @@ greškama](../errors.md).
 
 ## Povezane stranice
 
-- [get-parcel](get-parcel.md) prikazuje sve što katastar ima o čestici,
-  uključujući upisane posjednike.
-- [get-lr-unit](get-lr-unit.md) prikazuje zemljišnoknjižni uložak: vlasnike,
-  udjele i terete.
-- [search-municipality](search-municipality.md) pronalazi šifru katastarske
-  općine.
+- [čestica](get-parcel.md) prikazuje sve što katastar ima o čestici, uključujući
+  upisane posjednike.
+- [uložak](get-lr-unit.md) prikazuje zemljišnoknjižni uložak: vlasnike, udjele i
+  terete.
+- [traži-općinu](search-municipality.md) pronalazi šifru katastarske općine.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral search --help`:
+Ovo ispisuje `uz pretraži --help`:
 
 ```text
-Uporaba: cadastral search [OPTIONS] PARCEL_NUMBER
+Uporaba: uz pretraži [OPCIJE] BROJ_ČESTICE
 
   Brzo pretraživanje čestica s osnovnim podacima.
 
   Primjeri:
-    cadastral search 103/2 --municipality SAVAR
-    cadastral search 103/2 -m 334979
-    cadastral search 114 -m 334979 --partial
+    uz pretraži 103/2 --općina SAVAR
+    uz pretraži 103/2 -ko 334979
+    uz pretraži 114 -ko 334979 --djelomično
 
 Opcije:
-  -m, --municipality TEXT        Naziv ili šifra općine (npr. SAVAR ili 334979)
-                                 [obavezno]
-  --exact / --partial            Točno podudaranje ili djelomična pretraga
-  -f, --format [table|json|csv]  Format izlaza
-  -o, --output PUTANJA           Spremi izlaz u datoteku
-  --help                         Prikaži ovu poruku i izađi.
+  -ko, --općina TEXT              Naziv ili šifra općine (npr. SAVAR ili 334979)
+                                  [obavezno]
+  --točno / --djelomično          Točno podudaranje ili djelomična pretraga
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

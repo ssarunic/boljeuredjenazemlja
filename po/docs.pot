@@ -1534,42 +1534,51 @@ msgid ""
 msgstr ""
 
 #: install.md:75
+msgid ""
+"Step 2 installs two program names, `cadastral` and `uz`. They are the same "
+"program. The Croatian documentation uses `uz` with Croatian command and "
+"option names, such as `uz čestica 103/2 -ko SAVAR`; the English documentation"
+" uses `cadastral` with English names. Every command accepts both spellings, "
+"so a line copied from either edition works."
+msgstr ""
+
+#: install.md:81
 msgid "Step 5: verify"
 msgstr ""
 
-#: install.md:77
+#: install.md:83
 msgid "Open a new terminal as the user and run:"
 msgstr ""
 
-#: install.md:83
+#: install.md:89
 msgid "You should see this:"
 msgstr ""
 
-#: install.md:108
+#: install.md:114
 msgid "Hand-over checklist"
 msgstr ""
 
-#: install.md:110
+#: install.md:116
 msgid ""
 "The practice server starts on its own, or the user knows the two lines that "
 "start it."
 msgstr ""
 
-#: install.md:111
+#: install.md:117
 msgid ""
 "`cadastral info` prints the screen above in a fresh terminal opened by the "
 "user."
 msgstr ""
 
-#: install.md:112
+#: install.md:118
 msgid "`CADASTRAL_LANG` is set in the user's profile."
 msgstr ""
 
-#: install.md:113
+#: install.md:119
 msgid "The user has the link to [Start here](start-here.md) in their language."
 msgstr ""
 
-#: install.md:114
+#: install.md:120
 msgid ""
 "The user has your contact for when Terminal says the command is not found."
 msgstr ""

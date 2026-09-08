@@ -7,6 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from cadastral_cli.formatters import command_help, print_error, print_success
+from cadastral_cli.localized import LocalizedGroup
 
 console = Console()
 
@@ -19,7 +20,7 @@ Examples:
   cadastral cache clear --all"""))
 
 
-@click.group("cache", help=_CACHE_GROUP_HELP)
+@click.group("cache", cls=LocalizedGroup, help=_CACHE_GROUP_HELP)
 def cache_group() -> None:
     """Cache management commands."""
 

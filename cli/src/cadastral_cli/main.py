@@ -47,6 +47,11 @@ _preselect_language(sys.argv[1:])
 
 from cadastral_cli import __version__  # noqa: E402
 from cadastral_cli.formatters import command_help, describe_error  # noqa: E402
+from cadastral_cli.localized import (  # noqa: E402
+    LocalizedGroup,
+    help_option_names,
+    localize_command,
+)
 
 from .commands import (  # noqa: E402
     batch,
@@ -75,7 +80,11 @@ Documentation: https://github.com/yourusername/croatian-cadastral-api""")
 )
 
 
-@click.group(help=_CLI_HELP)
+@click.group(
+    cls=LocalizedGroup,
+    help=_CLI_HELP,
+    context_settings={"help_option_names": help_option_names()},
+)
 @click.version_option(version=__version__, prog_name="cadastral")
 @click.option("--verbose", "-v", is_flag=True, help=_("Verbose output"))
 @click.option(
@@ -116,6 +125,7 @@ cli.add_command(discovery.list_offices)
 cli.add_command(discovery.list_municipalities)
 cli.add_command(discovery.info)
 cli.add_command(cache.cache_group)
+localize_command(cli, "")  # --verbose, --lang, --version answer to their Croatian spellings too
 
 
 def main() -> None:

@@ -138,13 +138,21 @@ meaning and structure, but not word for word.
   poslužitelj and probni podaci, "Ako nešto ne uspije" for the trouble
   heading, kopirajte for copying a command, "uvid u" for consulting the
   register in titles.
-- Command names, option names, file names and everything inside code blocks
-  stay in English. This mirrors the CLI itself, where `--show-owners` is the
-  same in both languages. Option help text in the generated table is Croatian
-  because the CLI prints it in Croatian.
+- File names, JSON keys and format names (`json`, `csv`, `wkt`) stay in
+  English. Command and option names have Croatian spellings (previous
+  bullet); the generated option tables and `--help` captures show them
+  because the Croatian CLI prints them.
 - Examples do not carry `--lang`. The installer sets `CADASTRAL_LANG` for the
   user's preferred language (section 1.2), and the build captures output for
   each edition with the matching language explicitly.
+- Command lines on Croatian pages use the Croatian program name and
+  spellings: `uz čestica 103/2 -ko SAVAR --posjednici`. The writer never
+  translates them by hand. The build rewrites every command line in a shell
+  block or an output marker through the CLI's own alias table
+  (`cadastral_cli.localized`, see `specs/terminology.md` section 4), and the
+  output is captured by running the Croatian line. Only prose mentions of a
+  command or option in a code span are translated in `po/docs-hr.po`, using
+  the same spellings.
 
 ### 2.3 Things that are forbidden
 
@@ -490,6 +498,9 @@ Implementation status (September 2026):
 - [x] CI workflow `.github/workflows/docs-gate.yml` running both gates
 - [x] `docs/cli-reference.md` replaced by a pointer to the new pages
 - [x] `polib` added to the CLI dev dependencies
+- [x] Croatian command, option, argument and choice spellings
+      (`cli/src/cadastral_cli/localized.py`, program name `uz`); the build
+      rewrites documented command lines mechanically
 - [x] Geometry fixture `mock-server/data/geometry/334979.zip`; GIS downloads
       follow the configured base URL instead of a hard-coded production URL
 

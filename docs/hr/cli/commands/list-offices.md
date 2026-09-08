@@ -27,12 +27,12 @@ Ništa. Ova naredba ne traži unos.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral list-offices
+   uz uredi
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral list-offices -->
+   <!-- BEGIN GENERATED: output uz uredi -->
    ```text
    15 katastarskih ureda u Hrvatskoj:
 
@@ -72,23 +72,23 @@ Ništa. Ova naredba ne traži unos.
    ```
    <!-- END GENERATED: output -->
 
-4. **ID** je broj ureda. Koristite ga uz `--office` na stranici
-   [list-municipalities](list-municipalities.md).
+4. **ID** je broj ureda. Koristite ga uz `--ured` na stranici
+   [općine](list-municipalities.md).
 
 ## Što možete odabrati
 
-Da popis spremite u datoteku, dodajte `--format csv` i `--output` s nazivom
+Da popis spremite u datoteku, dodajte `--oblik csv` i `--datoteka` s nazivom
 datoteke:
 
 ```bash
-cadastral list-offices --format csv --output offices.csv
+uz uredi --oblik csv --datoteka offices.csv
 ```
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -99,28 +99,28 @@ instalirala alat da pokrene poslužitelj.
 
 ## Povezane stranice
 
-- [list-municipalities](list-municipalities.md) koristi broj ureda.
+- [općine](list-municipalities.md) koristi broj ureda.
 - [info](info.md) pokazuje s kojim poslužiteljem alat razgovara.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral list-offices --help`:
+Ovo ispisuje `uz uredi --help`:
 
 ```text
-Uporaba: cadastral list-offices [OPTIONS]
+Uporaba: uz uredi [OPCIJE]
 
   Popis svih katastarskih ureda u Hrvatskoj.
 
   Primjer:
-    cadastral list-offices
-    cadastral list-offices --format json
+    uz uredi
+    uz uredi --oblik json
 
 Opcije:
-  -f, --format [table|json|csv]  Format izlaza
-  -o, --output PUTANJA           Spremi izlaz u datoteku
-  --help                         Prikaži ovu poruku i izađi.
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

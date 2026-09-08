@@ -30,12 +30,12 @@ geografskih podataka koji kartografski programi čitaju.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral download-gis SAVAR --output ./gis_data
+   uz preuzmi-gis SAVAR --mapa ./gis_data
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral download-gis SAVAR --output ./gis_data -->
+   <!-- BEGIN GENERATED: output uz preuzmi-gis SAVAR --mapa ./gis_data -->
    ```text
    Preuzimam GIS podatke za općinu 334979...
    ✓ Preuzeto: ko-334979.zip (0.7 KB)
@@ -56,29 +56,29 @@ geografskih podataka koji kartografski programi čitaju.
 
 ## Što možete odabrati
 
-`--output` je obavezan i imenuje mapu. Dodajte `--no-extract` da zadržite samo
-preuzetu ZIP datoteku bez raspakiravanja. Dodajte `--clear-cache` za novo
-preuzimanje čak i ako alat već ima podatke iz ranijeg pokretanja.
+`--mapa` je obavezan i imenuje mapu. Dodajte `--bez-raspakiravanja` da zadržite
+samo preuzetu ZIP datoteku bez raspakiravanja. Dodajte `--obriši-predmemoriju`
+za novo preuzimanje čak i ako alat već ima podatke iz ranijeg pokretanja.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `MUNICIPALITY` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--output`, `-o` `PUTANJA` | Izlazni direktorij | Obavezno |
-| `--extract` / `--no-extract` | Raspakiraj ZIP datoteku | Koristi se `--extract` |
-| `--clear-cache` | Najprije očisti predmemorirane podatke | Nije uključeno |
+| `OPĆINA` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
+| `--mapa`, `-o` `PUTANJA` | Izlazni direktorij | Obavezno |
+| `--raspakiraj` / `--bez-raspakiravanja` | Raspakiraj ZIP datoteku | Koristi se `--raspakiraj` |
+| `--obriši-predmemoriju` | Najprije očisti predmemorirane podatke | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
-Ako zaboravite `--output`, alat staje i kaže vam da opcija nedostaje:
+Ako zaboravite `--mapa`, alat staje i kaže vam da opcija nedostaje:
 
-<!-- BEGIN GENERATED: output cadastral download-gis SAVAR -->
+<!-- BEGIN GENERATED: output uz preuzmi-gis SAVAR -->
 ```text
-Uporaba: python -m cadastral_cli download-gis [OPTIONS] MUNICIPALITY
-Za pomoć pokrenite 'python -m cadastral_cli download-gis --help'.
+Uporaba: uz preuzmi-gis [OPCIJE] OPĆINA
+Za pomoć pokrenite 'uz preuzmi-gis --help'.
 
-Greška: Nedostaje opcija '--output' / '-o'.
+Greška: Nedostaje opcija '--mapa' / '-o'.
 ```
 <!-- END GENERATED: output -->
 
@@ -90,30 +90,31 @@ greškama](../errors.md).
 
 ## Povezane stranice
 
-- [get-geometry](get-geometry.md) daje granicu jedne čestice.
-- [cache-clear](cache-clear.md) briše preuzete podatke s vašeg računala.
+- [granica](get-geometry.md) daje granicu jedne čestice.
+- [predmemorija obriši](cache-clear.md) briše preuzete podatke s vašeg računala.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral download-gis --help`:
+Ovo ispisuje `uz preuzmi-gis --help`:
 
 ```text
-Uporaba: cadastral download-gis [OPTIONS] MUNICIPALITY
+Uporaba: uz preuzmi-gis [OPCIJE] OPĆINA
 
   Preuzimanje potpunih GIS podataka za općinu.
 
   Primjeri:
-    cadastral download-gis 334979 --output ./gis_data
-    cadastral download-gis SAVAR --output ./savar_gis --extract
-    cadastral download-gis 334979 -o ./data --clear-cache
+    uz preuzmi-gis 334979 --mapa ./gis_data
+    uz preuzmi-gis SAVAR --mapa ./savar_gis --raspakiraj
+    uz preuzmi-gis 334979 -o ./data --obriši-predmemoriju
 
 Opcije:
-  -o, --output PUTANJA      Izlazni direktorij  [obavezno]
-  --extract / --no-extract  Raspakiraj ZIP datoteku
-  --clear-cache             Najprije očisti predmemorirane podatke
-  --help                    Prikaži ovu poruku i izađi.
+  -o, --mapa PUTANJA              Izlazni direktorij  [obavezno]
+  --raspakiraj / --bez-raspakiravanja
+                                  Raspakiraj ZIP datoteku
+  --obriši-predmemoriju           Najprije očisti predmemorirane podatke
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

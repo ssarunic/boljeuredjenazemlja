@@ -74,8 +74,8 @@ If you forget `--output`, the tool stops and tells you the option is missing:
 
 <!-- BEGIN GENERATED: output cadastral download-gis SAVAR -->
 ```text
-Usage: python -m cadastral_cli download-gis [OPTIONS] MUNICIPALITY
-Try 'python -m cadastral_cli download-gis --help' for help.
+Usage: cadastral download-gis [OPTIONS] MUNICIPALITY
+Try 'cadastral download-gis --help' for help.
 
 Error: Missing option '--output' / '-o'.
 ```

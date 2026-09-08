@@ -20,15 +20,15 @@ Zamolite tehničkog kolegu da slijedi [stranicu o instalaciji](install.md). Kad
 završi, otvorite Terminal, upišite sljedeći redak i pritisnite Enter:
 
 ```bash
-cadastral info
+uz info
 ```
 
 Ako vidite tablicu s brojem verzije i bez crvenog teksta, spremni ste. Ako
 Terminal kaže da naredba nije pronađena, vratite se kolegi.
 
-Dvije stvari prije početka. Prvo, svaka naredba počinje riječju `cadastral`.
-Drugo, alat radi s probnim podacima na vašem računalu; ništa što upišete ne
-stiže do službenih registara.
+Dvije stvari prije početka. Prvo, svaka naredba počinje riječju `uz`. Drugo,
+alat radi s probnim podacima na vašem računalu; ništa što upišete ne stiže do
+službenih registara.
 
 ## Zadatak 1: provjerite tko je vlasnik čestice
 
@@ -36,13 +36,13 @@ stiže do službenih registara.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-lr-unit --from-parcel 103/2 -m SAVAR --show-owners
+   uz uložak --od-čestice 103/2 -ko SAVAR --vlasnici
    ```
 
 3. Pročitajte tablicu s naslovom **VLASTOVNICA (LIST B)**. Svaki redak jedan je
    vlasnik s njegovim udjelom.
 
-Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md).
+Potpuno objašnjenje: [uložak](commands/get-lr-unit.md).
 
 ## Zadatak 2: provjerite hipoteke i druge terete
 
@@ -50,7 +50,7 @@ Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md).
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-lr-unit --from-parcel 103/2 -m SAVAR --all --plombe-detail
+   uz uložak --od-čestice 103/2 -ko SAVAR --sve --plombe
    ```
 
 3. Pročitajte **TERETOVNICA (LIST C)**. Ako piše **Nema tereta**, list C je
@@ -58,7 +58,7 @@ Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md).
 4. Potražite redak **Plombe (u tijeku)** pri vrhu. Ako ga ima, neki prijedlog za
    upis čeka odluku i listovi se mogu promijeniti.
 
-Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md).
+Potpuno objašnjenje: [uložak](commands/get-lr-unit.md).
 
 ## Zadatak 3: potražite više čestica odjednom
 
@@ -66,26 +66,26 @@ Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md).
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+   uz skupno-čestice "103/2,45,396/1" -ko SAVAR
    ```
 
 3. Svaki redak tablice **REZULTATI** jedna je čestica. Stupac **ZK uložak** je
    zemljišnoknjižni uložak svake od njih.
 
-Potpuno objašnjenje: [batch-fetch](commands/batch-fetch.md), a
-[batch-lr-unit](commands/batch-lr-unit.md) za čitanje svih tih uložaka odjednom.
+Potpuno objašnjenje: [skupno-čestice](commands/batch-fetch.md), a
+[skupno-ulošci](commands/batch-lr-unit.md) za čitanje svih tih uložaka odjednom.
 
 ## Zadatak 4: spremite rezultat u datoteku ili za kolegu
 
 1. Uzmite bilo koju naredbu s ove stranice.
-2. Na kraj dodajte `--format json --output` i naziv datoteke:
+2. Na kraj dodajte `--oblik json --datoteka` i naziv datoteke:
 
    ```bash
-   cadastral get-parcel 103/2 -m SAVAR --show-owners --format json --output parcel-103-2.json
+   uz čestica 103/2 -ko SAVAR --posjednici --oblik json --datoteka parcel-103-2.json
    ```
 
 3. Datoteka se pojavljuje u mapi u kojoj je Terminal, obično u vašoj osobnoj
-   mapi. Priložite je spisu ili proslijedite. `--format csv` umjesto toga daje
+   mapi. Priložite je spisu ili proslijedite. `--oblik csv` umjesto toga daje
    datoteku koja se otvara u programu za tablice.
 
 Potpuno objašnjenje: odjeljak „Što možete odabrati” na stranici bilo koje
@@ -96,15 +96,14 @@ naredbe.
 1. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-parcel 103/2 -m SAVAR
+   uz čestica 103/2 -ko SAVAR
    ```
 
 2. Pri dnu, pod **DODATNE INFORMACIJE**, nalazi se **URL karte**. Kopirajte ga u
    svoj web preglednik da vidite česticu na javnoj karti.
 
-Potpuno objašnjenje: [get-parcel](commands/get-parcel.md), a
-[get-geometry](commands/get-geometry.md) ako trebate granicu za kartografski
-program.
+Potpuno objašnjenje: [čestica](commands/get-parcel.md), a
+[granica](commands/get-geometry.md) ako trebate granicu za kartografski program.
 
 ## Kad nešto ne uspije
 

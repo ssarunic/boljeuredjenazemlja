@@ -36,12 +36,12 @@ znat će što s njima.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-geometry 103/2 -m SAVAR --show-stats
+   uz granica 103/2 -ko SAVAR --statistika
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral get-geometry 103/2 -m SAVAR --show-stats -->
+   <!-- BEGIN GENERATED: output uz granica 103/2 -ko SAVAR --statistika -->
    ```text
    STATISTIKA GEOMETRIJE
    =====================
@@ -71,32 +71,32 @@ znat će što s njima.
 
 ## Što možete odabrati
 
-`--format` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan
+`--oblik` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan
 gore. `geojson` je oblik koji čita većina web karata. `csv` daje jednu lomnu
 točku po retku za tablicu. `json` daje iste podatke za druge programe.
 
-Da biste granicu nekome predali, zapišite je u datoteku pomoću `--output`.
+Da biste granicu nekome predali, zapišite je u datoteku pomoću `--datoteka`.
 GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:
 
 ```bash
-cadastral get-geometry 103/2 -m SAVAR --format geojson --output parcel-103-2.geojson
+uz granica 103/2 -ko SAVAR --oblik geojson --datoteka parcel-103-2.geojson
 ```
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `PARCEL_NUMBER` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--municipality`, `-m` `TEXT` | Naziv ili šifra općine | Obavezno |
-| `--format`, `-f` | Format izvoza (`wkt`, `geojson`, `csv`, `json`) | Koristi se `wkt` |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--show-stats` | Uključi statistiku geometrije | Nije uključeno |
+| `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
+| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine | Obavezno |
+| `--oblik`, `-f` | Format izvoza (`wkt`, `geojson`, `csv`, `json`) | Koristi se `wkt` |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--statistika` | Uključi statistiku geometrije | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako čestice nema u podacima o granicama općine, vidjet ćete ovo:
 
-<!-- BEGIN GENERATED: output cadastral get-geometry 999 -m SAVAR -->
+<!-- BEGIN GENERATED: output uz granica 999 -ko SAVAR -->
 ```text
 ✗ Greška: Geometrija nije pronađena za česticu '999'
 
@@ -105,7 +105,7 @@ Napomena: GIS podaci moraju biti prvo preuzeti (to se događa automatski)
 <!-- END GENERATED: output -->
 
 Podaci o granicama i katastar nisu uvijek usklađeni; prvo provjerite česticu
-naredbom [search](search.md).
+naredbom [pretraži](search.md).
 
 Ako se podaci o granicama općine ne mogu preuzeti, pitajte osobu koja je
 instalirala alat je li probni poslužitelj pokrenut. Ostale poruke objašnjene su
@@ -113,32 +113,33 @@ na [stranici o greškama](../errors.md).
 
 ## Povezane stranice
 
-- [download-gis](download-gis.md) preuzima podatke o granicama cijele općine.
-- [cache-list](cache-list.md) pokazuje koje su općine već na vašem računalu.
+- [preuzmi-gis](download-gis.md) preuzima podatke o granicama cijele općine.
+- [predmemorija popis](cache-list.md) pokazuje koje su općine već na vašem
+  računalu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral get-geometry --help`:
+Ovo ispisuje `uz granica --help`:
 
 ```text
-Uporaba: cadastral get-geometry [OPTIONS] PARCEL_NUMBER
+Uporaba: uz granica [OPCIJE] BROJ_ČESTICE
 
   Dohvat koordinata granica čestice za GIS integraciju.
 
   Primjeri:
-    cadastral get-geometry 103/2 -m SAVAR
-    cadastral get-geometry 103/2 -m 334979 --format wkt
-    cadastral get-geometry 103/2 -m 334979 --format geojson -o parcel.geojson
-    cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv
+    uz granica 103/2 -ko SAVAR
+    uz granica 103/2 -ko 334979 --oblik wkt
+    uz granica 103/2 -ko 334979 --oblik geojson -o parcel.geojson
+    uz granica 103/2 -ko 334979 --oblik csv -o coords.csv
 
 Opcije:
-  -m, --municipality TEXT         Naziv ili šifra općine  [obavezno]
-  -f, --format [wkt|geojson|csv|json]
+  -ko, --općina TEXT              Naziv ili šifra općine  [obavezno]
+  -f, --oblik [wkt|geojson|csv|json]
                                   Format izvoza
-  -o, --output PUTANJA            Spremi izlaz u datoteku
-  --show-stats                    Uključi statistiku geometrije
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  --statistika                    Uključi statistiku geometrije
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

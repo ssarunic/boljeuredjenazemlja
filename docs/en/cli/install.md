@@ -72,6 +72,12 @@ export CADASTRAL_LANG=hr
 The documentation exists in both languages. Give the user the link to the
 edition that matches this setting.
 
+Step 2 installs two program names, `cadastral` and `uz`. They are the same
+program. The Croatian documentation uses `uz` with Croatian command and
+option names, such as `uz čestica 103/2 -ko SAVAR`; the English
+documentation uses `cadastral` with English names. Every command accepts
+both spellings, so a line copied from either edition works.
+
 ## Step 5: verify
 
 Open a new terminal as the user and run:

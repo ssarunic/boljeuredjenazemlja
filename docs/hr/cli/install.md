@@ -14,8 +14,8 @@ koristiti ne mora je čitati. Traje oko deset minuta.
 
 ## Što instalirate
 
-`cadastral` je alat naredbenog retka napisan u Pythonu. Razgovara s malim
-probnim poslužiteljem, uključenim u isti repozitorij, koji odgovara izmišljenim
+`uz` je alat naredbenog retka napisan u Pythonu. Razgovara s malim probnim
+poslužiteljem, uključenim u isti repozitorij, koji odgovara izmišljenim
 katastarskim podacima. Ništa ovdje ne spaja se na službene hrvatske sustave i
 tako mora ostati.
 
@@ -65,7 +65,7 @@ jedinicu na Linuxu) koji izvršava gornja dva retka unutar virtualnog okruženja
 
 Alat ispisuje na hrvatskom ako nije rečeno drukčije. Postavite varijablu
 okruženja `CADASTRAL_LANG` u korisnikovu profilu ljuske na `hr` ili `en`, tako
-da korisnik nikad ne mora zadavati `--lang`. Na primjer, u `~/.zshrc`:
+da korisnik nikad ne mora zadavati `--jezik`. Na primjer, u `~/.zshrc`:
 
 ```bash
 export CADASTRAL_LANG=hr
@@ -74,17 +74,23 @@ export CADASTRAL_LANG=hr
 Dokumentacija postoji na oba jezika. Dajte korisniku poveznicu na izdanje koje
 odgovara ovoj postavci.
 
+Korak 2 instalira dva naziva programa, `cadastral` i `uz`. To je isti program.
+Hrvatska dokumentacija koristi `uz` s hrvatskim nazivima naredbi i opcija, na
+primjer `uz čestica 103/2 -ko SAVAR`; engleska dokumentacija koristi `cadastral`
+s engleskim nazivima. Svaka naredba prihvaća oba načina pisanja, pa redak
+kopiran iz bilo kojeg izdanja radi.
+
 ## Korak 5: provjerite
 
 Otvorite novi terminal kao korisnik i pokrenite:
 
 ```bash
-cadastral info
+uz info
 ```
 
 Trebali biste vidjeti ovo:
 
-<!-- BEGIN GENERATED: output cadastral info -->
+<!-- BEGIN GENERATED: output uz info -->
 ```text
 Hrvatski katastarski CLI
 ========================
@@ -111,8 +117,7 @@ Za brisanje predmemorije: cadastral cache clear --all
 
 - Probni poslužitelj pokreće se sam, ili korisnik zna dva retka kojima ga
   pokreće.
-- `cadastral info` ispisuje gornji zaslon u novom terminalu koji je korisnik
-  otvorio.
+- `uz info` ispisuje gornji zaslon u novom terminalu koji je korisnik otvorio.
 - `CADASTRAL_LANG` je postavljen u korisnikovu profilu.
 - Korisnik ima poveznicu na [Počnite ovdje](start-here.md) na svom jeziku.
 - Korisnik ima vaš kontakt za slučaj da Terminal kaže da naredba nije pronađena.

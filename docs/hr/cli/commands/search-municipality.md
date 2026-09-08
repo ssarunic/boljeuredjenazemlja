@@ -29,12 +29,12 @@ Trebate naziv općine ili njegov dio.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral search-municipality SAVAR
+   uz traži-općinu SAVAR
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral search-municipality SAVAR -->
+   <!-- BEGIN GENERATED: output uz traži-općinu SAVAR -->
    ```text
    Pronađeno 1 općina (search='SAVAR'):
 
@@ -46,79 +46,77 @@ Trebate naziv općine ili njegov dio.
    ```
    <!-- END GENERATED: output -->
 
-4. **Šifra** je matični broj koji svakoj drugoj naredbi možete zadati iza `-m`.
+4. **Šifra** je matični broj koji svakoj drugoj naredbi možete zadati iza `-ko`.
    **Ured** i **Odjel** su brojevi katastarskog ureda i njegova odjela.
 
 ## Što možete odabrati
 
-Da ispišete sve općine jednog ureda, zadajte broj ureda uz `--office`. Možete ga
+Da ispišete sve općine jednog ureda, zadajte broj ureda uz `--ured`. Možete ga
 kombinirati s nazivom da suzite popis:
 
 ```bash
-cadastral search-municipality --office 114
+uz traži-općinu --ured 114
 ```
 
-Ako samo želite znati koliko se općina podudara, dodajte `--count-only`. Da
-popis spremite u datoteku, dodajte `--format csv` i `--output` s nazivom
-datoteke.
+Ako samo želite znati koliko se općina podudara, dodajte `--samo-broj`. Da popis
+spremite u datoteku, dodajte `--oblik csv` i `--datoteka` s nazivom datoteke.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `[SEARCH_TERM]` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
-| `--office`, `-o` `TEXT` | Filtriraj prema ID-u katastarskog ureda (npr. 114) | Ne koristi se |
-| `--department`, `-d` `TEXT` | Filtriraj prema ID-u odjela (npr. 116) | Ne koristi se |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--output`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--count-only` | Prikaži samo broj | Nije uključeno |
+| `POJAM` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
+| `--ured`, `-o` `TEXT` | Filtriraj prema ID-u katastarskog ureda (npr. 114) | Ne koristi se |
+| `--odjel`, `-d` `TEXT` | Filtriraj prema ID-u odjela (npr. 116) | Ne koristi se |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--samo-broj` | Prikaži samo broj | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako se ništa ne podudara, vidjet ćete ovo:
 
-<!-- BEGIN GENERATED: output cadastral search-municipality NOWHERE -->
+<!-- BEGIN GENERATED: output uz traži-općinu NOWHERE -->
 ```text
 ✗ Greška: Nema pronađenih općina za 'NOWHERE'
 ```
 <!-- END GENERATED: output -->
 
-Pokušajte s kraćim dijelom naziva, ili ispišite cijeli ured uz `--office` i
+Pokušajte s kraćim dijelom naziva, ili ispišite cijeli ured uz `--ured` i
 potražite naziv na popisu. Ostale poruke objašnjene su na [stranici o
 greškama](../errors.md).
 
 ## Povezane stranice
 
-- [list-municipalities](list-municipalities.md) radi isti posao s drukčijim
-  filtrima.
-- [list-offices](list-offices.md) prikazuje brojeve ureda za `--office`.
-- [search](search.md) je mjesto gdje pronađenu šifru koristite.
+- [općine](list-municipalities.md) radi isti posao s drukčijim filtrima.
+- [uredi](list-offices.md) prikazuje brojeve ureda za `--ured`.
+- [pretraži](search.md) je mjesto gdje pronađenu šifru koristite.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral search-municipality --help`:
+Ovo ispisuje `uz traži-općinu --help`:
 
 ```text
-Uporaba: cadastral search-municipality [OPTIONS] [SEARCH_TERM]
+Uporaba: uz traži-općinu [OPCIJE] POJAM
 
   Pretraživanje i filtriranje općina.
 
   Primjeri:
-    cadastral search-municipality SAVAR
-    cadastral search-municipality --office 114
-    cadastral search-municipality --office 114 --department 116
-    cadastral search-municipality SAVAR --office 114
+    uz traži-općinu SAVAR
+    uz traži-općinu --ured 114
+    uz traži-općinu --ured 114 --odjel 116
+    uz traži-općinu SAVAR --ured 114
 
 Opcije:
-  -o, --office TEXT              Filtriraj prema ID-u katastarskog ureda (npr.
-                                 114)
-  -d, --department TEXT          Filtriraj prema ID-u odjela (npr. 116)
-  -f, --format [table|json|csv]  Format izlaza
-  -out, --output PUTANJA         Spremi izlaz u datoteku
-  --count-only                   Prikaži samo broj
-  --help                         Prikaži ovu poruku i izađi.
+  -o, --ured TEXT                 Filtriraj prema ID-u katastarskog ureda (npr.
+                                  114)
+  -d, --odjel TEXT                Filtriraj prema ID-u odjela (npr. 116)
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  -out, --datoteka PUTANJA        Spremi izlaz u datoteku
+  --samo-broj                     Prikaži samo broj
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

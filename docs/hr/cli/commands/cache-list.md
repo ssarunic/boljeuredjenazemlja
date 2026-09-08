@@ -28,12 +28,12 @@ Ništa. Ova naredba ne traži unos i ništa ne mijenja.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral cache list
+   uz predmemorija popis
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral cache list -->
+   <!-- BEGIN GENERATED: output uz predmemorija popis -->
    ```text
    GIS podaci u predmemoriji (1 općina):
 
@@ -64,23 +64,23 @@ za preuzimanje. To nije greška.
 
 ## Povezane stranice
 
-- [cache-info](cache-info.md) daje samo ukupne vrijednosti.
-- [cache-clear](cache-clear.md) briše pohranjene podatke.
-- [download-gis](download-gis.md) dodaje općinu.
+- [predmemorija info](cache-info.md) daje samo ukupne vrijednosti.
+- [predmemorija obriši](cache-clear.md) briše pohranjene podatke.
+- [preuzmi-gis](download-gis.md) dodaje općinu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral cache list --help`:
+Ovo ispisuje `uz predmemorija popis --help`:
 
 ```text
-Uporaba: cadastral cache list [OPTIONS]
+Uporaba: uz predmemorija popis [OPCIJE]
 
   Popis predmemoriranih općina.
 
   Primjer:
-    cadastral cache list
+    uz predmemorija popis
 
 Opcije:
   --help  Prikaži ovu poruku i izađi.

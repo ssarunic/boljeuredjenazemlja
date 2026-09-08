@@ -105,7 +105,7 @@ possessors.
 <!-- BEGIN GENERATED: options -->
 | Type this | What it does | If you leave it out |
 |---|---|---|
-| `[PARCELS]` | Optional. A value you type right after the command name | Not used |
+| `PARCELS` | Optional. A value you type right after the command name | Not used |
 | `--input`, `-i` `PATH` | Input file (CSV or JSON) with parcel specifications | Not used |
 | `--municipality`, `-m` `TEXT` | Municipality name or code (required for CLI list mode) | Not used |
 | `--output`, `-o` `PATH` | Save output to file | Not used |
@@ -168,7 +168,7 @@ explained on the [errors page](../errors.md).
 This is what `cadastral batch-fetch --help` prints:
 
 ```text
-Usage: cadastral batch-fetch [OPTIONS] [PARCELS]
+Usage: cadastral batch-fetch [OPTIONS] PARCELS
 
   Fetch information for multiple parcels in batch mode.
 

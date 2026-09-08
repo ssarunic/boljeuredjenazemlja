@@ -18,6 +18,20 @@ that document's "Do not write" table, in the catalog and in the
 documentation. When a reviewer rejects a term, add it there before fixing
 the strings.
 
+## Command and Option Names
+
+Command names, long options, positional argument metavars and word-like
+choice values also have Croatian spellings. They are gettext entries with a
+context (`pgettext("command", "get-parcel")`, `pgettext("option",
+"--municipality")`, `pgettext("option get-parcel", "--show-owners")`,
+`pgettext("argument", "PARCEL_NUMBER")`, `pgettext("choice", "table")`) in
+`cli/src/cadastral_cli/localized.py`. The English name stays canonical and
+both spellings are accepted at all times; the naming convention is in
+[terminology.md](terminology.md) section 4. Example lines inside command
+help texts are written in English in the msgid and in Croatian in the
+msgstr (`uz čestica 103/2 -ko SAVAR`); `localized.localize_cmdline()`
+produces the Croatian line from the English one.
+
 ## Quick Reference
 
 ### Import Statement

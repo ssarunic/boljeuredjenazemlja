@@ -64,7 +64,7 @@ keep the list as a file, add `--format csv` and `--output` with a file name.
 <!-- BEGIN GENERATED: options -->
 | Type this | What it does | If you leave it out |
 |---|---|---|
-| `[SEARCH_TERM]` | Optional. A value you type right after the command name | Not used |
+| `SEARCH_TERM` | Optional. A value you type right after the command name | Not used |
 | `--office`, `-o` `TEXT` | Filter by cadastral office ID (e.g., 114) | Not used |
 | `--department`, `-d` `TEXT` | Filter by department ID (e.g., 116) | Not used |
 | `--format`, `-f` | Output format (`table`, `json`, `csv`) | `table` is used |
@@ -99,7 +99,7 @@ look for the name in the list. Other messages are explained on the
 This is what `cadastral search-municipality --help` prints:
 
 ```text
-Usage: cadastral search-municipality [OPTIONS] [SEARCH_TERM]
+Usage: cadastral search-municipality [OPTIONS] SEARCH_TERM
 
   Search and filter municipalities.
 

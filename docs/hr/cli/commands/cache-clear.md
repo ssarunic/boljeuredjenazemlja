@@ -29,12 +29,12 @@ pohranjeni podaci samo su kopija onoga što poslužitelj može ponovno poslati.
    želite ukloniti.
 
    ```bash
-   cadastral cache clear -m SAVAR --force
+   uz predmemorija obriši -ko SAVAR --bez-pitanja
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral cache clear -m SAVAR --force -->
+   <!-- BEGIN GENERATED: output uz predmemorija obriši -ko SAVAR --bez-pitanja -->
    ```text
    ✓ Očišćena općina 334979 (oslobođeno 0.7 KB)
    ```
@@ -44,37 +44,37 @@ pohranjeni podaci samo su kopija onoga što poslužitelj može ponovno poslati.
 
 ## Što možete odabrati
 
-`--force` preskače pitanje koje alat inače postavlja prije brisanja. Bez njega
-alat traži potvrdu; upišite `y` i pritisnite Enter za nastavak, ili samo
+`--bez-pitanja` preskače pitanje koje alat inače postavlja prije brisanja. Bez
+njega alat traži potvrdu; upišite `y` i pritisnite Enter za nastavak, ili samo
 pritisnite Enter da podatke zadržite.
 
-Da biste uklonili sve, umjesto naziva općine upotrijebite `--all`:
+Da biste uklonili sve, umjesto naziva općine upotrijebite `--sve`:
 
 ```bash
-cadastral cache clear --all
+uz predmemorija obriši --sve
 ```
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--municipality`, `-m` `TEXT` | Očisti specifičnu općinu | Ne koristi se |
-| `--all`, `-a` | Očisti svu predmemoriju | Nije uključeno |
-| `--force`, `-f` | Preskoči potvrdu | Nije uključeno |
+| `--općina`, `-ko` `TEXT` | Očisti specifičnu općinu | Ne koristi se |
+| `--sve`, `-a` | Očisti svu predmemoriju | Nije uključeno |
+| `--bez-pitanja`, `-f` | Preskoči potvrdu | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako navedete općinu koja nije pohranjena, alat vam to kaže i ne uklanja ništa:
 
-<!-- BEGIN GENERATED: output cadastral cache clear -m LUKA --force -->
+<!-- BEGIN GENERATED: output uz predmemorija obriši -ko LUKA --bez-pitanja -->
 ```text
 Općina 334731 nije u predmemoriji
 ```
 <!-- END GENERATED: output -->
 
-Ako ne navedete ni općinu ni `--all`, vidjet ćete ovo:
+Ako ne navedete ni općinu ni `--sve`, vidjet ćete ovo:
 
-<!-- BEGIN GENERATED: output cadastral cache clear -->
+<!-- BEGIN GENERATED: output uz predmemorija obriši -->
 ```text
 ✗ Greška: Potrebno je --municipality ili --all
 
@@ -84,31 +84,31 @@ Pokušajte: cadastral cache clear --help
 
 ## Povezane stranice
 
-- [cache-list](cache-list.md) pokazuje što je pohranjeno prije nego što išta
-  uklonite.
-- [download-gis](download-gis.md) ponovno preuzima općinu.
+- [predmemorija popis](cache-list.md) pokazuje što je pohranjeno prije nego što
+  išta uklonite.
+- [preuzmi-gis](download-gis.md) ponovno preuzima općinu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral cache clear --help`:
+Ovo ispisuje `uz predmemorija obriši --help`:
 
 ```text
-Uporaba: cadastral cache clear [OPTIONS]
+Uporaba: uz predmemorija obriši [OPCIJE]
 
   Brisanje predmemoriranih GIS podataka.
 
   Primjeri:
-    cadastral cache clear --municipality 334979
-    cadastral cache clear --all
-    cadastral cache clear -m SAVAR --force
+    uz predmemorija obriši --općina 334979
+    uz predmemorija obriši --sve
+    uz predmemorija obriši -ko SAVAR --bez-pitanja
 
 Opcije:
-  -m, --municipality TEXT  Očisti specifičnu općinu
-  -a, --all                Očisti svu predmemoriju
-  -f, --force              Preskoči potvrdu
-  --help                   Prikaži ovu poruku i izađi.
+  -ko, --općina TEXT  Očisti specifičnu općinu
+  -a, --sve           Očisti svu predmemoriju
+  -f, --bez-pitanja   Preskoči potvrdu
+  --help              Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

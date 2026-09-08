@@ -14,32 +14,32 @@ Sve naredbe, s poveznicom na stranicu svake od njih. Naredba je ono što upisuje
 
 ## Pretraga jedne čestice
 
-- `cadastral search`: [Brza provjera čestice](commands/search.md). Brzo pretraživanje čestica s osnovnim podacima.
-- `cadastral get-parcel`: [Sve što katastar ima o čestici](commands/get-parcel.md). Dohvat potpunih podataka o čestici s podacima o vlasništvu.
-- `cadastral get-lr-unit`: [Uvid u zemljišnoknjižni uložak: vlasnici, čestice, tereti](commands/get-lr-unit.md). Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.
+- `uz pretraži`: [Brza provjera čestice](commands/search.md). Brzo pretraživanje čestica s osnovnim podacima.
+- `uz čestica`: [Sve što katastar ima o čestici](commands/get-parcel.md). Dohvat potpunih podataka o čestici s podacima o vlasništvu.
+- `uz uložak`: [Uvid u zemljišnoknjižni uložak: vlasnici, čestice, tereti](commands/get-lr-unit.md). Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.
 
 ## Pretraga više čestica odjednom
 
-- `cadastral batch-fetch`: [Pretraga više čestica odjednom](commands/batch-fetch.md). Dohvat podataka za više čestica odjednom (skupna obrada).
-- `cadastral batch-lr-unit`: [Uvid u više zemljišnoknjižnih uložaka odjednom](commands/batch-lr-unit.md). Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).
+- `uz skupno-čestice`: [Pretraga više čestica odjednom](commands/batch-fetch.md). Dohvat podataka za više čestica odjednom (skupna obrada).
+- `uz skupno-ulošci`: [Uvid u više zemljišnoknjižnih uložaka odjednom](commands/batch-lr-unit.md). Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).
 
 ## Pronalaženje općina i ureda
 
-- `cadastral search-municipality`: [Matični broj katastarske općine](commands/search-municipality.md). Pretraživanje i filtriranje općina.
-- `cadastral list-municipalities`: [Popis katastarskih općina jednog ureda](commands/list-municipalities.md). Popis općina uz mogućnost filtriranja.
-- `cadastral list-offices`: [Popis katastarskih ureda](commands/list-offices.md). Popis svih katastarskih ureda u Hrvatskoj.
+- `uz traži-općinu`: [Matični broj katastarske općine](commands/search-municipality.md). Pretraživanje i filtriranje općina.
+- `uz općine`: [Popis katastarskih općina jednog ureda](commands/list-municipalities.md). Popis općina uz mogućnost filtriranja.
+- `uz uredi`: [Popis katastarskih ureda](commands/list-offices.md). Popis svih katastarskih ureda u Hrvatskoj.
 
 ## Granice i karte
 
-- `cadastral get-geometry`: [Granica čestice za kartu](commands/get-geometry.md). Dohvat koordinata granica čestice za GIS integraciju.
-- `cadastral download-gis`: [Preuzimanje podataka o granicama cijele općine](commands/download-gis.md). Preuzimanje potpunih GIS podataka za općinu.
+- `uz granica`: [Granica čestice za kartu](commands/get-geometry.md). Dohvat koordinata granica čestice za GIS integraciju.
+- `uz preuzmi-gis`: [Preuzimanje podataka o granicama cijele općine](commands/download-gis.md). Preuzimanje potpunih GIS podataka za općinu.
 
 ## Provjera samog alata
 
-- `cadastral info`: [Provjera je li alat postavljen](commands/info.md). Prikaz informacija o sustavu i stanju predmemorije.
-- `cadastral cache list`: [Koje su općine pohranjene na vašem računalu](commands/cache-list.md). Popis predmemoriranih općina.
-- `cadastral cache info`: [Koliko je podataka o granicama pohranjeno](commands/cache-info.md). Prikaz detaljnih informacija o predmemoriji.
-- `cadastral cache clear`: [Brisanje pohranjenih podataka o granicama](commands/cache-clear.md). Brisanje predmemoriranih GIS podataka.
+- `uz info`: [Provjera je li alat postavljen](commands/info.md). Prikaz informacija o sustavu i stanju predmemorije.
+- `uz predmemorija popis`: [Koje su općine pohranjene na vašem računalu](commands/cache-list.md). Popis predmemoriranih općina.
+- `uz predmemorija info`: [Koliko je podataka o granicama pohranjeno](commands/cache-info.md). Prikaz detaljnih informacija o predmemoriji.
+- `uz predmemorija obriši`: [Brisanje pohranjenih podataka o granicama](commands/cache-clear.md). Brisanje predmemoriranih GIS podataka.
 <!-- END GENERATED: reference -->
 
 ## Ostale stranice

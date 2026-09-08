@@ -37,9 +37,9 @@ Svaka greška počinje ovom oznakom i jednom od poruka u nastavku:
 naveli. Provjerite broj na svom dokumentu, uključujući dio iza kose crte, i
 provjerite jeste li naveli pravu općinu.
 
-**Općina nije pronađena** znači da naziv ili šifra iza `-m` nisu poznati.
+**Općina nije pronađena** znači da naziv ili šifra iza `-ko` nisu poznati.
 Provjerite pravopis ili pronađite šifru naredbom
-[search-municipality](commands/search-municipality.md) i upotrijebite nju.
+[traži-općinu](commands/search-municipality.md) i upotrijebite nju.
 
 **Zemljišnoknjižni uložak nije pronađen** znači da broj uloška i glavna knjiga
 koje ste zadali ne odgovaraju nijednom ulošku. Provjerite oba broja. Ako ste

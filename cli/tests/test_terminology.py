@@ -42,7 +42,7 @@ def load_rules() -> list[Rule]:
     rules: list[Rule] = []
     in_table = False
     for line in SPEC.read_text(encoding="utf-8").splitlines():
-        if line.startswith("## 4."):
+        if line.startswith("## 5."):
             in_table = True
             continue
         if in_table and line.startswith("## "):

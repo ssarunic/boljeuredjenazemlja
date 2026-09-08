@@ -46,12 +46,12 @@ istog sadržaja. Primjeri datoteka: [parcels.csv](../examples/parcels.csv),
 2. Upišite sljedeći redak i pritisnite Enter. Navodnici oko popisa su važni.
 
    ```bash
-   cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+   uz skupno-čestice "103/2,45,396/1" -ko SAVAR
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral batch-fetch "103/2,45,396/1" -m SAVAR -->
+   <!-- BEGIN GENERATED: output uz skupno-čestice "103/2,45,396/1" -ko SAVAR -->
    ```text
    📊 Pronađene 3 čestice za obradu
 
@@ -83,40 +83,39 @@ istog sadržaja. Primjeri datoteka: [parcels.csv](../examples/parcels.csv),
 ## Što možete odabrati
 
 Da biste popis pročitali iz datoteke, umjesto upisivanja čestica upotrijebite
-`--input` s nazivom datoteke. Otvorite Terminal u mapi u kojoj je datoteka:
+`--ulaz` s nazivom datoteke. Otvorite Terminal u mapi u kojoj je datoteka:
 
 ```bash
-cadastral batch-fetch --input parcels.csv
+uz skupno-čestice --ulaz parcels.csv
 ```
 
 Kada jedna čestica nije pronađena, alat nastavlja s ostalima i na kraju ispisuje
 neuspjele. Ako radije želite stati kod prvog problema, dodajte
-`--stop-on-error`.
+`--stani-kod-greške`.
 
 Za nastavak prema zemljišnoj knjizi spremite rezultat kao JSON datoteku pomoću
-`--format json` i `--output`. Stranica [batch-lr-unit](batch-lr-unit.md) tu
+`--oblik json` i `--datoteka`. Stranica [skupno-ulošci](batch-lr-unit.md) tu
 datoteku može izravno pročitati:
 
 ```bash
-cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json --output parcels-found.json
-cadastral batch-lr-unit --from-batch-output parcels-found.json
+uz skupno-čestice "103/2,45,396/1" -ko SAVAR --oblik json --datoteka parcels-found.json
+uz skupno-ulošci --iz-skupnog-ispisa parcels-found.json
 ```
 
-Dodajte `--detail full` za ispis cijelog katastarskog zapisa svake čestice, kao
-na stranici [get-parcel](get-parcel.md), i `--show-owners` da uključite
-posjednike.
+Dodajte `--detalji full` za ispis cijelog katastarskog zapisa svake čestice, kao
+na stranici [čestica](get-parcel.md), i `--posjednici` da uključite posjednike.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `[PARCELS]` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
-| `--input`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom čestica | Ne koristi se |
-| `--municipality`, `-m` `TEXT` | Naziv ili šifra općine (obavezno kod popisa u naredbenom retku) | Ne koristi se |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--detail` | Razina detalja: basic (samo sažetak) ili full (potpuni podaci za svaku česticu) (`basic`, `full`) | Koristi se `basic` |
-| `--show-owners` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
-| `--continue-on-error` / `--stop-on-error` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--continue-on-error` |
+| `ČESTICE` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
+| `--ulaz`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom čestica | Ne koristi se |
+| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine (obavezno kod popisa u naredbenom retku) | Ne koristi se |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--detalji` | Razina detalja: basic (samo sažetak) ili full (potpuni podaci za svaku česticu) (`basic`, `full`) | Koristi se `basic` |
+| `--posjednici` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
+| `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -124,7 +123,7 @@ posjednike.
 Čestica koja ne postoji ne prekida obradu. Dobiva križić u stupcu **Status** i
 objašnjenje u tablici **GREŠKE** na kraju:
 
-<!-- BEGIN GENERATED: output cadastral batch-fetch "103/2,999" -m SAVAR -->
+<!-- BEGIN GENERATED: output uz skupno-čestice "103/2,999" -ko SAVAR -->
 ```text
 📊 Pronađene 2 čestice za obradu
 
@@ -162,29 +161,29 @@ objašnjene su na [stranici o greškama](../errors.md).
 
 ## Povezane stranice
 
-- [batch-lr-unit](batch-lr-unit.md) čita zemljišnoknjižne uloške koje ste ovdje
+- [skupno-ulošci](batch-lr-unit.md) čita zemljišnoknjižne uloške koje ste ovdje
   pronašli.
-- [search](search.md) provjerava jednu česticu.
+- [pretraži](search.md) provjerava jednu česticu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral batch-fetch --help`:
+Ovo ispisuje `uz skupno-čestice --help`:
 
 ```text
-Uporaba: cadastral batch-fetch [OPTIONS] [PARCELS]
+Uporaba: uz skupno-čestice [OPCIJE] ČESTICE
 
   Dohvat podataka za više čestica odjednom (skupna obrada).
 
   Podržana su dva načina unosa:
 
   1. Popis odvojen zarezima u naredbenom retku (za male skupine):
-     cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
+     uz skupno-čestice "103/2,45,396/1" --općina SAVAR
 
   2. Ulazna datoteka (za velike skupine):
-     cadastral batch-fetch --input parcels.csv
-     cadastral batch-fetch --input parcels.json
+     uz skupno-čestice --ulaz parcels.csv
+     uz skupno-čestice --ulaz parcels.json
 
   CSV format (brojevi čestica s općinom):
     parcel_number,municipality
@@ -213,28 +212,28 @@ Uporaba: cadastral batch-fetch [OPTIONS] [PARCELS]
 
   Primjeri:
     # Brza skupna obrada iz popisa u naredbenom retku
-    cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+    uz skupno-čestice "103/2,45,396/1" -ko SAVAR
 
     # Skupna obrada iz CSV datoteke
-    cadastral batch-fetch --input parcels.csv --format csv -o results.csv
+    uz skupno-čestice --ulaz parcels.csv --oblik csv -o results.csv
 
     # Skupna obrada s potpunim podacima za svaku česticu (kao get-parcel)
-    cadastral batch-fetch "103/2,45,396/1" -m SAVAR --detail full
+    uz skupno-čestice "103/2,45,396/1" -ko SAVAR --detalji full
 
     # Skupna obrada s podacima o vlasništvu u JSON formatu
-    cadastral batch-fetch --input parcels.json --show-owners --format json -o results.json
+    uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -o results.json
 
 Opcije:
-  -i, --input PUTANJA             Ulazna datoteka (CSV ili JSON) s popisom
+  -i, --ulaz PUTANJA              Ulazna datoteka (CSV ili JSON) s popisom
                                   čestica
-  -m, --municipality TEXT         Naziv ili šifra općine (obavezno kod popisa u
+  -ko, --općina TEXT              Naziv ili šifra općine (obavezno kod popisa u
                                   naredbenom retku)
-  -o, --output PUTANJA            Spremi izlaz u datoteku
-  -f, --format [table|json|csv]   Format izlaza
-  --detail [basic|full]           Razina detalja: basic (samo sažetak) ili full
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  --detalji [basic|full]          Razina detalja: basic (samo sažetak) ili full
                                   (potpuni podaci za svaku česticu)
-  --show-owners                   Uključi detaljne podatke o vlasništvu u izlaz
-  --continue-on-error / --stop-on-error
+  --posjednici                    Uključi detaljne podatke o vlasništvu u izlaz
+  --nastavi-kod-greške / --stani-kod-greške
                                   Nastavi obradu nakon grešaka (zadano: nastavi)
   --help                          Prikaži ovu poruku i izađi.
 ```

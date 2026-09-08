@@ -10,12 +10,12 @@
 # Uvid u više zemljišnoknjižnih uložaka odjednom
 
 Zadajte alatu popis zemljišnoknjižnih uložaka, ili rezultat naredbe
-[batch-fetch](batch-fetch.md), i on ispisuje listove svakog uloška jedan za
+[skupno-čestice](batch-fetch.md), i on ispisuje listove svakog uloška jedan za
 drugim.
 
 ## Kada vam ovo treba
 
-- Provjerili ste popis čestica naredbom batch-fetch i sada želite vlasnike i
+- Provjerili ste popis čestica naredbom skupno-čestice i sada želite vlasnike i
   terete svake od njih.
 - Vodite popis uložaka za predmet i želite ih sve ponovno pročitati nakon
   promjene.
@@ -24,7 +24,7 @@ drugim.
 
 Svaki je uložak određen svojim brojem i identifikatorom glavne knjige (main book
 ID). Najlakše ćete oboje dobiti iz JSON datoteke koju zapisuje
-[batch-fetch](batch-fetch.md). Možete pripremiti i CSV datoteku s dva stupca,
+[skupno-čestice](batch-fetch.md). Možete pripremiti i CSV datoteku s dva stupca,
 `lr_unit_number` i `main_book_id`, poput primjera
 [lr_units.csv](../examples/lr_units.csv):
 
@@ -41,12 +41,12 @@ lr_unit_number,main_book_id
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral batch-lr-unit --input lr_units.csv --show-owners
+   uz skupno-ulošci --ulaz lr_units.csv --vlasnici
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral batch-lr-unit --input lr_units.csv --show-owners -->
+   <!-- BEGIN GENERATED: output uz skupno-ulošci --ulaz lr_units.csv --vlasnici -->
    ```text
    📄 Učitavam ZK uloške iz: lr_units.csv
    📊 Pronađena 3 ZK uloška za obradu
@@ -137,38 +137,38 @@ lr_unit_number,main_book_id
    <!-- END GENERATED: output -->
 
 4. Ulošci se ispisuju jedan za drugim, odvojeni crticama. Svaki je prikazan kao
-   na stranici [get-lr-unit](get-lr-unit.md): **ZEMLJIŠNOKNJIŽNI ULOŽAK**, zatim
+   na stranici [uložak](get-lr-unit.md): **ZEMLJIŠNOKNJIŽNI ULOŽAK**, zatim
    **POSJEDOVNICA (LIST A)**, **VLASTOVNICA (LIST B)** i **TERETOVNICA (LIST
    C)**. Uložak s plombama ima isti redak **Plombe (u tijeku)** i upozorenje.
 
 ## Što možete odabrati
 
-Za nastavak iz rezultata naredbe batch-fetch upotrijebite `--from-batch-output`
-s JSON datotekom koju je ona zapisala:
+Za nastavak iz rezultata naredbe skupno-čestice upotrijebite
+`--iz-skupnog-ispisa` s JSON datotekom koju je ona zapisala:
 
 ```bash
-cadastral batch-lr-unit --from-batch-output parcels-found.json --show-owners
+uz skupno-ulošci --iz-skupnog-ispisa parcels-found.json --vlasnici
 ```
 
 Kod dugog popisa ispis na zaslonu teško je čitati. Umjesto toga spremite ga u
-datoteku pomoću `--format json` i `--output`:
+datoteku pomoću `--oblik json` i `--datoteka`:
 
 ```bash
-cadastral batch-lr-unit --input lr_units.csv --show-owners --format json --output units.json
+uz skupno-ulošci --ulaz lr_units.csv --vlasnici --oblik json --datoteka units.json
 ```
 
 Kada se jedan uložak ne može pročitati, alat nastavlja s ostalima. Dodajte
-`--stop-on-error` da umjesto toga stane kod prvog problema.
+`--stani-kod-greške` da umjesto toga stane kod prvog problema.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--input`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom ZK uložaka | Ne koristi se |
-| `--from-batch-output`, `-b` `PUTANJA` | Učitaj reference ZK uložaka iz JSON izlaza naredbe batch-fetch | Ne koristi se |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--show-owners` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
-| `--continue-on-error` / `--stop-on-error` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--continue-on-error` |
+| `--ulaz`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom ZK uložaka | Ne koristi se |
+| `--iz-skupnog-ispisa`, `-b` `PUTANJA` | Učitaj reference ZK uložaka iz JSON izlaza naredbe batch-fetch | Ne koristi se |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--vlasnici` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
+| `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -184,28 +184,28 @@ greškama](../errors.md).
 
 ## Povezane stranice
 
-- [batch-fetch](batch-fetch.md) iz popisa čestica izrađuje popis uložaka.
-- [get-lr-unit](get-lr-unit.md) čita jedan uložak i objašnjava listove.
+- [skupno-čestice](batch-fetch.md) iz popisa čestica izrađuje popis uložaka.
+- [uložak](get-lr-unit.md) čita jedan uložak i objašnjava listove.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral batch-lr-unit --help`:
+Ovo ispisuje `uz skupno-ulošci --help`:
 
 ```text
-Uporaba: cadastral batch-lr-unit [OPTIONS]
+Uporaba: uz skupno-ulošci [OPCIJE]
 
   Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).
 
   Podržana su dva načina unosa:
 
   1. Datoteka sa ZK ulošcima (CSV ili JSON):
-     cadastral batch-lr-unit --input lr_units.csv
+     uz skupno-ulošci --ulaz lr_units.csv
 
   2. Izlaz naredbe batch-fetch (učitava jedinstvene reference ZK uložaka):
-     cadastral batch-fetch "103/2,45" -m SAVAR --format json -o parcels.json
-     cadastral batch-lr-unit --from-batch-output parcels.json
+     uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -o parcels.json
+     uz skupno-ulošci --iz-skupnog-ispisa parcels.json
 
   CSV format:
     lr_unit_number,main_book_id
@@ -220,27 +220,27 @@ Uporaba: cadastral batch-lr-unit [OPTIONS]
 
   Primjeri:
     # Iz datoteke sa ZK ulošcima
-    cadastral batch-lr-unit --input lr_units.csv
+    uz skupno-ulošci --ulaz lr_units.csv
 
     # Iz izlaza naredbe batch-fetch (lanac naredbi)
-    cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
-    cadastral batch-lr-unit --from-batch-output parcels.json
+    uz skupno-čestice "103/2,45,396/1" -ko SAVAR --oblik json -o parcels.json
+    uz skupno-ulošci --iz-skupnog-ispisa parcels.json
 
     # S podacima o vlasništvu u JSON formatu
-    cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json
+    uz skupno-ulošci -i lr_units.json --vlasnici --oblik json -o results.json
 
   ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
 
 Opcije:
-  -i, --input PUTANJA             Ulazna datoteka (CSV ili JSON) s popisom ZK
+  -i, --ulaz PUTANJA              Ulazna datoteka (CSV ili JSON) s popisom ZK
                                   uložaka
-  -b, --from-batch-output PUTANJA
+  -b, --iz-skupnog-ispisa PUTANJA
                                   Učitaj reference ZK uložaka iz JSON izlaza
                                   naredbe batch-fetch
-  -o, --output PUTANJA            Spremi izlaz u datoteku
-  -f, --format [table|json|csv]   Format izlaza
-  --show-owners                   Uključi detaljne podatke o vlasništvu u izlaz
-  --continue-on-error / --stop-on-error
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  --vlasnici                      Uključi detaljne podatke o vlasništvu u izlaz
+  --nastavi-kod-greške / --stani-kod-greške
                                   Nastavi obradu nakon grešaka (zadano: nastavi)
   --help                          Prikaži ovu poruku i izađi.
 ```

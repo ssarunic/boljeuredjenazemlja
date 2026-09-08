@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 12:35+0100\n"
+"POT-Creation-Date: 2026-09-08 13:00+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -322,6 +322,305 @@ msgstr "Detalji"
 msgid "No encumbrances found"
 msgstr "Nema tereta"
 
+#: cli/src/cadastral_cli/localized.py:41
+msgctxt "command"
+msgid "search"
+msgstr "pretraži"
+
+#: cli/src/cadastral_cli/localized.py:42
+msgctxt "command"
+msgid "search-municipality"
+msgstr "traži-općinu"
+
+#: cli/src/cadastral_cli/localized.py:43
+msgctxt "command"
+msgid "get-parcel"
+msgstr "čestica"
+
+#: cli/src/cadastral_cli/localized.py:44
+msgctxt "command"
+msgid "get-lr-unit"
+msgstr "uložak"
+
+#: cli/src/cadastral_cli/localized.py:45
+msgctxt "command"
+msgid "batch-fetch"
+msgstr "skupno-čestice"
+
+#: cli/src/cadastral_cli/localized.py:46
+msgctxt "command"
+msgid "batch-lr-unit"
+msgstr "skupno-ulošci"
+
+#: cli/src/cadastral_cli/localized.py:47
+msgctxt "command"
+msgid "get-geometry"
+msgstr "granica"
+
+#: cli/src/cadastral_cli/localized.py:48
+msgctxt "command"
+msgid "download-gis"
+msgstr "preuzmi-gis"
+
+#: cli/src/cadastral_cli/localized.py:49
+msgctxt "command"
+msgid "list-offices"
+msgstr "uredi"
+
+#: cli/src/cadastral_cli/localized.py:50
+msgctxt "command"
+msgid "list-municipalities"
+msgstr "općine"
+
+#: cli/src/cadastral_cli/localized.py:51
+msgctxt "command"
+msgid "info"
+msgstr "info"
+
+#: cli/src/cadastral_cli/localized.py:52
+msgctxt "command"
+msgid "cache"
+msgstr "predmemorija"
+
+#: cli/src/cadastral_cli/localized.py:53
+msgctxt "command"
+msgid "cache list"
+msgstr "predmemorija popis"
+
+#: cli/src/cadastral_cli/localized.py:54
+msgctxt "command"
+msgid "cache clear"
+msgstr "predmemorija obriši"
+
+#: cli/src/cadastral_cli/localized.py:55
+msgctxt "command"
+msgid "cache info"
+msgstr "predmemorija info"
+
+#: cli/src/cadastral_cli/localized.py:61
+msgctxt "option"
+msgid "--help"
+msgstr "--pomoć"
+
+#: cli/src/cadastral_cli/localized.py:62
+msgctxt "option"
+msgid "--lang"
+msgstr "--jezik"
+
+#: cli/src/cadastral_cli/localized.py:63
+msgctxt "option"
+msgid "--verbose"
+msgstr "--opširno"
+
+#: cli/src/cadastral_cli/localized.py:64
+msgctxt "option"
+msgid "--version"
+msgstr "--verzija"
+
+#: cli/src/cadastral_cli/localized.py:65
+msgctxt "option"
+msgid "--municipality"
+msgstr "--općina"
+
+#: cli/src/cadastral_cli/localized.py:66
+msgctxt "option"
+msgid "-m"
+msgstr "-ko"
+
+#: cli/src/cadastral_cli/localized.py:67
+msgctxt "option"
+msgid "--exact"
+msgstr "--točno"
+
+#: cli/src/cadastral_cli/localized.py:68
+msgctxt "option"
+msgid "--partial"
+msgstr "--djelomično"
+
+#: cli/src/cadastral_cli/localized.py:69
+msgctxt "option"
+msgid "--format"
+msgstr "--oblik"
+
+#: cli/src/cadastral_cli/localized.py:70
+msgctxt "option"
+msgid "--output"
+msgstr "--datoteka"
+
+#: cli/src/cadastral_cli/localized.py:71
+msgctxt "option"
+msgid "--office"
+msgstr "--ured"
+
+#: cli/src/cadastral_cli/localized.py:72
+msgctxt "option"
+msgid "--department"
+msgstr "--odjel"
+
+#: cli/src/cadastral_cli/localized.py:73
+msgctxt "option"
+msgid "--count-only"
+msgstr "--samo-broj"
+
+#: cli/src/cadastral_cli/localized.py:74
+msgctxt "option"
+msgid "--search"
+msgstr "--traži"
+
+#: cli/src/cadastral_cli/localized.py:75
+msgctxt "option"
+msgid "--detail"
+msgstr "--detalji"
+
+#: cli/src/cadastral_cli/localized.py:76
+msgctxt "option"
+msgid "--show-owners"
+msgstr "--vlasnici"
+
+#: cli/src/cadastral_cli/localized.py:77
+msgctxt "option"
+msgid "--show-geometry"
+msgstr "--geometrija"
+
+#: cli/src/cadastral_cli/localized.py:78
+msgctxt "option"
+msgid "--unit-number"
+msgstr "--broj-uloška"
+
+#: cli/src/cadastral_cli/localized.py:79
+msgctxt "option"
+msgid "--main-book"
+msgstr "--glavna-knjiga"
+
+#: cli/src/cadastral_cli/localized.py:80
+msgctxt "option"
+msgid "--from-parcel"
+msgstr "--od-čestice"
+
+#: cli/src/cadastral_cli/localized.py:81
+msgctxt "option"
+msgid "--show-parcels"
+msgstr "--čestice"
+
+#: cli/src/cadastral_cli/localized.py:82
+msgctxt "option"
+msgid "--show-encumbrances"
+msgstr "--tereti"
+
+#: cli/src/cadastral_cli/localized.py:83
+msgctxt "option"
+msgid "--plombe-detail"
+msgstr "--plombe"
+
+#: cli/src/cadastral_cli/localized.py:84
+msgctxt "option"
+msgid "--all"
+msgstr "--sve"
+
+#: cli/src/cadastral_cli/localized.py:85
+msgctxt "option"
+msgid "--input"
+msgstr "--ulaz"
+
+#: cli/src/cadastral_cli/localized.py:86
+msgctxt "option"
+msgid "--from-batch-output"
+msgstr "--iz-skupnog-ispisa"
+
+#: cli/src/cadastral_cli/localized.py:87
+msgctxt "option"
+msgid "--continue-on-error"
+msgstr "--nastavi-kod-greške"
+
+#: cli/src/cadastral_cli/localized.py:88
+msgctxt "option"
+msgid "--stop-on-error"
+msgstr "--stani-kod-greške"
+
+#: cli/src/cadastral_cli/localized.py:89
+msgctxt "option"
+msgid "--show-stats"
+msgstr "--statistika"
+
+#: cli/src/cadastral_cli/localized.py:90
+msgctxt "option"
+msgid "--extract"
+msgstr "--raspakiraj"
+
+#: cli/src/cadastral_cli/localized.py:91
+msgctxt "option"
+msgid "--no-extract"
+msgstr "--bez-raspakiravanja"
+
+#: cli/src/cadastral_cli/localized.py:92
+msgctxt "option"
+msgid "--clear-cache"
+msgstr "--obriši-predmemoriju"
+
+#: cli/src/cadastral_cli/localized.py:93
+msgctxt "option"
+msgid "--force"
+msgstr "--bez-pitanja"
+
+#: cli/src/cadastral_cli/localized.py:100
+msgctxt "option get-parcel"
+msgid "--show-owners"
+msgstr "--posjednici"
+
+#: cli/src/cadastral_cli/localized.py:101
+msgctxt "option batch-fetch"
+msgid "--show-owners"
+msgstr "--posjednici"
+
+#: cli/src/cadastral_cli/localized.py:102
+msgctxt "option download-gis"
+msgid "--output"
+msgstr "--mapa"
+
+#: cli/src/cadastral_cli/localized.py:107
+msgctxt "choice"
+msgid "table"
+msgstr "tablica"
+
+#: cli/src/cadastral_cli/localized.py:111
+msgctxt "program"
+msgid "cadastral"
+msgstr "uz"
+
+#: cli/src/cadastral_cli/localized.py:116
+msgctxt "argument"
+msgid "PARCEL_NUMBER"
+msgstr "BROJ_ČESTICE"
+
+#: cli/src/cadastral_cli/localized.py:117
+msgctxt "argument"
+msgid "SEARCH_TERM"
+msgstr "POJAM"
+
+#: cli/src/cadastral_cli/localized.py:118
+msgctxt "argument"
+msgid "PARCELS"
+msgstr "ČESTICE"
+
+#: cli/src/cadastral_cli/localized.py:119
+msgctxt "argument"
+msgid "MUNICIPALITY"
+msgstr "OPĆINA"
+
+#: cli/src/cadastral_cli/localized.py:121
+msgctxt "usage"
+msgid "[OPTIONS]"
+msgstr "[OPCIJE]"
+
+#: cli/src/cadastral_cli/localized.py:122
+msgctxt "usage"
+msgid "COMMAND [ARGS]..."
+msgstr "NAREDBA [ARGUMENTI]..."
+
+#: cli/src/cadastral_cli/localized.py:326 click/core.py:1799
+msgid "Commands"
+msgstr "Naredbe"
+
 #: cli/src/cadastral_cli/commands/discovery.py:14
 msgid ""
 "List all cadastral offices in Croatia.\n"
@@ -333,8 +632,8 @@ msgstr ""
 "Popis svih katastarskih ureda u Hrvatskoj.\n"
 "\n"
 "Primjer:\n"
-"  cadastral list-offices\n"
-"  cadastral list-offices --format json"
+"  uz uredi\n"
+"  uz uredi --oblik json"
 
 #: cli/src/cadastral_cli/commands/discovery.py:28
 #: cli/src/cadastral_cli/commands/discovery.py:91
@@ -415,10 +714,10 @@ msgstr ""
 "Popis općina uz mogućnost filtriranja.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral list-municipalities\n"
-"  cadastral list-municipalities --office 114\n"
-"  cadastral list-municipalities --office 114 --department 116\n"
-"  cadastral list-municipalities --search ZADAR"
+"  uz općine\n"
+"  uz općine --ured 114\n"
+"  uz općine --ured 114 --odjel 116\n"
+"  uz općine --traži ZADAR"
 
 #: cli/src/cadastral_cli/commands/discovery.py:82
 msgid "Filter by cadastral office ID"
@@ -474,7 +773,7 @@ msgid "Department"
 msgstr "Odjel"
 
 #: cli/src/cadastral_cli/commands/discovery.py:145
-#: cli/src/cadastral_cli/commands/cache.py:66
+#: cli/src/cadastral_cli/commands/cache.py:67
 #: cli/src/cadastral_cli/commands/search.py:89
 #: cli/src/cadastral_cli/commands/search.py:90
 #: cli/src/cadastral_cli/commands/search.py:94
@@ -508,7 +807,7 @@ msgstr ""
 "Prikaz informacija o sustavu i stanju predmemorije.\n"
 "\n"
 "Primjer:\n"
-"  cadastral info"
+"  uz info"
 
 #: cli/src/cadastral_cli/commands/discovery.py:189
 msgid "Croatian Cadastral CLI"
@@ -549,12 +848,12 @@ msgid "  ... and {more} more"
 msgstr "  ... i još {more}"
 
 #: cli/src/cadastral_cli/commands/discovery.py:232
-#: cli/src/cadastral_cli/commands/cache.py:75
+#: cli/src/cadastral_cli/commands/cache.py:76
 msgid "Cache is empty"
 msgstr "Predmemorija je prazna"
 
 #: cli/src/cadastral_cli/commands/discovery.py:234
-#: cli/src/cadastral_cli/commands/cache.py:44
+#: cli/src/cadastral_cli/commands/cache.py:45
 msgid "Cache directory does not exist yet"
 msgstr "Direktorij predmemorije još ne postoji"
 
@@ -573,7 +872,7 @@ msgid "Timeout: {timeout} seconds"
 msgstr "Timeout: {timeout} sekundi"
 
 #: cli/src/cadastral_cli/commands/discovery.py:248
-#: cli/src/cadastral_cli/commands/cache.py:249
+#: cli/src/cadastral_cli/commands/cache.py:250
 msgid "To clear cache: cadastral cache clear --all"
 msgstr "Za brisanje predmemorije: cadastral cache clear --all"
 
@@ -614,19 +913,19 @@ msgstr ""
 "\n"
 "Primjeri:\n"
 "  # Prema broju uloška i ID-u glavne knjige\n"
-"  cadastral get-lr-unit --unit-number 769 --main-book 21277\n"
+"  uz uložak --broj-uloška 769 --glavna-knjiga 21277\n"
 "\n"
 "  # Prema čestici (automatsko pronalaženje)\n"
-"  cadastral get-lr-unit --from-parcel 279/6 -m SAVAR\n"
+"  uz uložak --od-čestice 279/6 -ko SAVAR\n"
 "\n"
 "  # Samo podaci o vlasništvu\n"
-"  cadastral get-lr-unit -u 769 -b 21277 --show-owners\n"
+"  uz uložak -u 769 -b 21277 --vlasnici\n"
 "\n"
 "  # Svi listovi\n"
-"  cadastral get-lr-unit -p 279/6 -m SAVAR --all\n"
+"  uz uložak -p 279/6 -ko SAVAR --sve\n"
 "\n"
 "  # Izvoz u JSON\n"
-"  cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json\n"
+"  uz uložak -u 769 -b 21277 --oblik json -o lr-unit.json\n"
 "\n"
 "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja"
 
@@ -787,11 +1086,11 @@ msgstr ""
 "Podržana su dva načina unosa:\n"
 "\n"
 "1. Datoteka sa ZK ulošcima (CSV ili JSON):\n"
-"   cadastral batch-lr-unit --input lr_units.csv\n"
+"   uz skupno-ulošci --ulaz lr_units.csv\n"
 "\n"
 "2. Izlaz naredbe batch-fetch (učitava jedinstvene reference ZK uložaka):\n"
-"   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o parcels.json\n"
-"   cadastral batch-lr-unit --from-batch-output parcels.json\n"
+"   uz skupno-čestice \"103/2,45\" -ko SAVAR --oblik json -o parcels.json\n"
+"   uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 "\n"
 "CSV format:\n"
 "  lr_unit_number,main_book_id\n"
@@ -806,14 +1105,14 @@ msgstr ""
 "\n"
 "Primjeri:\n"
 "  # Iz datoteke sa ZK ulošcima\n"
-"  cadastral batch-lr-unit --input lr_units.csv\n"
+"  uz skupno-ulošci --ulaz lr_units.csv\n"
 "\n"
 "  # Iz izlaza naredbe batch-fetch (lanac naredbi)\n"
-"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o parcels.json\n"
-"  cadastral batch-lr-unit --from-batch-output parcels.json\n"
+"  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --oblik json -o parcels.json\n"
+"  uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 "\n"
 "  # S podacima o vlasništvu u JSON formatu\n"
-"  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json\n"
+"  uz skupno-ulošci -i lr_units.json --vlasnici --oblik json -o results.json\n"
 "\n"
 "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja"
 
@@ -963,11 +1262,11 @@ msgstr ""
 "Podržana su dva načina unosa:\n"
 "\n"
 "1. Popis odvojen zarezima u naredbenom retku (za male skupine):\n"
-"   cadastral batch-fetch \"103/2,45,396/1\" --municipality SAVAR\n"
+"   uz skupno-čestice \"103/2,45,396/1\" --općina SAVAR\n"
 "\n"
 "2. Ulazna datoteka (za velike skupine):\n"
-"   cadastral batch-fetch --input parcels.csv\n"
-"   cadastral batch-fetch --input parcels.json\n"
+"   uz skupno-čestice --ulaz parcels.csv\n"
+"   uz skupno-čestice --ulaz parcels.json\n"
 "\n"
 "CSV format (brojevi čestica s općinom):\n"
 "  parcel_number,municipality\n"
@@ -996,16 +1295,16 @@ msgstr ""
 "\n"
 "Primjeri:\n"
 "  # Brza skupna obrada iz popisa u naredbenom retku\n"
-"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR\n"
+"  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR\n"
 "\n"
 "  # Skupna obrada iz CSV datoteke\n"
-"  cadastral batch-fetch --input parcels.csv --format csv -o results.csv\n"
+"  uz skupno-čestice --ulaz parcels.csv --oblik csv -o results.csv\n"
 "\n"
 "  # Skupna obrada s potpunim podacima za svaku česticu (kao get-parcel)\n"
-"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --detail full\n"
+"  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --detalji full\n"
 "\n"
 "  # Skupna obrada s podacima o vlasništvu u JSON formatu\n"
-"  cadastral batch-fetch --input parcels.json --show-owners --format json -o results.json"
+"  uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -o results.json"
 
 #: cli/src/cadastral_cli/commands/batch.py:80
 msgid "Input file (CSV or JSON) with parcel specifications"
@@ -1114,7 +1413,7 @@ msgid "RESULTS"
 msgstr "REZULTATI"
 
 #: cli/src/cadastral_cli/commands/batch.py:316
-#: cli/src/cadastral_cli/commands/cache.py:90
+#: cli/src/cadastral_cli/commands/cache.py:91
 #: cli/src/cadastral_cli/commands/search.py:88
 #: cli/src/cadastral_cli/commands/parcel.py:194
 msgid "Municipality"
@@ -1125,7 +1424,7 @@ msgstr "Općina"
 msgid "Possessors"
 msgstr "Posjednici"
 
-#: cli/src/cadastral_cli/commands/cache.py:14
+#: cli/src/cadastral_cli/commands/cache.py:15
 msgid ""
 "Cache management commands.\n"
 "\n"
@@ -1137,11 +1436,11 @@ msgstr ""
 "Naredbe za upravljanje predmemorijom.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral cache list\n"
-"  cadastral cache clear --municipality 334979\n"
-"  cadastral cache clear --all"
+"  uz predmemorija popis\n"
+"  uz predmemorija obriši --općina 334979\n"
+"  uz predmemorija obriši --sve"
 
-#: cli/src/cadastral_cli/commands/cache.py:27
+#: cli/src/cadastral_cli/commands/cache.py:28
 msgid ""
 "List cached municipalities.\n"
 "\n"
@@ -1151,9 +1450,9 @@ msgstr ""
 "Popis predmemoriranih općina.\n"
 "\n"
 "Primjer:\n"
-"  cadastral cache list"
+"  uz predmemorija popis"
 
-#: cli/src/cadastral_cli/commands/cache.py:77
+#: cli/src/cadastral_cli/commands/cache.py:78
 msgid ""
 "\n"
 "Download GIS data: cadastral download-gis <municipality> -o ./output"
@@ -1161,7 +1460,7 @@ msgstr ""
 "\n"
 "Preuzmite GIS podatke: cadastral download-gis <općina> -o ./izlaz"
 
-#: cli/src/cadastral_cli/commands/cache.py:85
+#: cli/src/cadastral_cli/commands/cache.py:86
 #, python-brace-format
 msgid ""
 "\n"
@@ -1170,15 +1469,15 @@ msgstr ""
 "\n"
 "GIS podaci u predmemoriji ({count} općina):\n"
 
-#: cli/src/cadastral_cli/commands/cache.py:91
+#: cli/src/cadastral_cli/commands/cache.py:92
 msgid "Size"
 msgstr "Veličina"
 
-#: cli/src/cadastral_cli/commands/cache.py:92
+#: cli/src/cadastral_cli/commands/cache.py:93
 msgid "Last Modified"
 msgstr "Zadnja izmjena"
 
-#: cli/src/cadastral_cli/commands/cache.py:103
+#: cli/src/cadastral_cli/commands/cache.py:104
 #, python-brace-format
 msgid ""
 "\n"
@@ -1187,17 +1486,17 @@ msgstr ""
 "\n"
 "Ukupna veličina predmemorije: {size} MB"
 
-#: cli/src/cadastral_cli/commands/cache.py:106
+#: cli/src/cadastral_cli/commands/cache.py:107
 #, python-brace-format
 msgid "Cache Location: {cache_dir}"
 msgstr "Lokacija predmemorije: {cache_dir}"
 
-#: cli/src/cadastral_cli/commands/cache.py:111
+#: cli/src/cadastral_cli/commands/cache.py:112
 #, python-brace-format
 msgid "Error listing cache: {error}"
 msgstr "Greška pri ispisivanju predmemorije: {error}"
 
-#: cli/src/cadastral_cli/commands/cache.py:115
+#: cli/src/cadastral_cli/commands/cache.py:116
 msgid ""
 "Clear cached GIS data.\n"
 "\n"
@@ -1209,27 +1508,27 @@ msgstr ""
 "Brisanje predmemoriranih GIS podataka.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral cache clear --municipality 334979\n"
-"  cadastral cache clear --all\n"
-"  cadastral cache clear -m SAVAR --force"
+"  uz predmemorija obriši --općina 334979\n"
+"  uz predmemorija obriši --sve\n"
+"  uz predmemorija obriši -ko SAVAR --bez-pitanja"
 
-#: cli/src/cadastral_cli/commands/cache.py:124
+#: cli/src/cadastral_cli/commands/cache.py:125
 msgid "Clear specific municipality"
 msgstr "Očisti specifičnu općinu"
 
-#: cli/src/cadastral_cli/commands/cache.py:125
+#: cli/src/cadastral_cli/commands/cache.py:126
 msgid "Clear all cache"
 msgstr "Očisti svu predmemoriju"
 
-#: cli/src/cadastral_cli/commands/cache.py:126
+#: cli/src/cadastral_cli/commands/cache.py:127
 msgid "Skip confirmation"
 msgstr "Preskoči potvrdu"
 
-#: cli/src/cadastral_cli/commands/cache.py:131
+#: cli/src/cadastral_cli/commands/cache.py:132
 msgid "Either --municipality or --all is required"
 msgstr "Potrebno je --municipality ili --all"
 
-#: cli/src/cadastral_cli/commands/cache.py:132
+#: cli/src/cadastral_cli/commands/cache.py:133
 msgid ""
 "\n"
 "Try: cadastral cache clear --help"
@@ -1237,52 +1536,52 @@ msgstr ""
 "\n"
 "Pokušajte: cadastral cache clear --help"
 
-#: cli/src/cadastral_cli/commands/cache.py:140
+#: cli/src/cadastral_cli/commands/cache.py:141
 msgid "This will delete ALL cached GIS data."
 msgstr "Ovo će izbrisati SVE GIS podatke iz predmemorije."
 
-#: cli/src/cadastral_cli/commands/cache.py:141
+#: cli/src/cadastral_cli/commands/cache.py:142
 msgid "Are you sure?"
 msgstr "Jeste li sigurni?"
 
-#: cli/src/cadastral_cli/commands/cache.py:142
+#: cli/src/cadastral_cli/commands/cache.py:143
 msgid "Cancelled."
 msgstr "Otkazano."
 
-#: cli/src/cadastral_cli/commands/cache.py:147
+#: cli/src/cadastral_cli/commands/cache.py:148
 msgid "Cache is already empty"
 msgstr "Predmemorija je već prazna"
 
-#: cli/src/cadastral_cli/commands/cache.py:155
+#: cli/src/cadastral_cli/commands/cache.py:156
 msgid "Clearing all cache..."
 msgstr "Čistim svu predmemoriju..."
 
-#: cli/src/cadastral_cli/commands/cache.py:158
+#: cli/src/cadastral_cli/commands/cache.py:159
 #, python-brace-format
 msgid "Cleared all cache ({size} MB freed)"
 msgstr "Očišćena sva predmemorija (oslobođeno {size} MB)"
 
-#: cli/src/cadastral_cli/commands/cache.py:170
+#: cli/src/cadastral_cli/commands/cache.py:171
 #, python-brace-format
 msgid "Municipality {municipality_code} is not cached"
 msgstr "Općina {municipality_code} nije u predmemoriji"
 
-#: cli/src/cadastral_cli/commands/cache.py:179
+#: cli/src/cadastral_cli/commands/cache.py:180
 #, python-brace-format
 msgid "Clearing cache for municipality {municipality_code}..."
 msgstr "Čistim predmemoriju za općinu {municipality_code}..."
 
-#: cli/src/cadastral_cli/commands/cache.py:186
+#: cli/src/cadastral_cli/commands/cache.py:187
 #, python-brace-format
 msgid "Cleared municipality {municipality_code} ({size} KB freed)"
 msgstr "Očišćena općina {municipality_code} (oslobođeno {size} KB)"
 
-#: cli/src/cadastral_cli/commands/cache.py:193
+#: cli/src/cadastral_cli/commands/cache.py:194
 #, python-brace-format
 msgid "Error clearing cache: {error}"
 msgstr "Greška pri čišćenju predmemorije: {error}"
 
-#: cli/src/cadastral_cli/commands/cache.py:197
+#: cli/src/cadastral_cli/commands/cache.py:198
 msgid ""
 "Show detailed cache information.\n"
 "\n"
@@ -1292,46 +1591,46 @@ msgstr ""
 "Prikaz detaljnih informacija o predmemoriji.\n"
 "\n"
 "Primjer:\n"
-"  cadastral cache info"
+"  uz predmemorija info"
 
-#: cli/src/cadastral_cli/commands/cache.py:211
+#: cli/src/cadastral_cli/commands/cache.py:212
 msgid "CACHE INFORMATION"
 msgstr "INFORMACIJE O PREDMEMORIJI"
 
-#: cli/src/cadastral_cli/commands/cache.py:214
+#: cli/src/cadastral_cli/commands/cache.py:215
 #, python-brace-format
 msgid "Location: {cache_dir}"
 msgstr "Lokacija: {cache_dir}"
 
-#: cli/src/cadastral_cli/commands/cache.py:217
+#: cli/src/cadastral_cli/commands/cache.py:218
 msgid "Status: Empty (directory does not exist)"
 msgstr "Status: Prazno (direktorij ne postoji)"
 
-#: cli/src/cadastral_cli/commands/cache.py:240
+#: cli/src/cadastral_cli/commands/cache.py:241
 msgid "Status: Active"
 msgstr "Status: Aktivno"
 
-#: cli/src/cadastral_cli/commands/cache.py:241
+#: cli/src/cadastral_cli/commands/cache.py:242
 #, python-brace-format
 msgid "Total Size: {size} MB"
 msgstr "Ukupna veličina: {size} MB"
 
-#: cli/src/cadastral_cli/commands/cache.py:244
+#: cli/src/cadastral_cli/commands/cache.py:245
 #, python-brace-format
 msgid "Municipalities: {count}"
 msgstr "Općine: {count}"
 
-#: cli/src/cadastral_cli/commands/cache.py:245
+#: cli/src/cadastral_cli/commands/cache.py:246
 #, python-brace-format
 msgid "ZIP Files: {count}"
 msgstr "ZIP datoteke: {count}"
 
-#: cli/src/cadastral_cli/commands/cache.py:246
+#: cli/src/cadastral_cli/commands/cache.py:247
 #, python-brace-format
 msgid "GML Files: {count}"
 msgstr "GML datoteke: {count}"
 
-#: cli/src/cadastral_cli/commands/cache.py:248
+#: cli/src/cadastral_cli/commands/cache.py:249
 msgid ""
 "\n"
 "To list cached municipalities: cadastral cache list"
@@ -1339,7 +1638,7 @@ msgstr ""
 "\n"
 "Za popis općina u predmemoriji: cadastral cache list"
 
-#: cli/src/cadastral_cli/commands/cache.py:252
+#: cli/src/cadastral_cli/commands/cache.py:253
 #, python-brace-format
 msgid "Error getting cache info: {error}"
 msgstr "Greška pri dohvaćanju informacija o predmemoriji: {error}"
@@ -1356,9 +1655,9 @@ msgstr ""
 "Brzo pretraživanje čestica s osnovnim podacima.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral search 103/2 --municipality SAVAR\n"
-"  cadastral search 103/2 -m 334979\n"
-"  cadastral search 114 -m 334979 --partial"
+"  uz pretraži 103/2 --općina SAVAR\n"
+"  uz pretraži 103/2 -ko 334979\n"
+"  uz pretraži 114 -ko 334979 --djelomično"
 
 #: cli/src/cadastral_cli/commands/search.py:34
 msgid "Municipality name or code (e.g., SAVAR or 334979)"
@@ -1448,10 +1747,10 @@ msgstr ""
 "Pretraživanje i filtriranje općina.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral search-municipality SAVAR\n"
-"  cadastral search-municipality --office 114\n"
-"  cadastral search-municipality --office 114 --department 116\n"
-"  cadastral search-municipality SAVAR --office 114"
+"  uz traži-općinu SAVAR\n"
+"  uz traži-općinu --ured 114\n"
+"  uz traži-općinu --ured 114 --odjel 116\n"
+"  uz traži-općinu SAVAR --ured 114"
 
 #: cli/src/cadastral_cli/commands/search.py:158
 msgid "Filter by cadastral office ID (e.g., 114)"
@@ -1526,10 +1825,10 @@ msgstr ""
 "Dohvat potpunih podataka o čestici s podacima o vlasništvu.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral get-parcel 103/2 -m SAVAR\n"
-"  cadastral get-parcel 103/2 -m 334979 --show-owners\n"
-"  cadastral get-parcel 103/2 -m 334979 --detail owners\n"
-"  cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json"
+"  uz čestica 103/2 -ko SAVAR\n"
+"  uz čestica 103/2 -ko 334979 --posjednici\n"
+"  uz čestica 103/2 -ko 334979 --detalji owners\n"
+"  uz čestica 103/2 -ko 334979 --oblik json -o parcel.json"
 
 # Search command strings
 #: cli/src/cadastral_cli/commands/parcel.py:28
@@ -1719,10 +2018,10 @@ msgstr ""
 "Dohvat koordinata granica čestice za GIS integraciju.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral get-geometry 103/2 -m SAVAR\n"
-"  cadastral get-geometry 103/2 -m 334979 --format wkt\n"
-"  cadastral get-geometry 103/2 -m 334979 --format geojson -o parcel.geojson\n"
-"  cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv"
+"  uz granica 103/2 -ko SAVAR\n"
+"  uz granica 103/2 -ko 334979 --oblik wkt\n"
+"  uz granica 103/2 -ko 334979 --oblik geojson -o parcel.geojson\n"
+"  uz granica 103/2 -ko 334979 --oblik csv -o coords.csv"
 
 # GIS commands
 #: cli/src/cadastral_cli/commands/gis.py:37
@@ -1783,9 +2082,9 @@ msgstr ""
 "Preuzimanje potpunih GIS podataka za općinu.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral download-gis 334979 --output ./gis_data\n"
-"  cadastral download-gis SAVAR --output ./savar_gis --extract\n"
-"  cadastral download-gis 334979 -o ./data --clear-cache"
+"  uz preuzmi-gis 334979 --mapa ./gis_data\n"
+"  uz preuzmi-gis SAVAR --mapa ./savar_gis --raspakiraj\n"
+"  uz preuzmi-gis 334979 -o ./data --obriši-predmemoriju"
 
 #: cli/src/cadastral_cli/commands/gis.py:159
 msgid "Output directory"
@@ -1894,7 +2193,7 @@ msgstr "  Max Y"
 msgid "required"
 msgstr "obavezno"
 
-#: cli/src/cadastral_cli/main.py:66
+#: cli/src/cadastral_cli/main.py:67
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -1909,28 +2208,28 @@ msgstr ""
 "Hrvatski katastarski sustav - CLI za pristup katastarskim i zemljišnoknjižnim podacima.\n"
 "\n"
 "Primjeri:\n"
-"  cadastral search 103/2 --municipality SAVAR\n"
-"  cadastral get-parcel 103/2 -m 334979 --show-owners\n"
-"  cadastral list-municipalities --office 114\n"
-"  cadastral get-geometry 103/2 -m 334979 --format wkt\n"
+"  uz pretraži 103/2 --općina SAVAR\n"
+"  uz čestica 103/2 -ko 334979 --posjednici\n"
+"  uz općine --ured 114\n"
+"  uz granica 103/2 -ko 334979 --oblik wkt\n"
 "\n"
 "Dokumentacija: https://github.com/yourusername/croatian-cadastral-api"
 
 # Common UI strings
-#: cli/src/cadastral_cli/main.py:80
+#: cli/src/cadastral_cli/main.py:85
 msgid "Verbose output"
 msgstr "Opširni ispis"
 
-#: cli/src/cadastral_cli/main.py:84
+#: cli/src/cadastral_cli/main.py:89
 msgid "Language for output (overrides system locale)"
 msgstr "Jezik za ispis (nadjačava postavke sustava)"
 
-#: cli/src/cadastral_cli/main.py:100
+#: cli/src/cadastral_cli/main.py:105
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:126
+#: cli/src/cadastral_cli/main.py:132
 #, python-brace-format
 msgid ""
 "\n"
@@ -1939,7 +2238,7 @@ msgstr ""
 "\n"
 "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:129
+#: cli/src/cadastral_cli/main.py:135
 msgid ""
 "\n"
 "\n"
@@ -1949,7 +2248,7 @@ msgstr ""
 "\n"
 "Operacija otkazana od strane korisnika."
 
-#: cli/src/cadastral_cli/main.py:132
+#: cli/src/cadastral_cli/main.py:138
 #, python-brace-format
 msgid ""
 "\n"
@@ -1992,10 +2291,6 @@ msgstr "DeprecationWarning: naredba {name!r} je zastarjela.{extra_message}"
 #: click/core.py:1425
 msgid "Aborted!"
 msgstr "Prekinuto!"
-
-#: click/core.py:1799
-msgid "Commands"
-msgstr "Naredbe"
 
 #: click/core.py:1830
 msgid "Missing command."

@@ -541,6 +541,7 @@ boljeuredjenazemlja/
 6. **Testing**: Add tests for new features
 7. **File naming**: Follow [specs/naming-conventions.md](specs/naming-conventions.md)
 8. **CLI documentation**: Any change to a CLI command (new, changed, or removed) must update the user docs in the same commit, following [specs/documentation-guide.md](specs/documentation-guide.md)
+9. **Croatian command and option names**: every command, long option, positional argument and word-like choice value needs an entry in `cli/src/cadastral_cli/localized.py` and a translation in `po/hr.po` (naming convention in [specs/terminology.md](specs/terminology.md) section 4); `cd cli && pytest tests/test_localized_cli.py` enforces it. English names stay canonical; the Croatian program name is `uz`
 
 ### Documentation Style
 

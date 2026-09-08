@@ -29,12 +29,12 @@ Ništa. Ova naredba ne traži unos i ništa ne mijenja.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral info
+   uz info
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral info -->
+   <!-- BEGIN GENERATED: output uz info -->
    ```text
    Hrvatski katastarski CLI
    ========================
@@ -80,7 +80,7 @@ obratite se osobi koja je instalirala alat.
 
 ## Povezane stranice
 
-- [cache-list](cache-list.md) detaljnije prikazuje pohranjene podatke o
+- [predmemorija popis](cache-list.md) detaljnije prikazuje pohranjene podatke o
   granicama.
 - [Počnite ovdje](../start-here.md) je vodič za početak.
 
@@ -88,15 +88,15 @@ obratite se osobi koja je instalirala alat.
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral info --help`:
+Ovo ispisuje `uz info --help`:
 
 ```text
-Uporaba: cadastral info [OPTIONS]
+Uporaba: uz info [OPCIJE]
 
   Prikaz informacija o sustavu i stanju predmemorije.
 
   Primjer:
-    cadastral info
+    uz info
 
 Opcije:
   --help  Prikaži ovu poruku i izađi.

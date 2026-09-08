@@ -29,8 +29,9 @@ Uložak možete odrediti na dva načina. Ako krećete od čestice, zadajte broj
 uloška i glavnu knjigu kojoj pripada, zadajte to dvoje.
 
 Glavna knjiga određena je brojem koji alat naziva identifikatorom glavne knjige
-(main book ID). Dobivate ga iz rezultata naredbe [batch-fetch](batch-fetch.md)
-ili iz ranijeg dohvata. Kretanje od čestice lakši je put.
+(main book ID). Dobivate ga iz rezultata naredbe
+[skupno-čestice](batch-fetch.md) ili iz ranijeg dohvata. Kretanje od čestice
+lakši je put.
 
 ## Korak po korak
 
@@ -38,12 +39,12 @@ ili iz ranijeg dohvata. Kretanje od čestice lakši je put.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-lr-unit --from-parcel 103/2 -m SAVAR --all
+   uz uložak --od-čestice 103/2 -ko SAVAR --sve
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral get-lr-unit --from-parcel 103/2 -m SAVAR --all -->
+   <!-- BEGIN GENERATED: output uz uložak --od-čestice 103/2 -ko SAVAR --sve -->
    ```text
                    ZEMLJIŠNOKNJIŽNI ULOŽAK
     Broj uloška           657
@@ -83,19 +84,19 @@ ili iz ranijeg dohvata. Kretanje od čestice lakši je put.
 
 ## Što možete odabrati
 
-`--all` prikazuje sva tri lista. Da vidite samo jedan, upotrijebite
-`--show-owners` za list B, `--show-parcels` za list A ili `--show-encumbrances`
-za list C. Bez ijednog od njih alat ispisuje samo prvu tablicu.
+`--sve` prikazuje sva tri lista. Da vidite samo jedan, upotrijebite `--vlasnici`
+za list B, `--čestice` za list A ili `--tereti` za list C. Bez ijednog od njih
+alat ispisuje samo prvu tablicu.
 
-Da vidite o čemu je svaka plomba, dodajte `--plombe-detail`. Alat tada za svaku
-plombu pita zemljišnu knjigu, što je jedan dodatni upit po plombi, i ispisuje
-tablicu s vrstom prijedloga za upis, njegovim statusom i datumom zaprimanja:
+Da vidite o čemu je svaka plomba, dodajte `--plombe`. Alat tada za svaku plombu
+pita zemljišnu knjigu, što je jedan dodatni upit po plombi, i ispisuje tablicu s
+vrstom prijedloga za upis, njegovim statusom i datumom zaprimanja:
 
 ```bash
-cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail
+uz uložak --broj-uloška 449 --glavna-knjiga 21277 --sve --plombe
 ```
 
-<!-- BEGIN GENERATED: output cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail -->
+<!-- BEGIN GENERATED: output uz uložak --broj-uloška 449 --glavna-knjiga 21277 --sve --plombe -->
 ```text
              ZEMLJIŠNOKNJIŽNI ULOŽAK
  Broj uloška           449
@@ -131,36 +132,36 @@ cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail
 <!-- END GENERATED: output -->
 
 Da uložak odredite izravno umjesto polaskom od čestice, upotrijebite zajedno
-`--unit-number` i `--main-book`, kao u gornjem primjeru. Da rezultat spremite u
-datoteku, dodajte `--format json` i `--output` s nazivom datoteke.
+`--broj-uloška` i `--glavna-knjiga`, kao u gornjem primjeru. Da rezultat
+spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom datoteke.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--unit-number`, `-u` `TEXT` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
-| `--main-book`, `-b` `INTEGER` | ID glavne knjige (npr. 21277) | Ne koristi se |
-| `--from-parcel`, `-p` `TEXT` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
-| `--municipality`, `-m` `TEXT` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
-| `--show-owners`, `-o` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
-| `--show-parcels`, `-P` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
-| `--show-encumbrances`, `-e` | Prikaži terete (list C) | Nije uključeno |
-| `--plombe-detail`, `-D` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
-| `--all`, `-a` | Prikaži sve listove | Nije uključeno |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `csv`) | Koristi se `table` |
-| `--output` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--broj-uloška`, `-u` `TEXT` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
+| `--glavna-knjiga`, `-b` `INTEGER` | ID glavne knjige (npr. 21277) | Ne koristi se |
+| `--od-čestice`, `-p` `TEXT` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
+| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
+| `--vlasnici`, `-o` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
+| `--čestice`, `-P` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
+| `--tereti`, `-e` | Prikaži terete (list C) | Nije uključeno |
+| `--plombe`, `-D` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
+| `--sve`, `-a` | Prikaži sve listove | Nije uključeno |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako zadate česticu, a zaboravite općinu, alat staje i traži je:
 
-<!-- BEGIN GENERATED: output cadastral get-lr-unit --from-parcel 103/2 -->
+<!-- BEGIN GENERATED: output uz uložak --od-čestice 103/2 -->
 ```text
 ✗ Greška: --municipality je obavezan uz --from-parcel
 ```
 <!-- END GENERATED: output -->
 
-Dodajte `-m` i naziv ili šifru općine.
+Dodajte `-ko` i naziv ili šifru općine.
 
 Ako broj uloška ne postoji u toj glavnoj knjizi, alat javlja grešku koja
 završava s `404 Not Found`. Provjerite oba broja na svom dokumentu. Ostale
@@ -168,19 +169,19 @@ poruke objašnjene su na [stranici o greškama](../errors.md).
 
 ## Povezane stranice
 
-- [get-parcel](get-parcel.md) prikazuje katastarsku stranu iste čestice,
+- [čestica](get-parcel.md) prikazuje katastarsku stranu iste čestice,
   uključujući posjednike.
-- [batch-lr-unit](batch-lr-unit.md) čita više uložaka odjednom.
+- [skupno-ulošci](batch-lr-unit.md) čita više uložaka odjednom.
 - [Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral get-lr-unit --help`:
+Ovo ispisuje `uz uložak --help`:
 
 ```text
-Uporaba: cadastral get-lr-unit [OPTIONS]
+Uporaba: uz uložak [OPCIJE]
 
   Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.
 
@@ -189,37 +190,37 @@ Uporaba: cadastral get-lr-unit [OPTIONS]
 
   Primjeri:
     # Prema broju uloška i ID-u glavne knjige
-    cadastral get-lr-unit --unit-number 769 --main-book 21277
+    uz uložak --broj-uloška 769 --glavna-knjiga 21277
 
     # Prema čestici (automatsko pronalaženje)
-    cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
+    uz uložak --od-čestice 279/6 -ko SAVAR
 
     # Samo podaci o vlasništvu
-    cadastral get-lr-unit -u 769 -b 21277 --show-owners
+    uz uložak -u 769 -b 21277 --vlasnici
 
     # Svi listovi
-    cadastral get-lr-unit -p 279/6 -m SAVAR --all
+    uz uložak -p 279/6 -ko SAVAR --sve
 
     # Izvoz u JSON
-    cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
+    uz uložak -u 769 -b 21277 --oblik json -o lr-unit.json
 
   ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
 
 Opcije:
-  -u, --unit-number TEXT         Broj zemljišnoknjižnog uloška (npr. '769')
-  -b, --main-book INTEGER        ID glavne knjige (npr. 21277)
-  -p, --from-parcel TEXT         Dohvati ZK uložak prema broju čestice
-  -m, --municipality TEXT        Naziv ili šifra općine (obavezno uz --from-
-                                 parcel)
-  -o, --show-owners              Prikaži podatke o vlasništvu (list B)
-  -P, --show-parcels             Prikaži sve čestice u ulošku (list A)
-  -e, --show-encumbrances        Prikaži terete (list C)
-  -D, --plombe-detail            Razriješi detalje plombi - jedan dodatni
-                                 zahtjev po plombi
-  -a, --all                      Prikaži sve listove
-  -f, --format [table|json|csv]  Format izlaza
-  --output PUTANJA               Spremi izlaz u datoteku
-  --help                         Prikaži ovu poruku i izađi.
+  -u, --broj-uloška TEXT          Broj zemljišnoknjižnog uloška (npr. '769')
+  -b, --glavna-knjiga INTEGER     ID glavne knjige (npr. 21277)
+  -p, --od-čestice TEXT           Dohvati ZK uložak prema broju čestice
+  -ko, --općina TEXT              Naziv ili šifra općine (obavezno uz --from-
+                                  parcel)
+  -o, --vlasnici                  Prikaži podatke o vlasništvu (list B)
+  -P, --čestice                   Prikaži sve čestice u ulošku (list A)
+  -e, --tereti                    Prikaži terete (list C)
+  -D, --plombe                    Razriješi detalje plombi - jedan dodatni
+                                  zahtjev po plombi
+  -a, --sve                       Prikaži sve listove
+  -f, --oblik [tablica|json|csv]  Format izlaza
+  --datoteka PUTANJA              Spremi izlaz u datoteku
+  --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

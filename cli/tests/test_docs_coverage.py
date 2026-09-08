@@ -164,7 +164,7 @@ def _examples(text: str) -> list[tuple[int, str]]:
             if stripped.endswith("\\"):
                 pending = stripped[:-1].strip()
                 continue
-            if stripped.startswith("cadastral ") or stripped == "cadastral":
+            if stripped.startswith(tuple(f"{p} " for p in build_docs.PROGRAM_NAMES)):
                 found.append((block.lineno + 1 + offset, stripped))
     return found
 

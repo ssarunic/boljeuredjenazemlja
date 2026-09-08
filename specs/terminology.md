@@ -59,9 +59,34 @@ documentation guides point here.
 - A folder is **mapa**; the terminal application is **Terminal**; the
   tool's stored GIS data is **predmemorija**, because the CLI prints that word.
 
-## 4. Do not write
+## 4. Command and option names
 
-`cli/tests/test_terminology.py` reads this table. The first column is a
+The CLI answers to Croatian names as well as English ones. English names are
+canonical (code, JSON keys, MCP); the Croatian spelling of each command,
+option, argument and choice value is a gettext entry in
+`cli/src/cadastral_cli/localized.py`, translated in `po/hr.po`. The Croatian
+program name is `uz` (uređena zemlja).
+
+Convention for Croatian names:
+
+- Commands: a noun or an imperative verb plus object, kebab-case, diacritics
+  allowed (`čestica`, `uložak`, `skupno-čestice`, `traži-općinu`,
+  `preuzmi-gis`, `predmemorija obriši`).
+- Options: the thing the option asks for, not a translation of the English
+  word (`--općina`, `--posjednici` on cadastre commands but `--vlasnici` on
+  land registry commands, `--sve`, `--oblik`, `--datoteka`, `--od-čestice`).
+- Short flags stay single letters except `-ko` for the cadastral municipality.
+- Every spelling of every language is accepted at all times, with and without
+  diacritics. Help shows only the active language.
+- Format names (`json`, `csv`, `wkt`, `geojson`) are not translated; `table`
+  is `tablica`.
+
+`cli/tests/test_localized_cli.py` fails when a command or long option has no
+entry, when two spellings collide, or when help shows the wrong language.
+
+## 5. Do not write
+
+`cli/tests/test_terminology.py` reads this table (section 5). The first column is a
 regular expression (Python syntax, `(?i)` for case-insensitive). "hr" rows
 are checked against the Croatian strings of `po/hr.po`, all of
 `po/docs-hr.po`, `docs/hr/cli/` and the Croatian text in

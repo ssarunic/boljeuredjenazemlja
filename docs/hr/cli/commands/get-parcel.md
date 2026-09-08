@@ -25,12 +25,12 @@ uloška u kojem su pravni vlasnici.
 ## Prije nego počnete
 
 Trebate broj čestice i katastarsku općinu, po nazivu ili šifri, kao za
-[search](search.md).
+[pretraži](search.md).
 
 Dok čitate, imajte na umu jednu razliku. Katastar vodi posjednike; zemljišna
 knjiga vodi vlasnike. Često su to iste osobe, ali ne uvijek, a samo je zemljišna
 knjiga dokaz vlasništva. Ova stranica prikazuje katastar. Stranica
-[get-lr-unit](get-lr-unit.md) prikazuje zemljišnu knjigu.
+[uložak](get-lr-unit.md) prikazuje zemljišnu knjigu.
 
 ## Korak po korak
 
@@ -38,12 +38,12 @@ knjiga dokaz vlasništva. Ova stranica prikazuje katastar. Stranica
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   cadastral get-parcel 103/2 -m SAVAR --show-owners
+   uz čestica 103/2 -ko SAVAR --posjednici
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output cadastral get-parcel 103/2 -m SAVAR --show-owners -->
+   <!-- BEGIN GENERATED: output uz čestica 103/2 -ko SAVAR --posjednici -->
    ```text
    INFORMACIJE O ČESTICI
    =====================
@@ -101,49 +101,49 @@ knjiga dokaz vlasništva. Ova stranica prikazuje katastar. Stranica
 
 ## Što možete odabrati
 
-Bez `--show-owners` posjedovni list se izostavlja i zaslon je kraći. Dodajte ga
+Bez `--posjednici` posjedovni list se izostavlja i zaslon je kraći. Dodajte ga
 kad god želite vidjeti osobe.
 
-`--detail` sužava zaslon na jedan dio: `basic` samo za identifikaciju, `owners`
+`--detalji` sužava zaslon na jedan dio: `basic` samo za identifikaciju, `owners`
 za posjedovni list, `landuse` za podjelu po namjeni, `geometry` za koordinate
 granice, `full` za sve.
 
 ```bash
-cadastral get-parcel 103/2 -m SAVAR --detail landuse
+uz čestica 103/2 -ko SAVAR --detalji landuse
 ```
 
-Da zapis spremite u datoteku, dodajte `--format json` i `--output` s nazivom
+Da zapis spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom
 datoteke. Taj oblik koristite kad podatke želite priložiti spisu ili
 proslijediti kolegi.
 
 ```bash
-cadastral get-parcel 103/2 -m SAVAR --show-owners --format json --output parcel-103-2.json
+uz čestica 103/2 -ko SAVAR --posjednici --oblik json --datoteka parcel-103-2.json
 ```
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `PARCEL_NUMBER` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--municipality`, `-m` `TEXT` | Naziv ili šifra općine | Obavezno |
-| `--detail` | Razina detalja (`basic`, `full`, `owners`, `landuse`, `geometry`) | Koristi se `full` |
-| `--show-owners` | Uključi vlasničke podatke | Nije uključeno |
-| `--show-geometry` | Uključi koordinate granica | Nije uključeno |
-| `--format`, `-f` | Format izlaza (`table`, `json`, `yaml`, `csv`) | Koristi se `table` |
-| `--output`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
+| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine | Obavezno |
+| `--detalji` | Razina detalja (`basic`, `full`, `owners`, `landuse`, `geometry`) | Koristi se `full` |
+| `--posjednici` | Uključi vlasničke podatke | Nije uključeno |
+| `--geometrija` | Uključi koordinate granica | Nije uključeno |
+| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `yaml`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
 
 Ako općina nije prepoznata, alat to kaže i staje:
 
-<!-- BEGIN GENERATED: output cadastral get-parcel 103/2 -m NOWHERE -->
+<!-- BEGIN GENERATED: output uz čestica 103/2 -ko NOWHERE -->
 ```text
 ✗ Greška: Općina 'NOWHERE' nije pronađena
 ```
 <!-- END GENERATED: output -->
 
 Provjerite pravopis ili umjesto naziva upotrijebite šifru. Možete je pronaći
-naredbom [search-municipality](search-municipality.md).
+naredbom [traži-općinu](search-municipality.md).
 
 Ako čestica nije pronađena, provjerite broj na svom dokumentu, uključujući dio
 iza kose crte. Ostale poruke objašnjene su na [stranici o
@@ -151,37 +151,37 @@ greškama](../errors.md).
 
 ## Povezane stranice
 
-- [get-lr-unit](get-lr-unit.md) čita zemljišnoknjižni uložak čiji se broj
-  pojavljuje pod naslovom zemljišne knjige.
-- [search](search.md) je kraći oblik ove naredbe.
-- [get-geometry](get-geometry.md) daje granicu čestice za kartu.
+- [uložak](get-lr-unit.md) čita zemljišnoknjižni uložak čiji se broj pojavljuje
+  pod naslovom zemljišne knjige.
+- [pretraži](search.md) je kraći oblik ove naredbe.
+- [granica](get-geometry.md) daje granicu čestice za kartu.
 
 <details>
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `cadastral get-parcel --help`:
+Ovo ispisuje `uz čestica --help`:
 
 ```text
-Uporaba: cadastral get-parcel [OPTIONS] PARCEL_NUMBER
+Uporaba: uz čestica [OPCIJE] BROJ_ČESTICE
 
   Dohvat potpunih podataka o čestici s podacima o vlasništvu.
 
   Primjeri:
-    cadastral get-parcel 103/2 -m SAVAR
-    cadastral get-parcel 103/2 -m 334979 --show-owners
-    cadastral get-parcel 103/2 -m 334979 --detail owners
-    cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json
+    uz čestica 103/2 -ko SAVAR
+    uz čestica 103/2 -ko 334979 --posjednici
+    uz čestica 103/2 -ko 334979 --detalji owners
+    uz čestica 103/2 -ko 334979 --oblik json -o parcel.json
 
 Opcije:
-  -m, --municipality TEXT         Naziv ili šifra općine  [obavezno]
-  --detail [basic|full|owners|landuse|geometry]
+  -ko, --općina TEXT              Naziv ili šifra općine  [obavezno]
+  --detalji [basic|full|owners|landuse|geometry]
                                   Razina detalja
-  --show-owners                   Uključi vlasničke podatke
-  --show-geometry                 Uključi koordinate granica
-  -f, --format [table|json|yaml|csv]
+  --posjednici                    Uključi vlasničke podatke
+  --geometrija                    Uključi koordinate granica
+  -f, --oblik [tablica|json|yaml|csv]
                                   Format izlaza
-  -o, --output PUTANJA            Spremi izlaz u datoteku
+  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

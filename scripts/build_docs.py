@@ -59,6 +59,7 @@ PO_PATHS = {"hr": PO_DIR / "docs-hr.po"}
 CLI_CATALOG = {"hr": PO_DIR / "hr.po"}
 MOCK_SRC = REPO / "mock-server" / "src"
 GEOMETRY_FIXTURES = REPO / "mock-server" / "data" / "geometry"
+PROGRAM_NAMES = ("cadastral", "uz")
 CANONICAL_BASE_URL = "http://localhost:8000"
 CANONICAL_HOME = "~"
 TERMINAL_COLUMNS = "100"
@@ -106,7 +107,7 @@ STRINGS = {
         "argument": "A value you type right after the command name, without a name in front of it",
         "argument_optional": "Optional. A value you type right after the command name",
         "no_options": "This command has no choices. Type it as it is.",
-        "help_intro": "This is what `cadastral {name} --help` prints:",
+        "help_intro": "This is what `{command} --help` prints:",
         "index_intro": (
             "Every command, with a link to its page. The command is what you type; the "
             "link is what it is for."
@@ -143,7 +144,7 @@ STRINGS = {
         "argument": "Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje",
         "argument_optional": "Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe",
         "no_options": "Ova naredba nema izbora. Upišite je kako jest.",
-        "help_intro": "Ovo ispisuje `cadastral {name} --help`:",
+        "help_intro": "Ovo ispisuje `{command} --help`:",
         "index_intro": (
             "Sve naredbe, s poveznicom na stranicu svake od njih. Naredba je ono što "
             "upisujete; poveznica govori čemu služi."
@@ -256,14 +257,20 @@ def _dump_tree(lang: str) -> dict:
 
     set_language(lang)
     from cadastral_api.exceptions import ErrorType
-    from cadastral_cli import __version__
+    from cadastral_cli import __version__, localized
     from cadastral_cli.formatters import error_type_label
     from cadastral_cli.main import cli
+
+    program = localized.program_name()
 
     commands: list[dict] = []
 
     def describe_param(param: click.Parameter, ctx: click.Context) -> dict:
         record = param.get_help_record(ctx) if isinstance(param, click.Option) else None
+        opts, secondary = list(param.opts), list(param.secondary_opts)
+        if isinstance(param, localized.LocalizedOption):
+            opts = param._display(param._canonical_opts)
+            secondary = param._display(param._canonical_secondary_opts)
         default = param.default
         if callable(default) or not isinstance(default, (str, int, float, bool)):
             default = None  # click's UNSET sentinel, None, or a computed default
@@ -271,11 +278,16 @@ def _dump_tree(lang: str) -> dict:
         return {
             "kind": "option" if isinstance(param, click.Option) else "argument",
             "name": param.name,
-            "opts": list(param.opts),
-            "secondary_opts": list(param.secondary_opts),
+            "opts": opts,
+            "secondary_opts": secondary,
             "metavar": param.make_metavar(ctx),
             "type": param.type.name,
             "choices": choices,
+            "choices_display": (
+                [param.type.display(c) for c in choices]
+                if choices and isinstance(param.type, localized.LocalizedChoice)
+                else choices
+            ),
             "default": default,
             "required": bool(param.required),
             "is_flag": bool(getattr(param, "is_flag", False)),
@@ -284,15 +296,17 @@ def _dump_tree(lang: str) -> dict:
         }
 
     def walk(cmd: click.Command, path: list[str], parent: click.Context | None) -> None:
-        info_name = path[-1] if path else "cadastral"
+        info_name = localized.display_name(" ".join(path)) if path else program
         ctx = click.Context(
             cmd, info_name=info_name, parent=parent, terminal_width=80, max_content_width=80
         )
         is_group = isinstance(cmd, click.Group)
         first_paragraph = (cmd.help or "").strip().split("\n\n", 1)[0]
+        display_path = localized.active_spelling("command", " ".join(path)) if path else ""
         entry = {
             "path": path,
             "name": " ".join(path),
+            "display_path": display_path,
             "slug": "-".join(path),
             "is_group": is_group,
             "short": " ".join(first_paragraph.split()),
@@ -318,6 +332,7 @@ def _dump_tree(lang: str) -> dict:
     return {
         "lang": lang,
         "version": __version__,
+        "program": program,
         "commands": commands,
         "errors": errors,
         "error_prefix": _error_prefix(lang),
@@ -328,6 +343,36 @@ def _error_prefix(lang: str) -> str:
     from cadastral_api.i18n import _
 
     return _("\n✗ Error: {error}").strip().split("{error}")[0].strip()
+
+
+def _localize_cmdlines(lang: str, cmdlines: list[str]) -> list[str]:
+    """Run inside a subprocess: rewrite command lines into ``lang`` spellings."""
+    os.environ["CADASTRAL_LANG"] = lang
+    from cadastral_api.i18n import set_language
+
+    set_language(lang)
+    from cadastral_cli import localized
+    from cadastral_cli.main import cli
+
+    return [localized.localize_cmdline(line, cli) for line in cmdlines]
+
+
+def localize_cmdlines(lang: str, cmdlines: list[str]) -> dict[str, str]:
+    """Map each documented command line to its spelling in ``lang``."""
+    unique = sorted(set(cmdlines))
+    if not unique:
+        return {}
+    env = _clean_env()
+    env["CADASTRAL_LANG"] = lang
+    result = subprocess.run(
+        [sys.executable, str(Path(__file__).resolve()), "--localize", lang],
+        input=json.dumps(unique),
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    return dict(zip(unique, json.loads(result.stdout)))
 
 
 def load_tree(lang: str) -> dict:
@@ -420,6 +465,14 @@ class MockServer:
                 self._process.kill()
 
 
+def _program(name: str) -> list[str]:
+    """The installed console script, so usage lines show the real program name."""
+    script = Path(sys.executable).parent / name
+    if script.exists():
+        return [str(script)]
+    return [sys.executable, "-m", "cadastral_cli"]
+
+
 class OutputCapture:
     """Run documented commands in a clean, seeded home directory and record output.
 
@@ -463,8 +516,8 @@ class OutputCapture:
 
     def _run(self, lang: str, cmdline: str) -> str:
         words = shlex.split(cmdline)
-        if not words or words[0] != "cadastral":
-            raise ValueError(f"output regions must run 'cadastral ...', got: {cmdline}")
+        if not words or words[0] not in PROGRAM_NAMES:
+            raise ValueError(f"output regions must run one of {PROGRAM_NAMES}, got: {cmdline}")
         self._reset()
         env = _clean_env()
         env.update(
@@ -479,7 +532,7 @@ class OutputCapture:
             }
         )
         result = subprocess.run(
-            [sys.executable, "-m", "cadastral_cli", "--lang", lang, *words[1:]],
+            [*_program(words[0]), "--lang", lang, *words[1:]],
             cwd=self.cwd,
             env=env,
             capture_output=True,
@@ -839,7 +892,9 @@ def render_region(kind: str, args: str, rel: str, ctx: RenderContext) -> list[st
     if kind == "synopsis":
         command = _page_command(rel, ctx)
         return [
-            strings["help_intro"].format(name=command["name"]),
+            strings["help_intro"].format(
+                command=f"{ctx.tree['program']} {command['display_path']}"
+            ),
             "",
             "```text",
             *command["help_text"].rstrip().splitlines(),
@@ -888,7 +943,7 @@ def _render_options(rel: str, ctx: RenderContext) -> list[str]:
             spelling += f" `{param['metavar']}`"
         help_text = param["help"] or ""
         if param["choices"]:
-            help_text += " (" + ", ".join(f"`{c}`" for c in param["choices"]) + ")"
+            help_text += " (" + ", ".join(f"`{c}`" for c in param["choices_display"]) + ")"
         if param["required"]:
             absent = strings["required"]
         elif param["secondary_opts"]:
@@ -899,7 +954,10 @@ def _render_options(rel: str, ctx: RenderContext) -> list[str]:
         elif param["is_flag"]:
             absent = strings["flag_off"]
         elif param["default"] not in (None, "", False):
-            absent = strings["default_is"].format(value=param["default"])
+            default = param["default"]
+            if param["choices"] and default in param["choices"]:
+                default = param["choices_display"][param["choices"].index(default)]
+            absent = strings["default_is"].format(value=default)
         else:
             absent = strings["not_used"]
         rows.append((spelling, help_text, absent))
@@ -917,8 +975,8 @@ def _render_options(rel: str, ctx: RenderContext) -> list[str]:
 
 
 def _render_output(cmdline: str, rel: str, ctx: RenderContext) -> list[str]:
-    if not cmdline.startswith("cadastral "):
-        raise ValueError(f"{rel}: output region must name a 'cadastral ...' command line")
+    if not cmdline.startswith(tuple(f"{p} " for p in PROGRAM_NAMES)):
+        raise ValueError(f"{rel}: output region must start with the program name")
     if ctx.capture is not None:
         text = ctx.capture.run(ctx.lang, cmdline)
     else:
@@ -963,7 +1021,8 @@ def _render_reference(rel: str, ctx: RenderContext) -> list[str]:
             target = os.path.relpath(Path(command_page_rel(slug)), base)
             title = ctx.titles.get(command_page_rel(slug), command["name"])
             entries.append(
-                f"- `cadastral {command['name']}`: [{title}]({target}). {command['short']}"
+                f"- `{ctx.tree['program']} {command['display_path']}`: [{title}]({target}). "
+                f"{command['short']}"
             )
         if entries:
             lines.append(f"## {names[ctx.lang]}")
@@ -1093,6 +1152,40 @@ def translate_page(text: str, po: polib.POFile | None) -> str:
     return join_blocks(blocks, replacements)
 
 
+def _is_cmdline(line: str) -> bool:
+    return line.strip().startswith(tuple(f"{p} " for p in PROGRAM_NAMES))
+
+
+def page_cmdlines(text: str) -> list[str]:
+    """Documented command lines: in shell code blocks and in output region markers."""
+    found: list[str] = []
+    for block in parse_blocks(text):
+        if block.kind == "code" and block.lines[0].strip().startswith(("```bash", "```sh")):
+            found.extend(line.strip() for line in block.lines[1:-1] if _is_cmdline(line))
+        elif block.kind == "generated" and block.region and block.region[0] == "output":
+            found.append(block.region[1])
+    return found
+
+
+def localize_page_cmdlines(text: str, mapping: dict[str, str]) -> str:
+    """Rewrite documented command lines with ``mapping`` (from :func:`localize_cmdlines`)."""
+    blocks = parse_blocks(text)
+    replacements: dict[int, list[str]] = {}
+    for index, block in enumerate(blocks):
+        if block.kind == "code" and block.lines[0].strip().startswith(("```bash", "```sh")):
+            lines = list(block.lines)
+            for i, line in enumerate(lines):
+                if _is_cmdline(line):
+                    indent = line[: len(line) - len(line.lstrip())]
+                    lines[i] = indent + mapping.get(line.strip(), line.strip())
+            replacements[index] = lines
+        elif block.kind == "generated" and block.region and block.region[0] == "output":
+            new_args = mapping.get(block.region[1], block.region[1])
+            first = f"{block.indent}<!-- BEGIN GENERATED: output {new_args} -->"
+            replacements[index] = [first, *block.lines[1:]]
+    return join_blocks(blocks, replacements)
+
+
 def po_status(po: polib.POFile) -> tuple[int, int]:
     live = [e for e in po if not e.obsolete]
     untranslated = sum(1 for e in live if not e.msgstr)
@@ -1119,6 +1212,12 @@ def render_tree(
         if path.exists():
             existing[rel] = path.read_text(encoding="utf-8")
     translated = {rel: translate_page(text, po) for rel, text in pages_en.items()}
+    if lang != SOURCE_LANG:
+        cmdlines = [c for t in translated.values() for c in page_cmdlines(t)]
+        mapping = localize_cmdlines(lang, cmdlines)
+        translated = {
+            rel: localize_page_cmdlines(text, mapping) for rel, text in translated.items()
+        }
     titles = {rel: (page_title(text) or rel) for rel, text in translated.items()}
     ctx = RenderContext(lang=lang, tree=tree, titles=titles, capture=capture, existing=existing)
     rendered: dict[str, str] = {}
@@ -1230,10 +1329,15 @@ def main(argv: list[str] | None = None) -> int:
         "--check", action="store_true", help="do not write; list files a build would change"
     )
     parser.add_argument("--dump-tree", metavar="LANG", help=argparse.SUPPRESS)
+    parser.add_argument("--localize", metavar="LANG", help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
     if args.dump_tree:
         json.dump(_dump_tree(args.dump_tree), sys.stdout, ensure_ascii=False)
+        return 0
+    if args.localize:
+        localized_lines = _localize_cmdlines(args.localize, json.load(sys.stdin))
+        json.dump(localized_lines, sys.stdout, ensure_ascii=False)
         return 0
 
     result = build(capture_output=not args.no_output, write=not args.check)
