@@ -10,6 +10,7 @@ This directory contains technical specifications, architecture documentation, an
 
 - [pydantic-entities-implementation.md](pydantic-entities-implementation.md) - Pydantic V2 models specification and design
 - [mcp-server.md](mcp-server.md) - MCP server architecture and features
+- [gateway-service.md](gateway-service.md) - Hosted REST + remote MCP gateway service (draft)
 - [lr-unit-implementation-plan.md](lr-unit-implementation-plan.md) - Land registry unit implementation plan
 
 ## Project Standards
