@@ -1,0 +1,49 @@
+{
+  "summary": {
+    "total": 3,
+    "successful": 3,
+    "failed": 0,
+    "success_rate": "100.0%"
+  },
+  "results": [
+    {
+      "status": "success",
+      "parcel_number": "103/2",
+      "municipality": "SAVAR",
+      "parcel_id": 6564817,
+      "municipality_code": "334979",
+      "municipality_name": "SAVAR",
+      "area_m2": 1200,
+      "building_permitted": false,
+      "total_owners": 2,
+      "lr_unit_number": "657",
+      "main_book_id": 21277
+    },
+    {
+      "status": "success",
+      "parcel_number": "45",
+      "municipality": "SAVAR",
+      "parcel_id": 6564715,
+      "municipality_code": "334979",
+      "municipality_name": "SAVAR",
+      "area_m2": 981,
+      "building_permitted": false,
+      "total_owners": 2,
+      "lr_unit_number": "138",
+      "main_book_id": 21277
+    },
+    {
+      "status": "success",
+      "parcel_number": "396/1",
+      "municipality": "SAVAR",
+      "parcel_id": 6565198,
+      "municipality_code": "334979",
+      "municipality_name": "SAVAR",
+      "area_m2": 2077,
+      "building_permitted": false,
+      "total_owners": 18,
+      "lr_unit_number": "645",
+      "main_book_id": 21277
+    }
+  ]
+}

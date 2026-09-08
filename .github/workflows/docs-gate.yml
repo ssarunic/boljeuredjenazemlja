@@ -1,0 +1,33 @@
+name: Translation and documentation gates
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the SDK, the CLI and the mock server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ./api -e "./cli[dev]"
+          pip install -r mock-server/requirements.txt
+
+      - name: Translation coverage gate
+        working-directory: cli
+        run: pytest tests/test_i18n_coverage.py -q --no-cov
+
+      - name: Terminology gate
+        working-directory: cli
+        run: pytest tests/test_terminology.py -q --no-cov
+
+      - name: Documentation coverage gate
+        working-directory: cli
+        run: pytest tests/test_docs_coverage.py -q --no-cov

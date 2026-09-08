@@ -8,7 +8,14 @@ See the main [README](../README.md) for installation instructions and quick star
 
 ## Command-Line Interface
 
-- [cli-reference.md](cli-reference.md) - Complete CLI command reference with examples
+- [en/cli/start-here.md](en/cli/start-here.md) - Tutorial for professional users (English)
+- [en/cli/reference.md](en/cli/reference.md) - Every command, one page each (English)
+- [hr/cli/start-here.md](hr/cli/start-here.md) - Vodič za početak (hrvatski)
+- [hr/cli/reference.md](hr/cli/reference.md) - Sve naredbe, svaka na svojoj stranici (hrvatski)
+- [en/cli/install.md](en/cli/install.md) - Installation, written for the technical helper
+
+The Croatian pages are generated from the English ones and `po/docs-hr.po`;
+see [specs/documentation-guide.md](../specs/documentation-guide.md) before editing.
 
 ## MCP Server (AI Integration)
 

@@ -14,16 +14,24 @@ class GISCache:
     Automatically extracts files when needed.
     """
 
-    def __init__(self, cache_dir: Path | str | None = None) -> None:
+    DEFAULT_BASE_URL = "http://localhost:8000"
+
+    def __init__(
+        self, cache_dir: Path | str | None = None, base_url: str | None = None
+    ) -> None:
         """
         Initialize GIS cache.
 
         Args:
             cache_dir: Directory for caching files. Defaults to ~/.cadastral_api_cache
+            base_url: API base URL whose ``/atom/ko-<code>.zip`` endpoint serves
+                the municipality downloads. Defaults to the mock server so that
+                no download ever reaches a production system by accident.
         """
         if cache_dir is None:
             cache_dir = Path.home() / ".cadastral_api_cache"
         self.cache_dir = Path(cache_dir)
+        self.base_url = (base_url or self.DEFAULT_BASE_URL).rstrip("/")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def get_municipality_dir(self, municipality_reg_num: str) -> Path:
@@ -101,8 +109,8 @@ class GISCache:
         if zip_path.exists() and not force:
             return zip_path
 
-        # Download from ATOM feed
-        url = f"https://oss.uredjenazemlja.hr/oss/public/atom/ko-{municipality_reg_num}.zip"
+        # Download from the ATOM feed of the configured API (mock server by default)
+        url = f"{self.base_url}/atom/ko-{municipality_reg_num}.zip"
 
         with httpx.Client(timeout=60.0, follow_redirects=True) as client:
             response = client.get(url)

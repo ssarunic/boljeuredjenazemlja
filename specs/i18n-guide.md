@@ -2,6 +2,22 @@
 
 This document provides guidance for localizing CLI commands in the Croatian Cadastral API project.
 
+## Terminology First
+
+Croatian strings describe the cadastre and the land registry to lawyers and
+notaries, so the words matter more than the grammar. Every translation in
+`po/hr.po` must use the vocabulary in [terminology.md](terminology.md):
+posjedovnica / vlastovnica / teretovnica for the sheets, prijedlog za upis
+(never "prijava"), posjednik for anyone the cadastre lists (never "vlasnik"),
+način uporabe (never "namjena zemljišta"), dopušteno građenje (never "pravo
+građenja"). The English msgids follow the same rules where a word has a
+legal meaning: the cadastre has possessors, not owners.
+
+`cd cli && pytest tests/test_terminology.py` rejects the terms listed in
+that document's "Do not write" table, in the catalog and in the
+documentation. When a reviewer rejects a term, add it there before fixing
+the strings.
+
 ## Quick Reference
 
 ### Import Statement

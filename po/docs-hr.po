@@ -1,0 +1,2440 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cadastral-docs\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: commands/batch-fetch.md:9
+msgid "Look up a list of parcels at once"
+msgstr "Pretraga više čestica odjednom"
+
+#: commands/batch-fetch.md:11
+msgid ""
+"Give the tool several parcel numbers, or a file with a list, and get one "
+"table with the area, the internal parcel number and the land registry unit of"
+" each. The table is the starting point for reading many land registry units "
+"in one go."
+msgstr ""
+"Zadajte alatu više brojeva čestica, ili datoteku s popisom, i dobit ćete "
+"jednu tablicu s površinom, internim brojem čestice i zemljišnoknjižnim "
+"uloškom svake od njih. Ta je tablica polazište za čitanje više "
+"zemljišnoknjižnih uložaka odjednom."
+
+#: commands/batch-fetch.md:15 commands/batch-lr-unit.md:15
+#: commands/cache-clear.md:15 commands/cache-info.md:14
+#: commands/cache-list.md:15 commands/download-gis.md:15
+#: commands/get-geometry.md:15 commands/get-lr-unit.md:17
+#: commands/get-parcel.md:15 commands/info.md:15
+#: commands/list-municipalities.md:14 commands/list-offices.md:14
+#: commands/search-municipality.md:15 commands/search.md:15
+msgid "When you would use this"
+msgstr "Kada vam ovo treba"
+
+#: commands/batch-fetch.md:17
+msgid ""
+"An inheritance or a sale covers several parcels and you want to check all of "
+"them together."
+msgstr ""
+"Nasljeđivanje ili prodaja obuhvaća više čestica i želite ih provjeriti sve "
+"zajedno."
+
+#: commands/batch-fetch.md:18
+msgid ""
+"You have a spreadsheet of parcels from a client and want the land registry "
+"unit of each."
+msgstr ""
+"Od klijenta ste dobili tablicu čestica i želite zemljišnoknjižni uložak svake"
+" od njih."
+
+#: commands/batch-fetch.md:19
+msgid ""
+"You want to find out which parcels of a list do not exist or are misnumbered."
+msgstr ""
+"Želite utvrditi koje čestice s popisa ne postoje ili imaju pogrešan broj."
+
+#: commands/batch-fetch.md:21 commands/batch-lr-unit.md:20
+#: commands/cache-clear.md:20 commands/cache-info.md:19
+#: commands/cache-list.md:20 commands/download-gis.md:20
+#: commands/get-geometry.md:21 commands/get-lr-unit.md:23
+#: commands/get-parcel.md:21 commands/info.md:20
+#: commands/list-municipalities.md:19 commands/list-offices.md:19
+#: commands/search-municipality.md:21 commands/search.md:21
+msgid "Before you start"
+msgstr "Prije nego počnete"
+
+#: commands/batch-fetch.md:23
+msgid ""
+"For a handful of parcels in one municipality, you type them on the line, "
+"separated by commas. For longer lists, prepare a file. The simplest file is a"
+" CSV, which you can save from any spreadsheet program. It has two columns, "
+"`parcel_number` and `municipality`, and looks like this:"
+msgstr ""
+"Za nekoliko čestica u istoj općini upisujete ih u istom retku, odvojene "
+"zarezima. Za dulje popise pripremite datoteku. Najjednostavnija je CSV "
+"datoteka, koju možete spremiti iz bilo kojeg programa za tablice. Ima dva "
+"stupca, `parcel_number` i `municipality`, i izgleda ovako:"
+
+#: commands/batch-fetch.md:35
+msgid ""
+"An empty municipality cell means \"same as the row above\". A JSON file with "
+"the same content is accepted too. Example files: "
+"[parcels.csv](../examples/parcels.csv), "
+"[parcels.json](../examples/parcels.json)."
+msgstr ""
+"Prazno polje općine znači „isto kao u retku iznad”. Prihvaća se i JSON "
+"datoteka istog sadržaja. Primjeri datoteka: "
+"[parcels.csv](../examples/parcels.csv), "
+"[parcels.json](../examples/parcels.json)."
+
+#: commands/batch-fetch.md:39 commands/batch-lr-unit.md:34
+#: commands/cache-clear.md:26 commands/cache-info.md:23
+#: commands/cache-list.md:24 commands/download-gis.md:26
+#: commands/get-geometry.md:31 commands/get-lr-unit.md:34
+#: commands/get-parcel.md:32 commands/info.md:24
+#: commands/list-municipalities.md:24 commands/list-offices.md:23
+#: commands/search-municipality.md:25 commands/search.md:30
+msgid "Step by step"
+msgstr "Korak po korak"
+
+#: commands/batch-fetch.md:41 commands/cache-clear.md:28
+#: commands/cache-info.md:25 commands/cache-list.md:26
+#: commands/download-gis.md:28 commands/get-geometry.md:33
+#: commands/get-lr-unit.md:36 commands/get-parcel.md:34 commands/info.md:26
+#: commands/list-municipalities.md:26 commands/list-offices.md:25
+#: commands/search-municipality.md:27 commands/search.md:32
+msgid "Open Terminal."
+msgstr "Otvorite Terminal."
+
+#: commands/batch-fetch.md:42
+msgid ""
+"Type the following line and press Enter. The quotes around the list matter."
+msgstr ""
+"Upišite sljedeći redak i pritisnite Enter. Navodnici oko popisa su važni."
+
+#: commands/batch-fetch.md:48 commands/batch-lr-unit.md:43
+#: commands/cache-clear.md:36 commands/cache-info.md:32
+#: commands/cache-list.md:33 commands/download-gis.md:35
+#: commands/get-geometry.md:40 commands/get-lr-unit.md:43
+#: commands/get-parcel.md:41 commands/info.md:33
+#: commands/list-municipalities.md:33 commands/list-offices.md:32
+#: commands/search-municipality.md:34 commands/search.md:39
+msgid "You will see something like this:"
+msgstr "Vidjet ćete otprilike ovo:"
+
+#: commands/batch-fetch.md:74
+msgid ""
+"**BATCH PROCESSING SUMMARY** counts how many parcels were found. **RESULTS** "
+"has one row per parcel. **Status** shows a tick for found and a cross for not"
+" found. **LR Unit** is the land registry unit number of the parcel, which you"
+" need for the next step."
+msgstr ""
+"**SAŽETAK GRUPNE OBRADE** broji koliko je čestica pronađeno. **REZULTATI** "
+"ima jedan redak po čestici. **Status** pokazuje kvačicu za pronađenu i križić"
+" za nepronađenu česticu. **ZK uložak** je broj zemljišnoknjižnog uloška "
+"čestice, koji vam treba za sljedeći korak."
+
+#: commands/batch-fetch.md:79 commands/batch-lr-unit.md:142
+#: commands/cache-clear.md:46 commands/cache-info.md:54
+#: commands/cache-list.md:51 commands/download-gis.md:56
+#: commands/get-geometry.md:70 commands/get-lr-unit.md:84
+#: commands/get-parcel.md:101 commands/info.md:64
+#: commands/list-municipalities.md:66 commands/list-offices.md:77
+#: commands/search-municipality.md:52 commands/search.md:66
+msgid "Choices you can make"
+msgstr "Što možete odabrati"
+
+#: commands/batch-fetch.md:81
+msgid ""
+"To read the list from a file, use `--input` with the file name instead of "
+"typing the parcels. Open Terminal in the folder where the file is:"
+msgstr ""
+"Da biste popis pročitali iz datoteke, umjesto upisivanja čestica upotrijebite"
+" `--input` s nazivom datoteke. Otvorite Terminal u mapi u kojoj je datoteka:"
+
+#: commands/batch-fetch.md:88
+msgid ""
+"When one parcel is not found, the tool continues with the rest and lists the "
+"failures at the end. If you would rather stop at the first problem, add "
+"`--stop-on-error`."
+msgstr ""
+"Kada jedna čestica nije pronađena, alat nastavlja s ostalima i na kraju "
+"ispisuje neuspjele. Ako radije želite stati kod prvog problema, dodajte "
+"`--stop-on-error`."
+
+#: commands/batch-fetch.md:92
+msgid ""
+"To go on to the land registry, keep the result as a JSON file with `--format "
+"json` and `--output`. The [batch-lr-unit](batch-lr-unit.md) page can read "
+"that file directly:"
+msgstr ""
+"Za nastavak prema zemljišnoj knjizi spremite rezultat kao JSON datoteku "
+"pomoću `--format json` i `--output`. Stranica [batch-lr-unit](batch-lr-"
+"unit.md) tu datoteku može izravno pročitati:"
+
+#: commands/batch-fetch.md:101
+msgid ""
+"Add `--detail full` to print the whole cadastral record of every parcel, as "
+"the [get-parcel](get-parcel.md) page does, and `--show-owners` to include the"
+" possessors."
+msgstr ""
+"Dodajte `--detail full` za ispis cijelog katastarskog zapisa svake čestice, "
+"kao na stranici [get-parcel](get-parcel.md), i `--show-owners` da uključite "
+"posjednike."
+
+#: commands/batch-fetch.md:118 commands/batch-lr-unit.md:172
+#: commands/cache-clear.md:66 commands/cache-info.md:62
+#: commands/cache-list.md:59 commands/download-gis.md:71
+#: commands/get-geometry.md:93 commands/get-lr-unit.md:154
+#: commands/get-parcel.md:134 commands/info.md:72
+#: commands/list-municipalities.md:90 commands/list-offices.md:92
+#: commands/search-municipality.md:75 commands/search.md:97
+msgid "If something goes wrong"
+msgstr "Ako nešto ne uspije"
+
+#: commands/batch-fetch.md:120
+msgid ""
+"A parcel that does not exist does not stop the run. It gets a cross in the "
+"**Status** column and an explanation in an **ERRORS** table at the end:"
+msgstr ""
+"Čestica koja ne postoji ne prekida obradu. Dobiva križić u stupcu **Status** "
+"i objašnjenje u tablici **GREŠKE** na kraju:"
+
+#: commands/batch-fetch.md:153
+msgid "Correct the number and run the command again for that parcel alone."
+msgstr "Ispravite broj i ponovno pokrenite naredbu samo za tu česticu."
+
+#: commands/batch-fetch.md:155
+msgid ""
+"If the tool cannot find the file you named, check that Terminal is in the "
+"folder where the file is, or type the full path to it. Other messages are "
+"explained on the [errors page](../errors.md)."
+msgstr ""
+"Ako alat ne može pronaći datoteku koju ste naveli, provjerite je li Terminal "
+"u mapi u kojoj je datoteka, ili upišite njezinu punu putanju. Ostale poruke "
+"objašnjene su na [stranici o greškama](../errors.md)."
+
+#: commands/batch-fetch.md:159 commands/batch-lr-unit.md:182
+#: commands/cache-clear.md:87 commands/cache-info.md:67
+#: commands/cache-list.md:64 commands/download-gis.md:90
+#: commands/get-geometry.md:112 commands/get-lr-unit.md:170
+#: commands/get-parcel.md:151 commands/info.md:79
+#: commands/list-municipalities.md:103 commands/list-offices.md:98
+#: commands/search-municipality.md:89 commands/search.md:114
+msgid "Related pages"
+msgstr "Povezane stranice"
+
+#: commands/batch-fetch.md:161
+msgid ""
+"[batch-lr-unit](batch-lr-unit.md) reads the land registry units found here."
+msgstr ""
+"[batch-lr-unit](batch-lr-unit.md) čita zemljišnoknjižne uloške koje ste ovdje"
+" pronašli."
+
+#: commands/batch-fetch.md:162
+msgid "[search](search.md) checks one parcel."
+msgstr "[search](search.md) provjerava jednu česticu."
+
+#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:188
+#: commands/cache-clear.md:93 commands/cache-info.md:73
+#: commands/cache-list.md:71 commands/download-gis.md:96
+#: commands/get-geometry.md:118 commands/get-lr-unit.md:177
+#: commands/get-parcel.md:158 commands/info.md:85
+#: commands/list-municipalities.md:109 commands/list-offices.md:104
+#: commands/search-municipality.md:96 commands/search.md:121
+msgid "Technical details"
+msgstr "Tehnički detalji"
+
+#: commands/batch-lr-unit.md:9
+msgid "Read many land registry units at once"
+msgstr "Uvid u više zemljišnoknjižnih uložaka odjednom"
+
+#: commands/batch-lr-unit.md:11
+msgid ""
+"Give the tool a list of land registry units, or the result of a [batch-"
+"fetch](batch-fetch.md) run, and it prints the sheets of every unit one after "
+"another."
+msgstr ""
+"Zadajte alatu popis zemljišnoknjižnih uložaka, ili rezultat naredbe [batch-"
+"fetch](batch-fetch.md), i on ispisuje listove svakog uloška jedan za drugim."
+
+#: commands/batch-lr-unit.md:17
+msgid ""
+"You have checked a list of parcels with batch-fetch and now want the owners "
+"and encumbrances of each."
+msgstr ""
+"Provjerili ste popis čestica naredbom batch-fetch i sada želite vlasnike i "
+"terete svake od njih."
+
+#: commands/batch-lr-unit.md:18
+msgid ""
+"You keep a list of units for a case and want to re-read all of them after a "
+"change."
+msgstr ""
+"Vodite popis uložaka za predmet i želite ih sve ponovno pročitati nakon "
+"promjene."
+
+#: commands/batch-lr-unit.md:22
+msgid ""
+"Each unit is identified by its number and the main book ID. The easiest way "
+"to get both is the JSON file that [batch-fetch](batch-fetch.md) writes. You "
+"can also prepare a CSV file with two columns, `lr_unit_number` and "
+"`main_book_id`, like the example [lr_units.csv](../examples/lr_units.csv):"
+msgstr ""
+"Svaki je uložak određen svojim brojem i identifikatorom glavne knjige (main "
+"book ID). Najlakše ćete oboje dobiti iz JSON datoteke koju zapisuje [batch-"
+"fetch](batch-fetch.md). Možete pripremiti i CSV datoteku s dva stupca, "
+"`lr_unit_number` i `main_book_id`, poput primjera "
+"[lr_units.csv](../examples/lr_units.csv):"
+
+#: commands/batch-lr-unit.md:36
+msgid "Open Terminal in the folder where your file is."
+msgstr "Otvorite Terminal u mapi u kojoj je vaša datoteka."
+
+#: commands/batch-lr-unit.md:37 commands/cache-info.md:26
+#: commands/cache-list.md:27 commands/download-gis.md:29
+#: commands/get-geometry.md:34 commands/get-lr-unit.md:37
+#: commands/get-parcel.md:35 commands/info.md:27
+#: commands/list-municipalities.md:27 commands/list-offices.md:26
+#: commands/search-municipality.md:28 commands/search.md:33 start-here.md:35
+#: start-here.md:49 start-here.md:66 start-here.md:96
+msgid "Type the following line and press Enter:"
+msgstr "Upišite sljedeći redak i pritisnite Enter:"
+
+#: commands/batch-lr-unit.md:135
+msgid ""
+"The units are printed one after another, separated by a line of dashes. Each "
+"is laid out as on the [get-lr-unit](get-lr-unit.md) page: **LAND REGISTRY "
+"UNIT**, then **PARCEL LIST (SHEET A)**, **OWNERSHIP SHEET (LIST B)** and "
+"**ENCUMBRANCES SHEET (LIST C)**. A unit with pending entries carries the same"
+" **Pending entries (plombe)** line and warning."
+msgstr ""
+"Ulošci se ispisuju jedan za drugim, odvojeni crticama. Svaki je prikazan kao "
+"na stranici [get-lr-unit](get-lr-unit.md): **ZEMLJIŠNOKNJIŽNI ULOŽAK**, zatim"
+" **POSJEDOVNICA (LIST A)**, **VLASTOVNICA (LIST B)** i **TERETOVNICA (LIST "
+"C)**. Uložak s plombama ima isti redak **Plombe (u tijeku)** i upozorenje."
+
+#: commands/batch-lr-unit.md:144
+msgid ""
+"To continue from a batch-fetch result, use `--from-batch-output` with the "
+"JSON file it wrote:"
+msgstr ""
+"Za nastavak iz rezultata naredbe batch-fetch upotrijebite `--from-batch-"
+"output` s JSON datotekom koju je ona zapisala:"
+
+#: commands/batch-lr-unit.md:151
+msgid ""
+"For a long list, screen output is hard to read. Keep it as a file instead "
+"with `--format json` and `--output`:"
+msgstr ""
+"Kod dugog popisa ispis na zaslonu teško je čitati. Umjesto toga spremite ga u"
+" datoteku pomoću `--format json` i `--output`:"
+
+#: commands/batch-lr-unit.md:158
+msgid ""
+"When one unit cannot be read, the tool continues with the rest. Add `--stop-"
+"on-error` to stop at the first problem instead."
+msgstr ""
+"Kada se jedan uložak ne može pročitati, alat nastavlja s ostalima. Dodajte "
+"`--stop-on-error` da umjesto toga stane kod prvog problema."
+
+#: commands/batch-lr-unit.md:174
+msgid ""
+"If the tool cannot find the file you named, it stops before reading anything."
+" Check that Terminal is in the folder where the file is, or type the full "
+"path to it."
+msgstr ""
+"Ako alat ne može pronaći datoteku koju ste naveli, staje prije nego išta "
+"pročita. Provjerite je li Terminal u mapi u kojoj je datoteka, ili upišite "
+"njezinu punu putanju."
+
+#: commands/batch-lr-unit.md:178
+msgid ""
+"If one unit in the list does not exist, that unit is reported as failed and "
+"the others are still printed. Check its number and main book ID in your file."
+" Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+"Ako jedan uložak s popisa ne postoji, taj se uložak označava kao neuspio, a "
+"ostali se svejedno ispisuju. Provjerite njegov broj i identifikator glavne "
+"knjige u svojoj datoteci. Ostale poruke objašnjene su na [stranici o "
+"greškama](../errors.md)."
+
+#: commands/batch-lr-unit.md:184
+msgid ""
+"[batch-fetch](batch-fetch.md) produces the list of units from a list of "
+"parcels."
+msgstr ""
+"[batch-fetch](batch-fetch.md) iz popisa čestica izrađuje popis uložaka."
+
+#: commands/batch-lr-unit.md:185
+msgid "[get-lr-unit](get-lr-unit.md) reads one unit and explains the sheets."
+msgstr "[get-lr-unit](get-lr-unit.md) čita jedan uložak i objašnjava listove."
+
+#: commands/cache-clear.md:9
+msgid "Remove stored boundary data"
+msgstr "Brisanje pohranjenih podataka o granicama"
+
+#: commands/cache-clear.md:11
+msgid ""
+"Deletes the boundary data of one municipality, or of all of them, from your "
+"computer. The tool downloads the data again the next time you ask for a "
+"boundary."
+msgstr ""
+"Briše podatke o granicama jedne općine, ili svih općina, s vašeg računala. "
+"Alat će podatke ponovno preuzeti kada sljedeći put zatražite granicu."
+
+#: commands/cache-clear.md:17
+msgid ""
+"The boundaries of a municipality have changed and you want the tool to fetch "
+"the current data."
+msgstr ""
+"Granice općine su se promijenile i želite da alat dohvati aktualne podatke."
+
+#: commands/cache-clear.md:18
+msgid "You want to free disk space."
+msgstr "Želite osloboditi prostor na disku."
+
+#: commands/cache-clear.md:22
+msgid ""
+"Decide whether you want to remove one municipality or all of them. Nothing "
+"else is affected: the stored data is only a copy of what the server can send "
+"again."
+msgstr ""
+"Odlučite želite li ukloniti jednu općinu ili sve. Ništa drugo nije pogođeno: "
+"pohranjeni podaci samo su kopija onoga što poslužitelj može ponovno poslati."
+
+#: commands/cache-clear.md:29
+msgid ""
+"Type the following line and press Enter. Replace SAVAR with the municipality "
+"you want to remove."
+msgstr ""
+"Upišite sljedeći redak i pritisnite Enter. Zamijenite SAVAR općinom koju "
+"želite ukloniti."
+
+#: commands/cache-clear.md:44
+msgid "The tool confirms what it removed and how much space it freed."
+msgstr "Alat potvrđuje što je uklonio i koliko je prostora oslobodio."
+
+#: commands/cache-clear.md:48
+msgid ""
+"`--force` skips the question the tool otherwise asks before deleting. Without"
+" it, the tool asks you to confirm; type `y` and press Enter to go ahead, or "
+"just press Enter to keep the data."
+msgstr ""
+"`--force` preskače pitanje koje alat inače postavlja prije brisanja. Bez "
+"njega alat traži potvrdu; upišite `y` i pritisnite Enter za nastavak, ili "
+"samo pritisnite Enter da podatke zadržite."
+
+#: commands/cache-clear.md:52
+msgid "To remove everything, use `--all` instead of naming a municipality:"
+msgstr "Da biste uklonili sve, umjesto naziva općine upotrijebite `--all`:"
+
+#: commands/cache-clear.md:68
+msgid ""
+"If you name a municipality that is not stored, the tool tells you so and "
+"removes nothing:"
+msgstr ""
+"Ako navedete općinu koja nije pohranjena, alat vam to kaže i ne uklanja "
+"ništa:"
+
+#: commands/cache-clear.md:77
+msgid "If you name neither a municipality nor `--all`, you will see this:"
+msgstr "Ako ne navedete ni općinu ni `--all`, vidjet ćete ovo:"
+
+#: commands/cache-clear.md:89
+msgid "[cache-list](cache-list.md) shows what is stored before you remove it."
+msgstr ""
+"[cache-list](cache-list.md) pokazuje što je pohranjeno prije nego što išta "
+"uklonite."
+
+#: commands/cache-clear.md:90
+msgid "[download-gis](download-gis.md) downloads a municipality again."
+msgstr "[download-gis](download-gis.md) ponovno preuzima općinu."
+
+#: commands/cache-info.md:9
+msgid "See how much boundary data is stored"
+msgstr "Koliko je podataka o granicama pohranjeno"
+
+#: commands/cache-info.md:11
+msgid ""
+"Shows the folder where the tool keeps downloaded boundary data, the number of"
+" municipalities and files, and the total size."
+msgstr ""
+"Prikazuje mapu u kojoj alat čuva preuzete podatke o granicama, broj općina i "
+"datoteka te ukupnu veličinu."
+
+#: commands/cache-info.md:16
+msgid ""
+"Your computer is short of disk space and you want to know how much the tool "
+"uses."
+msgstr ""
+"Računalu nedostaje prostora na disku i želite znati koliko ga alat zauzima."
+
+#: commands/cache-info.md:17
+msgid "You want to find the folder to back it up or to hand it to a colleague."
+msgstr "Želite pronaći mapu da je sigurnosno kopirate ili predate kolegi."
+
+#: commands/cache-info.md:21 commands/cache-list.md:22 commands/info.md:22
+msgid "Nothing. This command takes no input and changes nothing."
+msgstr "Ništa. Ova naredba ne traži unos i ništa ne mijenja."
+
+#: commands/cache-info.md:50
+msgid ""
+"**Location** is the folder on your computer. **Total Size** is the disk space"
+" used. The last two lines remind you of the commands that list and clear the "
+"data."
+msgstr ""
+"**Lokacija** je mapa na vašem računalu. **Ukupna veličina** je zauzeti "
+"prostor na disku. Zadnja dva retka podsjećaju na naredbe kojima se podaci "
+"ispisuju i brišu."
+
+#: commands/cache-info.md:56 commands/cache-list.md:53
+msgid "None."
+msgstr "Nema ih."
+
+#: commands/cache-info.md:64
+msgid ""
+"This command has nothing to fail on. If the folder does not exist yet, the "
+"tool says so; run a boundary lookup and it will be created."
+msgstr ""
+"Ova naredba nema na čemu zapeti. Ako mapa još ne postoji, alat to kaže; "
+"pokrenite bilo koji dohvat granice i mapa će biti stvorena."
+
+#: commands/cache-info.md:69
+msgid "[cache-list](cache-list.md) lists the municipalities."
+msgstr "[cache-list](cache-list.md) ispisuje općine."
+
+#: commands/cache-info.md:70 commands/cache-list.md:67
+msgid "[cache-clear](cache-clear.md) removes stored data."
+msgstr "[cache-clear](cache-clear.md) briše pohranjene podatke."
+
+#: commands/cache-list.md:9
+msgid "See which municipalities are stored on your computer"
+msgstr "Koje su općine pohranjene na vašem računalu"
+
+#: commands/cache-list.md:11
+msgid ""
+"The boundary data of a municipality is downloaded once and then kept on your "
+"computer. This command lists what is kept, how big it is and when it was last"
+" updated."
+msgstr ""
+"Podaci o granicama općine preuzimaju se jednom i zatim čuvaju na vašem "
+"računalu. Ova naredba ispisuje što se čuva, koliko je veliko i kada je zadnji"
+" put ažurirano."
+
+#: commands/cache-list.md:17
+msgid ""
+"You want to know whether the tool already has the data of a municipality "
+"before you ask for a boundary."
+msgstr ""
+"Želite znati ima li alat već podatke neke općine prije nego zatražite "
+"granicu."
+
+#: commands/cache-list.md:18
+msgid "You want to see how much disk space the stored data takes."
+msgstr "Želite vidjeti koliko prostora na disku zauzimaju pohranjeni podaci."
+
+#: commands/cache-list.md:47
+msgid ""
+"One row per municipality, with its number, the size of the data and the date "
+"of the last download. The last lines give the total size and the folder where"
+" the data lives."
+msgstr ""
+"Jedan redak po općini, s njezinom šifrom, veličinom podataka i datumom "
+"zadnjeg preuzimanja. Zadnji reci daju ukupnu veličinu i mapu u kojoj se "
+"podaci nalaze."
+
+#: commands/cache-list.md:61
+msgid ""
+"If nothing has been downloaded yet, the tool says the store is empty and "
+"suggests the download command. That is not an error."
+msgstr ""
+"Ako još ništa nije preuzeto, alat kaže da je spremište prazno i predlaže "
+"naredbu za preuzimanje. To nije greška."
+
+#: commands/cache-list.md:66
+msgid "[cache-info](cache-info.md) gives the totals only."
+msgstr "[cache-info](cache-info.md) daje samo ukupne vrijednosti."
+
+#: commands/cache-list.md:68
+msgid "[download-gis](download-gis.md) adds a municipality."
+msgstr "[download-gis](download-gis.md) dodaje općinu."
+
+#: commands/download-gis.md:9
+msgid "Download the boundary data of a whole municipality"
+msgstr "Preuzimanje podataka o granicama cijele općine"
+
+#: commands/download-gis.md:11
+msgid ""
+"Fetches the file with the boundaries of every parcel in a cadastral "
+"municipality and unpacks it into a folder of your choice, for use in a "
+"mapping program."
+msgstr ""
+"Dohvaća datoteku s granicama svih čestica jedne katastarske općine i "
+"raspakirava je u mapu po vašem izboru, za uporabu u kartografskom programu."
+
+#: commands/download-gis.md:17
+msgid ""
+"A surveyor or an architect asks for the parcel boundaries of an area, not "
+"just one parcel."
+msgstr ""
+"Geodet ili arhitekt traži granice čestica nekog područja, a ne samo jedne "
+"čestice."
+
+#: commands/download-gis.md:18
+msgid ""
+"You want to open a whole municipality in a mapping program such as QGIS."
+msgstr ""
+"Želite otvoriti cijelu općinu u kartografskom programu kao što je QGIS."
+
+#: commands/download-gis.md:22
+msgid ""
+"You need the municipality, by name or number, and a folder name where the "
+"files should go. The folder is created if it does not exist. The files are in"
+" GML, a text form for geographic data that mapping programs read."
+msgstr ""
+"Trebate općinu, po nazivu ili šifri, i naziv mape u koju datoteke trebaju "
+"otići. Mapa se stvara ako ne postoji. Datoteke su u obliku GML, tekstualnom "
+"zapisu geografskih podataka koji kartografski programi čitaju."
+
+#: commands/download-gis.md:52
+msgid ""
+"The tool reports the file it fetched, the folder it unpacked into, and the "
+"number of parcels in the data. The folder now contains a file named "
+"`katastarske_cestice.gml` with all parcel boundaries."
+msgstr ""
+"Alat javlja koju je datoteku dohvatio, u koju ju je mapu raspakirao i koliko "
+"čestica sadrže podaci. Mapa sada sadrži datoteku `katastarske_cestice.gml` sa"
+" svim granicama čestica."
+
+#: commands/download-gis.md:58
+msgid ""
+"`--output` is required and names the folder. Add `--no-extract` to keep only "
+"the downloaded ZIP file without unpacking it. Add `--clear-cache` to download"
+" afresh even if the tool already has the data from an earlier run."
+msgstr ""
+"`--output` je obavezan i imenuje mapu. Dodajte `--no-extract` da zadržite "
+"samo preuzetu ZIP datoteku bez raspakiravanja. Dodajte `--clear-cache` za "
+"novo preuzimanje čak i ako alat već ima podatke iz ranijeg pokretanja."
+
+#: commands/download-gis.md:73
+msgid ""
+"If you forget `--output`, the tool stops and tells you the option is missing:"
+msgstr "Ako zaboravite `--output`, alat staje i kaže vam da opcija nedostaje:"
+
+#: commands/download-gis.md:84
+msgid "Add it with a folder name."
+msgstr "Dodajte je s nazivom mape."
+
+#: commands/download-gis.md:86
+msgid ""
+"If the download fails, the practice server may not be running. Ask the person"
+" who installed the tool. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+"Ako preuzimanje ne uspije, probni poslužitelj možda nije pokrenut. Obratite "
+"se osobi koja je instalirala alat. Ostale poruke objašnjene su na [stranici o"
+" greškama](../errors.md)."
+
+#: commands/download-gis.md:92
+msgid "[get-geometry](get-geometry.md) gives the boundary of one parcel."
+msgstr "[get-geometry](get-geometry.md) daje granicu jedne čestice."
+
+#: commands/download-gis.md:93
+msgid ""
+"[cache-clear](cache-clear.md) removes downloaded data from your computer."
+msgstr "[cache-clear](cache-clear.md) briše preuzete podatke s vašeg računala."
+
+#: commands/get-geometry.md:9
+msgid "Get the boundary of a parcel for a map"
+msgstr "Granica čestice za kartu"
+
+#: commands/get-geometry.md:11
+msgid ""
+"Prints the corner points of a parcel in the official Croatian coordinate "
+"system, so that a surveyor or a mapping program can draw it. It can also tell"
+" you the area computed from those points."
+msgstr ""
+"Ispisuje lomne točke čestice u službenom hrvatskom koordinatnom sustavu, tako"
+" da je geodet ili kartografski program može nacrtati. Može izračunati i "
+"površinu iz tih točaka."
+
+#: commands/get-geometry.md:17
+msgid ""
+"You want to hand the exact outline of a parcel to a surveyor or an architect."
+msgstr "Želite geodetu ili arhitektu predati točan obris čestice."
+
+#: commands/get-geometry.md:18
+msgid ""
+"You want to compare the area computed from the boundary with the area "
+"recorded in the cadastre."
+msgstr ""
+"Želite usporediti površinu izračunatu iz granice s površinom upisanom u "
+"katastru."
+
+#: commands/get-geometry.md:19
+msgid ""
+"You want to place the parcel on a map in a program that understands "
+"geographic data."
+msgstr ""
+"Želite smjestiti česticu na kartu u programu koji razumije geografske "
+"podatke."
+
+#: commands/get-geometry.md:23
+msgid ""
+"You need the parcel number and the cadastral municipality. The boundary data "
+"for a whole municipality is downloaded once and kept on your computer; the "
+"first lookup in a municipality therefore takes longer than the following "
+"ones."
+msgstr ""
+"Trebate broj čestice i katastarsku općinu. Podaci o granicama cijele općine "
+"preuzimaju se jednom i čuvaju na vašem računalu; prvi dohvat u nekoj općini "
+"stoga traje dulje od sljedećih."
+
+#: commands/get-geometry.md:27
+msgid ""
+"The coordinates are in the HTRS96/TM system (EPSG:3765), the official "
+"projection for Croatia. They are not the degrees you see in a car navigation "
+"system. A mapping program will know what to do with them."
+msgstr ""
+"Koordinate su u sustavu HTRS96/TM (EPSG:3765), službenoj projekciji za "
+"Hrvatsku. To nisu stupnjevi kakve vidite u automobilskoj navigaciji. "
+"Kartografski program znat će što s njima."
+
+#: commands/get-geometry.md:64
+msgid ""
+"**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
+"(**Vertices**), the area computed from them (**Area (GIS)**), and the "
+"smallest rectangle that contains the parcel (**Bounding Box**). The last "
+"block is the boundary itself, written as a polygon in a standard text form. "
+"Each pair of numbers is one corner point."
+msgstr ""
+"**STATISTIKA GEOMETRIJE** sažima oblik: broj lomnih točaka (**Vrhovi**), "
+"površinu izračunatu iz njih (**Površina (GIS)**) i najmanji pravokutnik koji "
+"obuhvaća česticu (**Granični okvir**). Zadnji blok je sama granica, zapisana "
+"kao poligon u standardnom tekstualnom obliku. Svaki par brojeva jedna je "
+"lomna točka."
+
+#: commands/get-geometry.md:72
+msgid ""
+"`--format` chooses the form of the boundary. `wkt` is the standard text form "
+"shown above. `geojson` is the form most web maps read. `csv` gives one corner"
+" point per line for a spreadsheet. `json` gives the same data for other "
+"programs."
+msgstr ""
+"`--format` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan "
+"gore. `geojson` je oblik koji čita većina web karata. `csv` daje jednu lomnu "
+"točku po retku za tablicu. `json` daje iste podatke za druge programe."
+
+#: commands/get-geometry.md:76
+msgid ""
+"To hand the boundary to someone, write it to a file with `--output`. A "
+"GeoJSON file can be dragged onto many online map viewers:"
+msgstr ""
+"Da biste granicu nekome predali, zapišite je u datoteku pomoću `--output`. "
+"GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:"
+
+#: commands/get-geometry.md:95
+msgid ""
+"If the parcel is not in the boundary data of the municipality, you will see "
+"this:"
+msgstr "Ako čestice nema u podacima o granicama općine, vidjet ćete ovo:"
+
+#: commands/get-geometry.md:105
+msgid ""
+"The boundary data and the cadastre are not always in step; check the parcel "
+"with [search](search.md) first."
+msgstr ""
+"Podaci o granicama i katastar nisu uvijek usklađeni; prvo provjerite česticu "
+"naredbom [search](search.md)."
+
+#: commands/get-geometry.md:108
+msgid ""
+"If the boundary data of the municipality cannot be downloaded, ask the person"
+" who installed the tool whether the practice server is running. Other "
+"messages are explained on the [errors page](../errors.md)."
+msgstr ""
+"Ako se podaci o granicama općine ne mogu preuzeti, pitajte osobu koja je "
+"instalirala alat je li probni poslužitelj pokrenut. Ostale poruke objašnjene "
+"su na [stranici o greškama](../errors.md)."
+
+#: commands/get-geometry.md:114
+msgid ""
+"[download-gis](download-gis.md) downloads the boundary data of a whole "
+"municipality."
+msgstr ""
+"[download-gis](download-gis.md) preuzima podatke o granicama cijele općine."
+
+#: commands/get-geometry.md:115
+msgid ""
+"[cache-list](cache-list.md) shows which municipalities are already on your "
+"computer."
+msgstr ""
+"[cache-list](cache-list.md) pokazuje koje su općine već na vašem računalu."
+
+#: commands/get-lr-unit.md:9
+msgid "Read the land registry unit: owners, parcels, encumbrances"
+msgstr "Uvid u zemljišnoknjižni uložak: vlasnici, čestice, tereti"
+
+# fuzzy match of: The land registry unit (zemljišnoknjižni uložak) is the
+# legal
+# record of a property. This command shows its three sheets: the parcels it
+# covers (list A), the owners and their shares (list B), and the encumbrances
+# such as mortgages and easements (list C). It also shows pending entries
+# (plombe).
+#: commands/get-lr-unit.md:11
+msgid ""
+"The land registry unit (zemljišnoknjižni uložak) is the legal record of a "
+"property. This command shows its three sheets: the parcels it covers "
+"(posjedovnica, list A), the owners and their shares (vlastovnica, list B), "
+"and the encumbrances such as mortgages and easements (teretovnica, list C). "
+"It also shows pending entries (plombe)."
+msgstr ""
+"Zemljišnoknjižni uložak sadrži pravno stanje nekretnine. Ova naredba "
+"prikazuje njegova tri lista: čestice koje obuhvaća (posjedovnica, list A), "
+"vlasnike i njihove udjele (vlastovnica, list B) te terete poput hipoteka i "
+"služnosti (teretovnica, list C). Prikazuje i plombe."
+
+#: commands/get-lr-unit.md:19
+msgid "You need to know who legally owns a parcel and in what shares."
+msgstr "Trebate znati tko je pravni vlasnik čestice i u kojim udjelima."
+
+#: commands/get-lr-unit.md:20
+msgid ""
+"You are checking for mortgages, easements, notes or other charges before a "
+"sale or a loan."
+msgstr ""
+"Provjeravate hipoteke, služnosti, zabilježbe ili druge terete prije prodaje "
+"ili kredita."
+
+# fuzzy match of: You want to know whether a request is pending on the unit,
+# for example an inheritance decision that has not been entered yet.
+#: commands/get-lr-unit.md:21
+msgid ""
+"You want to know whether a request for registration (prijedlog za upis) is "
+"pending on the unit, for example an inheritance decision that has not been "
+"entered yet."
+msgstr ""
+"Želite znati je li na ulošku u tijeku neki prijedlog za upis, na primjer "
+"rješenje o nasljeđivanju koje još nije provedeno."
+
+#: commands/get-lr-unit.md:25
+msgid ""
+"There are two ways to name the unit. If you start from a parcel, give the "
+"parcel number and the cadastral municipality, and the tool finds the unit for"
+" you. If you already have the unit number and the main book (glavna knjiga) "
+"it belongs to, give those two instead."
+msgstr ""
+"Uložak možete odrediti na dva načina. Ako krećete od čestice, zadajte broj "
+"čestice i katastarsku općinu, a alat sam pronalazi uložak. Ako već imate broj"
+" uloška i glavnu knjigu kojoj pripada, zadajte to dvoje."
+
+#: commands/get-lr-unit.md:30
+msgid ""
+"The main book is identified by a number the tool calls the main book ID. You "
+"get it from the [batch-fetch](batch-fetch.md) results or from a previous "
+"lookup. Starting from the parcel is the easier route."
+msgstr ""
+"Glavna knjiga određena je brojem koji alat naziva identifikatorom glavne "
+"knjige (main book ID). Dobivate ga iz rezultata naredbe [batch-fetch](batch-"
+"fetch.md) ili iz ranijeg dohvata. Kretanje od čestice lakši je put."
+
+# fuzzy match of: The first table, **LAND REGISTRY UNIT**, identifies the
+# unit:
+# its number, the main book, the office that keeps it, and **Last Diary
+# Number**, the most recent file number entered in the diary (dnevnik).
+# **PARCEL LIST (SHEET A)** is list A. **OWNERSHIP SHEET (LIST B)** is list B,
+# with the share of each owner as a fraction. **ENCUMBRANCES SHEET (LIST C)**
+# is list C. When list C is empty, the tool prints **No encumbrances found**.
+#: commands/get-lr-unit.md:71
+msgid ""
+"The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
+" main book, the office that keeps it, and **Last Diary Number**, the most "
+"recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)** "
+"is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
+" list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
+"(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
+"**No encumbrances found**."
+msgstr ""
+"Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj, "
+"glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji "
+"poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A. "
+"**VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. "
+"**TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje "
+"**Nema tereta**."
+
+# fuzzy match of: If the unit has pending entries, an extra line **Pending
+# entries (plombe)** appears in the first table with the file numbers, and a
+# warning follows. A plomba means a request has been received and the unit may
+# be about to change. Do not treat the sheets as final until it is resolved.
+#: commands/get-lr-unit.md:79
+msgid ""
+"If the unit has pending entries, an extra line **Pending entries (plombe)** "
+"appears in the first table with the file numbers, and a warning follows. A "
+"plomba means a request for registration (prijedlog za upis) has been received"
+" and the unit may be about to change. Do not treat the sheets as final until "
+"it is resolved."
+msgstr ""
+"Ako uložak ima plombe, u prvoj tablici pojavljuje se dodatni redak **Plombe "
+"(u tijeku)** s poslovnim brojevima, a slijedi upozorenje. Plomba znači da je "
+"prijedlog za upis zaprimljen i da se uložak možda uskoro mijenja. Ne "
+"smatrajte listove konačnima dok se on ne riješi."
+
+#: commands/get-lr-unit.md:86
+msgid ""
+"`--all` shows the three sheets. To see only one, use `--show-owners` for list"
+" B, `--show-parcels` for list A, or `--show-encumbrances` for list C. Without"
+" any of them the tool prints the first table only."
+msgstr ""
+"`--all` prikazuje sva tri lista. Da vidite samo jedan, upotrijebite `--show-"
+"owners` za list B, `--show-parcels` za list A ili `--show-encumbrances` za "
+"list C. Bez ijednog od njih alat ispisuje samo prvu tablicu."
+
+# fuzzy match of: To see what each pending entry is about, add `--plombe-
+# detail`. The tool then asks the registry about every plomba, which takes one
+# extra request each, and prints a table with the request type, its status and
+# the date it was received:
+#: commands/get-lr-unit.md:90
+msgid ""
+"To see what each pending entry is about, add `--plombe-detail`. The tool then"
+" asks the registry about every plomba, which takes one extra lookup each, and"
+" prints a table with the type of the request for registration, its status and"
+" the date it was received:"
+msgstr ""
+"Da vidite o čemu je svaka plomba, dodajte `--plombe-detail`. Alat tada za "
+"svaku plombu pita zemljišnu knjigu, što je jedan dodatni upit po plombi, i "
+"ispisuje tablicu s vrstom prijedloga za upis, njegovim statusom i datumom "
+"zaprimanja:"
+
+#: commands/get-lr-unit.md:134
+msgid ""
+"To name the unit directly instead of starting from a parcel, use `--unit-"
+"number` and `--main-book` together, as in the example above. To keep the "
+"result as a file, add `--format json` and `--output` with a file name."
+msgstr ""
+"Da uložak odredite izravno umjesto polaskom od čestice, upotrijebite zajedno "
+"`--unit-number` i `--main-book`, kao u gornjem primjeru. Da rezultat spremite"
+" u datoteku, dodajte `--format json` i `--output` s nazivom datoteke."
+
+#: commands/get-lr-unit.md:156
+msgid ""
+"If you give a parcel but forget the municipality, the tool stops and asks for"
+" it:"
+msgstr "Ako zadate česticu, a zaboravite općinu, alat staje i traži je:"
+
+#: commands/get-lr-unit.md:164
+msgid "Add `-m` and the municipality name or number."
+msgstr "Dodajte `-m` i naziv ili šifru općine."
+
+#: commands/get-lr-unit.md:166
+msgid ""
+"If the unit number does not exist in that main book, the tool reports an "
+"error that ends with `404 Not Found`. Check both numbers against your "
+"document. Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+"Ako broj uloška ne postoji u toj glavnoj knjizi, alat javlja grešku koja "
+"završava s `404 Not Found`. Provjerite oba broja na svom dokumentu. Ostale "
+"poruke objašnjene su na [stranici o greškama](../errors.md)."
+
+#: commands/get-lr-unit.md:172
+msgid ""
+"[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
+"including the possessors."
+msgstr ""
+"[get-parcel](get-parcel.md) prikazuje katastarsku stranu iste čestice, "
+"uključujući posjednike."
+
+#: commands/get-lr-unit.md:173
+msgid "[batch-lr-unit](batch-lr-unit.md) reads many units in one go."
+msgstr "[batch-lr-unit](batch-lr-unit.md) čita više uložaka odjednom."
+
+#: commands/get-lr-unit.md:174
+msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
+msgstr "[Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu."
+
+#: commands/get-parcel.md:9
+msgid "See everything the cadastre holds about a parcel"
+msgstr "Sve što katastar ima o čestici"
+
+#: commands/get-parcel.md:11
+msgid ""
+"The full cadastral record of one parcel: location, area, land use, the "
+"possession sheet (posjedovni list) with the people the cadastre records, and "
+"the number of the land registry unit where the legal owners are."
+msgstr ""
+"Potpuni katastarski zapis jedne čestice: položaj, površina, način uporabe "
+"zemljišta, posjedovni list s osobama koje katastar vodi i broj "
+"zemljišnoknjižnog uloška u kojem su pravni vlasnici."
+
+#: commands/get-parcel.md:17
+msgid ""
+"You are preparing a contract and need the area, the land use and the "
+"cadastral state of the parcel in one place."
+msgstr ""
+"Pripremate ugovor i trebate površinu, način uporabe zemljišta i katastarsko "
+"stanje čestice na jednom mjestu."
+
+#: commands/get-parcel.md:18
+msgid ""
+"You want to compare who the cadastre records as possessor with who the land "
+"registry records as owner."
+msgstr ""
+"Želite usporediti koga katastar vodi kao posjednika s onim koga zemljišna "
+"knjiga vodi kao vlasnika."
+
+#: commands/get-parcel.md:19
+msgid ""
+"You need the number of the land registry unit (zemljišnoknjižni uložak) of a "
+"parcel so you can read its owners and encumbrances."
+msgstr ""
+"Trebate broj zemljišnoknjižnog uloška čestice da biste pročitali njegove "
+"vlasnike i terete."
+
+#: commands/get-parcel.md:23
+msgid ""
+"You need the parcel number and the cadastral municipality, by name or number,"
+" as for [search](search.md)."
+msgstr ""
+"Trebate broj čestice i katastarsku općinu, po nazivu ili šifri, kao za "
+"[search](search.md)."
+
+#: commands/get-parcel.md:26
+msgid ""
+"Keep one distinction in mind while you read. The cadastre records possessors "
+"(posjednici); the land registry records owners (vlasnici). They are often the"
+" same people, but not always, and only the land registry is proof of "
+"ownership. This page shows the cadastre. The [get-lr-unit](get-lr-unit.md) "
+"page shows the land registry."
+msgstr ""
+"Dok čitate, imajte na umu jednu razliku. Katastar vodi posjednike; zemljišna "
+"knjiga vodi vlasnike. Često su to iste osobe, ali ne uvijek, a samo je "
+"zemljišna knjiga dokaz vlasništva. Ova stranica prikazuje katastar. Stranica "
+"[get-lr-unit](get-lr-unit.md) prikazuje zemljišnu knjigu."
+
+#: commands/get-parcel.md:88
+msgid ""
+"The screen has five parts. **PARCEL INFORMATION** identifies the parcel; the "
+"line **Cadastre/LR harmonized** says whether the cadastre and the land "
+"registry agree about it. **LAND USE** splits the area by cadastral culture. "
+"**POSSESSION SHEET (cadastre / posjedovni list)** lists the possessors the "
+"cadastre records, with their share where the cadastre has one. **LAND "
+"REGISTRY** gives the number of the land registry unit (**Unit Number**) that "
+"you can look up next. **ADDITIONAL INFO** contains a link that opens the "
+"parcel on the public map."
+msgstr ""
+"Zaslon ima pet dijelova. **INFORMACIJE O ČESTICI** određuje česticu; redak "
+"**Katastar/ZK usklađeni** kaže slažu li se katastar i zemljišna knjiga o "
+"njoj. **NAČIN UPORABE** dijeli površinu po katastarskoj kulturi. **POSJEDOVNI"
+" LIST (katastar)** ispisuje posjednike koje katastar vodi, s udjelom gdje ga "
+"katastar ima. **ZEMLJIŠNA KNJIGA** daje broj zemljišnoknjižnog uloška (**Broj"
+" uloška**) koji zatim možete potražiti. **DODATNE INFORMACIJE** sadrži "
+"poveznicu koja otvara česticu na javnoj karti."
+
+#: commands/get-parcel.md:97
+msgid ""
+"Where a value is not recorded, the tool prints **N/A**. In the possession "
+"sheet this is common: the cadastre often records who possesses without "
+"recording a share."
+msgstr ""
+"Gdje vrijednost nije upisana, alat ispisuje **N/D**. U posjedovnom listu to "
+"je često: katastar nerijetko vodi tko posjeduje, a ne vodi udio."
+
+#: commands/get-parcel.md:103
+msgid ""
+"Without `--show-owners` the possession sheet is left out and the screen is "
+"shorter. Add it whenever you want to see the people."
+msgstr ""
+"Bez `--show-owners` posjedovni list se izostavlja i zaslon je kraći. Dodajte "
+"ga kad god želite vidjeti osobe."
+
+#: commands/get-parcel.md:106
+msgid ""
+"`--detail` narrows the screen to one part: `basic` for the identification "
+"only, `owners` for the possession sheet, `landuse` for the land use split, "
+"`geometry` for the boundary coordinates, `full` for everything."
+msgstr ""
+"`--detail` sužava zaslon na jedan dio: `basic` samo za identifikaciju, "
+"`owners` za posjedovni list, `landuse` za podjelu po namjeni, `geometry` za "
+"koordinate granice, `full` za sve."
+
+#: commands/get-parcel.md:114
+msgid ""
+"To keep the record as a file, add `--format json` and `--output` with a file "
+"name. This is the form to use when you want to attach the data to a case file"
+" or pass it to a colleague."
+msgstr ""
+"Da zapis spremite u datoteku, dodajte `--format json` i `--output` s nazivom "
+"datoteke. Taj oblik koristite kad podatke želite priložiti spisu ili "
+"proslijediti kolegi."
+
+#: commands/get-parcel.md:136
+msgid "If the municipality is not recognised, the tool says so and stops:"
+msgstr "Ako općina nije prepoznata, alat to kaže i staje:"
+
+#: commands/get-parcel.md:144
+msgid ""
+"Check the spelling, or use the registration number instead of the name. You "
+"can find it with [search-municipality](search-municipality.md)."
+msgstr ""
+"Provjerite pravopis ili umjesto naziva upotrijebite šifru. Možete je pronaći "
+"naredbom [search-municipality](search-municipality.md)."
+
+#: commands/get-parcel.md:147
+msgid ""
+"If the parcel is not found, check the number on your document, including any "
+"part after the slash. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+"Ako čestica nije pronađena, provjerite broj na svom dokumentu, uključujući "
+"dio iza kose crte. Ostale poruke objašnjene su na [stranici o "
+"greškama](../errors.md)."
+
+#: commands/get-parcel.md:153
+msgid ""
+"[get-lr-unit](get-lr-unit.md) reads the land registry unit whose number "
+"appears under the land registry heading."
+msgstr ""
+"[get-lr-unit](get-lr-unit.md) čita zemljišnoknjižni uložak čiji se broj "
+"pojavljuje pod naslovom zemljišne knjige."
+
+#: commands/get-parcel.md:154
+msgid "[search](search.md) is the short form of this command."
+msgstr "[search](search.md) je kraći oblik ove naredbe."
+
+#: commands/get-parcel.md:155
+msgid ""
+"[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
+msgstr "[get-geometry](get-geometry.md) daje granicu čestice za kartu."
+
+#: commands/info.md:9
+msgid "Check that the tool is set up"
+msgstr "Provjera je li alat postavljen"
+
+#: commands/info.md:11
+msgid ""
+"Shows the version of the tool, the server it talks to, and the boundary data "
+"it has stored on your computer. This is the first thing to run after "
+"installation, and the first thing to run when something does not work."
+msgstr ""
+"Prikazuje verziju alata, poslužitelj s kojim razgovara i podatke o granicama "
+"koje je pohranio na vašem računalu. To je prvo što pokrećete nakon "
+"instalacije i prvo što pokrećete kad nešto ne radi."
+
+#: commands/info.md:17
+msgid "The tool has just been installed and you want to confirm it works."
+msgstr "Alat je upravo instaliran i želite potvrditi da radi."
+
+#: commands/info.md:18
+msgid ""
+"A command failed and you want to see whether the tool is pointed at the right"
+" server."
+msgstr ""
+"Naredba nije uspjela i želite vidjeti je li alat usmjeren na pravi "
+"poslužitelj."
+
+#: commands/info.md:58
+msgid ""
+"**API Base** is the address of the server the tool talks to. For practice it "
+"is the address of the practice server on your own computer. **Cache "
+"Information** lists the municipalities whose boundary data is stored on your "
+"computer. **API Settings** shows how long the tool waits between requests and"
+" how long it waits for an answer."
+msgstr ""
+"**API osnova** je adresa poslužitelja s kojim alat razgovara. Za vježbu to je"
+" adresa probnog poslužitelja na vašem računalu. **Informacije o "
+"predmemoriji** ispisuje općine čiji su podaci o granicama pohranjeni na vašem"
+" računalu; alat tu pohranu naziva predmemorijom. **API postavke** pokazuje "
+"koliko alat čeka između zahtjeva i koliko dugo čeka odgovor."
+
+#: commands/info.md:66
+msgid "None. If the tool prints this screen, it is installed correctly."
+msgstr "Nema ih. Ako alat ispiše ovaj zaslon, ispravno je instaliran."
+
+#: commands/info.md:74
+msgid ""
+"If Terminal says the command is not found, the tool is not installed for your"
+" user account, or Terminal was opened before the installation finished. Close"
+" Terminal, open it again and retry. If it still fails, ask the person who "
+"installed the tool."
+msgstr ""
+"Ako Terminal kaže da naredba nije pronađena, alat nije instaliran za vaš "
+"korisnički račun ili je Terminal otvoren prije nego što je instalacija "
+"završila. Zatvorite Terminal, otvorite ga ponovno i pokušajte opet. Ako i "
+"dalje ne radi, obratite se osobi koja je instalirala alat."
+
+#: commands/info.md:81
+msgid ""
+"[cache-list](cache-list.md) shows the stored boundary data in more detail."
+msgstr ""
+"[cache-list](cache-list.md) detaljnije prikazuje pohranjene podatke o "
+"granicama."
+
+#: commands/info.md:82
+msgid "[Start here](../start-here.md) is the tutorial."
+msgstr "[Počnite ovdje](../start-here.md) je vodič za početak."
+
+#: commands/list-municipalities.md:9
+msgid "List the cadastral municipalities of an office"
+msgstr "Popis katastarskih općina jednog ureda"
+
+#: commands/list-municipalities.md:11
+msgid ""
+"Shows the cadastral municipalities with their registration numbers, filtered "
+"by cadastral office, by department, or by part of a name."
+msgstr ""
+"Prikazuje katastarske općine s njihovim šiframa, filtrirane po katastarskom "
+"uredu, po odjelu ili po dijelu naziva."
+
+#: commands/list-municipalities.md:16
+msgid ""
+"You work with one cadastral office and want the numbers of all its "
+"municipalities on one sheet."
+msgstr ""
+"Radite s jednim katastarskim uredom i želite šifre svih njegovih općina na "
+"jednom listu."
+
+#: commands/list-municipalities.md:17
+msgid ""
+"You want to check which department a municipality belongs to before you "
+"contact the office."
+msgstr ""
+"Želite provjeriti kojem odjelu općina pripada prije nego se obratite uredu."
+
+#: commands/list-municipalities.md:21
+msgid ""
+"You need the number of the cadastral office. The [list-offices](list-"
+"offices.md) page shows all of them."
+msgstr ""
+"Trebate broj katastarskog ureda. Stranica [list-offices](list-offices.md) "
+"prikazuje sve urede."
+
+#: commands/list-municipalities.md:63
+msgid ""
+"**Code** is the number to give after `-m` in the other commands. The first "
+"line tells you how many municipalities the office has."
+msgstr ""
+"**Šifra** je matični broj općine koji u ostalim naredbama upisujete iza `-m`."
+" Prvi redak kaže koliko općina ured ima."
+
+#: commands/list-municipalities.md:68
+msgid ""
+"Add `--department` to narrow the list to one department of the office, or "
+"`--search` with part of a name to look for one municipality:"
+msgstr ""
+"Dodajte `--department` da popis suzite na jedan odjel ureda, ili `--search` s"
+" dijelom naziva da potražite jednu općinu:"
+
+#: commands/list-municipalities.md:75
+msgid ""
+"Without any filter the tool lists every municipality it knows, which is a "
+"long list. Add `--count-only` to get only the number, or `--format csv` with "
+"`--output` to keep the list as a spreadsheet file."
+msgstr ""
+"Bez ikakvog filtra alat ispisuje sve općine koje poznaje, a to je dug popis. "
+"Dodajte `--count-only` da dobijete samo broj, ili `--format csv` s `--output`"
+" da popis spremite kao datoteku za tablice."
+
+#: commands/list-municipalities.md:92
+msgid "If the office number is wrong, you will see this:"
+msgstr "Ako je broj ureda pogrešan, vidjet ćete ovo:"
+
+#: commands/list-municipalities.md:100
+msgid ""
+"Check the number on the [list-offices](list-offices.md) page. Other messages "
+"are explained on the [errors page](../errors.md)."
+msgstr ""
+"Provjerite broj na stranici [list-offices](list-offices.md). Ostale poruke "
+"objašnjene su na [stranici o greškama](../errors.md)."
+
+#: commands/list-municipalities.md:105
+msgid "[search-municipality](search-municipality.md) searches by name."
+msgstr "[search-municipality](search-municipality.md) pretražuje po nazivu."
+
+#: commands/list-municipalities.md:106
+msgid "[list-offices](list-offices.md) gives the office numbers."
+msgstr "[list-offices](list-offices.md) daje brojeve ureda."
+
+#: commands/list-offices.md:9
+msgid "List the cadastral offices"
+msgstr "Popis katastarskih ureda"
+
+#: commands/list-offices.md:11
+msgid ""
+"Shows every regional cadastral office (područni ured za katastar) with its "
+"number. You need the number to list the municipalities of an office."
+msgstr ""
+"Prikazuje sve područne urede za katastar s njihovim brojevima. Broj vam treba"
+" da biste ispisali općine nekog ureda."
+
+#: commands/list-offices.md:16
+msgid "You want to know which office is responsible for an area."
+msgstr "Želite znati koji je ured nadležan za neko područje."
+
+#: commands/list-offices.md:17
+msgid "Another command asks for an office number and you do not know it."
+msgstr "Druga naredba traži broj ureda, a vi ga ne znate."
+
+#: commands/list-offices.md:21
+msgid "Nothing. This command takes no input."
+msgstr "Ništa. Ova naredba ne traži unos."
+
+#: commands/list-offices.md:74
+msgid ""
+"**ID** is the office number. Use it with `--office` on the [list-"
+"municipalities](list-municipalities.md) page."
+msgstr ""
+"**ID** je broj ureda. Koristite ga uz `--office` na stranici [list-"
+"municipalities](list-municipalities.md)."
+
+#: commands/list-offices.md:79
+msgid ""
+"To keep the list as a file, add `--format csv` and `--output` with a file "
+"name:"
+msgstr ""
+"Da popis spremite u datoteku, dodajte `--format csv` i `--output` s nazivom "
+"datoteke:"
+
+#: commands/list-offices.md:94
+msgid ""
+"This command only fails when the tool cannot reach the practice server. The "
+"message is explained on the [errors page](../errors.md); ask the person who "
+"installed the tool to start the server."
+msgstr ""
+"Ova naredba ne uspijeva samo kad alat ne može doseći probni poslužitelj. "
+"Poruka je objašnjena na [stranici o greškama](../errors.md); zamolite osobu "
+"koja je instalirala alat da pokrene poslužitelj."
+
+#: commands/list-offices.md:100
+msgid "[list-municipalities](list-municipalities.md) uses the office number."
+msgstr "[list-municipalities](list-municipalities.md) koristi broj ureda."
+
+#: commands/list-offices.md:101
+msgid "[info](info.md) shows which server the tool is talking to."
+msgstr "[info](info.md) pokazuje s kojim poslužiteljem alat razgovara."
+
+#: commands/search-municipality.md:9
+msgid "Find the number of a cadastral municipality"
+msgstr "Matični broj katastarske općine"
+
+#: commands/search-municipality.md:11
+msgid ""
+"Every cadastral municipality (katastarska općina, k.o.) has a registration "
+"number. This command finds it from the name, or lists the municipalities that"
+" belong to a cadastral office."
+msgstr ""
+"Svaka katastarska općina (k.o.) ima matični broj, koji alat ispisuje kao "
+"šifru. Ova je naredba pronalazi iz naziva ili ispisuje općine koje pripadaju "
+"nekom katastarskom uredu."
+
+#: commands/search-municipality.md:17
+msgid ""
+"Two municipalities have the same or a similar name and you want to be sure "
+"which one you are looking at."
+msgstr ""
+"Dvije općine imaju isti ili sličan naziv i želite biti sigurni koju gledate."
+
+#: commands/search-municipality.md:18
+msgid ""
+"A command refused the municipality name and you need the number instead."
+msgstr "Naredba je odbila naziv općine i umjesto njega trebate šifru."
+
+#: commands/search-municipality.md:19
+msgid ""
+"You want to know which cadastral office (područni ured za katastar) and "
+"department a municipality belongs to."
+msgstr ""
+"Želite znati kojem područnom uredu za katastar i odjelu općina pripada."
+
+#: commands/search-municipality.md:23
+msgid "You need the name of the municipality, or part of it."
+msgstr "Trebate naziv općine ili njegov dio."
+
+#: commands/search-municipality.md:48
+msgid ""
+"**Code** is the registration number you can give to any other command after "
+"`-m`. **Office** and **Department** are the numbers of the cadastral office "
+"and its department."
+msgstr ""
+"**Šifra** je matični broj koji svakoj drugoj naredbi možete zadati iza `-m`. "
+"**Ured** i **Odjel** su brojevi katastarskog ureda i njegova odjela."
+
+#: commands/search-municipality.md:54
+msgid ""
+"To list every municipality of one office, give the office number with "
+"`--office`. You can combine it with a name to narrow the list:"
+msgstr ""
+"Da ispišete sve općine jednog ureda, zadajte broj ureda uz `--office`. Možete"
+" ga kombinirati s nazivom da suzite popis:"
+
+#: commands/search-municipality.md:61
+msgid ""
+"If you only want to know how many municipalities match, add `--count-only`. "
+"To keep the list as a file, add `--format csv` and `--output` with a file "
+"name."
+msgstr ""
+"Ako samo želite znati koliko se općina podudara, dodajte `--count-only`. Da "
+"popis spremite u datoteku, dodajte `--format csv` i `--output` s nazivom "
+"datoteke."
+
+#: commands/search-municipality.md:77
+msgid "If nothing matches, you will see this:"
+msgstr "Ako se ništa ne podudara, vidjet ćete ovo:"
+
+#: commands/search-municipality.md:85
+msgid ""
+"Try a shorter part of the name, or list the whole office with `--office` and "
+"look for the name in the list. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+"Pokušajte s kraćim dijelom naziva, ili ispišite cijeli ured uz `--office` i "
+"potražite naziv na popisu. Ostale poruke objašnjene su na [stranici o "
+"greškama](../errors.md)."
+
+#: commands/search-municipality.md:91
+msgid ""
+"[list-municipalities](list-municipalities.md) does the same job with a "
+"different set of filters."
+msgstr ""
+"[list-municipalities](list-municipalities.md) radi isti posao s drukčijim "
+"filtrima."
+
+#: commands/search-municipality.md:92
+msgid ""
+"[list-offices](list-offices.md) shows the office numbers to use with "
+"`--office`."
+msgstr "[list-offices](list-offices.md) prikazuje brojeve ureda za `--office`."
+
+#: commands/search-municipality.md:93
+msgid "[search](search.md) is where you use the number you found."
+msgstr "[search](search.md) je mjesto gdje pronađenu šifru koristite."
+
+#: commands/search.md:9
+msgid "Check a parcel quickly"
+msgstr "Brza provjera čestice"
+
+#: commands/search.md:11
+msgid ""
+"Type a parcel number and the cadastral municipality, and get the basics on "
+"one screen: where the parcel is, how big it is, what the land is used for, "
+"and how many people the cadastre records on it."
+msgstr ""
+"Upišite broj čestice i katastarsku općinu i dobit ćete osnovne podatke na "
+"jednom zaslonu: gdje je čestica, kolika je, čemu zemljište služi i koliko "
+"osoba katastar na njoj vodi."
+
+#: commands/search.md:17
+msgid ""
+"A client mentions a parcel and you want to confirm it exists before you go "
+"any further."
+msgstr ""
+"Klijent spominje česticu i želite potvrditi da postoji prije nego nastavite."
+
+#: commands/search.md:18
+msgid ""
+"You need the area and the land use of a parcel for a contract or a valuation."
+msgstr ""
+"Trebate površinu i način uporabe zemljišta čestice za ugovor ili procjenu."
+
+#: commands/search.md:19
+msgid ""
+"You want the registration number of the municipality and the parcel's "
+"internal number for a later, more detailed lookup."
+msgstr ""
+"Želite matični broj općine i interni broj čestice za kasniji, detaljniji "
+"dohvat."
+
+#: commands/search.md:23
+msgid ""
+"You need two things: the parcel number (broj katastarske čestice, for example"
+" 103/2) and the cadastral municipality (katastarska općina) it belongs to. "
+"Both are on any extract from the cadastre or the land registry, and on most "
+"contracts."
+msgstr ""
+"Trebate dvoje: broj katastarske čestice (na primjer 103/2) i katastarsku "
+"općinu kojoj pripada. Oboje je na svakom izvatku iz katastra ili zemljišne "
+"knjige i na većini ugovora."
+
+#: commands/search.md:27
+msgid ""
+"You can give the municipality by name (SAVAR) or by its registration number "
+"(334979). The tool accepts either."
+msgstr ""
+"Općinu možete zadati nazivom (SAVAR) ili šifrom (334979). Alat prihvaća "
+"oboje."
+
+# fuzzy match of: Read the lines from top to bottom. **Parcel Number** and
+# **Municipality** confirm that the tool found the parcel you meant. **Area**
+# is the surface in square metres. **Land Use** is the cadastral culture, in
+# the wording of the cadastre. **Building Permitted** tells you whether the
+# cadastre records a building right. **Owners** is the number of people
+# recorded on the parcel in the cadastre, not in the land registry.
+#: commands/search.md:55
+msgid ""
+"Read the lines from top to bottom. **Parcel Number** and **Municipality** "
+"confirm that the tool found the parcel you meant. **Area** is the surface in "
+"square metres. **Land Use** is the cadastral culture, in the wording of the "
+"cadastre. **Building Permitted** tells you whether building is allowed on the"
+" parcel according to the cadastre. **Possessors** is the number of people the"
+" cadastre records on the parcel. They are possessors (posjednici), not "
+"necessarily the legal owners; the land registry has those."
+msgstr ""
+"Čitajte retke odozgo prema dolje. **Broj čestice** i **Općina** potvrđuju da "
+"je alat pronašao česticu koju ste mislili. **Površina** je površina u "
+"četvornim metrima. **Način uporabe** je katastarska kultura, u rječniku "
+"katastra. **Dozvoljeno građenje** kaže je li prema katastru na čestici "
+"dopušteno graditi. **Posjednici** je broj osoba koje katastar vodi na "
+"čestici. To su posjednici, a ne nužno vlasnici; vlasnike vodi zemljišna "
+"knjiga."
+
+#: commands/search.md:63
+msgid ""
+"The last line suggests the command for the full details. Copy it if you need "
+"more than this summary."
+msgstr ""
+"Zadnji redak predlaže naredbu za potpune detalje. Kopirajte je ako trebate "
+"više od ovog sažetka."
+
+#: commands/search.md:68
+msgid ""
+"The part after `-m` is the municipality. It can be a name or a number. If two"
+" municipalities share a name, use the number, which you can find with "
+"[search-municipality](search-municipality.md)."
+msgstr ""
+"Dio iza `-m` je općina. Može biti naziv ili šifra. Ako dvije općine dijele "
+"naziv, upotrijebite šifru, koju možete pronaći naredbom [search-"
+"municipality](search-municipality.md)."
+
+#: commands/search.md:72
+msgid ""
+"If you only know the beginning of a parcel number, add `--partial` to see "
+"every parcel that starts with what you typed:"
+msgstr ""
+"Ako znate samo početak broja čestice, dodajte `--partial` da vidite sve "
+"čestice koje počinju onim što ste upisali:"
+
+#: commands/search.md:79
+msgid ""
+"To keep the result as a file instead of reading it on screen, add `--format "
+"json` or `--format csv` and `--output` with a file name. A JSON file can be "
+"read by other programs; a CSV file opens in a spreadsheet."
+msgstr ""
+"Da rezultat spremite u datoteku umjesto čitanja na zaslonu, dodajte `--format"
+" json` ili `--format csv` i `--output` s nazivom datoteke. JSON datoteku mogu"
+" čitati drugi programi; CSV datoteka otvara se u programu za tablice."
+
+#: commands/search.md:99
+msgid ""
+"If the parcel number does not exist in that municipality, the tool says so "
+"and stops:"
+msgstr "Ako broj čestice ne postoji u toj općini, alat to kaže i staje:"
+
+#: commands/search.md:107
+msgid ""
+"Check the number on your document. Parcel numbers often contain a slash, and "
+"103 is not the same parcel as 103/2."
+msgstr ""
+"Provjerite broj na svom dokumentu. Brojevi čestica često sadrže kosu crtu, a "
+"103 nije ista čestica kao 103/2."
+
+#: commands/search.md:110
+msgid ""
+"If the municipality is not recognised, the message names it. Check the "
+"spelling, or use the number instead. Other messages are explained on the "
+"[errors page](../errors.md)."
+msgstr ""
+"Ako općina nije prepoznata, poruka je imenuje. Provjerite pravopis ili "
+"umjesto naziva upotrijebite šifru. Ostale poruke objašnjene su na [stranici o"
+" greškama](../errors.md)."
+
+#: commands/search.md:116
+msgid ""
+"[get-parcel](get-parcel.md) shows everything the cadastre holds about the "
+"parcel, including the recorded possessors."
+msgstr ""
+"[get-parcel](get-parcel.md) prikazuje sve što katastar ima o čestici, "
+"uključujući upisane posjednike."
+
+#: commands/search.md:117
+msgid ""
+"[get-lr-unit](get-lr-unit.md) shows the land registry unit: owners, shares "
+"and encumbrances."
+msgstr ""
+"[get-lr-unit](get-lr-unit.md) prikazuje zemljišnoknjižni uložak: vlasnike, "
+"udjele i terete."
+
+#: commands/search.md:118
+msgid ""
+"[search-municipality](search-municipality.md) finds the number of a cadastral"
+" municipality."
+msgstr ""
+"[search-municipality](search-municipality.md) pronalazi šifru katastarske "
+"općine."
+
+#: errors.md:9
+msgid "What the error messages mean"
+msgstr "Što znače poruke o greškama"
+
+#: errors.md:11
+msgid ""
+"When something goes wrong, the tool stops and prints one line in red. This "
+"page lists the messages and says what to do about each."
+msgstr ""
+"Kada nešto ne uspije, alat staje i ispisuje jedan redak crvenom bojom. Ova "
+"stranica ispisuje te poruke i kaže što učiniti kod svake."
+
+#: errors.md:33
+msgid "Messages about what you typed"
+msgstr "Poruke o onome što ste upisali"
+
+#: errors.md:35
+msgid ""
+"**Parcel not found** means the parcel number does not exist in the "
+"municipality you named. Check the number on your document, including the part"
+" after the slash, and check that you named the right municipality."
+msgstr ""
+"**Čestica nije pronađena** znači da broj čestice ne postoji u općini koju ste"
+" naveli. Provjerite broj na svom dokumentu, uključujući dio iza kose crte, i "
+"provjerite jeste li naveli pravu općinu."
+
+#: errors.md:39
+msgid ""
+"**Municipality not found** means the name or number after `-m` is not known. "
+"Check the spelling, or find the registration number with [search-"
+"municipality](commands/search-municipality.md) and use that instead."
+msgstr ""
+"**Općina nije pronađena** znači da naziv ili šifra iza `-m` nisu poznati. "
+"Provjerite pravopis ili pronađite šifru naredbom [search-"
+"municipality](commands/search-municipality.md) i upotrijebite nju."
+
+#: errors.md:43
+msgid ""
+"**Land registry unit not found** means the unit number and main book you gave"
+" do not match a unit. Check both numbers. If you started from a parcel, the "
+"parcel may not be entered in the land registry yet."
+msgstr ""
+"**Zemljišnoknjižni uložak nije pronađen** znači da broj uloška i glavna "
+"knjiga koje ste zadali ne odgovaraju nijednom ulošku. Provjerite oba broja. "
+"Ako ste krenuli od čestice, čestica možda još nije upisana u zemljišnu "
+"knjigu."
+
+#: errors.md:47
+msgid "Messages about the connection"
+msgstr "Poruke o vezi"
+
+#: errors.md:49
+msgid ""
+"**Connection error** means the tool could not reach the server. For practice "
+"use, the practice server on your computer is not running. Ask the person who "
+"installed the tool to start it, then run the command again."
+msgstr ""
+"**Greška veze** znači da alat nije mogao doseći poslužitelj. Kod vježbe to "
+"znači da probni poslužitelj na vašem računalu nije pokrenut. Zamolite osobu "
+"koja je instalirala alat da ga pokrene, pa ponovno pokrenite naredbu."
+
+#: errors.md:53
+msgid ""
+"**Request timed out** means the server did not answer in time. Wait a moment "
+"and run the command again."
+msgstr ""
+"**Isteklo je vrijeme zahtjeva** znači da poslužitelj nije odgovorio na "
+"vrijeme. Pričekajte trenutak i ponovno pokrenite naredbu."
+
+#: errors.md:56
+msgid ""
+"**Rate limit exceeded** means requests were sent too quickly. The tool "
+"already spaces its requests; wait a minute and try again."
+msgstr ""
+"**Prekoračeno ograničenje broja zahtjeva** znači da su zahtjevi slani "
+"prebrzo. Alat već razmiče svoje zahtjeve; pričekajte minutu i pokušajte "
+"ponovno."
+
+#: errors.md:59
+msgid ""
+"**Server error** and **Invalid response from server** mean the server "
+"answered but not in the expected way. Try again later. If it keeps happening,"
+" tell the person who installed the tool."
+msgstr ""
+"**Greška poslužitelja** i **Neispravan odgovor poslužitelja** znače da je "
+"poslužitelj odgovorio, ali ne na očekivani način. Pokušajte kasnije. Ako se "
+"ponavlja, recite osobi koja je instalirala alat."
+
+#: errors.md:63
+msgid "Messages from Terminal itself"
+msgstr "Poruke samog Terminala"
+
+#: errors.md:65
+msgid ""
+"If Terminal answers `command not found`, the tool is not installed for your "
+"account or Terminal was opened before the installation finished. Close "
+"Terminal, open it again, and retry. If it still fails, ask the person who "
+"installed the tool."
+msgstr ""
+"Ako Terminal odgovori `command not found`, alat nije instaliran za vaš račun "
+"ili je Terminal otvoren prije nego što je instalacija završila. Zatvorite "
+"Terminal, otvorite ga ponovno i pokušajte opet. Ako i dalje ne radi, obratite"
+" se osobi koja je instalirala alat."
+
+#: errors.md:70
+msgid ""
+"If the tool prints `Missing option` or `No such option`, part of the command "
+"is misspelt. Compare your line with the example on the command's page."
+msgstr ""
+"Ako alat ispiše `Nedostaje opcija` ili `Nepostojeća opcija`, dio naredbe je "
+"pogrešno napisan. Usporedite svoj redak s primjerom na stranici te naredbe."
+
+#: glossary.md:9
+msgid "Glossary"
+msgstr "Pojmovnik"
+
+#: glossary.md:11
+msgid ""
+"The words of the cadastre and the land registry, and where the tool shows "
+"each of them. Croatian terms are given as they appear on official documents."
+msgstr ""
+"Riječi katastra i zemljišne knjige te gdje ih alat prikazuje. Pojmovi su "
+"navedeni onako kako stoje na službenim ispravama."
+
+#: glossary.md:14
+msgid "| Term | What it means | Where you see it in the tool |"
+msgstr "| Pojam | Što znači | Gdje ga vidite u alatu |"
+
+#: glossary.md:16
+msgid ""
+"| Katastarska čestica (k.č.) | A parcel: one numbered piece of land in the "
+"cadastre. | The parcel number you type after `search`, `get-parcel` and `get-"
+"geometry`. |"
+msgstr ""
+"| Katastarska čestica (k.č.) | Čestica: jedan numerirani dio zemljišta u "
+"katastru. | Broj čestice koji upisujete iza `search`, `get-parcel` i `get-"
+"geometry`. |"
+
+# fuzzy match of: | Katastarska općina (k.o.) | The cadastral municipality a
+# parcel belongs to. Each has a name and a registration number. | The value
+# after `-m` in most commands. [search-municipality](commands/search-
+# municipality.md) finds the number. |
+#: glossary.md:17
+msgid ""
+"| Katastarska općina (k.o.) | The cadastral municipality a parcel belongs to."
+" Each has a name and a registration number (matični broj), which the tool "
+"prints as its code. | The value after `-m` in most commands. [search-"
+"municipality](commands/search-municipality.md) finds the number. |"
+msgstr ""
+"| Katastarska općina (k.o.) | Katastarska općina kojoj čestica pripada. Svaka"
+" ima naziv i matični broj, koji alat ispisuje kao šifru. | Vrijednost iza "
+"`-m` u većini naredbi. [search-municipality](commands/search-municipality.md)"
+" pronalazi matični broj. |"
+
+#: glossary.md:18
+msgid ""
+"| Posjedovni list | The possession sheet of the cadastre: who possesses a "
+"parcel according to the cadastre. Not proof of ownership. | [get-"
+"parcel](commands/get-parcel.md) with `--show-owners`. |"
+msgstr ""
+"| Posjedovni list | Posjedovni list katastra: tko posjeduje česticu prema "
+"katastru. Nije dokaz vlasništva. | [get-parcel](commands/get-parcel.md) uz "
+"`--show-owners`. |"
+
+#: glossary.md:19
+msgid ""
+"| Posjednik | A possessor recorded in the cadastre. | The rows of the "
+"possession sheet on [get-parcel](commands/get-parcel.md). |"
+msgstr ""
+"| Posjednik | Posjednik upisan u katastru. | Reci posjedovnog lista na [get-"
+"parcel](commands/get-parcel.md). |"
+
+# fuzzy match of: | Zemljišnoknjižni uložak (ZK uložak) | The land registry
+# unit: the legal record of a property, kept by the municipal court. | [get-
+# lr-
+# unit](commands/get-lr-unit.md). Its number also appears on [get-
+# parcel](commands/get-parcel.md) and in the batch results. |
+#: glossary.md:20
+msgid ""
+"| Zemljišnoknjižni uložak (ZK uložak) | The land registry unit: the record of"
+" the legal state of a property, kept by the land registry department of the "
+"municipal court. | [get-lr-unit](commands/get-lr-unit.md). Its number also "
+"appears on [get-parcel](commands/get-parcel.md) and in the batch results. |"
+msgstr ""
+"| Zemljišnoknjižni uložak (ZK uložak) | Sadrži pravno stanje nekretnine; vodi"
+" ga zemljišnoknjižni odjel općinskog suda. | [get-lr-unit](commands/get-lr-"
+"unit.md). Njegov broj pojavljuje se i na [get-parcel](commands/get-parcel.md)"
+" te u rezultatima grupne obrade. |"
+
+#: glossary.md:21
+msgid ""
+"| Glavna knjiga | The main book: the volume of the land registry that holds "
+"the units of one cadastral municipality. | `--main-book` on [get-lr-"
+"unit](commands/get-lr-unit.md). |"
+msgstr ""
+"| Glavna knjiga | Svezak zemljišne knjige koji sadrži uloške jedne "
+"katastarske općine. | `--main-book` na [get-lr-unit](commands/get-lr-"
+"unit.md). |"
+
+#: glossary.md:22
+msgid ""
+"| Posjedovnica (list A) | Sheet A: the parcels that make up the unit. | The "
+"first table after the unit header on [get-lr-unit](commands/get-lr-unit.md). "
+"|"
+msgstr ""
+"| Posjedovnica (list A) | List A: čestice koje čine uložak. | Prva tablica "
+"iza zaglavlja uloška na [get-lr-unit](commands/get-lr-unit.md). |"
+
+#: glossary.md:23
+msgid ""
+"| Vlastovnica (list B) | Sheet B: the owners and their shares. | `--show-"
+"owners` on [get-lr-unit](commands/get-lr-unit.md). |"
+msgstr ""
+"| Vlastovnica (list B) | List B: vlasnici i njihovi udjeli. | `--show-owners`"
+" na [get-lr-unit](commands/get-lr-unit.md). |"
+
+# fuzzy match of: | Teretovnica (list C) | Sheet C: encumbrances such as
+# mortgages, easements and notes. | `--show-encumbrances` on [get-lr-
+# unit](commands/get-lr-unit.md). |
+#: glossary.md:24
+msgid ""
+"| Teretovnica (list C) | Sheet C: liens (mortgages), easements, real burdens "
+"and notes. | `--show-encumbrances` on [get-lr-unit](commands/get-lr-unit.md)."
+" |"
+msgstr ""
+"| Teretovnica (list C) | List C: založna prava (hipoteke), služnosti, stvarni"
+" tereti i zabilježbe. | `--show-encumbrances` na [get-lr-unit](commands/get-"
+"lr-unit.md). |"
+
+#: glossary.md:25
+msgid ""
+"| Suvlasnički udio | A co-ownership share, written as a fraction such as 1/2."
+" | The share column of sheet B. |"
+msgstr ""
+"| Suvlasnički udio | Udio u suvlasništvu, zapisan kao razlomak, na primjer "
+"1/2. | Stupac udjela lista B. |"
+
+# fuzzy match of: | Plomba | A note that a request has been received and not
+# yet decided. The unit may change. | The pending entries line on [get-lr-
+# unit](commands/get-lr-unit.md); `--plombe-detail` shows what each request
+# is.
+# |
+#: glossary.md:26
+msgid ""
+"| Plomba | A mark that a request for registration (prijedlog za upis) has "
+"been received and not yet decided. The unit may change. | The pending entries"
+" line on [get-lr-unit](commands/get-lr-unit.md); `--plombe-detail` shows what"
+" each request is. |"
+msgstr ""
+"| Plomba | Naznaka da je prijedlog za upis zaprimljen, a još nije riješen. "
+"Uložak se može promijeniti. | Redak s plombama na [get-lr-unit](commands/get-"
+"lr-unit.md); `--plombe-detail` pokazuje o čemu je svaki prijedlog. |"
+
+# fuzzy match of: | Dnevnik, broj Z | The diary of the land registry and the
+# file number (Z-number) of a request. | The last diary number on [get-lr-
+# unit](commands/get-lr-unit.md) and the file numbers of the pending entries.
+# |
+#: glossary.md:27
+msgid ""
+"| Dnevnik, broj Z | The diary of the land registry and the file number "
+"(Z-number) of a request for registration. | The last diary number on [get-lr-"
+"unit](commands/get-lr-unit.md) and the file numbers of the pending entries. |"
+msgstr ""
+"| Dnevnik, broj Z | Dnevnik zemljišne knjige i poslovni broj (Z-broj) "
+"prijedloga za upis. | Zadnji broj dnevnika na [get-lr-unit](commands/get-lr-"
+"unit.md) i poslovni brojevi plombi. |"
+
+#: glossary.md:28
+msgid ""
+"| Etažno vlasništvo | Ownership of a special part of a property (a flat or "
+"business premises), tied to a co-ownership share of the whole. | The unit "
+"type row of the unit header on [get-lr-unit](commands/get-lr-unit.md). |"
+msgstr ""
+"| Etažno vlasništvo | Vlasništvo posebnog dijela nekretnine (stana ili "
+"poslovnog prostora), povezano sa suvlasničkim dijelom cijele nekretnine. | "
+"Redak tipa uloška u zaglavlju uloška na [get-lr-unit](commands/get-lr-"
+"unit.md). |"
+
+# fuzzy match of: | Kultura, namjena zemljišta | The land use recorded in the
+# cadastre, such as arable land, pasture or orchard. | The land use table on
+# [get-parcel](commands/get-parcel.md). |
+#: glossary.md:29
+msgid ""
+"| Kultura, način uporabe zemljišta | The land use recorded in the cadastre, "
+"such as arable land, pasture or orchard. | The land use table on [get-"
+"parcel](commands/get-parcel.md). |"
+msgstr ""
+"| Kultura, način uporabe zemljišta | Način uporabe zemljišta upisan u "
+"katastru, na primjer oranica, pašnjak ili voćnjak. | Tablica načina uporabe "
+"na [get-parcel](commands/get-parcel.md). |"
+
+# fuzzy match of: | OIB | The personal identification number of a person or
+# company. | The OIB column of sheet B, when the registry has it. |
+#: glossary.md:30
+msgid ""
+"| OIB | The personal identification number of a natural or legal person. | "
+"The OIB column of sheet B, when the registry has it. |"
+msgstr ""
+"| OIB | Osobni identifikacijski broj fizičke ili pravne osobe. | Stupac OIB "
+"lista B, kada ga zemljišna knjiga ima. |"
+
+#: glossary.md:31
+msgid ""
+"| Područni ured za katastar | A regional cadastral office. | [list-"
+"offices](commands/list-offices.md). |"
+msgstr ""
+"| Područni ured za katastar | Područni ured za katastar. | [list-"
+"offices](commands/list-offices.md). |"
+
+#: glossary.md:32
+msgid ""
+"| Granica čestice | The boundary of a parcel as coordinates. | [get-"
+"geometry](commands/get-geometry.md) and [download-gis](commands/download-"
+"gis.md). |"
+msgstr ""
+"| Granica čestice | Granica čestice zapisana koordinatama. | [get-"
+"geometry](commands/get-geometry.md) i [download-gis](commands/download-"
+"gis.md). |"
+
+#: glossary.md:33
+msgid ""
+"| HTRS96/TM (EPSG:3765) | The official coordinate system of Croatia, used for"
+" all boundaries. | Every coordinate the tool prints. |"
+msgstr ""
+"| HTRS96/TM (EPSG:3765) | Službeni koordinatni sustav Hrvatske, koristi se za"
+" sve granice. | Svaka koordinata koju alat ispiše. |"
+
+#: install.md:9
+msgid "Installation, for the person setting this up"
+msgstr "Instalacija, za osobu koja postavlja alat"
+
+#: install.md:11
+msgid ""
+"This page is for the technical colleague who installs the tool. The person "
+"who will use it does not need to read it. It takes about ten minutes."
+msgstr ""
+"Ova je stranica za tehničkog kolegu koji instalira alat. Osoba koja će ga "
+"koristiti ne mora je čitati. Traje oko deset minuta."
+
+#: install.md:14
+msgid "What you are installing"
+msgstr "Što instalirate"
+
+#: install.md:16
+msgid ""
+"`cadastral` is a command-line tool written in Python. It talks to a small "
+"practice server, included in the same repository, that answers with made-up "
+"cadastral data. Nothing here connects to the official Croatian systems, and "
+"it must stay that way."
+msgstr ""
+"`cadastral` je alat naredbenog retka napisan u Pythonu. Razgovara s malim "
+"probnim poslužiteljem, uključenim u isti repozitorij, koji odgovara "
+"izmišljenim katastarskim podacima. Ništa ovdje ne spaja se na službene "
+"hrvatske sustave i tako mora ostati."
+
+#: install.md:21
+msgid "Requirements"
+msgstr "Preduvjeti"
+
+#: install.md:23
+msgid "Python 3.12 or newer."
+msgstr "Python 3.12 ili noviji."
+
+#: install.md:24
+msgid "Git, to fetch the repository."
+msgstr "Git, za dohvat repozitorija."
+
+#: install.md:25
+msgid ""
+"A terminal the user can open: Terminal on macOS, Windows Terminal or "
+"PowerShell on Windows, any terminal on Linux."
+msgstr ""
+"Terminal koji korisnik može otvoriti: Terminal na macOS-u, Windows Terminal "
+"ili PowerShell na Windowsima, bilo koji terminal na Linuxu."
+
+#: install.md:27
+msgid "Step 1: fetch the repository and create an environment"
+msgstr "Korak 1: dohvatite repozitorij i stvorite okruženje"
+
+#: install.md:36
+msgid ""
+"On Windows, activate with `.venv\\Scripts\\activate` instead of the last "
+"line."
+msgstr ""
+"Na Windowsima umjesto zadnjeg retka aktivirajte s `.venv\\Scripts\\activate`."
+
+#: install.md:38
+msgid "Step 2: install the tool and the practice server"
+msgstr "Korak 2: instalirajte alat i probni poslužitelj"
+
+#: install.md:45
+msgid "Step 3: start the practice server"
+msgstr "Korak 3: pokrenite probni poslužitelj"
+
+#: install.md:47
+msgid ""
+"The practice server has to be running whenever the user works with the tool. "
+"Start it in its own terminal window and leave that window open:"
+msgstr ""
+"Probni poslužitelj mora biti pokrenut kad god korisnik radi s alatom. "
+"Pokrenite ga u zasebnom prozoru terminala i ostavite taj prozor otvoren:"
+
+#: install.md:55
+msgid ""
+"It listens on `http://localhost:8000`. The tool uses that address unless told"
+" otherwise, so no further configuration is needed for practice use."
+msgstr ""
+"Sluša na adresi `http://localhost:8000`. Alat koristi tu adresu ako mu nije "
+"rečeno drukčije, pa za vježbu nije potrebno dodatno podešavanje."
+
+#: install.md:58
+msgid ""
+"To have the server start automatically at login, create a user service "
+"(launchd on macOS, a scheduled task on Windows, a systemd user unit on Linux)"
+" that runs the two lines above inside the virtual environment."
+msgstr ""
+"Da se poslužitelj pokreće sam pri uključivanju računala, napravite korisnički"
+" servis (launchd na macOS-u, zakazani zadatak na Windowsima, systemd "
+"korisničku jedinicu na Linuxu) koji izvršava gornja dva retka unutar "
+"virtualnog okruženja."
+
+#: install.md:62
+msgid "Step 4: choose the user's language"
+msgstr "Korak 4: odaberite korisnikov jezik"
+
+#: install.md:64
+msgid ""
+"The tool prints in Croatian by default. Set the `CADASTRAL_LANG` environment "
+"variable in the user's shell profile to `hr` or `en` so that they never have "
+"to pass `--lang`. For example, in `~/.zshrc`:"
+msgstr ""
+"Alat ispisuje na hrvatskom ako nije rečeno drukčije. Postavite varijablu "
+"okruženja `CADASTRAL_LANG` u korisnikovu profilu ljuske na `hr` ili `en`, "
+"tako da korisnik nikad ne mora zadavati `--lang`. Na primjer, u `~/.zshrc`:"
+
+#: install.md:72
+msgid ""
+"The documentation exists in both languages. Give the user the link to the "
+"edition that matches this setting."
+msgstr ""
+"Dokumentacija postoji na oba jezika. Dajte korisniku poveznicu na izdanje "
+"koje odgovara ovoj postavci."
+
+#: install.md:75
+msgid "Step 5: verify"
+msgstr "Korak 5: provjerite"
+
+#: install.md:77
+msgid "Open a new terminal as the user and run:"
+msgstr "Otvorite novi terminal kao korisnik i pokrenite:"
+
+#: install.md:83
+msgid "You should see this:"
+msgstr "Trebali biste vidjeti ovo:"
+
+#: install.md:108
+msgid "Hand-over checklist"
+msgstr "Popis za primopredaju"
+
+#: install.md:110
+msgid ""
+"The practice server starts on its own, or the user knows the two lines that "
+"start it."
+msgstr ""
+"Probni poslužitelj pokreće se sam, ili korisnik zna dva retka kojima ga "
+"pokreće."
+
+#: install.md:111
+msgid ""
+"`cadastral info` prints the screen above in a fresh terminal opened by the "
+"user."
+msgstr ""
+"`cadastral info` ispisuje gornji zaslon u novom terminalu koji je korisnik "
+"otvorio."
+
+#: install.md:112
+msgid "`CADASTRAL_LANG` is set in the user's profile."
+msgstr "`CADASTRAL_LANG` je postavljen u korisnikovu profilu."
+
+#: install.md:113
+msgid "The user has the link to [Start here](start-here.md) in their language."
+msgstr ""
+"Korisnik ima poveznicu na [Počnite ovdje](start-here.md) na svom jeziku."
+
+#: install.md:114
+msgid ""
+"The user has your contact for when Terminal says the command is not found."
+msgstr ""
+"Korisnik ima vaš kontakt za slučaj da Terminal kaže da naredba nije "
+"pronađena."
+
+#: reference.md:9
+msgid "Complete reference"
+msgstr "Potpuni pregled naredbi"
+
+#: reference.md:44
+msgid "Other pages"
+msgstr "Ostale stranice"
+
+#: reference.md:46
+msgid "[Start here](start-here.md): the tutorial."
+msgstr "[Počnite ovdje](start-here.md): vodič za početak."
+
+#: reference.md:47
+msgid ""
+"[Glossary](glossary.md): the words of the land registry and the cadastre."
+msgstr "[Pojmovnik](glossary.md): riječi zemljišne knjige i katastra."
+
+#: reference.md:48
+msgid "[Errors](errors.md): what the messages mean."
+msgstr "[Greške](errors.md): što znače poruke."
+
+#: reference.md:49
+msgid ""
+"[Installation](install.md): for the technical colleague who sets the tool up."
+msgstr "[Instalacija](install.md): za tehničkog kolegu koji postavlja alat."
+
+#: start-here.md:9
+msgid "Start here"
+msgstr "Počnite ovdje"
+
+#: start-here.md:11
+msgid ""
+"This tool lets you read the cadastre and the land registry from your own "
+"computer, one typed line at a time. This page walks you through the five "
+"things you will do most often. Each task ends with a link to the page that "
+"explains the command in full."
+msgstr ""
+"Ovaj vam alat omogućuje da katastar i zemljišnu knjigu čitate s vlastitog "
+"računala, jednom naredbom po upitu. Ova vas stranica vodi kroz pet stvari "
+"koje ćete najčešće raditi. Svaki zadatak završava poveznicom na stranicu koja"
+" naredbu objašnjava u cijelosti."
+
+#: start-here.md:16
+msgid "Before the first use"
+msgstr "Prije prve uporabe"
+
+#: start-here.md:18
+msgid ""
+"Ask a technical colleague to follow the [installation page](install.md). When"
+" they are done, open Terminal and type the following line, then press Enter:"
+msgstr ""
+"Zamolite tehničkog kolegu da slijedi [stranicu o instalaciji](install.md). "
+"Kad završi, otvorite Terminal, upišite sljedeći redak i pritisnite Enter:"
+
+#: start-here.md:25
+msgid ""
+"If you see a table with a version number and no red text, you are ready. If "
+"Terminal says the command is not found, go back to your colleague."
+msgstr ""
+"Ako vidite tablicu s brojem verzije i bez crvenog teksta, spremni ste. Ako "
+"Terminal kaže da naredba nije pronađena, vratite se kolegi."
+
+#: start-here.md:28
+msgid ""
+"Two things to know before you start. First, every command begins with the "
+"word `cadastral`. Second, the tool works with practice data on your own "
+"computer; nothing you type reaches the official registers."
+msgstr ""
+"Dvije stvari prije početka. Prvo, svaka naredba počinje riječju `cadastral`. "
+"Drugo, alat radi s probnim podacima na vašem računalu; ništa što upišete ne "
+"stiže do službenih registara."
+
+#: start-here.md:32
+msgid "Task 1: check who owns a parcel"
+msgstr "Zadatak 1: provjerite tko je vlasnik čestice"
+
+#: start-here.md:34
+msgid "Find the parcel number and the cadastral municipality on your document."
+msgstr "Pronađite broj čestice i katastarsku općinu na svom dokumentu."
+
+#: start-here.md:41
+msgid ""
+"Read the table headed **OWNERSHIP SHEET (LIST B)**. Each row is one owner "
+"with their share."
+msgstr ""
+"Pročitajte tablicu s naslovom **VLASTOVNICA (LIST B)**. Svaki redak jedan je "
+"vlasnik s njegovim udjelom."
+
+#: start-here.md:44 start-here.md:61
+msgid "Full explanation: [get-lr-unit](commands/get-lr-unit.md)."
+msgstr "Potpuno objašnjenje: [get-lr-unit](commands/get-lr-unit.md)."
+
+#: start-here.md:46
+msgid "Task 2: check for mortgages and other charges"
+msgstr "Zadatak 2: provjerite hipoteke i druge terete"
+
+#: start-here.md:48
+msgid "Use the same parcel and municipality."
+msgstr "Uzmite istu česticu i općinu."
+
+#: start-here.md:55
+msgid ""
+"Read **ENCUMBRANCES SHEET (LIST C)**. If it says **No encumbrances found**, "
+"list C is empty."
+msgstr ""
+"Pročitajte **TERETOVNICA (LIST C)**. Ako piše **Nema tereta**, list C je "
+"prazan."
+
+# fuzzy match of: Look for the line **Pending entries (plombe)** near the top.
+# If it is there, a request is waiting to be entered and the sheets may
+# change.
+#: start-here.md:57
+msgid ""
+"Look for the line **Pending entries (plombe)** near the top. If it is there, "
+"a request for registration (prijedlog) is waiting to be decided and the "
+"sheets may change."
+msgstr ""
+"Potražite redak **Plombe (u tijeku)** pri vrhu. Ako ga ima, neki prijedlog za"
+" upis čeka odluku i listovi se mogu promijeniti."
+
+#: start-here.md:63
+msgid "Task 3: look up many parcels at once"
+msgstr "Zadatak 3: potražite više čestica odjednom"
+
+#: start-here.md:65
+msgid ""
+"Write the parcel numbers in one line, separated by commas, inside quotes."
+msgstr ""
+"Napišite brojeve čestica u jednom retku, odvojene zarezima, unutar navodnika."
+
+#: start-here.md:72
+msgid ""
+"Each row of the **RESULTS** table is one parcel. The **LR Unit** column is "
+"the land registry unit of each."
+msgstr ""
+"Svaki redak tablice **REZULTATI** jedna je čestica. Stupac **ZK uložak** je "
+"zemljišnoknjižni uložak svake od njih."
+
+#: start-here.md:75
+msgid ""
+"Full explanation: [batch-fetch](commands/batch-fetch.md), and [batch-lr-"
+"unit](commands/batch-lr-unit.md) for reading all those units in one go."
+msgstr ""
+"Potpuno objašnjenje: [batch-fetch](commands/batch-fetch.md), a [batch-lr-"
+"unit](commands/batch-lr-unit.md) za čitanje svih tih uložaka odjednom."
+
+#: start-here.md:79
+msgid "Task 4: save a result for a file or a colleague"
+msgstr "Zadatak 4: spremite rezultat u datoteku ili za kolegu"
+
+#: start-here.md:81
+msgid "Take any command from this page."
+msgstr "Uzmite bilo koju naredbu s ove stranice."
+
+#: start-here.md:82
+msgid "Add `--format json --output` and a file name at the end:"
+msgstr "Na kraj dodajte `--format json --output` i naziv datoteke:"
+
+#: start-here.md:88
+msgid ""
+"The file appears in the folder Terminal is in, usually your home folder. "
+"Attach it to the case file or send it on. `--format csv` gives a file that "
+"opens in a spreadsheet instead."
+msgstr ""
+"Datoteka se pojavljuje u mapi u kojoj je Terminal, obično u vašoj osobnoj "
+"mapi. Priložite je spisu ili proslijedite. `--format csv` umjesto toga daje "
+"datoteku koja se otvara u programu za tablice."
+
+#: start-here.md:92
+msgid "Full explanation: the \"Choices you can make\" section of any command page."
+msgstr ""
+"Potpuno objašnjenje: odjeljak „Što možete odabrati” na stranici bilo koje "
+"naredbe."
+
+#: start-here.md:94
+msgid "Task 5: see the parcel on a map"
+msgstr "Zadatak 5: pogledajte česticu na karti"
+
+#: start-here.md:102
+msgid ""
+"Near the bottom, under **ADDITIONAL INFO**, there is a **Map URL**. Copy it "
+"into your web browser to see the parcel on the public map."
+msgstr ""
+"Pri dnu, pod **DODATNE INFORMACIJE**, nalazi se **URL karte**. Kopirajte ga u"
+" svoj web preglednik da vidite česticu na javnoj karti."
+
+#: start-here.md:105
+msgid ""
+"Full explanation: [get-parcel](commands/get-parcel.md), and [get-"
+"geometry](commands/get-geometry.md) if you need the boundary for a mapping "
+"program."
+msgstr ""
+"Potpuno objašnjenje: [get-parcel](commands/get-parcel.md), a [get-"
+"geometry](commands/get-geometry.md) ako trebate granicu za kartografski "
+"program."
+
+#: start-here.md:109
+msgid "When something goes wrong"
+msgstr "Kad nešto ne uspije"
+
+#: start-here.md:111
+msgid ""
+"Every error starts with a red cross and a short message. The [errors "
+"page](errors.md) lists them and says what to do. The most common cause is a "
+"mistyped parcel number or municipality."
+msgstr ""
+"Svaka greška počinje crvenim križićem i kratkom porukom. [Stranica o "
+"greškama](errors.md) ih ispisuje i kaže što učiniti. Najčešći je uzrok "
+"pogrešno upisan broj čestice ili općine."
+
+#: start-here.md:115
+msgid "Where to go next"
+msgstr "Kamo dalje"
+
+#: start-here.md:117
+msgid ""
+"[Complete reference](reference.md): every command on one page, with links."
+msgstr ""
+"[Potpuni pregled naredbi](reference.md): sve naredbe na jednoj stranici, s "
+"poveznicama."
+
+#: start-here.md:118
+msgid ""
+"[Glossary](glossary.md): the words of the land registry and what the tool "
+"calls them."
+msgstr ""
+"[Pojmovnik](glossary.md): riječi zemljišne knjige i kako ih alat naziva."
+
+#~ msgid ""
+#~ "| Kultura, namjena zemljišta | The land use recorded in the cadastre, such as"
+#~ " arable land, pasture or orchard. | The land use table on [get-"
+#~ "parcel](commands/get-parcel.md). |"
+#~ msgstr ""
+#~ "| Kultura, namjena zemljišta | Namjena zemljišta upisana u katastru, na "
+#~ "primjer oranica, pašnjak ili voćnjak. | Tablica namjene zemljišta na [get-"
+#~ "parcel](commands/get-parcel.md). |"
+
+#~ msgid ""
+#~ "The land registry unit (zemljišnoknjižni uložak) is the legal record of a "
+#~ "property. This command shows its three sheets: the parcels it covers (list "
+#~ "A), the owners and their shares (list B), and the encumbrances such as "
+#~ "mortgages and easements (list C). It also shows pending entries (plombe)."
+#~ msgstr ""
+#~ "Zemljišnoknjižni uložak pravni je zapis o nekretnini. Ova naredba prikazuje "
+#~ "njegova tri lista: čestice koje obuhvaća (list A), vlasnike i njihove udjele "
+#~ "(list B) te terete poput hipoteka i služnosti (list C). Prikazuje i plombe."
+
+#~ msgid ""
+#~ "You want to know whether a request is pending on the unit, for example an "
+#~ "inheritance decision that has not been entered yet."
+#~ msgstr ""
+#~ "Želite znati je li na ulošku u tijeku neka prijava, na primjer rješenje o "
+#~ "nasljeđivanju koje još nije provedeno."
+
+#~ msgid ""
+#~ "The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
+#~ " main book, the office that keeps it, and **Last Diary Number**, the most "
+#~ "recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)** "
+#~ "is list A. **OWNERSHIP SHEET (LIST B)** is list B, with the share of each "
+#~ "owner as a fraction. **ENCUMBRANCES SHEET (LIST C)** is list C. When list C "
+#~ "is empty, the tool prints **No encumbrances found**."
+#~ msgstr ""
+#~ "Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj, "
+#~ "glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji broj "
+#~ "predmeta upisan u dnevnik. **POPIS ČESTICA (LIST A)** je list A. **VLASNIČKI "
+#~ "LIST (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. **TERETNI"
+#~ " LIST (LIST C)** je list C. Kada je list C prazan, alat ispisuje **Nema "
+#~ "tereta**."
+
+#~ msgid ""
+#~ "If the unit has pending entries, an extra line **Pending entries (plombe)** "
+#~ "appears in the first table with the file numbers, and a warning follows. A "
+#~ "plomba means a request has been received and the unit may be about to change."
+#~ " Do not treat the sheets as final until it is resolved."
+#~ msgstr ""
+#~ "Ako uložak ima plombe, u prvoj tablici pojavljuje se dodatni redak **Plombe "
+#~ "(u tijeku)** s brojevima predmeta, a slijedi upozorenje. Plomba znači da je "
+#~ "prijava zaprimljena i da se uložak možda uskoro mijenja. Ne smatrajte listove"
+#~ " konačnima dok se ona ne riješi."
+
+#~ msgid ""
+#~ "To see what each pending entry is about, add `--plombe-detail`. The tool then"
+#~ " asks the registry about every plomba, which takes one extra request each, "
+#~ "and prints a table with the request type, its status and the date it was "
+#~ "received:"
+#~ msgstr ""
+#~ "Da vidite o čemu je svaka plomba, dodajte `--plombe-detail`. Alat tada za "
+#~ "svaku plombu pita zemljišnu knjigu, što je jedan dodatni zahtjev po plombi, i"
+#~ " ispisuje tablicu s vrstom prijave, njezinim statusom i datumom zaprimanja:"
+
+#~ msgid ""
+#~ "Read the lines from top to bottom. **Parcel Number** and **Municipality** "
+#~ "confirm that the tool found the parcel you meant. **Area** is the surface in "
+#~ "square metres. **Land Use** is the cadastral culture, in the wording of the "
+#~ "cadastre. **Building Permitted** tells you whether the cadastre records a "
+#~ "building right. **Owners** is the number of people recorded on the parcel in "
+#~ "the cadastre, not in the land registry."
+#~ msgstr ""
+#~ "Čitajte retke odozgo prema dolje. **Broj čestice** i **Općina** potvrđuju da "
+#~ "je alat pronašao česticu koju ste mislili. **Površina** je površina u "
+#~ "četvornim metrima. **Namjena zemljišta** je katastarska kultura, u rječniku "
+#~ "katastra. **Dozvoljeno građenje** kaže vodi li katastar pravo građenja. "
+#~ "**Vlasnici** je broj osoba koje su na čestici upisane u katastru, a ne u "
+#~ "zemljišnoj knjizi."
+
+#~ msgid ""
+#~ "| Katastarska općina (k.o.) | The cadastral municipality a parcel belongs to."
+#~ " Each has a name and a registration number. | The value after `-m` in most "
+#~ "commands. [search-municipality](commands/search-municipality.md) finds the "
+#~ "number. |"
+#~ msgstr ""
+#~ "| Katastarska općina (k.o.) | Katastarska općina kojoj čestica pripada. Svaka"
+#~ " ima naziv i šifru (matični broj). | Vrijednost iza `-m` u većini naredbi. "
+#~ "[search-municipality](commands/search-municipality.md) pronalazi šifru. |"
+
+#~ msgid ""
+#~ "| Zemljišnoknjižni uložak (ZK uložak) | The land registry unit: the legal "
+#~ "record of a property, kept by the municipal court. | [get-lr-"
+#~ "unit](commands/get-lr-unit.md). Its number also appears on [get-"
+#~ "parcel](commands/get-parcel.md) and in the batch results. |"
+#~ msgstr ""
+#~ "| Zemljišnoknjižni uložak (ZK uložak) | Pravni zapis o nekretnini koji vodi "
+#~ "općinski sud. | [get-lr-unit](commands/get-lr-unit.md). Njegov broj "
+#~ "pojavljuje se i na [get-parcel](commands/get-parcel.md) te u rezultatima "
+#~ "grupne obrade. |"
+
+#~ msgid ""
+#~ "| Teretovnica (list C) | Sheet C: encumbrances such as mortgages, easements "
+#~ "and notes. | `--show-encumbrances` on [get-lr-unit](commands/get-lr-unit.md)."
+#~ " |"
+#~ msgstr ""
+#~ "| Teretovnica (list C) | List C: tereti poput hipoteka, služnosti i "
+#~ "zabilježbi. | `--show-encumbrances` na [get-lr-unit](commands/get-lr-"
+#~ "unit.md). |"
+
+#~ msgid ""
+#~ "| Plomba | A note that a request has been received and not yet decided. The "
+#~ "unit may change. | The pending entries line on [get-lr-unit](commands/get-lr-"
+#~ "unit.md); `--plombe-detail` shows what each request is. |"
+#~ msgstr ""
+#~ "| Plomba | Zabilježba da je prijava zaprimljena, a još nije riješena. Uložak "
+#~ "se može promijeniti. | Redak s plombama na [get-lr-unit](commands/get-lr-"
+#~ "unit.md); `--plombe-detail` pokazuje o čemu je svaka prijava. |"
+
+#~ msgid ""
+#~ "| Dnevnik, broj Z | The diary of the land registry and the file number "
+#~ "(Z-number) of a request. | The last diary number on [get-lr-"
+#~ "unit](commands/get-lr-unit.md) and the file numbers of the pending entries. |"
+#~ msgstr ""
+#~ "| Dnevnik, broj Z | Dnevnik zemljišne knjige i broj predmeta (Z-broj) "
+#~ "prijave. | Zadnji broj dnevnika na [get-lr-unit](commands/get-lr-unit.md) i "
+#~ "brojevi predmeta plombi. |"
+
+#~ msgid ""
+#~ "| Etažno vlasništvo | Condominium ownership: separate ownership of flats in "
+#~ "one building. | The unit type row of the unit header on [get-lr-"
+#~ "unit](commands/get-lr-unit.md). |"
+#~ msgstr ""
+#~ "| Etažno vlasništvo | Vlasništvo posebnog dijela: zasebno vlasništvo stanova "
+#~ "u jednoj zgradi. | Redak tipa uloška u zaglavlju uloška na [get-lr-"
+#~ "unit](commands/get-lr-unit.md). |"
+
+#~ msgid ""
+#~ "| OIB | The personal identification number of a person or company. | The OIB "
+#~ "column of sheet B, when the registry has it. |"
+#~ msgstr ""
+#~ "| OIB | Osobni identifikacijski broj osobe ili tvrtke. | Stupac OIB lista B, "
+#~ "kada ga zemljišna knjiga ima. |"
+
+#~ msgid ""
+#~ "Look for the line **Pending entries (plombe)** near the top. If it is there, "
+#~ "a request is waiting to be entered and the sheets may change."
+#~ msgstr ""
+#~ "Potražite redak **Plombe (u tijeku)** pri vrhu. Ako ga ima, neka prijava čeka"
+#~ " provedbu i listovi se mogu promijeniti."

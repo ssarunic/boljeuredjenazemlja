@@ -23,6 +23,7 @@ fi
 
 # Update each .po file
 for PO_FILE in po/*.po; do
+    case "$(basename "${PO_FILE}")" in docs*) continue ;; esac  # documentation catalogs are built by scripts/build_docs.py
     if [ -f "${PO_FILE}" ]; then
         LANG=$(basename "${PO_FILE}" .po)
         echo ""

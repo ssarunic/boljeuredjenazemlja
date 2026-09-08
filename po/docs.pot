@@ -1,0 +1,1762 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cadastral-docs\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: commands/batch-fetch.md:9
+msgid "Look up a list of parcels at once"
+msgstr ""
+
+#: commands/batch-fetch.md:11
+msgid ""
+"Give the tool several parcel numbers, or a file with a list, and get one "
+"table with the area, the internal parcel number and the land registry unit of"
+" each. The table is the starting point for reading many land registry units "
+"in one go."
+msgstr ""
+
+#: commands/batch-fetch.md:15 commands/batch-lr-unit.md:15
+#: commands/cache-clear.md:15 commands/cache-info.md:14
+#: commands/cache-list.md:15 commands/download-gis.md:15
+#: commands/get-geometry.md:15 commands/get-lr-unit.md:17
+#: commands/get-parcel.md:15 commands/info.md:15
+#: commands/list-municipalities.md:14 commands/list-offices.md:14
+#: commands/search-municipality.md:15 commands/search.md:15
+msgid "When you would use this"
+msgstr ""
+
+#: commands/batch-fetch.md:17
+msgid ""
+"An inheritance or a sale covers several parcels and you want to check all of "
+"them together."
+msgstr ""
+
+#: commands/batch-fetch.md:18
+msgid ""
+"You have a spreadsheet of parcels from a client and want the land registry "
+"unit of each."
+msgstr ""
+
+#: commands/batch-fetch.md:19
+msgid ""
+"You want to find out which parcels of a list do not exist or are misnumbered."
+msgstr ""
+
+#: commands/batch-fetch.md:21 commands/batch-lr-unit.md:20
+#: commands/cache-clear.md:20 commands/cache-info.md:19
+#: commands/cache-list.md:20 commands/download-gis.md:20
+#: commands/get-geometry.md:21 commands/get-lr-unit.md:23
+#: commands/get-parcel.md:21 commands/info.md:20
+#: commands/list-municipalities.md:19 commands/list-offices.md:19
+#: commands/search-municipality.md:21 commands/search.md:21
+msgid "Before you start"
+msgstr ""
+
+#: commands/batch-fetch.md:23
+msgid ""
+"For a handful of parcels in one municipality, you type them on the line, "
+"separated by commas. For longer lists, prepare a file. The simplest file is a"
+" CSV, which you can save from any spreadsheet program. It has two columns, "
+"`parcel_number` and `municipality`, and looks like this:"
+msgstr ""
+
+#: commands/batch-fetch.md:35
+msgid ""
+"An empty municipality cell means \"same as the row above\". A JSON file with "
+"the same content is accepted too. Example files: "
+"[parcels.csv](../examples/parcels.csv), "
+"[parcels.json](../examples/parcels.json)."
+msgstr ""
+
+#: commands/batch-fetch.md:39 commands/batch-lr-unit.md:34
+#: commands/cache-clear.md:26 commands/cache-info.md:23
+#: commands/cache-list.md:24 commands/download-gis.md:26
+#: commands/get-geometry.md:31 commands/get-lr-unit.md:34
+#: commands/get-parcel.md:32 commands/info.md:24
+#: commands/list-municipalities.md:24 commands/list-offices.md:23
+#: commands/search-municipality.md:25 commands/search.md:30
+msgid "Step by step"
+msgstr ""
+
+#: commands/batch-fetch.md:41 commands/cache-clear.md:28
+#: commands/cache-info.md:25 commands/cache-list.md:26
+#: commands/download-gis.md:28 commands/get-geometry.md:33
+#: commands/get-lr-unit.md:36 commands/get-parcel.md:34 commands/info.md:26
+#: commands/list-municipalities.md:26 commands/list-offices.md:25
+#: commands/search-municipality.md:27 commands/search.md:32
+msgid "Open Terminal."
+msgstr ""
+
+#: commands/batch-fetch.md:42
+msgid ""
+"Type the following line and press Enter. The quotes around the list matter."
+msgstr ""
+
+#: commands/batch-fetch.md:48 commands/batch-lr-unit.md:43
+#: commands/cache-clear.md:36 commands/cache-info.md:32
+#: commands/cache-list.md:33 commands/download-gis.md:35
+#: commands/get-geometry.md:40 commands/get-lr-unit.md:43
+#: commands/get-parcel.md:41 commands/info.md:33
+#: commands/list-municipalities.md:33 commands/list-offices.md:32
+#: commands/search-municipality.md:34 commands/search.md:39
+msgid "You will see something like this:"
+msgstr ""
+
+#: commands/batch-fetch.md:74
+msgid ""
+"**BATCH PROCESSING SUMMARY** counts how many parcels were found. **RESULTS** "
+"has one row per parcel. **Status** shows a tick for found and a cross for not"
+" found. **LR Unit** is the land registry unit number of the parcel, which you"
+" need for the next step."
+msgstr ""
+
+#: commands/batch-fetch.md:79 commands/batch-lr-unit.md:142
+#: commands/cache-clear.md:46 commands/cache-info.md:54
+#: commands/cache-list.md:51 commands/download-gis.md:56
+#: commands/get-geometry.md:70 commands/get-lr-unit.md:84
+#: commands/get-parcel.md:101 commands/info.md:64
+#: commands/list-municipalities.md:66 commands/list-offices.md:77
+#: commands/search-municipality.md:52 commands/search.md:66
+msgid "Choices you can make"
+msgstr ""
+
+#: commands/batch-fetch.md:81
+msgid ""
+"To read the list from a file, use `--input` with the file name instead of "
+"typing the parcels. Open Terminal in the folder where the file is:"
+msgstr ""
+
+#: commands/batch-fetch.md:88
+msgid ""
+"When one parcel is not found, the tool continues with the rest and lists the "
+"failures at the end. If you would rather stop at the first problem, add "
+"`--stop-on-error`."
+msgstr ""
+
+#: commands/batch-fetch.md:92
+msgid ""
+"To go on to the land registry, keep the result as a JSON file with `--format "
+"json` and `--output`. The [batch-lr-unit](batch-lr-unit.md) page can read "
+"that file directly:"
+msgstr ""
+
+#: commands/batch-fetch.md:101
+msgid ""
+"Add `--detail full` to print the whole cadastral record of every parcel, as "
+"the [get-parcel](get-parcel.md) page does, and `--show-owners` to include the"
+" possessors."
+msgstr ""
+
+#: commands/batch-fetch.md:118 commands/batch-lr-unit.md:172
+#: commands/cache-clear.md:66 commands/cache-info.md:62
+#: commands/cache-list.md:59 commands/download-gis.md:71
+#: commands/get-geometry.md:93 commands/get-lr-unit.md:154
+#: commands/get-parcel.md:134 commands/info.md:72
+#: commands/list-municipalities.md:90 commands/list-offices.md:92
+#: commands/search-municipality.md:75 commands/search.md:97
+msgid "If something goes wrong"
+msgstr ""
+
+#: commands/batch-fetch.md:120
+msgid ""
+"A parcel that does not exist does not stop the run. It gets a cross in the "
+"**Status** column and an explanation in an **ERRORS** table at the end:"
+msgstr ""
+
+#: commands/batch-fetch.md:153
+msgid "Correct the number and run the command again for that parcel alone."
+msgstr ""
+
+#: commands/batch-fetch.md:155
+msgid ""
+"If the tool cannot find the file you named, check that Terminal is in the "
+"folder where the file is, or type the full path to it. Other messages are "
+"explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/batch-fetch.md:159 commands/batch-lr-unit.md:182
+#: commands/cache-clear.md:87 commands/cache-info.md:67
+#: commands/cache-list.md:64 commands/download-gis.md:90
+#: commands/get-geometry.md:112 commands/get-lr-unit.md:170
+#: commands/get-parcel.md:151 commands/info.md:79
+#: commands/list-municipalities.md:103 commands/list-offices.md:98
+#: commands/search-municipality.md:89 commands/search.md:114
+msgid "Related pages"
+msgstr ""
+
+#: commands/batch-fetch.md:161
+msgid ""
+"[batch-lr-unit](batch-lr-unit.md) reads the land registry units found here."
+msgstr ""
+
+#: commands/batch-fetch.md:162
+msgid "[search](search.md) checks one parcel."
+msgstr ""
+
+#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:188
+#: commands/cache-clear.md:93 commands/cache-info.md:73
+#: commands/cache-list.md:71 commands/download-gis.md:96
+#: commands/get-geometry.md:118 commands/get-lr-unit.md:177
+#: commands/get-parcel.md:158 commands/info.md:85
+#: commands/list-municipalities.md:109 commands/list-offices.md:104
+#: commands/search-municipality.md:96 commands/search.md:121
+msgid "Technical details"
+msgstr ""
+
+#: commands/batch-lr-unit.md:9
+msgid "Read many land registry units at once"
+msgstr ""
+
+#: commands/batch-lr-unit.md:11
+msgid ""
+"Give the tool a list of land registry units, or the result of a [batch-"
+"fetch](batch-fetch.md) run, and it prints the sheets of every unit one after "
+"another."
+msgstr ""
+
+#: commands/batch-lr-unit.md:17
+msgid ""
+"You have checked a list of parcels with batch-fetch and now want the owners "
+"and encumbrances of each."
+msgstr ""
+
+#: commands/batch-lr-unit.md:18
+msgid ""
+"You keep a list of units for a case and want to re-read all of them after a "
+"change."
+msgstr ""
+
+#: commands/batch-lr-unit.md:22
+msgid ""
+"Each unit is identified by its number and the main book ID. The easiest way "
+"to get both is the JSON file that [batch-fetch](batch-fetch.md) writes. You "
+"can also prepare a CSV file with two columns, `lr_unit_number` and "
+"`main_book_id`, like the example [lr_units.csv](../examples/lr_units.csv):"
+msgstr ""
+
+#: commands/batch-lr-unit.md:36
+msgid "Open Terminal in the folder where your file is."
+msgstr ""
+
+#: commands/batch-lr-unit.md:37 commands/cache-info.md:26
+#: commands/cache-list.md:27 commands/download-gis.md:29
+#: commands/get-geometry.md:34 commands/get-lr-unit.md:37
+#: commands/get-parcel.md:35 commands/info.md:27
+#: commands/list-municipalities.md:27 commands/list-offices.md:26
+#: commands/search-municipality.md:28 commands/search.md:33 start-here.md:35
+#: start-here.md:49 start-here.md:66 start-here.md:96
+msgid "Type the following line and press Enter:"
+msgstr ""
+
+#: commands/batch-lr-unit.md:135
+msgid ""
+"The units are printed one after another, separated by a line of dashes. Each "
+"is laid out as on the [get-lr-unit](get-lr-unit.md) page: **LAND REGISTRY "
+"UNIT**, then **PARCEL LIST (SHEET A)**, **OWNERSHIP SHEET (LIST B)** and "
+"**ENCUMBRANCES SHEET (LIST C)**. A unit with pending entries carries the same"
+" **Pending entries (plombe)** line and warning."
+msgstr ""
+
+#: commands/batch-lr-unit.md:144
+msgid ""
+"To continue from a batch-fetch result, use `--from-batch-output` with the "
+"JSON file it wrote:"
+msgstr ""
+
+#: commands/batch-lr-unit.md:151
+msgid ""
+"For a long list, screen output is hard to read. Keep it as a file instead "
+"with `--format json` and `--output`:"
+msgstr ""
+
+#: commands/batch-lr-unit.md:158
+msgid ""
+"When one unit cannot be read, the tool continues with the rest. Add `--stop-"
+"on-error` to stop at the first problem instead."
+msgstr ""
+
+#: commands/batch-lr-unit.md:174
+msgid ""
+"If the tool cannot find the file you named, it stops before reading anything."
+" Check that Terminal is in the folder where the file is, or type the full "
+"path to it."
+msgstr ""
+
+#: commands/batch-lr-unit.md:178
+msgid ""
+"If one unit in the list does not exist, that unit is reported as failed and "
+"the others are still printed. Check its number and main book ID in your file."
+" Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/batch-lr-unit.md:184
+msgid ""
+"[batch-fetch](batch-fetch.md) produces the list of units from a list of "
+"parcels."
+msgstr ""
+
+#: commands/batch-lr-unit.md:185
+msgid "[get-lr-unit](get-lr-unit.md) reads one unit and explains the sheets."
+msgstr ""
+
+#: commands/cache-clear.md:9
+msgid "Remove stored boundary data"
+msgstr ""
+
+#: commands/cache-clear.md:11
+msgid ""
+"Deletes the boundary data of one municipality, or of all of them, from your "
+"computer. The tool downloads the data again the next time you ask for a "
+"boundary."
+msgstr ""
+
+#: commands/cache-clear.md:17
+msgid ""
+"The boundaries of a municipality have changed and you want the tool to fetch "
+"the current data."
+msgstr ""
+
+#: commands/cache-clear.md:18
+msgid "You want to free disk space."
+msgstr ""
+
+#: commands/cache-clear.md:22
+msgid ""
+"Decide whether you want to remove one municipality or all of them. Nothing "
+"else is affected: the stored data is only a copy of what the server can send "
+"again."
+msgstr ""
+
+#: commands/cache-clear.md:29
+msgid ""
+"Type the following line and press Enter. Replace SAVAR with the municipality "
+"you want to remove."
+msgstr ""
+
+#: commands/cache-clear.md:44
+msgid "The tool confirms what it removed and how much space it freed."
+msgstr ""
+
+#: commands/cache-clear.md:48
+msgid ""
+"`--force` skips the question the tool otherwise asks before deleting. Without"
+" it, the tool asks you to confirm; type `y` and press Enter to go ahead, or "
+"just press Enter to keep the data."
+msgstr ""
+
+#: commands/cache-clear.md:52
+msgid "To remove everything, use `--all` instead of naming a municipality:"
+msgstr ""
+
+#: commands/cache-clear.md:68
+msgid ""
+"If you name a municipality that is not stored, the tool tells you so and "
+"removes nothing:"
+msgstr ""
+
+#: commands/cache-clear.md:77
+msgid "If you name neither a municipality nor `--all`, you will see this:"
+msgstr ""
+
+#: commands/cache-clear.md:89
+msgid "[cache-list](cache-list.md) shows what is stored before you remove it."
+msgstr ""
+
+#: commands/cache-clear.md:90
+msgid "[download-gis](download-gis.md) downloads a municipality again."
+msgstr ""
+
+#: commands/cache-info.md:9
+msgid "See how much boundary data is stored"
+msgstr ""
+
+#: commands/cache-info.md:11
+msgid ""
+"Shows the folder where the tool keeps downloaded boundary data, the number of"
+" municipalities and files, and the total size."
+msgstr ""
+
+#: commands/cache-info.md:16
+msgid ""
+"Your computer is short of disk space and you want to know how much the tool "
+"uses."
+msgstr ""
+
+#: commands/cache-info.md:17
+msgid "You want to find the folder to back it up or to hand it to a colleague."
+msgstr ""
+
+#: commands/cache-info.md:21 commands/cache-list.md:22 commands/info.md:22
+msgid "Nothing. This command takes no input and changes nothing."
+msgstr ""
+
+#: commands/cache-info.md:50
+msgid ""
+"**Location** is the folder on your computer. **Total Size** is the disk space"
+" used. The last two lines remind you of the commands that list and clear the "
+"data."
+msgstr ""
+
+#: commands/cache-info.md:56 commands/cache-list.md:53
+msgid "None."
+msgstr ""
+
+#: commands/cache-info.md:64
+msgid ""
+"This command has nothing to fail on. If the folder does not exist yet, the "
+"tool says so; run a boundary lookup and it will be created."
+msgstr ""
+
+#: commands/cache-info.md:69
+msgid "[cache-list](cache-list.md) lists the municipalities."
+msgstr ""
+
+#: commands/cache-info.md:70 commands/cache-list.md:67
+msgid "[cache-clear](cache-clear.md) removes stored data."
+msgstr ""
+
+#: commands/cache-list.md:9
+msgid "See which municipalities are stored on your computer"
+msgstr ""
+
+#: commands/cache-list.md:11
+msgid ""
+"The boundary data of a municipality is downloaded once and then kept on your "
+"computer. This command lists what is kept, how big it is and when it was last"
+" updated."
+msgstr ""
+
+#: commands/cache-list.md:17
+msgid ""
+"You want to know whether the tool already has the data of a municipality "
+"before you ask for a boundary."
+msgstr ""
+
+#: commands/cache-list.md:18
+msgid "You want to see how much disk space the stored data takes."
+msgstr ""
+
+#: commands/cache-list.md:47
+msgid ""
+"One row per municipality, with its number, the size of the data and the date "
+"of the last download. The last lines give the total size and the folder where"
+" the data lives."
+msgstr ""
+
+#: commands/cache-list.md:61
+msgid ""
+"If nothing has been downloaded yet, the tool says the store is empty and "
+"suggests the download command. That is not an error."
+msgstr ""
+
+#: commands/cache-list.md:66
+msgid "[cache-info](cache-info.md) gives the totals only."
+msgstr ""
+
+#: commands/cache-list.md:68
+msgid "[download-gis](download-gis.md) adds a municipality."
+msgstr ""
+
+#: commands/download-gis.md:9
+msgid "Download the boundary data of a whole municipality"
+msgstr ""
+
+#: commands/download-gis.md:11
+msgid ""
+"Fetches the file with the boundaries of every parcel in a cadastral "
+"municipality and unpacks it into a folder of your choice, for use in a "
+"mapping program."
+msgstr ""
+
+#: commands/download-gis.md:17
+msgid ""
+"A surveyor or an architect asks for the parcel boundaries of an area, not "
+"just one parcel."
+msgstr ""
+
+#: commands/download-gis.md:18
+msgid ""
+"You want to open a whole municipality in a mapping program such as QGIS."
+msgstr ""
+
+#: commands/download-gis.md:22
+msgid ""
+"You need the municipality, by name or number, and a folder name where the "
+"files should go. The folder is created if it does not exist. The files are in"
+" GML, a text form for geographic data that mapping programs read."
+msgstr ""
+
+#: commands/download-gis.md:52
+msgid ""
+"The tool reports the file it fetched, the folder it unpacked into, and the "
+"number of parcels in the data. The folder now contains a file named "
+"`katastarske_cestice.gml` with all parcel boundaries."
+msgstr ""
+
+#: commands/download-gis.md:58
+msgid ""
+"`--output` is required and names the folder. Add `--no-extract` to keep only "
+"the downloaded ZIP file without unpacking it. Add `--clear-cache` to download"
+" afresh even if the tool already has the data from an earlier run."
+msgstr ""
+
+#: commands/download-gis.md:73
+msgid ""
+"If you forget `--output`, the tool stops and tells you the option is missing:"
+msgstr ""
+
+#: commands/download-gis.md:84
+msgid "Add it with a folder name."
+msgstr ""
+
+#: commands/download-gis.md:86
+msgid ""
+"If the download fails, the practice server may not be running. Ask the person"
+" who installed the tool. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+
+#: commands/download-gis.md:92
+msgid "[get-geometry](get-geometry.md) gives the boundary of one parcel."
+msgstr ""
+
+#: commands/download-gis.md:93
+msgid ""
+"[cache-clear](cache-clear.md) removes downloaded data from your computer."
+msgstr ""
+
+#: commands/get-geometry.md:9
+msgid "Get the boundary of a parcel for a map"
+msgstr ""
+
+#: commands/get-geometry.md:11
+msgid ""
+"Prints the corner points of a parcel in the official Croatian coordinate "
+"system, so that a surveyor or a mapping program can draw it. It can also tell"
+" you the area computed from those points."
+msgstr ""
+
+#: commands/get-geometry.md:17
+msgid ""
+"You want to hand the exact outline of a parcel to a surveyor or an architect."
+msgstr ""
+
+#: commands/get-geometry.md:18
+msgid ""
+"You want to compare the area computed from the boundary with the area "
+"recorded in the cadastre."
+msgstr ""
+
+#: commands/get-geometry.md:19
+msgid ""
+"You want to place the parcel on a map in a program that understands "
+"geographic data."
+msgstr ""
+
+#: commands/get-geometry.md:23
+msgid ""
+"You need the parcel number and the cadastral municipality. The boundary data "
+"for a whole municipality is downloaded once and kept on your computer; the "
+"first lookup in a municipality therefore takes longer than the following "
+"ones."
+msgstr ""
+
+#: commands/get-geometry.md:27
+msgid ""
+"The coordinates are in the HTRS96/TM system (EPSG:3765), the official "
+"projection for Croatia. They are not the degrees you see in a car navigation "
+"system. A mapping program will know what to do with them."
+msgstr ""
+
+#: commands/get-geometry.md:64
+msgid ""
+"**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
+"(**Vertices**), the area computed from them (**Area (GIS)**), and the "
+"smallest rectangle that contains the parcel (**Bounding Box**). The last "
+"block is the boundary itself, written as a polygon in a standard text form. "
+"Each pair of numbers is one corner point."
+msgstr ""
+
+#: commands/get-geometry.md:72
+msgid ""
+"`--format` chooses the form of the boundary. `wkt` is the standard text form "
+"shown above. `geojson` is the form most web maps read. `csv` gives one corner"
+" point per line for a spreadsheet. `json` gives the same data for other "
+"programs."
+msgstr ""
+
+#: commands/get-geometry.md:76
+msgid ""
+"To hand the boundary to someone, write it to a file with `--output`. A "
+"GeoJSON file can be dragged onto many online map viewers:"
+msgstr ""
+
+#: commands/get-geometry.md:95
+msgid ""
+"If the parcel is not in the boundary data of the municipality, you will see "
+"this:"
+msgstr ""
+
+#: commands/get-geometry.md:105
+msgid ""
+"The boundary data and the cadastre are not always in step; check the parcel "
+"with [search](search.md) first."
+msgstr ""
+
+#: commands/get-geometry.md:108
+msgid ""
+"If the boundary data of the municipality cannot be downloaded, ask the person"
+" who installed the tool whether the practice server is running. Other "
+"messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/get-geometry.md:114
+msgid ""
+"[download-gis](download-gis.md) downloads the boundary data of a whole "
+"municipality."
+msgstr ""
+
+#: commands/get-geometry.md:115
+msgid ""
+"[cache-list](cache-list.md) shows which municipalities are already on your "
+"computer."
+msgstr ""
+
+#: commands/get-lr-unit.md:9
+msgid "Read the land registry unit: owners, parcels, encumbrances"
+msgstr ""
+
+#: commands/get-lr-unit.md:11
+msgid ""
+"The land registry unit (zemljišnoknjižni uložak) is the legal record of a "
+"property. This command shows its three sheets: the parcels it covers "
+"(posjedovnica, list A), the owners and their shares (vlastovnica, list B), "
+"and the encumbrances such as mortgages and easements (teretovnica, list C). "
+"It also shows pending entries (plombe)."
+msgstr ""
+
+#: commands/get-lr-unit.md:19
+msgid "You need to know who legally owns a parcel and in what shares."
+msgstr ""
+
+#: commands/get-lr-unit.md:20
+msgid ""
+"You are checking for mortgages, easements, notes or other charges before a "
+"sale or a loan."
+msgstr ""
+
+#: commands/get-lr-unit.md:21
+msgid ""
+"You want to know whether a request for registration (prijedlog za upis) is "
+"pending on the unit, for example an inheritance decision that has not been "
+"entered yet."
+msgstr ""
+
+#: commands/get-lr-unit.md:25
+msgid ""
+"There are two ways to name the unit. If you start from a parcel, give the "
+"parcel number and the cadastral municipality, and the tool finds the unit for"
+" you. If you already have the unit number and the main book (glavna knjiga) "
+"it belongs to, give those two instead."
+msgstr ""
+
+#: commands/get-lr-unit.md:30
+msgid ""
+"The main book is identified by a number the tool calls the main book ID. You "
+"get it from the [batch-fetch](batch-fetch.md) results or from a previous "
+"lookup. Starting from the parcel is the easier route."
+msgstr ""
+
+#: commands/get-lr-unit.md:71
+msgid ""
+"The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
+" main book, the office that keeps it, and **Last Diary Number**, the most "
+"recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)** "
+"is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
+" list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
+"(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
+"**No encumbrances found**."
+msgstr ""
+
+#: commands/get-lr-unit.md:79
+msgid ""
+"If the unit has pending entries, an extra line **Pending entries (plombe)** "
+"appears in the first table with the file numbers, and a warning follows. A "
+"plomba means a request for registration (prijedlog za upis) has been received"
+" and the unit may be about to change. Do not treat the sheets as final until "
+"it is resolved."
+msgstr ""
+
+#: commands/get-lr-unit.md:86
+msgid ""
+"`--all` shows the three sheets. To see only one, use `--show-owners` for list"
+" B, `--show-parcels` for list A, or `--show-encumbrances` for list C. Without"
+" any of them the tool prints the first table only."
+msgstr ""
+
+#: commands/get-lr-unit.md:90
+msgid ""
+"To see what each pending entry is about, add `--plombe-detail`. The tool then"
+" asks the registry about every plomba, which takes one extra lookup each, and"
+" prints a table with the type of the request for registration, its status and"
+" the date it was received:"
+msgstr ""
+
+#: commands/get-lr-unit.md:134
+msgid ""
+"To name the unit directly instead of starting from a parcel, use `--unit-"
+"number` and `--main-book` together, as in the example above. To keep the "
+"result as a file, add `--format json` and `--output` with a file name."
+msgstr ""
+
+#: commands/get-lr-unit.md:156
+msgid ""
+"If you give a parcel but forget the municipality, the tool stops and asks for"
+" it:"
+msgstr ""
+
+#: commands/get-lr-unit.md:164
+msgid "Add `-m` and the municipality name or number."
+msgstr ""
+
+#: commands/get-lr-unit.md:166
+msgid ""
+"If the unit number does not exist in that main book, the tool reports an "
+"error that ends with `404 Not Found`. Check both numbers against your "
+"document. Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/get-lr-unit.md:172
+msgid ""
+"[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
+"including the possessors."
+msgstr ""
+
+#: commands/get-lr-unit.md:173
+msgid "[batch-lr-unit](batch-lr-unit.md) reads many units in one go."
+msgstr ""
+
+#: commands/get-lr-unit.md:174
+msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
+msgstr ""
+
+#: commands/get-parcel.md:9
+msgid "See everything the cadastre holds about a parcel"
+msgstr ""
+
+#: commands/get-parcel.md:11
+msgid ""
+"The full cadastral record of one parcel: location, area, land use, the "
+"possession sheet (posjedovni list) with the people the cadastre records, and "
+"the number of the land registry unit where the legal owners are."
+msgstr ""
+
+#: commands/get-parcel.md:17
+msgid ""
+"You are preparing a contract and need the area, the land use and the "
+"cadastral state of the parcel in one place."
+msgstr ""
+
+#: commands/get-parcel.md:18
+msgid ""
+"You want to compare who the cadastre records as possessor with who the land "
+"registry records as owner."
+msgstr ""
+
+#: commands/get-parcel.md:19
+msgid ""
+"You need the number of the land registry unit (zemljišnoknjižni uložak) of a "
+"parcel so you can read its owners and encumbrances."
+msgstr ""
+
+#: commands/get-parcel.md:23
+msgid ""
+"You need the parcel number and the cadastral municipality, by name or number,"
+" as for [search](search.md)."
+msgstr ""
+
+#: commands/get-parcel.md:26
+msgid ""
+"Keep one distinction in mind while you read. The cadastre records possessors "
+"(posjednici); the land registry records owners (vlasnici). They are often the"
+" same people, but not always, and only the land registry is proof of "
+"ownership. This page shows the cadastre. The [get-lr-unit](get-lr-unit.md) "
+"page shows the land registry."
+msgstr ""
+
+#: commands/get-parcel.md:88
+msgid ""
+"The screen has five parts. **PARCEL INFORMATION** identifies the parcel; the "
+"line **Cadastre/LR harmonized** says whether the cadastre and the land "
+"registry agree about it. **LAND USE** splits the area by cadastral culture. "
+"**POSSESSION SHEET (cadastre / posjedovni list)** lists the possessors the "
+"cadastre records, with their share where the cadastre has one. **LAND "
+"REGISTRY** gives the number of the land registry unit (**Unit Number**) that "
+"you can look up next. **ADDITIONAL INFO** contains a link that opens the "
+"parcel on the public map."
+msgstr ""
+
+#: commands/get-parcel.md:97
+msgid ""
+"Where a value is not recorded, the tool prints **N/A**. In the possession "
+"sheet this is common: the cadastre often records who possesses without "
+"recording a share."
+msgstr ""
+
+#: commands/get-parcel.md:103
+msgid ""
+"Without `--show-owners` the possession sheet is left out and the screen is "
+"shorter. Add it whenever you want to see the people."
+msgstr ""
+
+#: commands/get-parcel.md:106
+msgid ""
+"`--detail` narrows the screen to one part: `basic` for the identification "
+"only, `owners` for the possession sheet, `landuse` for the land use split, "
+"`geometry` for the boundary coordinates, `full` for everything."
+msgstr ""
+
+#: commands/get-parcel.md:114
+msgid ""
+"To keep the record as a file, add `--format json` and `--output` with a file "
+"name. This is the form to use when you want to attach the data to a case file"
+" or pass it to a colleague."
+msgstr ""
+
+#: commands/get-parcel.md:136
+msgid "If the municipality is not recognised, the tool says so and stops:"
+msgstr ""
+
+#: commands/get-parcel.md:144
+msgid ""
+"Check the spelling, or use the registration number instead of the name. You "
+"can find it with [search-municipality](search-municipality.md)."
+msgstr ""
+
+#: commands/get-parcel.md:147
+msgid ""
+"If the parcel is not found, check the number on your document, including any "
+"part after the slash. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+
+#: commands/get-parcel.md:153
+msgid ""
+"[get-lr-unit](get-lr-unit.md) reads the land registry unit whose number "
+"appears under the land registry heading."
+msgstr ""
+
+#: commands/get-parcel.md:154
+msgid "[search](search.md) is the short form of this command."
+msgstr ""
+
+#: commands/get-parcel.md:155
+msgid ""
+"[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
+msgstr ""
+
+#: commands/info.md:9
+msgid "Check that the tool is set up"
+msgstr ""
+
+#: commands/info.md:11
+msgid ""
+"Shows the version of the tool, the server it talks to, and the boundary data "
+"it has stored on your computer. This is the first thing to run after "
+"installation, and the first thing to run when something does not work."
+msgstr ""
+
+#: commands/info.md:17
+msgid "The tool has just been installed and you want to confirm it works."
+msgstr ""
+
+#: commands/info.md:18
+msgid ""
+"A command failed and you want to see whether the tool is pointed at the right"
+" server."
+msgstr ""
+
+#: commands/info.md:58
+msgid ""
+"**API Base** is the address of the server the tool talks to. For practice it "
+"is the address of the practice server on your own computer. **Cache "
+"Information** lists the municipalities whose boundary data is stored on your "
+"computer. **API Settings** shows how long the tool waits between requests and"
+" how long it waits for an answer."
+msgstr ""
+
+#: commands/info.md:66
+msgid "None. If the tool prints this screen, it is installed correctly."
+msgstr ""
+
+#: commands/info.md:74
+msgid ""
+"If Terminal says the command is not found, the tool is not installed for your"
+" user account, or Terminal was opened before the installation finished. Close"
+" Terminal, open it again and retry. If it still fails, ask the person who "
+"installed the tool."
+msgstr ""
+
+#: commands/info.md:81
+msgid ""
+"[cache-list](cache-list.md) shows the stored boundary data in more detail."
+msgstr ""
+
+#: commands/info.md:82
+msgid "[Start here](../start-here.md) is the tutorial."
+msgstr ""
+
+#: commands/list-municipalities.md:9
+msgid "List the cadastral municipalities of an office"
+msgstr ""
+
+#: commands/list-municipalities.md:11
+msgid ""
+"Shows the cadastral municipalities with their registration numbers, filtered "
+"by cadastral office, by department, or by part of a name."
+msgstr ""
+
+#: commands/list-municipalities.md:16
+msgid ""
+"You work with one cadastral office and want the numbers of all its "
+"municipalities on one sheet."
+msgstr ""
+
+#: commands/list-municipalities.md:17
+msgid ""
+"You want to check which department a municipality belongs to before you "
+"contact the office."
+msgstr ""
+
+#: commands/list-municipalities.md:21
+msgid ""
+"You need the number of the cadastral office. The [list-offices](list-"
+"offices.md) page shows all of them."
+msgstr ""
+
+#: commands/list-municipalities.md:63
+msgid ""
+"**Code** is the number to give after `-m` in the other commands. The first "
+"line tells you how many municipalities the office has."
+msgstr ""
+
+#: commands/list-municipalities.md:68
+msgid ""
+"Add `--department` to narrow the list to one department of the office, or "
+"`--search` with part of a name to look for one municipality:"
+msgstr ""
+
+#: commands/list-municipalities.md:75
+msgid ""
+"Without any filter the tool lists every municipality it knows, which is a "
+"long list. Add `--count-only` to get only the number, or `--format csv` with "
+"`--output` to keep the list as a spreadsheet file."
+msgstr ""
+
+#: commands/list-municipalities.md:92
+msgid "If the office number is wrong, you will see this:"
+msgstr ""
+
+#: commands/list-municipalities.md:100
+msgid ""
+"Check the number on the [list-offices](list-offices.md) page. Other messages "
+"are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/list-municipalities.md:105
+msgid "[search-municipality](search-municipality.md) searches by name."
+msgstr ""
+
+#: commands/list-municipalities.md:106
+msgid "[list-offices](list-offices.md) gives the office numbers."
+msgstr ""
+
+#: commands/list-offices.md:9
+msgid "List the cadastral offices"
+msgstr ""
+
+#: commands/list-offices.md:11
+msgid ""
+"Shows every regional cadastral office (područni ured za katastar) with its "
+"number. You need the number to list the municipalities of an office."
+msgstr ""
+
+#: commands/list-offices.md:16
+msgid "You want to know which office is responsible for an area."
+msgstr ""
+
+#: commands/list-offices.md:17
+msgid "Another command asks for an office number and you do not know it."
+msgstr ""
+
+#: commands/list-offices.md:21
+msgid "Nothing. This command takes no input."
+msgstr ""
+
+#: commands/list-offices.md:74
+msgid ""
+"**ID** is the office number. Use it with `--office` on the [list-"
+"municipalities](list-municipalities.md) page."
+msgstr ""
+
+#: commands/list-offices.md:79
+msgid ""
+"To keep the list as a file, add `--format csv` and `--output` with a file "
+"name:"
+msgstr ""
+
+#: commands/list-offices.md:94
+msgid ""
+"This command only fails when the tool cannot reach the practice server. The "
+"message is explained on the [errors page](../errors.md); ask the person who "
+"installed the tool to start the server."
+msgstr ""
+
+#: commands/list-offices.md:100
+msgid "[list-municipalities](list-municipalities.md) uses the office number."
+msgstr ""
+
+#: commands/list-offices.md:101
+msgid "[info](info.md) shows which server the tool is talking to."
+msgstr ""
+
+#: commands/search-municipality.md:9
+msgid "Find the number of a cadastral municipality"
+msgstr ""
+
+#: commands/search-municipality.md:11
+msgid ""
+"Every cadastral municipality (katastarska općina, k.o.) has a registration "
+"number. This command finds it from the name, or lists the municipalities that"
+" belong to a cadastral office."
+msgstr ""
+
+#: commands/search-municipality.md:17
+msgid ""
+"Two municipalities have the same or a similar name and you want to be sure "
+"which one you are looking at."
+msgstr ""
+
+#: commands/search-municipality.md:18
+msgid ""
+"A command refused the municipality name and you need the number instead."
+msgstr ""
+
+#: commands/search-municipality.md:19
+msgid ""
+"You want to know which cadastral office (područni ured za katastar) and "
+"department a municipality belongs to."
+msgstr ""
+
+#: commands/search-municipality.md:23
+msgid "You need the name of the municipality, or part of it."
+msgstr ""
+
+#: commands/search-municipality.md:48
+msgid ""
+"**Code** is the registration number you can give to any other command after "
+"`-m`. **Office** and **Department** are the numbers of the cadastral office "
+"and its department."
+msgstr ""
+
+#: commands/search-municipality.md:54
+msgid ""
+"To list every municipality of one office, give the office number with "
+"`--office`. You can combine it with a name to narrow the list:"
+msgstr ""
+
+#: commands/search-municipality.md:61
+msgid ""
+"If you only want to know how many municipalities match, add `--count-only`. "
+"To keep the list as a file, add `--format csv` and `--output` with a file "
+"name."
+msgstr ""
+
+#: commands/search-municipality.md:77
+msgid "If nothing matches, you will see this:"
+msgstr ""
+
+#: commands/search-municipality.md:85
+msgid ""
+"Try a shorter part of the name, or list the whole office with `--office` and "
+"look for the name in the list. Other messages are explained on the [errors "
+"page](../errors.md)."
+msgstr ""
+
+#: commands/search-municipality.md:91
+msgid ""
+"[list-municipalities](list-municipalities.md) does the same job with a "
+"different set of filters."
+msgstr ""
+
+#: commands/search-municipality.md:92
+msgid ""
+"[list-offices](list-offices.md) shows the office numbers to use with "
+"`--office`."
+msgstr ""
+
+#: commands/search-municipality.md:93
+msgid "[search](search.md) is where you use the number you found."
+msgstr ""
+
+#: commands/search.md:9
+msgid "Check a parcel quickly"
+msgstr ""
+
+#: commands/search.md:11
+msgid ""
+"Type a parcel number and the cadastral municipality, and get the basics on "
+"one screen: where the parcel is, how big it is, what the land is used for, "
+"and how many people the cadastre records on it."
+msgstr ""
+
+#: commands/search.md:17
+msgid ""
+"A client mentions a parcel and you want to confirm it exists before you go "
+"any further."
+msgstr ""
+
+#: commands/search.md:18
+msgid ""
+"You need the area and the land use of a parcel for a contract or a valuation."
+msgstr ""
+
+#: commands/search.md:19
+msgid ""
+"You want the registration number of the municipality and the parcel's "
+"internal number for a later, more detailed lookup."
+msgstr ""
+
+#: commands/search.md:23
+msgid ""
+"You need two things: the parcel number (broj katastarske čestice, for example"
+" 103/2) and the cadastral municipality (katastarska općina) it belongs to. "
+"Both are on any extract from the cadastre or the land registry, and on most "
+"contracts."
+msgstr ""
+
+#: commands/search.md:27
+msgid ""
+"You can give the municipality by name (SAVAR) or by its registration number "
+"(334979). The tool accepts either."
+msgstr ""
+
+#: commands/search.md:55
+msgid ""
+"Read the lines from top to bottom. **Parcel Number** and **Municipality** "
+"confirm that the tool found the parcel you meant. **Area** is the surface in "
+"square metres. **Land Use** is the cadastral culture, in the wording of the "
+"cadastre. **Building Permitted** tells you whether building is allowed on the"
+" parcel according to the cadastre. **Possessors** is the number of people the"
+" cadastre records on the parcel. They are possessors (posjednici), not "
+"necessarily the legal owners; the land registry has those."
+msgstr ""
+
+#: commands/search.md:63
+msgid ""
+"The last line suggests the command for the full details. Copy it if you need "
+"more than this summary."
+msgstr ""
+
+#: commands/search.md:68
+msgid ""
+"The part after `-m` is the municipality. It can be a name or a number. If two"
+" municipalities share a name, use the number, which you can find with "
+"[search-municipality](search-municipality.md)."
+msgstr ""
+
+#: commands/search.md:72
+msgid ""
+"If you only know the beginning of a parcel number, add `--partial` to see "
+"every parcel that starts with what you typed:"
+msgstr ""
+
+#: commands/search.md:79
+msgid ""
+"To keep the result as a file instead of reading it on screen, add `--format "
+"json` or `--format csv` and `--output` with a file name. A JSON file can be "
+"read by other programs; a CSV file opens in a spreadsheet."
+msgstr ""
+
+#: commands/search.md:99
+msgid ""
+"If the parcel number does not exist in that municipality, the tool says so "
+"and stops:"
+msgstr ""
+
+#: commands/search.md:107
+msgid ""
+"Check the number on your document. Parcel numbers often contain a slash, and "
+"103 is not the same parcel as 103/2."
+msgstr ""
+
+#: commands/search.md:110
+msgid ""
+"If the municipality is not recognised, the message names it. Check the "
+"spelling, or use the number instead. Other messages are explained on the "
+"[errors page](../errors.md)."
+msgstr ""
+
+#: commands/search.md:116
+msgid ""
+"[get-parcel](get-parcel.md) shows everything the cadastre holds about the "
+"parcel, including the recorded possessors."
+msgstr ""
+
+#: commands/search.md:117
+msgid ""
+"[get-lr-unit](get-lr-unit.md) shows the land registry unit: owners, shares "
+"and encumbrances."
+msgstr ""
+
+#: commands/search.md:118
+msgid ""
+"[search-municipality](search-municipality.md) finds the number of a cadastral"
+" municipality."
+msgstr ""
+
+#: errors.md:9
+msgid "What the error messages mean"
+msgstr ""
+
+#: errors.md:11
+msgid ""
+"When something goes wrong, the tool stops and prints one line in red. This "
+"page lists the messages and says what to do about each."
+msgstr ""
+
+#: errors.md:33
+msgid "Messages about what you typed"
+msgstr ""
+
+#: errors.md:35
+msgid ""
+"**Parcel not found** means the parcel number does not exist in the "
+"municipality you named. Check the number on your document, including the part"
+" after the slash, and check that you named the right municipality."
+msgstr ""
+
+#: errors.md:39
+msgid ""
+"**Municipality not found** means the name or number after `-m` is not known. "
+"Check the spelling, or find the registration number with [search-"
+"municipality](commands/search-municipality.md) and use that instead."
+msgstr ""
+
+#: errors.md:43
+msgid ""
+"**Land registry unit not found** means the unit number and main book you gave"
+" do not match a unit. Check both numbers. If you started from a parcel, the "
+"parcel may not be entered in the land registry yet."
+msgstr ""
+
+#: errors.md:47
+msgid "Messages about the connection"
+msgstr ""
+
+#: errors.md:49
+msgid ""
+"**Connection error** means the tool could not reach the server. For practice "
+"use, the practice server on your computer is not running. Ask the person who "
+"installed the tool to start it, then run the command again."
+msgstr ""
+
+#: errors.md:53
+msgid ""
+"**Request timed out** means the server did not answer in time. Wait a moment "
+"and run the command again."
+msgstr ""
+
+#: errors.md:56
+msgid ""
+"**Rate limit exceeded** means requests were sent too quickly. The tool "
+"already spaces its requests; wait a minute and try again."
+msgstr ""
+
+#: errors.md:59
+msgid ""
+"**Server error** and **Invalid response from server** mean the server "
+"answered but not in the expected way. Try again later. If it keeps happening,"
+" tell the person who installed the tool."
+msgstr ""
+
+#: errors.md:63
+msgid "Messages from Terminal itself"
+msgstr ""
+
+#: errors.md:65
+msgid ""
+"If Terminal answers `command not found`, the tool is not installed for your "
+"account or Terminal was opened before the installation finished. Close "
+"Terminal, open it again, and retry. If it still fails, ask the person who "
+"installed the tool."
+msgstr ""
+
+#: errors.md:70
+msgid ""
+"If the tool prints `Missing option` or `No such option`, part of the command "
+"is misspelt. Compare your line with the example on the command's page."
+msgstr ""
+
+#: glossary.md:9
+msgid "Glossary"
+msgstr ""
+
+#: glossary.md:11
+msgid ""
+"The words of the cadastre and the land registry, and where the tool shows "
+"each of them. Croatian terms are given as they appear on official documents."
+msgstr ""
+
+#: glossary.md:14
+msgid "| Term | What it means | Where you see it in the tool |"
+msgstr ""
+
+#: glossary.md:16
+msgid ""
+"| Katastarska čestica (k.č.) | A parcel: one numbered piece of land in the "
+"cadastre. | The parcel number you type after `search`, `get-parcel` and `get-"
+"geometry`. |"
+msgstr ""
+
+#: glossary.md:17
+msgid ""
+"| Katastarska općina (k.o.) | The cadastral municipality a parcel belongs to."
+" Each has a name and a registration number (matični broj), which the tool "
+"prints as its code. | The value after `-m` in most commands. [search-"
+"municipality](commands/search-municipality.md) finds the number. |"
+msgstr ""
+
+#: glossary.md:18
+msgid ""
+"| Posjedovni list | The possession sheet of the cadastre: who possesses a "
+"parcel according to the cadastre. Not proof of ownership. | [get-"
+"parcel](commands/get-parcel.md) with `--show-owners`. |"
+msgstr ""
+
+#: glossary.md:19
+msgid ""
+"| Posjednik | A possessor recorded in the cadastre. | The rows of the "
+"possession sheet on [get-parcel](commands/get-parcel.md). |"
+msgstr ""
+
+#: glossary.md:20
+msgid ""
+"| Zemljišnoknjižni uložak (ZK uložak) | The land registry unit: the record of"
+" the legal state of a property, kept by the land registry department of the "
+"municipal court. | [get-lr-unit](commands/get-lr-unit.md). Its number also "
+"appears on [get-parcel](commands/get-parcel.md) and in the batch results. |"
+msgstr ""
+
+#: glossary.md:21
+msgid ""
+"| Glavna knjiga | The main book: the volume of the land registry that holds "
+"the units of one cadastral municipality. | `--main-book` on [get-lr-"
+"unit](commands/get-lr-unit.md). |"
+msgstr ""
+
+#: glossary.md:22
+msgid ""
+"| Posjedovnica (list A) | Sheet A: the parcels that make up the unit. | The "
+"first table after the unit header on [get-lr-unit](commands/get-lr-unit.md). "
+"|"
+msgstr ""
+
+#: glossary.md:23
+msgid ""
+"| Vlastovnica (list B) | Sheet B: the owners and their shares. | `--show-"
+"owners` on [get-lr-unit](commands/get-lr-unit.md). |"
+msgstr ""
+
+#: glossary.md:24
+msgid ""
+"| Teretovnica (list C) | Sheet C: liens (mortgages), easements, real burdens "
+"and notes. | `--show-encumbrances` on [get-lr-unit](commands/get-lr-unit.md)."
+" |"
+msgstr ""
+
+#: glossary.md:25
+msgid ""
+"| Suvlasnički udio | A co-ownership share, written as a fraction such as 1/2."
+" | The share column of sheet B. |"
+msgstr ""
+
+#: glossary.md:26
+msgid ""
+"| Plomba | A mark that a request for registration (prijedlog za upis) has "
+"been received and not yet decided. The unit may change. | The pending entries"
+" line on [get-lr-unit](commands/get-lr-unit.md); `--plombe-detail` shows what"
+" each request is. |"
+msgstr ""
+
+#: glossary.md:27
+msgid ""
+"| Dnevnik, broj Z | The diary of the land registry and the file number "
+"(Z-number) of a request for registration. | The last diary number on [get-lr-"
+"unit](commands/get-lr-unit.md) and the file numbers of the pending entries. |"
+msgstr ""
+
+#: glossary.md:28
+msgid ""
+"| Etažno vlasništvo | Ownership of a special part of a property (a flat or "
+"business premises), tied to a co-ownership share of the whole. | The unit "
+"type row of the unit header on [get-lr-unit](commands/get-lr-unit.md). |"
+msgstr ""
+
+#: glossary.md:29
+msgid ""
+"| Kultura, način uporabe zemljišta | The land use recorded in the cadastre, "
+"such as arable land, pasture or orchard. | The land use table on [get-"
+"parcel](commands/get-parcel.md). |"
+msgstr ""
+
+#: glossary.md:30
+msgid ""
+"| OIB | The personal identification number of a natural or legal person. | "
+"The OIB column of sheet B, when the registry has it. |"
+msgstr ""
+
+#: glossary.md:31
+msgid ""
+"| Područni ured za katastar | A regional cadastral office. | [list-"
+"offices](commands/list-offices.md). |"
+msgstr ""
+
+#: glossary.md:32
+msgid ""
+"| Granica čestice | The boundary of a parcel as coordinates. | [get-"
+"geometry](commands/get-geometry.md) and [download-gis](commands/download-"
+"gis.md). |"
+msgstr ""
+
+#: glossary.md:33
+msgid ""
+"| HTRS96/TM (EPSG:3765) | The official coordinate system of Croatia, used for"
+" all boundaries. | Every coordinate the tool prints. |"
+msgstr ""
+
+#: install.md:9
+msgid "Installation, for the person setting this up"
+msgstr ""
+
+#: install.md:11
+msgid ""
+"This page is for the technical colleague who installs the tool. The person "
+"who will use it does not need to read it. It takes about ten minutes."
+msgstr ""
+
+#: install.md:14
+msgid "What you are installing"
+msgstr ""
+
+#: install.md:16
+msgid ""
+"`cadastral` is a command-line tool written in Python. It talks to a small "
+"practice server, included in the same repository, that answers with made-up "
+"cadastral data. Nothing here connects to the official Croatian systems, and "
+"it must stay that way."
+msgstr ""
+
+#: install.md:21
+msgid "Requirements"
+msgstr ""
+
+#: install.md:23
+msgid "Python 3.12 or newer."
+msgstr ""
+
+#: install.md:24
+msgid "Git, to fetch the repository."
+msgstr ""
+
+#: install.md:25
+msgid ""
+"A terminal the user can open: Terminal on macOS, Windows Terminal or "
+"PowerShell on Windows, any terminal on Linux."
+msgstr ""
+
+#: install.md:27
+msgid "Step 1: fetch the repository and create an environment"
+msgstr ""
+
+#: install.md:36
+msgid ""
+"On Windows, activate with `.venv\\Scripts\\activate` instead of the last "
+"line."
+msgstr ""
+
+#: install.md:38
+msgid "Step 2: install the tool and the practice server"
+msgstr ""
+
+#: install.md:45
+msgid "Step 3: start the practice server"
+msgstr ""
+
+#: install.md:47
+msgid ""
+"The practice server has to be running whenever the user works with the tool. "
+"Start it in its own terminal window and leave that window open:"
+msgstr ""
+
+#: install.md:55
+msgid ""
+"It listens on `http://localhost:8000`. The tool uses that address unless told"
+" otherwise, so no further configuration is needed for practice use."
+msgstr ""
+
+#: install.md:58
+msgid ""
+"To have the server start automatically at login, create a user service "
+"(launchd on macOS, a scheduled task on Windows, a systemd user unit on Linux)"
+" that runs the two lines above inside the virtual environment."
+msgstr ""
+
+#: install.md:62
+msgid "Step 4: choose the user's language"
+msgstr ""
+
+#: install.md:64
+msgid ""
+"The tool prints in Croatian by default. Set the `CADASTRAL_LANG` environment "
+"variable in the user's shell profile to `hr` or `en` so that they never have "
+"to pass `--lang`. For example, in `~/.zshrc`:"
+msgstr ""
+
+#: install.md:72
+msgid ""
+"The documentation exists in both languages. Give the user the link to the "
+"edition that matches this setting."
+msgstr ""
+
+#: install.md:75
+msgid "Step 5: verify"
+msgstr ""
+
+#: install.md:77
+msgid "Open a new terminal as the user and run:"
+msgstr ""
+
+#: install.md:83
+msgid "You should see this:"
+msgstr ""
+
+#: install.md:108
+msgid "Hand-over checklist"
+msgstr ""
+
+#: install.md:110
+msgid ""
+"The practice server starts on its own, or the user knows the two lines that "
+"start it."
+msgstr ""
+
+#: install.md:111
+msgid ""
+"`cadastral info` prints the screen above in a fresh terminal opened by the "
+"user."
+msgstr ""
+
+#: install.md:112
+msgid "`CADASTRAL_LANG` is set in the user's profile."
+msgstr ""
+
+#: install.md:113
+msgid "The user has the link to [Start here](start-here.md) in their language."
+msgstr ""
+
+#: install.md:114
+msgid ""
+"The user has your contact for when Terminal says the command is not found."
+msgstr ""
+
+#: reference.md:9
+msgid "Complete reference"
+msgstr ""
+
+#: reference.md:44
+msgid "Other pages"
+msgstr ""
+
+#: reference.md:46
+msgid "[Start here](start-here.md): the tutorial."
+msgstr ""
+
+#: reference.md:47
+msgid ""
+"[Glossary](glossary.md): the words of the land registry and the cadastre."
+msgstr ""
+
+#: reference.md:48
+msgid "[Errors](errors.md): what the messages mean."
+msgstr ""
+
+#: reference.md:49
+msgid ""
+"[Installation](install.md): for the technical colleague who sets the tool up."
+msgstr ""
+
+#: start-here.md:9
+msgid "Start here"
+msgstr ""
+
+#: start-here.md:11
+msgid ""
+"This tool lets you read the cadastre and the land registry from your own "
+"computer, one typed line at a time. This page walks you through the five "
+"things you will do most often. Each task ends with a link to the page that "
+"explains the command in full."
+msgstr ""
+
+#: start-here.md:16
+msgid "Before the first use"
+msgstr ""
+
+#: start-here.md:18
+msgid ""
+"Ask a technical colleague to follow the [installation page](install.md). When"
+" they are done, open Terminal and type the following line, then press Enter:"
+msgstr ""
+
+#: start-here.md:25
+msgid ""
+"If you see a table with a version number and no red text, you are ready. If "
+"Terminal says the command is not found, go back to your colleague."
+msgstr ""
+
+#: start-here.md:28
+msgid ""
+"Two things to know before you start. First, every command begins with the "
+"word `cadastral`. Second, the tool works with practice data on your own "
+"computer; nothing you type reaches the official registers."
+msgstr ""
+
+#: start-here.md:32
+msgid "Task 1: check who owns a parcel"
+msgstr ""
+
+#: start-here.md:34
+msgid "Find the parcel number and the cadastral municipality on your document."
+msgstr ""
+
+#: start-here.md:41
+msgid ""
+"Read the table headed **OWNERSHIP SHEET (LIST B)**. Each row is one owner "
+"with their share."
+msgstr ""
+
+#: start-here.md:44 start-here.md:61
+msgid "Full explanation: [get-lr-unit](commands/get-lr-unit.md)."
+msgstr ""
+
+#: start-here.md:46
+msgid "Task 2: check for mortgages and other charges"
+msgstr ""
+
+#: start-here.md:48
+msgid "Use the same parcel and municipality."
+msgstr ""
+
+#: start-here.md:55
+msgid ""
+"Read **ENCUMBRANCES SHEET (LIST C)**. If it says **No encumbrances found**, "
+"list C is empty."
+msgstr ""
+
+#: start-here.md:57
+msgid ""
+"Look for the line **Pending entries (plombe)** near the top. If it is there, "
+"a request for registration (prijedlog) is waiting to be decided and the "
+"sheets may change."
+msgstr ""
+
+#: start-here.md:63
+msgid "Task 3: look up many parcels at once"
+msgstr ""
+
+#: start-here.md:65
+msgid ""
+"Write the parcel numbers in one line, separated by commas, inside quotes."
+msgstr ""
+
+#: start-here.md:72
+msgid ""
+"Each row of the **RESULTS** table is one parcel. The **LR Unit** column is "
+"the land registry unit of each."
+msgstr ""
+
+#: start-here.md:75
+msgid ""
+"Full explanation: [batch-fetch](commands/batch-fetch.md), and [batch-lr-"
+"unit](commands/batch-lr-unit.md) for reading all those units in one go."
+msgstr ""
+
+#: start-here.md:79
+msgid "Task 4: save a result for a file or a colleague"
+msgstr ""
+
+#: start-here.md:81
+msgid "Take any command from this page."
+msgstr ""
+
+#: start-here.md:82
+msgid "Add `--format json --output` and a file name at the end:"
+msgstr ""
+
+#: start-here.md:88
+msgid ""
+"The file appears in the folder Terminal is in, usually your home folder. "
+"Attach it to the case file or send it on. `--format csv` gives a file that "
+"opens in a spreadsheet instead."
+msgstr ""
+
+#: start-here.md:92
+msgid "Full explanation: the \"Choices you can make\" section of any command page."
+msgstr ""
+
+#: start-here.md:94
+msgid "Task 5: see the parcel on a map"
+msgstr ""
+
+#: start-here.md:102
+msgid ""
+"Near the bottom, under **ADDITIONAL INFO**, there is a **Map URL**. Copy it "
+"into your web browser to see the parcel on the public map."
+msgstr ""
+
+#: start-here.md:105
+msgid ""
+"Full explanation: [get-parcel](commands/get-parcel.md), and [get-"
+"geometry](commands/get-geometry.md) if you need the boundary for a mapping "
+"program."
+msgstr ""
+
+#: start-here.md:109
+msgid "When something goes wrong"
+msgstr ""
+
+#: start-here.md:111
+msgid ""
+"Every error starts with a red cross and a short message. The [errors "
+"page](errors.md) lists them and says what to do. The most common cause is a "
+"mistyped parcel number or municipality."
+msgstr ""
+
+#: start-here.md:115
+msgid "Where to go next"
+msgstr ""
+
+#: start-here.md:117
+msgid ""
+"[Complete reference](reference.md): every command on one page, with links."
+msgstr ""
+
+#: start-here.md:118
+msgid ""
+"[Glossary](glossary.md): the words of the land registry and what the tool "
+"calls them."
+msgstr ""

@@ -37,3 +37,12 @@ Test data is located in the `data/` directory:
 ## License
 
 MIT
+
+## GIS geometry fixture
+
+`data/geometry/<municipality>.zip` is served by `/atom/ko-<municipality>.zip`.
+The included `334979.zip` holds a small synthetic `katastarske_cestice.gml`
+(parcels 103/2, 45 and 396/1 of SAVAR, drawn as rectangles whose areas match
+`data/parcels/334979.json`). It exists so that `get-geometry` and
+`download-gis` work offline against the mock server, and so that the
+documentation build can capture their output.

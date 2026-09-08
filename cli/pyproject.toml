@@ -35,6 +35,7 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.0.0",
     "pylint>=3.0.0",
+    "polib>=1.2.0",  # documentation build and gate (scripts/build_docs.py)
 ]
 
 [project.scripts]

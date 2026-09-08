@@ -20,6 +20,7 @@ mkdir -p "${LOCALE_DIR}"
 
 # Compile each .po file
 for PO_FILE in po/*.po; do
+    case "$(basename "${PO_FILE}")" in docs*) continue ;; esac  # documentation catalogs are not runtime catalogs
     if [ -f "${PO_FILE}" ]; then
         LANG=$(basename "${PO_FILE}" .po)
         MO_DIR="${LOCALE_DIR}/${LANG}/LC_MESSAGES"

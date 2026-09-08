@@ -94,8 +94,9 @@ def search(
                     else _("N/A")
                 ),
                 _("Building Permitted"): _("Yes") if parcel.has_building_right else _("No"),
-                _("Owners"): (
-                    ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
+                # Cadastre records possessors (posjednici), not legal owners.
+                _("Possessors"): (
+                    ngettext("{count} possessor", "{count} possessors", parcel.total_owners).format(
                         count=parcel.total_owners
                     )
                     if parcel.total_owners

@@ -319,7 +319,8 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
     results_table.add_column(_("LR Unit"))
 
     if show_owners:
-        results_table.add_column(_("Owners"), justify="right")
+        # Cadastre possession sheets list possessors, not legal owners.
+        results_table.add_column(_("Possessors"), justify="right")
 
     for i, result in enumerate(summary.results, 1):
         # Format status

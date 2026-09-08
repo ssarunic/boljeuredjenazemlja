@@ -100,7 +100,7 @@ class CadastralAPIClient:
         )
 
         # Initialize GIS cache
-        self.gis_cache = GISCache(cache_dir)
+        self.gis_cache = GISCache(cache_dir, base_url=self.base_url)
 
     def __enter__(self) -> "CadastralAPIClient":
         """Context manager entry."""
