@@ -5,12 +5,11 @@ import json
 from io import StringIO
 from typing import Any
 
+from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.i18n import _
 from rich.console import Console
 from rich.table import Table
 from tabulate import tabulate
-
-from cadastral_api.i18n import _
-
 
 console = Console()
 
@@ -94,3 +93,64 @@ def create_rich_table(title: str, columns: list[str]) -> Table:
     for col in columns:
         table.add_column(col)
     return table
+
+
+def command_help(text: str) -> str:
+    """Prepare a translated command description for click.
+
+    Click rewraps paragraphs to the terminal width. Indented blocks (examples,
+    file formats) have to keep their layout, so click's ``\b`` no-wrap marker
+    is inserted in front of every paragraph that contains an indented line.
+    Keeping the marker out of the translatable text keeps the .po entries plain.
+    """
+    paragraphs = text.strip("\n").split("\n\n")
+    prepared = []
+    for paragraph in paragraphs:
+        if any(line.startswith("  ") for line in paragraph.split("\n")):
+            prepared.append("\b\n" + paragraph)
+        else:
+            prepared.append(paragraph)
+    return "\n\n".join(prepared)
+
+
+def error_type_label(error_type: ErrorType) -> str:
+    """Human-readable, translated label for an API error type."""
+    labels = {
+        ErrorType.CONNECTION: _("Connection error"),
+        ErrorType.TIMEOUT: _("Request timed out"),
+        ErrorType.RATE_LIMIT: _("Rate limit exceeded"),
+        ErrorType.INVALID_RESPONSE: _("Invalid response from server"),
+        ErrorType.PARCEL_NOT_FOUND: _("Parcel not found"),
+        ErrorType.MUNICIPALITY_NOT_FOUND: _("Municipality not found"),
+        ErrorType.LR_UNIT_NOT_FOUND: _("Land registry unit not found"),
+        ErrorType.SERVER_ERROR: _("Server error"),
+    }
+    return labels.get(error_type, str(error_type.value))
+
+
+def describe_error(error: CadastralAPIError) -> str:
+    """Translated description of a ``CadastralAPIError`` including its details."""
+    parts = [error_type_label(error.error_type)]
+    details = ", ".join(
+        f"{key}={value}" for key, value in error.details.items() if value is not None
+    )
+    if details:
+        parts.append(f"({details})")
+    if error.cause is not None:
+        cause = str(error.cause) or type(error.cause).__name__
+        parts.append(
+            _("- caused by: {cause}").format(cause=f"{type(error.cause).__name__}: {cause}")
+        )
+    return " ".join(parts)
+
+
+def error_type_value_label(value: str | None) -> str:
+    """Translated label for an error type stored as a string (batch results)."""
+    if not value:
+        return _("unknown")
+    if value == "unexpected_error":
+        return _("Unexpected error")
+    try:
+        return error_type_label(ErrorType(value))
+    except ValueError:
+        return value

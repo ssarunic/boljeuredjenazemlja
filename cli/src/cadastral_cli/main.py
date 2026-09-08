@@ -13,18 +13,64 @@ DO NOT use with Croatian government production systems.
 See README.md for full disclaimer.
 """
 
+import sys
+
 import click
+from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.i18n import SUPPORTED_LANGUAGES, _, get_current_language, set_language
 from rich.console import Console
 
-from cadastral_api.exceptions import CadastralAPIError
-from cadastral_api.i18n import _, get_current_language, set_language, SUPPORTED_LANGUAGES
-from cadastral_cli import __version__
-from .commands import batch, batch_lr_unit, cache, discovery, gis, parcel, registry, search
+
+def _preselect_language(argv: list[str]) -> None:
+    """Apply ``--lang`` before the command modules are imported.
+
+    Help texts are evaluated when the command modules load, so the language
+    has to be chosen before that happens. click re-validates the option later.
+    """
+    for index, arg in enumerate(argv):
+        value = None
+        if arg == "--lang" and index + 1 < len(argv):
+            value = argv[index + 1]
+        elif arg.startswith("--lang="):
+            value = arg[len("--lang="):]
+        if value in SUPPORTED_LANGUAGES:
+            set_language(value)
+            return
+
+
+_preselect_language(sys.argv[1:])
+
+from cadastral_cli import __version__  # noqa: E402
+from cadastral_cli.formatters import command_help, describe_error  # noqa: E402
+
+from .commands import (  # noqa: E402
+    batch,
+    batch_lr_unit,
+    cache,
+    discovery,
+    gis,
+    parcel,
+    registry,
+    search,
+)
 
 console = Console()
 
 
-@click.group()
+_CLI_HELP = command_help(
+    _("""Croatian Cadastral System CLI - Access cadastral and land registry data.
+
+Examples:
+  cadastral search 103/2 --municipality SAVAR
+  cadastral get-parcel 103/2 -m 334979 --show-owners
+  cadastral list-municipalities --office 114
+  cadastral get-geometry 103/2 -m 334979 --format wkt
+
+Documentation: https://github.com/yourusername/croatian-cadastral-api""")
+)
+
+
+@click.group(help=_CLI_HELP)
 @click.version_option(version=__version__, prog_name="cadastral")
 @click.option("--verbose", "-v", is_flag=True, help=_("Verbose output"))
 @click.option(
@@ -35,18 +81,7 @@ console = Console()
 )
 @click.pass_context
 def cli(ctx: click.Context, verbose: bool, lang: str | None) -> None:
-    """
-    Croatian Cadastral System CLI - Access cadastral and land registry data.
-
-    \b
-    Examples:
-      cadastral search 103/2 --municipality SAVAR
-      cadastral get-parcel 103/2 -m 334979 --show-owners
-      cadastral list-municipalities --office 114
-      cadastral get-geometry 103/2 -m 334979 --format wkt
-
-    Documentation: https://github.com/yourusername/croatian-cadastral-api
-    """
+    """Croatian Cadastral System CLI - Access cadastral and land registry data."""
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose
     ctx.obj["client"] = None  # Will be initialized per command
@@ -83,7 +118,7 @@ def main() -> None:
     try:
         cli(obj={})
     except CadastralAPIError as e:
-        console.print(_("\n✗ Error: {error}").format(error=e), style="bold red")
+        console.print(_("\n✗ Error: {error}").format(error=describe_error(e)), style="bold red")
         raise SystemExit(1) from e
     except KeyboardInterrupt as exc:
         console.print(_("\n\nOperation cancelled by user."), style="yellow")

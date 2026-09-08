@@ -6,28 +6,28 @@ from rich.console import Console
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
-from cadastral_cli.formatters import format_table, print_error, print_output
+from cadastral_cli.formatters import command_help, describe_error, format_table, print_error, print_output
 
 console = Console()
 
 
-@click.command()
+_SEARCH_HELP = command_help(_("""Quick search for parcels with basic information.
+
+Examples:
+  cadastral search 103/2 --municipality SAVAR
+  cadastral search 103/2 -m 334979
+  cadastral search 114 -m 334979 --partial"""))
+
+
+@click.command(help=_SEARCH_HELP)
 @click.argument("parcel_number")
-@click.option("--municipality", "-m", required=True, help="Municipality name or code (e.g., SAVAR or 334979)")
-@click.option("--exact/--partial", default=True, help="Exact match or partial search")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
-@click.option("--output", "-o", type=click.Path(), help="Save output to file")
+@click.option("--municipality", "-m", required=True, help=_("Municipality name or code (e.g., SAVAR or 334979)"))
+@click.option("--exact/--partial", default=True, help=_("Exact match or partial search"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def search(ctx: click.Context, parcel_number: str, municipality: str, exact: bool, output_format: str, output: str | None) -> None:
-    """
-    Quick search for parcels with basic information.
-
-    \b
-    Examples:
-      cadastral search 103/2 --municipality SAVAR
-      cadastral search 103/2 -m 334979
-      cadastral search 114 -m 334979 --partial
-    """
+    """Quick search for parcels with basic information."""
     try:
         with CadastralAPIClient() as client:
             # Resolve municipality
@@ -104,17 +104,26 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
             search = e.details.get("search_term", municipality)
             print_error(_("Municipality '{municipality}' not found").format(municipality=search))
         else:
-            print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+            print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1)
 
 
-@click.command("search-municipality")
+_SEARCH_MUNICIPALITY_HELP = command_help(_("""Search and filter municipalities.
+
+Examples:
+  cadastral search-municipality SAVAR
+  cadastral search-municipality --office 114
+  cadastral search-municipality --office 114 --department 116
+  cadastral search-municipality SAVAR --office 114"""))
+
+
+@click.command("search-municipality", help=_SEARCH_MUNICIPALITY_HELP)
 @click.argument("search_term", required=False)
-@click.option("--office", "-o", help="Filter by cadastral office ID (e.g., 114)")
-@click.option("--department", "-d", help="Filter by department ID (e.g., 116)")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
-@click.option("--output", "-out", type=click.Path(), help="Save output to file")
-@click.option("--count-only", is_flag=True, help="Show count only")
+@click.option("--office", "-o", help=_("Filter by cadastral office ID (e.g., 114)"))
+@click.option("--department", "-d", help=_("Filter by department ID (e.g., 116)"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
+@click.option("--count-only", is_flag=True, help=_("Show count only"))
 @click.pass_context
 def search_municipality(
     ctx: click.Context,
@@ -125,16 +134,7 @@ def search_municipality(
     output: str | None,
     count_only: bool
 ) -> None:
-    """
-    Search and filter municipalities.
-
-    \b
-    Examples:
-      cadastral search-municipality SAVAR
-      cadastral search-municipality --office 114
-      cadastral search-municipality --office 114 --department 116
-      cadastral search-municipality SAVAR --office 114
-    """
+    """Search and filter municipalities."""
     if not search_term and not office and not department:
         print_error(_("At least one of search_term, --office, or --department is required"))
         console.print(f"\n{_('Try')}: cadastral search-municipality --help", style="yellow")
@@ -207,7 +207,7 @@ def search_municipality(
             search = e.details.get("search_term", search_term or "")
             print_error(_("No municipalities found for '{search}'").format(search=search))
         else:
-            print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+            print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
@@ -261,7 +261,7 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
             search = e.details.get("search_term", municipality)
             print_error(_("Municipality '{municipality}' not found").format(municipality=search))
         else:
-            print_error(_("Failed to resolve municipality: {error_type}").format(
-                error_type=e.error_type.value
+            print_error(_("Failed to resolve municipality: {error}").format(
+                error=describe_error(e)
             ))
         raise SystemExit(1) from e

@@ -65,8 +65,8 @@ def clean_html(text: str) -> str:
 def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
     """Print basic LR unit information."""
     table = Table(title=_("LAND REGISTRY UNIT"), show_header=False, box=None)
-    table.add_column("Field", style="bold cyan")
-    table.add_column("Value")
+    table.add_column(_("Field"), style="bold cyan")
+    table.add_column(_("Value"))
 
     table.add_row(_("Unit Number"), lr_unit.lr_unit_number)
     table.add_row(_("Main Book"), lr_unit.main_book_name)
@@ -139,8 +139,8 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
     summary = lr_unit.summary()
 
     table = Table(title=_("SUMMARY"), show_header=False, box=None)
-    table.add_column("Metric", style="bold yellow")
-    table.add_column("Value", style="green")
+    table.add_column(_("Metric"), style="bold yellow")
+    table.add_column(_("Value"), style="green")
 
     # Show condominium info if applicable
     if summary.get("is_condominium"):

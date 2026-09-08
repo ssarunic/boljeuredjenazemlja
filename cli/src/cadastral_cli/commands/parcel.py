@@ -7,20 +7,29 @@ from rich.table import Table
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
-from cadastral_cli.formatters import print_error, print_output
+from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
 from .search import _resolve_municipality
 
 console = Console()
 
 
-@click.command("get-parcel")
+_GET_PARCEL_HELP = command_help(_("""Get complete parcel information with ownership details.
+
+Examples:
+  cadastral get-parcel 103/2 -m SAVAR
+  cadastral get-parcel 103/2 -m 334979 --show-owners
+  cadastral get-parcel 103/2 -m 334979 --detail owners
+  cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json"""))
+
+
+@click.command("get-parcel", help=_GET_PARCEL_HELP)
 @click.argument("parcel_number")
-@click.option("--municipality", "-m", required=True, help="Municipality name or code")
-@click.option("--detail", type=click.Choice(["basic", "full", "owners", "landuse", "geometry"]), default="full", help="Detail level")
-@click.option("--show-owners", is_flag=True, help="Include ownership details")
-@click.option("--show-geometry", is_flag=True, help="Include boundary coordinates")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "yaml", "csv"]), default="table", help="Output format")
-@click.option("--output", "-o", type=click.Path(), help="Save output to file")
+@click.option("--municipality", "-m", required=True, help=_("Municipality name or code"))
+@click.option("--detail", type=click.Choice(["basic", "full", "owners", "landuse", "geometry"]), default="full", help=_("Detail level"))
+@click.option("--show-owners", is_flag=True, help=_("Include ownership details"))
+@click.option("--show-geometry", is_flag=True, help=_("Include boundary coordinates"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "yaml", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def get_parcel(
     ctx: click.Context,
@@ -32,16 +41,7 @@ def get_parcel(
     output_format: str,
     output: str | None
 ) -> None:
-    """
-    Get complete parcel information with ownership details.
-
-    \b
-    Examples:
-      cadastral get-parcel 103/2 -m SAVAR
-      cadastral get-parcel 103/2 -m 334979 --show-owners
-      cadastral get-parcel 103/2 -m 334979 --detail owners
-      cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json
-    """
+    """Get complete parcel information with ownership details."""
     try:
         with CadastralAPIClient() as client:
             # Resolve municipality
@@ -83,7 +83,7 @@ def get_parcel(
                 municipality=muni_code
             ))
         else:
-            print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+            print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 

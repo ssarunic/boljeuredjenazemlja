@@ -40,6 +40,29 @@ xgettext \
     --foreign-user \
     $(find ${API_SRC_DIR} ${CLI_SRC_DIR} -name "*.py" -type f 2>/dev/null)
 
+# click renders its own messages ("Usage:", "Options", "Missing option" ...)
+# through the same catalog (see cadastral_api.i18n), so extract them as well.
+PYTHON="${PYTHON:-python3}"
+CLICK_DIR=$("${PYTHON}" -c "import click, os; print(os.path.dirname(click.__file__))" 2>/dev/null || true)
+if [ -n "${CLICK_DIR}" ]; then
+    echo "Adding click messages from ${CLICK_DIR}"
+    (
+        cd "$(dirname "${CLICK_DIR}")" && xgettext \
+            --language=Python \
+            --keyword=_ \
+            --keyword=ngettext:1,2 \
+            --flag=ngettext:1:no-python-brace-format \
+            --flag=ngettext:2:no-python-brace-format \
+            --from-code=UTF-8 \
+            --join-existing \
+            --output="${OLDPWD}/${POT_FILE}" \
+            click/*.py
+    )
+else
+    echo "WARNING: click not importable via ${PYTHON}; its messages were not extracted." >&2
+    echo "         Set PYTHON=/path/to/python with click installed and re-run." >&2
+fi
+
 # Count extracted strings
 TOTAL_STRINGS=$(grep -c "^msgid" "${POT_FILE}" || echo "0")
 

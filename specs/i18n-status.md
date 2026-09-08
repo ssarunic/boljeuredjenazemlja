@@ -1,17 +1,42 @@
 # i18n Status
 
-**Last Updated**: 2025-11-14 23:30
+**Last Updated**: 2026-09-08
 
-## 📊 Overall Status: 95% Complete ✅
+## Overall Status: Complete (verified by `cli/tests/test_i18n_coverage.py`)
 
-- ✅ **Infrastructure**: 100% complete
-- ✅ **Code Localization**: 100% complete
-- ✅ **Translations**: 100% complete (186/186 strings)
-- ⏳ **Testing**: 0% complete
+- Infrastructure: complete
+- Automated coverage gate: complete (`cd cli && pytest tests/test_i18n_coverage.py`)
+- Code localization: complete for the CLI (option help, command help, output,
+  error messages, and click's own messages such as "Usage:" / "Missing option")
+- Croatian translations: 387/387 extracted strings translated
+- `--lang` flag: switches help texts and runtime output at any position
+  (`cadastral --lang en search ...`); `CADASTRAL_LANG` and the system locale
+  are still honoured
+- MCP server: not localized by design (tool descriptions and responses are
+  consumed by an AI agent, not shown to a person)
 
-**Estimated time to 100%**: 2-3 hours (testing only)
+The sections below this one predate the coverage gate and describe the state
+on 2025-11-14; the gate output is authoritative.
 
----
+## Gaps Closed (2026-09-08)
+
+1. 16 untranslated Croatian entries translated.
+2. All click option `help=` texts wrapped in `_()`; all 16 commands pass their
+   description via `help=command_help(_(...))` instead of relying on the
+   docstring. `command_help()` re-inserts click's `\b` no-wrap marker in front
+   of indented example blocks so the marker stays out of the .po files.
+3. Stray literals (`Use '... --help'`, `Reading parcels from`, `Details:`,
+   `Field` / `Value` / `Metric` column headers) wrapped in `_()`.
+4. `--lang` was a no-op: command modules bound `_` at import time. `i18n` now
+   exposes delegating `_` / `ngettext` / `pgettext` functions and `main.py`
+   pre-scans `sys.argv` for `--lang` before importing the command modules.
+   The duplicate `--lang` option on `get-lr-unit` was removed.
+5. API error types are rendered through translated labels
+   (`formatters.describe_error`, `error_type_label`, `error_type_value_label`)
+   instead of the raw `ErrorType` value.
+6. click's own messages are extracted into the catalog
+   (`scripts/generate_pot.sh` scans the installed click package; set `PYTHON`
+   to an interpreter that has click importable) and translated to Croatian.
 
 ## ✅ Completed
 
