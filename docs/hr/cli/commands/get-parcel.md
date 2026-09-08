@@ -124,7 +124,7 @@ uz čestica 103/2 -ko SAVAR --posjednici --oblik json --datoteka parcel-103-2.js
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine | Obavezno |
+| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine | Obavezno |
 | `--detalji` | Razina detalja (`basic`, `full`, `owners`, `landuse`, `geometry`) | Koristi se `full` |
 | `--posjednici` | Uključi vlasničke podatke | Nije uključeno |
 | `--geometrija` | Uključi koordinate granica | Nije uključeno |
@@ -174,7 +174,7 @@ Uporaba: uz čestica [OPCIJE] BROJ_ČESTICE
     uz čestica 103/2 -ko 334979 --oblik json -o parcel.json
 
 Opcije:
-  -ko, --općina TEXT              Naziv ili šifra općine  [obavezno]
+  -ko, --općina TEKST             Naziv ili šifra općine  [obavezno]
   --detalji [basic|full|owners|landuse|geometry]
                                   Razina detalja
   --posjednici                    Uključi vlasničke podatke

@@ -81,9 +81,9 @@ popis spremite kao datoteku za tablice.
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--ured`, `-o` `TEXT` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
-| `--odjel`, `-d` `TEXT` | Filtriraj po ID-u odjela | Ne koristi se |
-| `--traži`, `-s` `TEXT` | Pretraži po nazivu | Ne koristi se |
+| `--ured`, `-o` `TEKST` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
+| `--odjel`, `-d` `TEKST` | Filtriraj po ID-u odjela | Ne koristi se |
+| `--traži`, `-s` `TEKST` | Pretraži po nazivu | Ne koristi se |
 | `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--datoteka`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--samo-broj` | Prikaži samo broj | Nije uključeno |
@@ -125,9 +125,9 @@ Uporaba: uz općine [OPCIJE]
     uz općine --traži ZADAR
 
 Opcije:
-  -o, --ured TEXT                 Filtriraj po ID-u katastarskog ureda
-  -d, --odjel TEXT                Filtriraj po ID-u odjela
-  -s, --traži TEXT                Pretraži po nazivu
+  -o, --ured TEKST                Filtriraj po ID-u katastarskog ureda
+  -d, --odjel TEKST               Filtriraj po ID-u odjela
+  -s, --traži TEKST               Pretraži po nazivu
   -f, --oblik [tablica|json|csv]  Format izlaza
   -out, --datoteka PUTANJA        Spremi izlaz u datoteku
   --samo-broj                     Prikaži samo broj

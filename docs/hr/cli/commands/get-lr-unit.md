@@ -138,10 +138,10 @@ spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom datoteke.
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--broj-uloška`, `-u` `TEXT` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
-| `--glavna-knjiga`, `-b` `INTEGER` | ID glavne knjige (npr. 21277) | Ne koristi se |
-| `--od-čestice`, `-p` `TEXT` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
-| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
+| `--broj-uloška`, `-u` `TEKST` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
+| `--glavna-knjiga`, `-b` `CIJELI_BROJ` | ID glavne knjige (npr. 21277) | Ne koristi se |
+| `--od-čestice`, `-p` `TEKST` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
+| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
 | `--vlasnici`, `-o` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
 | `--čestice`, `-P` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
 | `--tereti`, `-e` | Prikaži terete (list C) | Nije uključeno |
@@ -207,10 +207,11 @@ Uporaba: uz uložak [OPCIJE]
   ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
 
 Opcije:
-  -u, --broj-uloška TEXT          Broj zemljišnoknjižnog uloška (npr. '769')
-  -b, --glavna-knjiga INTEGER     ID glavne knjige (npr. 21277)
-  -p, --od-čestice TEXT           Dohvati ZK uložak prema broju čestice
-  -ko, --općina TEXT              Naziv ili šifra općine (obavezno uz --from-
+  -u, --broj-uloška TEKST         Broj zemljišnoknjižnog uloška (npr. '769')
+  -b, --glavna-knjiga CIJELI_BROJ
+                                  ID glavne knjige (npr. 21277)
+  -p, --od-čestice TEKST          Dohvati ZK uložak prema broju čestice
+  -ko, --općina TEKST             Naziv ili šifra općine (obavezno uz --from-
                                   parcel)
   -o, --vlasnici                  Prikaži podatke o vlasništvu (list B)
   -P, --čestice                   Prikaži sve čestice u ulošku (list A)

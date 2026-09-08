@@ -36,6 +36,11 @@ dev = [
     "mypy>=1.0.0",
     "pylint>=3.0.0",
     "polib>=1.2.0",  # documentation build and gate (scripts/build_docs.py)
+    # po/*.po also translate click's own messages, which differ between click
+    # releases; the translation gate needs the exact version the catalog was
+    # extracted from. Runtime keeps the range above (newer click just shows
+    # its few new messages untranslated).
+    "click==8.3.0",
 ]
 
 [project.scripts]

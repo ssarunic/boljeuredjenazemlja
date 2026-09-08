@@ -57,7 +57,7 @@ uz predmemorija obriši --sve
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--općina`, `-ko` `TEXT` | Očisti specifičnu općinu | Ne koristi se |
+| `--općina`, `-ko` `TEKST` | Očisti specifičnu općinu | Ne koristi se |
 | `--sve`, `-a` | Očisti svu predmemoriju | Nije uključeno |
 | `--bez-pitanja`, `-f` | Preskoči potvrdu | Nije uključeno |
 <!-- END GENERATED: options -->
@@ -105,10 +105,10 @@ Uporaba: uz predmemorija obriši [OPCIJE]
     uz predmemorija obriši -ko SAVAR --bez-pitanja
 
 Opcije:
-  -ko, --općina TEXT  Očisti specifičnu općinu
-  -a, --sve           Očisti svu predmemoriju
-  -f, --bez-pitanja   Preskoči potvrdu
-  --help              Prikaži ovu poruku i izađi.
+  -ko, --općina TEKST  Očisti specifičnu općinu
+  -a, --sve            Očisti svu predmemoriju
+  -f, --bez-pitanja    Preskoči potvrdu
+  --help               Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->
 

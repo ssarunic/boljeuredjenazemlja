@@ -110,7 +110,7 @@ na stranici [čestica](get-parcel.md), i `--posjednici` da uključite posjednike
 |---|---|---|
 | `ČESTICE` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
 | `--ulaz`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom čestica | Ne koristi se |
-| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine (obavezno kod popisa u naredbenom retku) | Ne koristi se |
+| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno kod popisa u naredbenom retku) | Ne koristi se |
 | `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--detalji` | Razina detalja: basic (samo sažetak) ili full (potpuni podaci za svaku česticu) (`basic`, `full`) | Koristi se `basic` |
@@ -226,7 +226,7 @@ Uporaba: uz skupno-čestice [OPCIJE] ČESTICE
 Opcije:
   -i, --ulaz PUTANJA              Ulazna datoteka (CSV ili JSON) s popisom
                                   čestica
-  -ko, --općina TEXT              Naziv ili šifra općine (obavezno kod popisa u
+  -ko, --općina TEKST             Naziv ili šifra općine (obavezno kod popisa u
                                   naredbenom retku)
   -o, --datoteka PUTANJA          Spremi izlaz u datoteku
   -f, --oblik [tablica|json|csv]  Format izlaza

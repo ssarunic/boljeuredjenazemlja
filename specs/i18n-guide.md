@@ -18,6 +18,16 @@ that document's "Do not write" table, in the catalog and in the
 documentation. When a reviewer rejects a term, add it there before fixing
 the strings.
 
+## Click Version
+
+`po/*.po` also carry click's own messages ("Usage:", "Missing option", the
+`TEXT`/`PATH` placeholders). Those differ between click releases, so the
+translation gate only passes against the click version the catalog was
+extracted from; the CLI's dev extras pin it (`click==8.3.0`). To move to a
+newer click: bump the pin, run `./scripts/generate_pot.sh` and
+`./scripts/update_translations.sh`, translate the new click messages in
+`po/hr.po`, compile.
+
 ## Command and Option Names
 
 Command names, long options, positional argument metavars and word-like

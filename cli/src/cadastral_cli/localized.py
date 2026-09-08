@@ -121,6 +121,14 @@ ARGUMENTS: dict[str, str] = {
 OPTIONS_METAVAR = pgettext("usage", "[OPTIONS]")
 SUBCOMMAND_METAVAR = pgettext("usage", "COMMAND [ARGS]...")
 
+# Value placeholders click derives from the parameter type (``--općina TEXT``).
+METAVARS: dict[str, str] = {
+    "TEXT": pgettext("metavar", "TEXT"),
+    "INTEGER": pgettext("metavar", "INTEGER"),
+    "FLOAT": pgettext("metavar", "FLOAT"),
+    "PATH": pgettext("metavar", "PATH"),
+}
+
 
 # ---------------------------------------------------------------------------
 # Catalog access
@@ -254,6 +262,9 @@ def localize_command(command: click.Command, command_path: str) -> None:
             continue
         if not isinstance(param, click.Option) or isinstance(param, LocalizedOption):
             continue
+        type_metavar = param.type.name.upper()
+        if param.metavar is None and type_metavar in METAVARS and not param.is_flag:
+            param.metavar = active_spelling("metavar", type_metavar)
         canonical_opts = list(param.opts)
         canonical_secondary = list(param.secondary_opts)
         param.opts = _expand(command_path, canonical_opts)

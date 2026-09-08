@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 13:00+0100\n"
+"POT-Creation-Date: 2026-09-08 13:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -614,7 +614,27 @@ msgctxt "usage"
 msgid "COMMAND [ARGS]..."
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:326 click/core.py:1799
+#: cli/src/cadastral_cli/localized.py:126
+msgctxt "metavar"
+msgid "TEXT"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:127
+msgctxt "metavar"
+msgid "INTEGER"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:128
+msgctxt "metavar"
+msgid "FLOAT"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:129
+msgctxt "metavar"
+msgid "PATH"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:337 click/core.py:1799
 msgid "Commands"
 msgstr ""
 
@@ -1977,7 +1997,7 @@ msgstr ""
 msgid "required"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:67
+#: cli/src/cadastral_cli/main.py:71
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -1990,34 +2010,34 @@ msgid ""
 "Documentation: https://github.com/yourusername/croatian-cadastral-api"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:85
+#: cli/src/cadastral_cli/main.py:89
 msgid "Verbose output"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:89
+#: cli/src/cadastral_cli/main.py:93
 msgid "Language for output (overrides system locale)"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:105
+#: cli/src/cadastral_cli/main.py:109
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:132
+#: cli/src/cadastral_cli/main.py:136
 #, python-brace-format
 msgid ""
 "\n"
 "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:135
+#: cli/src/cadastral_cli/main.py:139
 msgid ""
 "\n"
 "\n"
 "Operation cancelled by user."
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:138
+#: cli/src/cadastral_cli/main.py:142
 #, python-brace-format
 msgid ""
 "\n"

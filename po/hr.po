@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 13:00+0100\n"
+"POT-Creation-Date: 2026-09-08 13:15+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -617,7 +617,27 @@ msgctxt "usage"
 msgid "COMMAND [ARGS]..."
 msgstr "NAREDBA [ARGUMENTI]..."
 
-#: cli/src/cadastral_cli/localized.py:326 click/core.py:1799
+#: cli/src/cadastral_cli/localized.py:126
+msgctxt "metavar"
+msgid "TEXT"
+msgstr "TEKST"
+
+#: cli/src/cadastral_cli/localized.py:127
+msgctxt "metavar"
+msgid "INTEGER"
+msgstr "CIJELI_BROJ"
+
+#: cli/src/cadastral_cli/localized.py:128
+msgctxt "metavar"
+msgid "FLOAT"
+msgstr "BROJ"
+
+#: cli/src/cadastral_cli/localized.py:129
+msgctxt "metavar"
+msgid "PATH"
+msgstr "PUTANJA"
+
+#: cli/src/cadastral_cli/localized.py:337 click/core.py:1799
 msgid "Commands"
 msgstr "Naredbe"
 
@@ -2193,7 +2213,7 @@ msgstr "  Max Y"
 msgid "required"
 msgstr "obavezno"
 
-#: cli/src/cadastral_cli/main.py:67
+#: cli/src/cadastral_cli/main.py:71
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -2216,20 +2236,20 @@ msgstr ""
 "Dokumentacija: https://github.com/yourusername/croatian-cadastral-api"
 
 # Common UI strings
-#: cli/src/cadastral_cli/main.py:85
+#: cli/src/cadastral_cli/main.py:89
 msgid "Verbose output"
 msgstr "Opširni ispis"
 
-#: cli/src/cadastral_cli/main.py:89
+#: cli/src/cadastral_cli/main.py:93
 msgid "Language for output (overrides system locale)"
 msgstr "Jezik za ispis (nadjačava postavke sustava)"
 
-#: cli/src/cadastral_cli/main.py:105
+#: cli/src/cadastral_cli/main.py:109
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:132
+#: cli/src/cadastral_cli/main.py:136
 #, python-brace-format
 msgid ""
 "\n"
@@ -2238,7 +2258,7 @@ msgstr ""
 "\n"
 "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:135
+#: cli/src/cadastral_cli/main.py:139
 msgid ""
 "\n"
 "\n"
@@ -2248,7 +2268,7 @@ msgstr ""
 "\n"
 "Operacija otkazana od strane korisnika."
 
-#: cli/src/cadastral_cli/main.py:138
+#: cli/src/cadastral_cli/main.py:142
 #, python-brace-format
 msgid ""
 "\n"

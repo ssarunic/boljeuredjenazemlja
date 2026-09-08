@@ -86,7 +86,7 @@ uz granica 103/2 -ko SAVAR --oblik geojson --datoteka parcel-103-2.geojson
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--općina`, `-ko` `TEXT` | Naziv ili šifra općine | Obavezno |
+| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine | Obavezno |
 | `--oblik`, `-f` | Format izvoza (`wkt`, `geojson`, `csv`, `json`) | Koristi se `wkt` |
 | `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--statistika` | Uključi statistiku geometrije | Nije uključeno |
@@ -135,7 +135,7 @@ Uporaba: uz granica [OPCIJE] BROJ_ČESTICE
     uz granica 103/2 -ko 334979 --oblik csv -o coords.csv
 
 Opcije:
-  -ko, --općina TEXT              Naziv ili šifra općine  [obavezno]
+  -ko, --općina TEKST             Naziv ili šifra općine  [obavezno]
   -f, --oblik [wkt|geojson|csv|json]
                                   Format izvoza
   -o, --datoteka PUTANJA          Spremi izlaz u datoteku
