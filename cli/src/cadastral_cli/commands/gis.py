@@ -9,18 +9,27 @@ from rich.table import Table
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _
-from cadastral_cli.formatters import print_error, print_success
+from cadastral_cli.formatters import command_help, describe_error, print_error, print_success
 from .search import _resolve_municipality
 
 console = Console()
 
 
-@click.command("get-geometry")
+_GET_GEOMETRY_HELP = command_help(_("""Get parcel boundary coordinates for GIS integration.
+
+Examples:
+  cadastral get-geometry 103/2 -m SAVAR
+  cadastral get-geometry 103/2 -m 334979 --format wkt
+  cadastral get-geometry 103/2 -m 334979 --format geojson -o parcel.geojson
+  cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv"""))
+
+
+@click.command("get-geometry", help=_GET_GEOMETRY_HELP)
 @click.argument("parcel_number")
-@click.option("--municipality", "-m", required=True, help="Municipality name or code")
-@click.option("--format", "-f", "output_format", type=click.Choice(["wkt", "geojson", "csv", "json"]), default="wkt", help="Export format")
-@click.option("--output", "-o", type=click.Path(), help="Save output to file")
-@click.option("--show-stats", is_flag=True, help="Include geometry statistics")
+@click.option("--municipality", "-m", required=True, help=_("Municipality name or code"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["wkt", "geojson", "csv", "json"]), default="wkt", help=_("Export format"))
+@click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
+@click.option("--show-stats", is_flag=True, help=_("Include geometry statistics"))
 @click.pass_context
 def get_geometry(
     ctx: click.Context,
@@ -30,16 +39,7 @@ def get_geometry(
     output: str | None,
     show_stats: bool
 ) -> None:
-    """
-    Get parcel boundary coordinates for GIS integration.
-
-    \b
-    Examples:
-      cadastral get-geometry 103/2 -m SAVAR
-      cadastral get-geometry 103/2 -m 334979 --format wkt
-      cadastral get-geometry 103/2 -m 334979 --format geojson -o parcel.geojson
-      cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv
-    """
+    """Get parcel boundary coordinates for GIS integration."""
     try:
         with CadastralAPIClient() as client:
             # Resolve municipality
@@ -131,15 +131,23 @@ def get_geometry(
                     console.print(output_data)
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error}").format(error=str(e)))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
-@click.command("download-gis")
+_DOWNLOAD_GIS_HELP = command_help(_("""Download complete GIS data for a municipality.
+
+Examples:
+  cadastral download-gis 334979 --output ./gis_data
+  cadastral download-gis SAVAR --output ./savar_gis --extract
+  cadastral download-gis 334979 -o ./data --clear-cache"""))
+
+
+@click.command("download-gis", help=_DOWNLOAD_GIS_HELP)
 @click.argument("municipality")
-@click.option("--output", "-o", type=click.Path(), required=True, help="Output directory")
-@click.option("--extract/--no-extract", default=True, help="Extract ZIP file")
-@click.option("--clear-cache", is_flag=True, help="Clear cached data first")
+@click.option("--output", "-o", type=click.Path(), required=True, help=_("Output directory"))
+@click.option("--extract/--no-extract", default=True, help=_("Extract ZIP file"))
+@click.option("--clear-cache", is_flag=True, help=_("Clear cached data first"))
 @click.pass_context
 def download_gis(
     ctx: click.Context,
@@ -148,15 +156,7 @@ def download_gis(
     extract: bool,
     clear_cache: bool
 ) -> None:
-    """
-    Download complete GIS data for a municipality.
-
-    \b
-    Examples:
-      cadastral download-gis 334979 --output ./gis_data
-      cadastral download-gis SAVAR --output ./savar_gis --extract
-      cadastral download-gis 334979 -o ./data --clear-cache
-    """
+    """Download complete GIS data for a municipality."""
     try:
         from pathlib import Path
         import shutil
@@ -225,7 +225,7 @@ def download_gis(
             ), style="dim")
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error}").format(error=str(e)))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Error downloading GIS data: {error}").format(error=str(e)))

@@ -7,15 +7,22 @@ from pathlib import Path
 from typing import Any
 
 import click
-from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
-from rich.table import Table
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import LandRegistryUnitDetailed
-from cadastral_cli.formatters import print_error, print_success, print_output
+from rich.console import Console
+from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn, TextColumn
+from rich.table import Table
+
+from cadastral_cli.formatters import (
+    command_help,
+    describe_error,
+    error_type_value_label,
+    print_error,
+    print_output,
+    print_success,
+)
 from cadastral_cli.lr_unit_output import print_lr_unit_full
 
 console = Console()
@@ -338,7 +345,7 @@ def _process_lr_unit_batch(
                 successful += 1
 
             except CadastralAPIError as e:
-                error_msg = str(e) or e.error_type.value
+                error_msg = describe_error(e)
                 results.append(
                     LRUnitResult(
                         status="error",
@@ -414,7 +421,7 @@ def _print_table_output(summary: LRUnitBatchSummary, show_owners: bool) -> None:
                 error_table.add_row(
                     str(error_num),
                     f"{result.input.lr_unit_number} (book: {result.input.main_book_id})",
-                    result.error_type or _("unknown"),
+                    error_type_value_label(result.error_type),
                     result.error_message or _("No error message"),
                 )
 
@@ -443,26 +450,62 @@ def _format_csv_data(summary: LRUnitBatchSummary, show_owners: bool) -> list[dic
     return rows
 
 
-@click.command("batch-lr-unit")
+_BATCH_LR_UNIT_HELP = command_help(_("""Fetch information for multiple land registry units in batch mode.
+
+Supports two input methods:
+
+1. Direct LR unit file (CSV or JSON):
+   cadastral batch-lr-unit --input lr_units.csv
+
+2. From batch-fetch output (reads unique LR unit refs):
+   cadastral batch-fetch "103/2,45" -m SAVAR --format json -o parcels.json
+   cadastral batch-lr-unit --from-batch-output parcels.json
+
+CSV Format:
+  lr_unit_number,main_book_id
+  769,21277
+  123,45678
+
+JSON Format:
+  [
+    {"lr_unit_number": "769", "main_book_id": 21277},
+    {"lr_unit_number": "123", "main_book_id": 45678}
+  ]
+
+Examples:
+  # From direct LR unit input
+  cadastral batch-lr-unit --input lr_units.csv
+
+  # From batch-fetch output (pipeline)
+  cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
+  cadastral batch-lr-unit --from-batch-output parcels.json
+
+  # With ownership details in JSON format
+  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json
+
+⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"""))
+
+
+@click.command("batch-lr-unit", help=_BATCH_LR_UNIT_HELP)
 @click.option(
     "--input",
     "-i",
     "input_file",
     type=click.Path(exists=True),
-    help="Input file (CSV or JSON) with LR unit specifications",
+    help=_("Input file (CSV or JSON) with LR unit specifications"),
 )
 @click.option(
     "--from-batch-output",
     "-b",
     "batch_output_file",
     type=click.Path(exists=True),
-    help="Read LR unit refs from batch-fetch JSON output",
+    help=_("Read LR unit refs from batch-fetch JSON output"),
 )
 @click.option(
     "--output",
     "-o",
     type=click.Path(),
-    help="Save output to file",
+    help=_("Save output to file"),
 )
 @click.option(
     "--format",
@@ -470,17 +513,17 @@ def _format_csv_data(summary: LRUnitBatchSummary, show_owners: bool) -> list[dic
     "output_format",
     type=click.Choice(["table", "json", "csv"]),
     default="table",
-    help="Output format",
+    help=_("Output format"),
 )
 @click.option(
     "--show-owners",
     is_flag=True,
-    help="Include detailed ownership information in output",
+    help=_("Include detailed ownership information in output"),
 )
 @click.option(
     "--continue-on-error/--stop-on-error",
     default=True,
-    help="Continue processing after errors (default: continue)",
+    help=_("Continue processing after errors (default: continue)"),
 )
 @click.pass_context
 def batch_lr_unit(
@@ -492,53 +535,12 @@ def batch_lr_unit(
     show_owners: bool,
     continue_on_error: bool,
 ) -> None:
-    """
-    Fetch information for multiple land registry units in batch mode.
-
-    Supports two input methods:
-
-    \b
-    1. Direct LR unit file (CSV or JSON):
-       cadastral batch-lr-unit --input lr_units.csv
-
-    \b
-    2. From batch-fetch output (reads unique LR unit refs):
-       cadastral batch-fetch "103/2,45" -m SAVAR --format json -o parcels.json
-       cadastral batch-lr-unit --from-batch-output parcels.json
-
-    \b
-    CSV Format:
-      lr_unit_number,main_book_id
-      769,21277
-      123,45678
-
-    \b
-    JSON Format:
-      [
-        {"lr_unit_number": "769", "main_book_id": 21277},
-        {"lr_unit_number": "123", "main_book_id": 45678}
-      ]
-
-    \b
-    Examples:
-      # From direct LR unit input
-      cadastral batch-lr-unit --input lr_units.csv
-
-      # From batch-fetch output (pipeline)
-      cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
-      cadastral batch-lr-unit --from-batch-output parcels.json
-
-      # With ownership details in JSON format
-      cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json
-
-    \b
-    ⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only
-    """
+    """Fetch information for multiple land registry units in batch mode."""
     try:
         # Validate input
         if not input_file and not batch_output_file:
             print_error(_("Must provide either --input file or --from-batch-output file"))
-            console.print("\nUse 'cadastral batch-lr-unit --help' for usage information.")
+            console.print(_("\nUse '{command}' for usage information.").format(command="cadastral batch-lr-unit --help"))
             raise SystemExit(1)
 
         if input_file and batch_output_file:
@@ -548,10 +550,10 @@ def batch_lr_unit(
         # Parse input
         try:
             if batch_output_file:
-                console.print(f"📄 Reading LR unit refs from batch-fetch output: {batch_output_file}", style="dim")
+                console.print(_("📄 Reading LR unit refs from batch-fetch output: {file}").format(file=batch_output_file), style="dim")
                 lr_unit_list = _parse_batch_fetch_output(Path(batch_output_file))
             else:
-                console.print(f"📄 Reading LR units from: {input_file}", style="dim")
+                console.print(_("📄 Reading LR units from: {file}").format(file=input_file), style="dim")
                 lr_unit_list = _parse_lr_unit_input(input_file)
 
         except (ValueError, FileNotFoundError) as e:
@@ -613,9 +615,9 @@ def batch_lr_unit(
             raise SystemExit(1)
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         if hasattr(e, 'details') and e.details:
-            console.print(f"   Details: {e.details}", style="dim red")
+            console.print(_("   Details: {details}").format(details=e.details), style="dim red")
         raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Unexpected error: {error}").format(error=str(e)))

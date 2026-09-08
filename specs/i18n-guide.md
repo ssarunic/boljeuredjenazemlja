@@ -125,7 +125,7 @@ console = Console()
 _COMMAND_HELP = _("Command description")
 _OPTION_HELP = _("Option description")
 
-@click.command()
+@click.command(help=_COMMAND_HELP)
 @click.argument("argument_name")
 @click.option("--option-name", "-o", help=_OPTION_HELP)
 @click.pass_context
@@ -208,6 +208,11 @@ print(_("New message"))
 ```
 
 ### 2. Extract Strings to Template
+
+The script also extracts click's own messages ("Usage:", "Options", "Missing
+option" ...) from the installed click package, because `cadastral_api.i18n`
+routes click's gettext calls to our catalog. It needs an interpreter that can
+import click; set `PYTHON=/path/to/python` if `python3` cannot.
 ```bash
 ./scripts/generate_pot.sh
 ```
@@ -231,6 +236,9 @@ msgstr "Broj čestice"
 
 ### 6. Test
 ```bash
+# Automated coverage gate (run before every release)
+cd cli && pytest tests/test_i18n_coverage.py
+
 # Croatian (default)
 cadastral search 103/2 -m SAVAR
 
@@ -238,6 +246,20 @@ cadastral search 103/2 -m SAVAR
 cadastral search 103/2 -m SAVAR --lang en
 CADASTRAL_LANG=en cadastral search 103/2 -m SAVAR
 ```
+
+The coverage gate in `cli/tests/test_i18n_coverage.py` needs no gettext
+binaries. It fails when:
+
+- a string wrapped in `_()` / `ngettext()` / `pgettext()` has no entry in a
+  `po/<lang>.po` file (run steps 2 and 3)
+- a Croatian entry is untranslated or fuzzy
+- a live `.po` entry is no longer referenced by the source (run step 3 so it
+  becomes obsolete)
+- a translation uses a `{placeholder}` that the source string does not have
+- the compiled `.mo` catalogs differ from the `.po` files (run step 5)
+- a click `help=` text, a click command help (docstring fallback) or a literal
+  passed to `console.print()` / `print_error()` / `add_column()` bypasses `_()`
+- `set_language()` does not affect the `_` alias imported by command modules
 
 ## Testing Checklist
 
@@ -252,6 +274,7 @@ CADASTRAL_LANG=en cadastral search 103/2 -m SAVAR
 - [ ] Status messages localized
 - [ ] Plural forms handled correctly
 - [ ] Both languages tested
+- [ ] `cd cli && pytest tests/test_i18n_coverage.py` passes
 
 ## Common Mistakes to Avoid
 
@@ -264,15 +287,34 @@ message = _("Found ") + str(count) + _(" results")
 message = _("Found {count} results").format(count=count)
 ```
 
-### ❌ Don't Use _() in Decorators
+### ❌ Don't Leave Help Text Unwrapped
 ```python
-# Wrong - won't work
-@click.option("--opt", help=_("Help text"))
+# Wrong - plain literal, can never be translated
+@click.option("--opt", help="Help text")
 
-# Right - use constant
+# Wrong - click falls back to the (untranslated) docstring for --help
+@click.command()
+def cmd():
+    """Command description."""
+
+# Right - wrap inline or via a module constant; pass command help explicitly
 _OPT_HELP = _("Help text")
+_CMD_HELP = command_help(_("""Command description.
+
+Examples:
+  cadastral cmd --opt value"""))
+
+@click.command(help=_CMD_HELP)
 @click.option("--opt", help=_OPT_HELP)
 ```
+
+`command_help()` (from `cadastral_cli.formatters`) inserts click's `\b`
+no-wrap marker in front of every paragraph that contains an indented line, so
+example blocks keep their layout while the .po entries stay plain text.
+
+Help texts are evaluated once, when the module is imported. `main.py` scans
+`sys.argv` for `--lang` before importing the command modules, so the flag,
+`CADASTRAL_LANG` and the system locale all work for help output.
 
 ### ❌ Don't Localize Technical Terms
 ```python

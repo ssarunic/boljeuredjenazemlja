@@ -593,6 +593,9 @@ mypy src/cadastral_api
 
 # Linting
 ruff check src/
+
+# Translation coverage gate (run before every release)
+cd cli && pytest tests/test_i18n_coverage.py
 ```
 
 ## Documentation
@@ -653,8 +656,15 @@ Based on live API testing:
 
 ### Translation Status
 
-The i18n infrastructure is complete with full translations:
-- Core i18n module: ✅ Complete
-- Translation scripts: ✅ Complete
-- CLI commands: ✅ Fully localized
-- Translation files (.po): ✅ Complete (Croatian and English)
+The CLI is fully localized (Croatian and English), including option help,
+command help, output, error messages and click's own messages. The
+authoritative status is the output of `cd cli && pytest tests/test_i18n_coverage.py`
+(see [specs/i18n-status.md](specs/i18n-status.md)). Rules that keep it that way:
+- Command descriptions go through `help=command_help(_("""..."""))`, never the
+  docstring; option help through `help=_("...")`
+- `from cadastral_api.i18n import _` is safe at module level: `_` delegates to
+  the active catalog, so `--lang` works after import
+- After changing strings run `./scripts/generate_pot.sh`,
+  `./scripts/update_translations.sh`, translate `po/hr.po`, then
+  `./scripts/compile_translations.sh`; the gate fails otherwise
+- The MCP server is intentionally not localized (its text is read by an AI agent)

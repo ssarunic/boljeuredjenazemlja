@@ -1,15 +1,21 @@
 """Shared output formatting for land registry units."""
 
 import re
+from datetime import datetime
 
 from rich.console import Console
 from rich.table import Table
 
 from cadastral_api.i18n import _
-from cadastral_api.models.entities import LandRegistryUnitDetailed
+from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.utils import parse_fraction
 
 console = Console()
+
+
+def _date_text(value: datetime | None) -> str:
+    """Render a timestamp as a plain YYYY-MM-DD date, or '-' when missing."""
+    return value.date().isoformat() if value else "-"
 
 
 def _fraction_text(description: str) -> str:
@@ -59,8 +65,8 @@ def clean_html(text: str) -> str:
 def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
     """Print basic LR unit information."""
     table = Table(title=_("LAND REGISTRY UNIT"), show_header=False, box=None)
-    table.add_column("Field", style="bold cyan")
-    table.add_column("Value")
+    table.add_column(_("Field"), style="bold cyan")
+    table.add_column(_("Value"))
 
     table.add_row(_("Unit Number"), lr_unit.lr_unit_number)
     table.add_row(_("Main Book"), lr_unit.main_book_name)
@@ -83,13 +89,58 @@ def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
         )
 
 
+def print_lr_unit_plombe_detail(
+    lr_unit: LandRegistryUnitDetailed,
+    details: dict[str, FileStatus],
+) -> None:
+    """Print the detail behind each pending plomba (what / status / dates).
+
+    ``details`` maps file_number -> FileStatus (land-registry plombe that
+    resolved). Every active plomba is still listed: cadastre plombe and any that
+    did not resolve are shown as "detail unavailable" so nothing is hidden.
+    """
+    table = Table(title=_("PENDING ENTRIES DETAIL (PLOMBE)"), box=None)
+    table.add_column(_("File Number"), style="bold red")
+    table.add_column(_("Request"))
+    table.add_column(_("Status"), style="cyan")
+    table.add_column(_("Received"), justify="right")
+    table.add_column(_("Outcome"))
+
+    for plumb in lr_unit.active_plumbs:
+        status = details.get(plumb.file_number)
+        if status is not None:
+            if status.is_resolved or status.resolution_type_name:
+                outcome = status.resolution_type_name or _("Resolved")
+                outcome = f"{outcome} ({_date_text(status.execution_date)})"
+            else:
+                outcome = _("In progress")
+            table.add_row(
+                plumb.file_number,
+                status.application_content or "-",
+                status.status_description or "-",
+                _date_text(status.receiving_date),
+                outcome,
+            )
+        else:
+            # Cadastre plombe are not resolvable via the (land-registry)
+            # file-status endpoint; others simply had no record.
+            note = (
+                _("cadastre plomba (no land-registry detail)")
+                if plumb.cad_plumb
+                else _("detail unavailable")
+            )
+            table.add_row(plumb.file_number, f"[dim]{note}[/dim]", "-", "-", "-")
+
+    console.print(table)
+
+
 def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
     """Print summary statistics."""
     summary = lr_unit.summary()
 
     table = Table(title=_("SUMMARY"), show_header=False, box=None)
-    table.add_column("Metric", style="bold yellow")
-    table.add_column("Value", style="green")
+    table.add_column(_("Metric"), style="bold yellow")
+    table.add_column(_("Value"), style="green")
 
     # Show condominium info if applicable
     if summary.get("is_condominium"):
@@ -269,6 +320,7 @@ def print_lr_unit_full(
     show_parcels: bool = False,
     show_encumbrances: bool = False,
     show_all: bool = False,
+    plombe_details: dict[str, FileStatus] | None = None,
 ) -> None:
     """Print complete LR unit information.
 
@@ -278,9 +330,17 @@ def print_lr_unit_full(
         show_parcels: Show parcel list (Sheet A)
         show_encumbrances: Show encumbrances (Sheet C)
         show_all: Show all sheets
+        plombe_details: Resolved plomba detail (file_number -> FileStatus). When
+            provided and the unit has pending plombe, a detail table is printed
+            right after the basic info.
     """
     # Print basic info
     print_lr_unit_basic_info(lr_unit)
+
+    # Print plomba detail right after the basic info, where the plombe are listed.
+    if plombe_details is not None and lr_unit.has_pending_plombe():
+        console.print()
+        print_lr_unit_plombe_detail(lr_unit, plombe_details)
 
     # Print parcels if requested (Sheet A)
     if show_parcels or show_all:

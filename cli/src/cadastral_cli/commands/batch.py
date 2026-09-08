@@ -1,37 +1,94 @@
 """Batch parcel information commands for CLI."""
 
 import click
-from rich.console import Console
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _, ngettext
+from rich.console import Console
+
 from cadastral_cli.batch_processor import process_batch
-from cadastral_cli.formatters import print_error, print_success, print_output
+from cadastral_cli.formatters import (
+    command_help,
+    describe_error,
+    error_type_value_label,
+    print_error,
+    print_output,
+    print_success,
+)
 from cadastral_cli.input_parsers import parse_cli_list, parse_input_file
 
 console = Console()
 
 
-@click.command("batch-fetch")
+_BATCH_FETCH_HELP = command_help(_("""Fetch information for multiple parcels in batch mode.
+
+Supports two input methods:
+
+1. CLI comma-separated list (for quick batches):
+   cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
+
+2. File input (for large batches):
+   cadastral batch-fetch --input parcels.csv
+   cadastral batch-fetch --input parcels.json
+
+CSV Format (parcel numbers with municipality):
+  parcel_number,municipality
+  103/2,334979
+  45,
+  396/1,
+
+Note: Empty municipality cells inherit from the previous row.
+
+CSV Format (direct parcel IDs):
+  parcel_id
+  12345678
+  87654321
+
+JSON Format:
+  [
+    {"parcel_number": "103/2", "municipality": "334979"},
+    {"parcel_number": "45", "municipality": "SAVAR"}
+  ]
+
+Or:
+  [
+    {"parcel_id": "12345678"},
+    {"parcel_id": "87654321"}
+  ]
+
+Examples:
+  # Quick batch with CLI list
+  cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+
+  # Batch from CSV file
+  cadastral batch-fetch --input parcels.csv --format csv -o results.csv
+
+  # Batch with full details for each parcel (like get-parcel)
+  cadastral batch-fetch "103/2,45,396/1" -m SAVAR --detail full
+
+  # Batch with ownership details in JSON format
+  cadastral batch-fetch --input parcels.json --show-owners --format json -o results.json"""))
+
+
+@click.command("batch-fetch", help=_BATCH_FETCH_HELP)
 @click.argument("parcels", required=False)
 @click.option(
     "--input",
     "-i",
     "input_file",
     type=click.Path(exists=True),
-    help="Input file (CSV or JSON) with parcel specifications",
+    help=_("Input file (CSV or JSON) with parcel specifications"),
 )
 @click.option(
     "--municipality",
     "-m",
-    help="Municipality name or code (required for CLI list mode)",
+    help=_("Municipality name or code (required for CLI list mode)"),
 )
 @click.option(
     "--output",
     "-o",
     type=click.Path(),
-    help="Save output to file",
+    help=_("Save output to file"),
 )
 @click.option(
     "--format",
@@ -39,23 +96,23 @@ console = Console()
     "output_format",
     type=click.Choice(["table", "json", "csv"]),
     default="table",
-    help="Output format",
+    help=_("Output format"),
 )
 @click.option(
     "--detail",
     type=click.Choice(["basic", "full"]),
     default="basic",
-    help="Detail level: basic (summary only) or full (complete parcel info for each)",
+    help=_("Detail level: basic (summary only) or full (complete parcel info for each)"),
 )
 @click.option(
     "--show-owners",
     is_flag=True,
-    help="Include detailed ownership information in output",
+    help=_("Include detailed ownership information in output"),
 )
 @click.option(
     "--continue-on-error/--stop-on-error",
     default=True,
-    help="Continue processing after errors (default: continue)",
+    help=_("Continue processing after errors (default: continue)"),
 )
 @click.pass_context
 def batch_fetch(
@@ -69,67 +126,12 @@ def batch_fetch(
     show_owners: bool,
     continue_on_error: bool,
 ) -> None:
-    """
-    Fetch information for multiple parcels in batch mode.
-
-    Supports two input methods:
-
-    \b
-    1. CLI comma-separated list (for quick batches):
-       cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
-
-    \b
-    2. File input (for large batches):
-       cadastral batch-fetch --input parcels.csv
-       cadastral batch-fetch --input parcels.json
-
-    \b
-    CSV Format (parcel numbers with municipality):
-      parcel_number,municipality
-      103/2,334979
-      45,
-      396/1,
-
-    Note: Empty municipality cells inherit from the previous row.
-
-    \b
-    CSV Format (direct parcel IDs):
-      parcel_id
-      12345678
-      87654321
-
-    \b
-    JSON Format:
-      [
-        {"parcel_number": "103/2", "municipality": "334979"},
-        {"parcel_number": "45", "municipality": "SAVAR"}
-      ]
-
-    Or:
-      [
-        {"parcel_id": "12345678"},
-        {"parcel_id": "87654321"}
-      ]
-
-    \b
-    Examples:
-      # Quick batch with CLI list
-      cadastral batch-fetch "103/2,45,396/1" -m SAVAR
-
-      # Batch from CSV file
-      cadastral batch-fetch --input parcels.csv --format csv -o results.csv
-
-      # Batch with full details for each parcel (like get-parcel)
-      cadastral batch-fetch "103/2,45,396/1" -m SAVAR --detail full
-
-      # Batch with ownership details in JSON format
-      cadastral batch-fetch --input parcels.json --show-owners --format json -o results.json
-    """
+    """Fetch information for multiple parcels in batch mode."""
     try:
         # Validate input
         if not parcels and not input_file:
             print_error(_("Must provide either PARCELS argument or --input file"))
-            console.print("\nUse 'cadastral batch-fetch --help' for usage information.")
+            console.print(_("\nUse '{command}' for usage information.").format(command="cadastral batch-fetch --help"))
             raise SystemExit(1)
 
         if parcels and input_file:
@@ -140,7 +142,7 @@ def batch_fetch(
         try:
             if input_file:
                 # File input mode
-                console.print(f"📄 Reading parcels from: {input_file}", style="dim")
+                console.print(_("📄 Reading parcels from: {file}").format(file=input_file), style="dim")
                 parcel_list = parse_input_file(input_file)
             else:
                 # CLI list mode
@@ -209,9 +211,9 @@ def batch_fetch(
             raise SystemExit(1)
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         if hasattr(e, 'details') and e.details:
-            console.print(f"   Details: {e.details}", style="dim red")
+            console.print(_("   Details: {details}").format(details=e.details), style="dim red")
         raise SystemExit(1) from e
     except Exception as e:
         print_error(_("Unexpected error: {error}").format(error=str(e)))
@@ -234,7 +236,7 @@ def _print_detailed_parcels(summary, show_owners: bool) -> None:
                     console.print(f"{_('Parcel ID')}: {result.input.parcel_id}")
                 else:
                     console.print(f"{_('Parcel')}: {result.input.parcel_number} ({result.input.municipality})")
-                console.print(f"{_('Error')}: {result.error_type or _('unknown')}")
+                console.print(f"{_('Error')}: {error_type_value_label(result.error_type)}")
                 console.print(f"{_('Message')}: {result.error_message or _('No error message')}")
                 continue
 
@@ -340,7 +342,7 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
         else:
             # Error row
             municipality = result.input.municipality or "N/A"
-            error_msg = f"[red]{result.error_type or 'error'}[/red]"
+            error_msg = f"[red]{error_type_value_label(result.error_type)}[/red]"
 
             row = [str(i), status, parcel_display, municipality, error_msg, "-", "-"]
             if show_owners:
@@ -372,7 +374,7 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
                 error_table.add_row(
                     str(i),
                     parcel_display,
-                    result.error_type or _("unknown"),
+                    error_type_value_label(result.error_type),
                     result.error_message or _("No error message"),
                 )
 

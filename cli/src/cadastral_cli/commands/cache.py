@@ -6,34 +6,34 @@ from rich.table import Table
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.i18n import _
-from cadastral_cli.formatters import print_error, print_success
+from cadastral_cli.formatters import command_help, print_error, print_success
 
 console = Console()
 
 
-@click.group("cache")
+_CACHE_GROUP_HELP = command_help(_("""Cache management commands.
+
+Examples:
+  cadastral cache list
+  cadastral cache clear --municipality 334979
+  cadastral cache clear --all"""))
+
+
+@click.group("cache", help=_CACHE_GROUP_HELP)
 def cache_group() -> None:
-    """
-    Cache management commands.
-
-    \b
-    Examples:
-      cadastral cache list
-      cadastral cache clear --municipality 334979
-      cadastral cache clear --all
-    """
+    """Cache management commands."""
 
 
-@cache_group.command("list")
+_CACHE_LIST_HELP = command_help(_("""List cached municipalities.
+
+Example:
+  cadastral cache list"""))
+
+
+@cache_group.command("list", help=_CACHE_LIST_HELP)
 @click.pass_context
 def cache_list(ctx: click.Context) -> None:
-    """
-    List cached municipalities.
-
-    \b
-    Example:
-      cadastral cache list
-    """
+    """List cached municipalities."""
     try:
         from datetime import datetime
 
@@ -109,21 +109,21 @@ def cache_list(ctx: click.Context) -> None:
         raise SystemExit(1) from e
 
 
-@cache_group.command("clear")
-@click.option("--municipality", "-m", help="Clear specific municipality")
-@click.option("--all", "-a", "clear_all", is_flag=True, help="Clear all cache")
-@click.option("--force", "-f", is_flag=True, help="Skip confirmation")
+_CACHE_CLEAR_HELP = command_help(_("""Clear cached GIS data.
+
+Examples:
+  cadastral cache clear --municipality 334979
+  cadastral cache clear --all
+  cadastral cache clear -m SAVAR --force"""))
+
+
+@cache_group.command("clear", help=_CACHE_CLEAR_HELP)
+@click.option("--municipality", "-m", help=_("Clear specific municipality"))
+@click.option("--all", "-a", "clear_all", is_flag=True, help=_("Clear all cache"))
+@click.option("--force", "-f", is_flag=True, help=_("Skip confirmation"))
 @click.pass_context
 def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, force: bool) -> None:
-    """
-    Clear cached GIS data.
-
-    \b
-    Examples:
-      cadastral cache clear --municipality 334979
-      cadastral cache clear --all
-      cadastral cache clear -m SAVAR --force
-    """
+    """Clear cached GIS data."""
     if not municipality and not clear_all:
         print_error(_("Either --municipality or --all is required"))
         console.print(_("\nTry: cadastral cache clear --help"), style="yellow")
@@ -188,16 +188,16 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
         raise SystemExit(1) from e
 
 
-@cache_group.command("info")
+_CACHE_INFO_HELP = command_help(_("""Show detailed cache information.
+
+Example:
+  cadastral cache info"""))
+
+
+@cache_group.command("info", help=_CACHE_INFO_HELP)
 @click.pass_context
 def cache_info(ctx: click.Context) -> None:
-    """
-    Show detailed cache information.
-
-    \b
-    Example:
-      cadastral cache info
-    """
+    """Show detailed cache information."""
     try:
         with CadastralAPIClient() as client:
             cache_dir = client.gis_cache.cache_dir

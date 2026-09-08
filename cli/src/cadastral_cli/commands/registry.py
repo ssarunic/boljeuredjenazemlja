@@ -7,27 +7,51 @@ from rich.console import Console
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
-from cadastral_api.models.entities import LandRegistryUnitDetailed
+from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.i18n import _
-from cadastral_cli.formatters import print_error, print_output
+from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
 from cadastral_cli.lr_unit_output import print_lr_unit_full
 from .search import _resolve_municipality
 
 console = Console()
 
 
-@click.command("get-lr-unit")
-@click.option("--unit-number", "-u", help="Land registry unit number (e.g., '769')")
-@click.option("--main-book", "-b", type=int, help="Main book ID (e.g., 21277)")
-@click.option("--from-parcel", "-p", help="Get LR unit from parcel number")
-@click.option("--municipality", "-m", help="Municipality name or code (required with --from-parcel)")
-@click.option("--show-owners", "-o", is_flag=True, help="Display ownership details (Sheet B)")
-@click.option("--show-parcels", "-P", is_flag=True, help="Display all parcels in unit (Sheet A)")
-@click.option("--show-encumbrances", "-e", is_flag=True, help="Display encumbrances (Sheet C)")
-@click.option("--all", "-a", "show_all", is_flag=True, help="Show all sheets")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
-@click.option("--output", type=click.Path(), help="Save output to file")
-@click.option("--lang", type=click.Choice(["hr", "en"]), help="Language for output")
+_GET_LR_UNIT_HELP = command_help(_("""Get detailed land registry unit information.
+
+Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),
+including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).
+
+Examples:
+  # Get by unit number and main book ID
+  cadastral get-lr-unit --unit-number 769 --main-book 21277
+
+  # Get from parcel (automatic lookup)
+  cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
+
+  # Show only ownership information
+  cadastral get-lr-unit -u 769 -b 21277 --show-owners
+
+  # Show all sheets
+  cadastral get-lr-unit -p 279/6 -m SAVAR --all
+
+  # Export to JSON
+  cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
+
+⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"""))
+
+
+@click.command("get-lr-unit", help=_GET_LR_UNIT_HELP)
+@click.option("--unit-number", "-u", help=_("Land registry unit number (e.g., '769')"))
+@click.option("--main-book", "-b", type=int, help=_("Main book ID (e.g., 21277)"))
+@click.option("--from-parcel", "-p", help=_("Get LR unit from parcel number"))
+@click.option("--municipality", "-m", help=_("Municipality name or code (required with --from-parcel)"))
+@click.option("--show-owners", "-o", is_flag=True, help=_("Display ownership details (Sheet B)"))
+@click.option("--show-parcels", "-P", is_flag=True, help=_("Display all parcels in unit (Sheet A)"))
+@click.option("--show-encumbrances", "-e", is_flag=True, help=_("Display encumbrances (Sheet C)"))
+@click.option("--plombe-detail", "-D", is_flag=True, help=_("Resolve detail of pending entries (plombe) - one extra request per plomba"))
+@click.option("--all", "-a", "show_all", is_flag=True, help=_("Show all sheets"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def get_lr_unit(
     ctx: click.Context,
@@ -38,37 +62,12 @@ def get_lr_unit(
     show_owners: bool,
     show_parcels: bool,
     show_encumbrances: bool,
+    plombe_detail: bool,
     show_all: bool,
     output_format: str,
     output: str | None,
-    lang: str | None,
 ) -> None:
-    """
-    Get detailed land registry unit information.
-
-    Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),
-    including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).
-
-    \b
-    Examples:
-      # Get by unit number and main book ID
-      cadastral get-lr-unit --unit-number 769 --main-book 21277
-
-      # Get from parcel (automatic lookup)
-      cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
-
-      # Show only ownership information
-      cadastral get-lr-unit -u 769 -b 21277 --show-owners
-
-      # Show all sheets
-      cadastral get-lr-unit -p 279/6 -m SAVAR --all
-
-      # Export to JSON
-      cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
-
-    \b
-    ⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only
-    """
+    """Get detailed land registry unit information."""
     # Validate arguments
     if from_parcel:
         if not municipality:
@@ -96,14 +95,24 @@ def get_lr_unit(
                 )):
                     lr_unit = client.get_lr_unit_detailed(unit_number, main_book)
 
+            # Resolve plomba detail on request (one extra request per plomba).
+            plombe_details = None
+            if plombe_detail and lr_unit.has_pending_plombe():
+                with console.status(_("Resolving pending entries (plombe) detail...")):
+                    plombe_details = client.get_plombe_details(lr_unit)
+
             # Format output
             if output_format != "table":
                 # Structured output
-                data = _format_structured_data(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
+                data = _format_structured_data(
+                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                )
                 print_output(data, output_format=output_format, file=output)
             else:
                 # Rich table output
-                print_lr_unit_full(lr_unit, show_owners, show_parcels, show_encumbrances, show_all)
+                print_lr_unit_full(
+                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                )
 
                 # Disclose cadastre/ZK divergence and offer the cadastre drill-down
                 # (only meaningful when we came from a specific parcel).
@@ -129,7 +138,7 @@ def get_lr_unit(
         elif e.error_type == ErrorType.PARCEL_NOT_FOUND:
             print_error(_("Parcel not found"))
         else:
-            print_error(_("API error: {error_type}").format(error_type=e.error_type.value))
+            print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
@@ -139,6 +148,7 @@ def _format_structured_data(
     show_parcels: bool,
     show_encumbrances: bool,
     show_all: bool,
+    plombe_details: dict[str, FileStatus] | None = None,
 ) -> dict[str, Any]:
     """Format LR unit data for JSON/CSV output."""
     data = {
@@ -151,6 +161,13 @@ def _format_structured_data(
         "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
         "cadastre_harmonized": lr_unit.cadastre_harmonized,
     }
+
+    # Plomba detail (only when --plombe-detail was requested and resolved).
+    if plombe_details is not None:
+        data["plombe_detail"] = {
+            file_number: status.model_dump(mode="json", by_alias=False)
+            for file_number, status in plombe_details.items()
+        }
 
     # Add summary
     summary = lr_unit.summary()

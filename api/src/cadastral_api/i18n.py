@@ -20,6 +20,15 @@ Usage:
 
     # Context-specific translation
     label = pgettext("button", "Open")
+
+``_``, ``ngettext`` and ``pgettext`` are stable functions that always consult
+the catalog selected by the most recent :func:`set_language` call, so modules
+may import them at module level and still follow a later language switch.
+
+The selected language is also bound to Python's module-level gettext domain
+(``gettext.textdomain``) and exported via the ``LANGUAGE`` environment
+variable, so libraries that use ``gettext.gettext`` directly (click does)
+render their own messages from the same catalog.
 """
 
 import gettext as _gettext_module
@@ -50,8 +59,8 @@ def get_system_locale() -> str:
         Language code ('hr' or 'en')
     """
     try:
-        # Try to get locale from system
-        lang = locale.getdefaultlocale()[0]
+        # Try to get locale from the current locale settings
+        lang = locale.getlocale()[0]
         if lang:
             # Extract language code (e.g., 'hr_HR' -> 'hr', 'en_US' -> 'en')
             lang_code = lang.split('_')[0].lower()
@@ -65,7 +74,7 @@ def get_system_locale() -> str:
         env_lang = os.getenv(env_var, "")
         if env_lang:
             # Extract language code
-            lang_code = env_lang.split('_')[0].split('.')[0].lower()
+            lang_code = env_lang.split('_')[0].split('.')[0].split(':')[0].lower()
             if lang_code in SUPPORTED_LANGUAGES:
                 return lang_code
 
@@ -93,27 +102,61 @@ def get_translation_language() -> str:
     return get_system_locale()
 
 
+def _load_catalog(lang: str) -> _gettext_module.NullTranslations:
+    """Load the catalog for ``lang``, falling back to source strings."""
+    try:
+        return _gettext_module.translation(
+            domain=DOMAIN,
+            localedir=str(_LOCALE_DIR),
+            languages=[lang],
+            fallback=True,  # Fall back to source strings if not found
+        )
+    except Exception:
+        # If locale directory doesn't exist or translation files are missing,
+        # create a NullTranslations object that returns source strings
+        return _gettext_module.NullTranslations()
+
+
+def _activate(lang: str) -> None:
+    """Make ``lang`` the active language for this module and for libraries."""
+    global _current_language, TRANSLATIONS
+
+    _current_language = lang
+    TRANSLATIONS = _load_catalog(lang)
+
+    # Route the module-level gettext API (used by click for its own messages
+    # such as "Usage:", "Options" and "Missing option") to the same catalog.
+    _gettext_module.bindtextdomain(DOMAIN, str(_LOCALE_DIR))
+    _gettext_module.textdomain(DOMAIN)
+    os.environ["LANGUAGE"] = lang
+
+
 # Initialize translations
-_current_language = get_translation_language()
-
-try:
-    # Attempt to load translations for selected language
-    TRANSLATIONS = _gettext_module.translation(
-        domain=DOMAIN,
-        localedir=str(_LOCALE_DIR),
-        languages=[_current_language],
-        fallback=True  # Fall back to source strings if not found
-    )
-except Exception:
-    # If locale directory doesn't exist or translation files are missing,
-    # create a NullTranslations object that returns source strings
-    TRANSLATIONS = _gettext_module.NullTranslations()
+_current_language = DEFAULT_LANGUAGE
+TRANSLATIONS: _gettext_module.NullTranslations = _gettext_module.NullTranslations()
+_activate(get_translation_language())
 
 
-# Public translation API
-_ = TRANSLATIONS.gettext           # Basic translation: _("text")
-ngettext = TRANSLATIONS.ngettext   # Plural forms: ngettext("1 item", "{n} items", n)
-pgettext = TRANSLATIONS.pgettext   # Context-specific: pgettext("menu", "File")
+# Public translation API. These delegate on every call so that a module-level
+# ``from cadastral_api.i18n import _`` keeps working after set_language().
+def _(message: str) -> str:
+    """Translate ``message`` using the active catalog."""
+    return TRANSLATIONS.gettext(message)
+
+
+def gettext(message: str) -> str:
+    """Alias of :func:`_` for callers that prefer the explicit name."""
+    return TRANSLATIONS.gettext(message)
+
+
+def ngettext(singular: str, plural: str, n: int) -> str:
+    """Translate a message with plural forms: ngettext("1 item", "{n} items", n)."""
+    return TRANSLATIONS.ngettext(singular, plural, n)
+
+
+def pgettext(context: str, message: str) -> str:
+    """Translate a message in a specific context: pgettext("menu", "File")."""
+    return TRANSLATIONS.pgettext(context, message)
 
 
 def get_current_language() -> str:
@@ -136,27 +179,10 @@ def set_language(lang: str) -> None:
     Raises:
         ValueError: If language is not supported
     """
-    global _current_language, TRANSLATIONS, _, ngettext, pgettext
-
     if lang not in SUPPORTED_LANGUAGES:
         raise ValueError(
             f"Unsupported language: {lang}. "
             f"Supported languages: {', '.join(SUPPORTED_LANGUAGES)}"
         )
 
-    _current_language = lang
-
-    try:
-        TRANSLATIONS = _gettext_module.translation(
-            domain=DOMAIN,
-            localedir=str(_LOCALE_DIR),
-            languages=[lang],
-            fallback=True
-        )
-    except Exception:
-        TRANSLATIONS = _gettext_module.NullTranslations()
-
-    # Update public API
-    _ = TRANSLATIONS.gettext
-    ngettext = TRANSLATIONS.ngettext
-    pgettext = TRANSLATIONS.pgettext
+    _activate(lang)

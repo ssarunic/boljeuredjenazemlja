@@ -9,6 +9,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _
+from cadastral_cli.formatters import describe_error
 from cadastral_api.models.entities import ParcelInfo
 from .input_parsers import ParcelInput
 
@@ -228,24 +229,14 @@ def process_batch(
                             status="error",
                             input=parcel_input,
                             error_type=ErrorType.PARCEL_NOT_FOUND.value,
-                            error_message="Parcel not found",
+                            error_message=_("Parcel not found"),
                         )
                     )
                     failed += 1
 
             except CadastralAPIError as e:
                 # Handle API errors
-                error_msg = str(e)
-
-                # If error message is empty, construct one from details
-                if not error_msg or error_msg == e.error_type.value:
-                    if e.details:
-                        detail_parts = [f"{k}={v}" for k, v in e.details.items() if v is not None]
-                        if detail_parts:
-                            error_msg = f"{e.error_type.value}: {', '.join(detail_parts)}"
-                    if e.cause:
-                        cause_msg = str(e.cause) if str(e.cause) else type(e.cause).__name__
-                        error_msg = f"{error_msg} (caused by {type(e.cause).__name__}: {cause_msg})"
+                error_msg = describe_error(e)
 
                 results.append(
                     BatchResult(

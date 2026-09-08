@@ -412,12 +412,26 @@ class CadastralTools:
             "summary": summary,
         }
 
+    def _plombe_detail(self, lr_unit: Any) -> dict[str, Any]:
+        """Resolve pending-plomba detail for a unit, shaped for JSON output.
+
+        Returns a map of file_number -> status detail for the land-registry
+        plombe that resolved (cadastre/unresolvable plombe are omitted, but they
+        remain visible in the unit's summary ``pending_plombe`` list).
+        """
+        details = self.client.get_plombe_details(lr_unit)
+        return {
+            file_number: status.model_dump(mode="json", by_alias=False)
+            for file_number, status in details.items()
+        }
+
     async def get_lr_unit(
         self,
         unit_number: str,
         main_book_id: int,
         detail: str = "ownership",
         owners_limit: int | None = None,
+        include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
         Get land registry unit (zemljišnoknjižni uložak) information.
@@ -452,7 +466,10 @@ class CadastralTools:
                 f"Fetching LR unit {unit_number} from main book {main_book_id} (detail={detail})"
             )
             lr_unit = self.client.get_lr_unit_detailed(unit_number, main_book_id)
-            return self._shape_lr_unit(lr_unit, detail, owners_limit)
+            result = self._shape_lr_unit(lr_unit, detail, owners_limit)
+            if include_plombe_detail and lr_unit.has_pending_plombe():
+                result["plombe_detail"] = self._plombe_detail(lr_unit)
+            return result
 
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
@@ -467,6 +484,7 @@ class CadastralTools:
         municipality: str,
         detail: str = "ownership",
         owners_limit: int | None = None,
+        include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
         Get the land registry unit (and registered owners) for a parcel.
@@ -502,7 +520,10 @@ class CadastralTools:
             )
             muni_code = await self._resolve_municipality(municipality)
             lr_unit = self.client.get_lr_unit_from_parcel(parcel_number, muni_code)
-            return self._shape_lr_unit(lr_unit, detail, owners_limit)
+            result = self._shape_lr_unit(lr_unit, detail, owners_limit)
+            if include_plombe_detail and lr_unit.has_pending_plombe():
+                result["plombe_detail"] = self._plombe_detail(lr_unit)
+            return result
 
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch LR unit from parcel {parcel_number}: {e}", exc_info=True)

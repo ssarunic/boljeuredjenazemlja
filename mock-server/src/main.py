@@ -13,7 +13,7 @@ import json
 from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import FastAPI, Query
+from fastapi import Body, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
@@ -41,6 +41,7 @@ _offices: list[dict[str, Any]] = []
 _municipalities: list[dict[str, Any]] = []
 _parcels: dict[str, list[dict[str, Any]]] = {}  # municipality_code -> parcels
 _lr_units: dict[str, dict[str, Any]] = {}  # "mainBookId-lrUnitNumber" -> lr_unit_data
+_file_status: dict[str, dict[str, Any]] = {}  # "institutionId-code-order-year" -> file status
 
 
 def load_json(filepath: Path) -> Any:
@@ -52,7 +53,7 @@ def load_json(filepath: Path) -> Any:
 @app.on_event("startup")
 async def load_data():
     """Load all static data into memory on startup."""
-    global _offices, _municipalities, _parcels, _lr_units
+    global _offices, _municipalities, _parcels, _lr_units, _file_status
 
     # Load offices
     offices_file = DATA_DIR / "offices.json"
@@ -85,7 +86,19 @@ async def load_data():
             _lr_units[key] = lr_unit_data
             print(f"✓ Loaded LR unit {key}")
 
-    print(f"\n🚀 Mock server ready with {len(_parcels)} municipalities and {len(_lr_units)} LR units")
+    # Load land registry file statuses (plomba/spis detail)
+    file_status_dir = DATA_DIR / "lr-file-status"
+    if file_status_dir.exists():
+        for fs_file in file_status_dir.glob("*.json"):
+            # Filename format: institutionId-code-order-year.json (e.g. 284-Z-12564-2026.json)
+            key = fs_file.stem.upper()
+            _file_status[key] = load_json(fs_file)
+            print(f"✓ Loaded file status {key}")
+
+    print(
+        f"\n🚀 Mock server ready with {len(_parcels)} municipalities, "
+        f"{len(_lr_units)} LR units, {len(_file_status)} file statuses"
+    )
 
 
 @app.get("/")
@@ -101,6 +114,7 @@ async def root():
             "parcel_search": "/search-cad-parcels/parcel-numbers",
             "parcel_info": "/cad/parcel-info",
             "lr_unit": "/lr/lr-unit",
+            "file_status": "/lr/file-status",
             "gis_download": "/atom/ko-{code}.zip",
         },
         "data_loaded": {
@@ -108,6 +122,7 @@ async def root():
             "municipalities": len(_municipalities),
             "parcel_sets": len(_parcels),
             "lr_units": len(_lr_units),
+            "file_statuses": len(_file_status),
         },
     }
 
@@ -276,6 +291,52 @@ async def get_lr_unit(
             "mainBookId": mainBookId,
         },
     )
+
+
+@app.post("/lr/file-status")
+async def get_file_status(body: dict[str, Any] = Body(...)):
+    """Get processing status for a single land registry file (plomba / spis).
+
+    Mirrors the production endpoint: it takes the file number split into parts
+    (``lrFileCode``, ``lrFileOrderNumber``, ``lrFileYear``) plus the owning
+    ``institutionId``, and returns the file's status detail.
+
+    Args:
+        body: JSON object with ``lrFileCode``, ``lrFileOrderNumber``,
+            ``lrFileYear`` (all required) and ``institutionId``.
+
+    Returns:
+        File status object, or an empty object ``{}`` when no record matches
+        (the production endpoint also answers unknown files with ``{}``).
+
+    Note:
+        ⚠️ DEMO/EDUCATIONAL USE ONLY - Returns static test data.
+    """
+    # Validate required fields, matching the production 400 shape.
+    missing = [
+        field
+        for field in ("lrFileCode", "lrFileOrderNumber", "lrFileYear")
+        if body.get(field) in (None, "")
+    ]
+    if missing:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "status": "BAD_REQUEST",
+                "message": "Dogodio se problem sa vašim zahtjevom.",
+                "errors": [f"{field}: ne smije bit blank" for field in missing],
+                "statusCode": 400,
+            },
+        )
+
+    institution_id = body.get("institutionId")
+    code = str(body["lrFileCode"]).upper()
+    order = body["lrFileOrderNumber"]
+    year = body["lrFileYear"]
+    key = f"{institution_id}-{code}-{order}-{year}".upper()
+
+    # Unknown file (or missing institution context) -> empty object, as in production.
+    return _file_status.get(key, {})
 
 
 @app.get("/atom/ko-{municipality_code}.zip")

@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
-"Report-Msgid-Bugs-To: your.email@example.com\n"
-"POT-Creation-Date: 2026-06-09 13:36+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-08 10:53+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -16,96 +16,214 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: cli/src/cadastral_cli/batch_processor.py:181
+#: cli/src/cadastral_cli/batch_processor.py:182
 msgid "Processing parcels..."
 msgstr ""
 
-#: cli/src/cadastral_cli/batch_processor.py:193
+#: cli/src/cadastral_cli/batch_processor.py:194
 #, python-brace-format
 msgid "Processing {current}/{total}: {input}"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:29
+#: cli/src/cadastral_cli/batch_processor.py:232
+#: cli/src/cadastral_cli/formatters.py:123
+#: cli/src/cadastral_cli/commands/registry.py:139
+msgid "Parcel not found"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:28
 msgid "No results found."
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:71
+#: cli/src/cadastral_cli/formatters.py:70
 #, python-brace-format
 msgid "✓ Output saved to: {file}"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:78
+#: cli/src/cadastral_cli/formatters.py:77
 #, python-brace-format
 msgid "✗ Error: {message}"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:61
+#: cli/src/cadastral_cli/formatters.py:119
+msgid "Connection error"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:120
+msgid "Request timed out"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:121
+msgid "Rate limit exceeded"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:122
+msgid "Invalid response from server"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:124
+msgid "Municipality not found"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:125
+#: cli/src/cadastral_cli/commands/registry.py:137
+msgid "Land registry unit not found"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:126
+msgid "Server error"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:142
+#, python-brace-format
+msgid "- caused by: {cause}"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:150
+msgid "unknown"
+msgstr ""
+
+#: cli/src/cadastral_cli/formatters.py:152
+msgid "Unexpected error"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:67
 msgid "LAND REGISTRY UNIT"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:65
+#: cli/src/cadastral_cli/lr_unit_output.py:68
+#: cli/src/cadastral_cli/commands/batch.py:279
+#: cli/src/cadastral_cli/commands/parcel.py:172
+#: cli/src/cadastral_cli/commands/parcel.py:323
+#: cli/src/cadastral_cli/commands/parcel.py:345
+#: cli/src/cadastral_cli/commands/parcel.py:376
+#: cli/src/cadastral_cli/commands/gis.py:242
+msgid "Field"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:69
+#: cli/src/cadastral_cli/lr_unit_output.py:143
+#: cli/src/cadastral_cli/commands/batch.py:280
+#: cli/src/cadastral_cli/commands/parcel.py:173
+#: cli/src/cadastral_cli/commands/parcel.py:324
+#: cli/src/cadastral_cli/commands/parcel.py:346
+#: cli/src/cadastral_cli/commands/parcel.py:377
+#: cli/src/cadastral_cli/commands/gis.py:243
+msgid "Value"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:71
 #: cli/src/cadastral_cli/commands/parcel.py:326
 msgid "Unit Number"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:66
+#: cli/src/cadastral_cli/lr_unit_output.py:72
 #: cli/src/cadastral_cli/commands/parcel.py:328
 msgid "Main Book"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:67
+#: cli/src/cadastral_cli/lr_unit_output.py:73
 #: cli/src/cadastral_cli/commands/parcel.py:331
 msgid "Institution"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:68
-#: cli/src/cadastral_cli/commands/batch.py:301
+#: cli/src/cadastral_cli/lr_unit_output.py:74
+#: cli/src/cadastral_cli/lr_unit_output.py:105
+#: cli/src/cadastral_cli/commands/batch.py:303
 #: cli/src/cadastral_cli/commands/parcel.py:332
 msgid "Status"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:69
+#: cli/src/cadastral_cli/lr_unit_output.py:75
 msgid "Unit Type"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:70
+#: cli/src/cadastral_cli/lr_unit_output.py:76
 msgid "Last Diary Number"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:79
+#: cli/src/cadastral_cli/lr_unit_output.py:81
+msgid "Pending entries (plombe)"
+msgstr "Pending entries (plombe)"
+
+#: cli/src/cadastral_cli/lr_unit_output.py:87
+msgid "This unit has pending entries (plombe) - a change may be in progress."
+msgstr "This unit has pending entries (plombe) - a change may be in progress."
+
+#: cli/src/cadastral_cli/lr_unit_output.py:102
+msgid "PENDING ENTRIES DETAIL (PLOMBE)"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:103
+msgid "File Number"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:104
+msgid "Request"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:106
+msgid "Received"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:107
+msgid "Outcome"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:113
+msgid "Resolved"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:116
+msgid "In progress"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:128
+msgid "cadastre plomba (no land-registry detail)"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:130
+msgid "detail unavailable"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:141
 msgid "SUMMARY"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:85
+#: cli/src/cadastral_cli/lr_unit_output.py:142
+msgid "Metric"
+msgstr ""
+
+#: cli/src/cadastral_cli/lr_unit_output.py:147
 msgid "Property Type"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:85
+#: cli/src/cadastral_cli/lr_unit_output.py:147
 msgid "Condominium (Etažno vlasništvo)"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:86
+#: cli/src/cadastral_cli/lr_unit_output.py:148
 msgid "Number of Units"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:88
-#: cli/src/cadastral_cli/commands/batch.py:280
+#: cli/src/cadastral_cli/lr_unit_output.py:150
+#: cli/src/cadastral_cli/commands/batch.py:282
 msgid "Total Parcels"
 msgstr "Total Parcels"
 
-#: cli/src/cadastral_cli/lr_unit_output.py:89
+#: cli/src/cadastral_cli/lr_unit_output.py:151
 msgid "Total Area"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:90
+#: cli/src/cadastral_cli/lr_unit_output.py:152
 msgid "Number of Owners"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:92
+#: cli/src/cadastral_cli/lr_unit_output.py:154
 msgid "Has Encumbrances"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:93
+#: cli/src/cadastral_cli/lr_unit_output.py:155
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
 #: cli/src/cadastral_cli/commands/parcel.py:183
@@ -114,7 +232,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:93
+#: cli/src/cadastral_cli/lr_unit_output.py:155
 #: cli/src/cadastral_cli/commands/search.py:63
 #: cli/src/cadastral_cli/commands/parcel.py:180
 #: cli/src/cadastral_cli/commands/parcel.py:183
@@ -123,88 +241,112 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:97
-msgid "Pending entries (plombe)"
-msgstr "Pending entries (plombe)"
-
-#: cli/src/cadastral_cli/lr_unit_output.py:105
-msgid "This unit has pending entries (plombe) - a change may be in progress."
-msgstr "This unit has pending entries (plombe) - a change may be in progress."
-
-#: cli/src/cadastral_cli/lr_unit_output.py:111
+#: cli/src/cadastral_cli/lr_unit_output.py:162
 msgid "Use --show-owners to see ownership details"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:113
+#: cli/src/cadastral_cli/lr_unit_output.py:164
 msgid "Use --show-parcels to see all parcels"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:115
+#: cli/src/cadastral_cli/lr_unit_output.py:166
 msgid "Use --show-encumbrances to see encumbrances"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:120
+#: cli/src/cadastral_cli/lr_unit_output.py:171
 msgid "PARCEL LIST (SHEET A)"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:121
+#: cli/src/cadastral_cli/lr_unit_output.py:172
 #: cli/src/cadastral_cli/commands/search.py:58
 #: cli/src/cadastral_cli/commands/parcel.py:175
 msgid "Parcel Number"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:122
-#: cli/src/cadastral_cli/lr_unit_output.py:150
+#: cli/src/cadastral_cli/lr_unit_output.py:173
+#: cli/src/cadastral_cli/lr_unit_output.py:201
 #: cli/src/cadastral_cli/commands/search.py:60
 #: cli/src/cadastral_cli/commands/parcel.py:178
 #: cli/src/cadastral_cli/commands/parcel.py:278
 msgid "Address"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:123
-#: cli/src/cadastral_cli/commands/batch.py:304
+#: cli/src/cadastral_cli/lr_unit_output.py:174
+#: cli/src/cadastral_cli/commands/batch.py:306
 #: cli/src/cadastral_cli/commands/parcel.py:216
 msgid "Area (m²)"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:135
+#: cli/src/cadastral_cli/lr_unit_output.py:186
 msgid "TOTAL"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:147
+#: cli/src/cadastral_cli/lr_unit_output.py:198
 msgid "OWNERSHIP SHEET (LIST B)"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:148
+#: cli/src/cadastral_cli/lr_unit_output.py:199
 msgid "Share"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:149
+#: cli/src/cadastral_cli/lr_unit_output.py:200
 msgid "Owner"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:151
+#: cli/src/cadastral_cli/lr_unit_output.py:202
 msgid "OIB"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:155
+#: cli/src/cadastral_cli/lr_unit_output.py:206
 msgid "Apartment"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:242
+#: cli/src/cadastral_cli/lr_unit_output.py:293
 msgid "ENCUMBRANCES SHEET (LIST C)"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:243
+#: cli/src/cadastral_cli/lr_unit_output.py:294
 msgid "Description"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:244
+#: cli/src/cadastral_cli/lr_unit_output.py:295
 msgid "Details"
 msgstr ""
 
-#: cli/src/cadastral_cli/lr_unit_output.py:247
+#: cli/src/cadastral_cli/lr_unit_output.py:298
 msgid "No encumbrances found"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:14
+msgid ""
+"List all cadastral offices in Croatia.\n"
+"\n"
+"Example:\n"
+"  cadastral list-offices\n"
+"  cadastral list-offices --format json"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:22
+#: cli/src/cadastral_cli/commands/discovery.py:78
+#: cli/src/cadastral_cli/commands/registry.py:53
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:516
+#: cli/src/cadastral_cli/commands/batch.py:99
+#: cli/src/cadastral_cli/commands/search.py:26
+#: cli/src/cadastral_cli/commands/search.py:124
+#: cli/src/cadastral_cli/commands/parcel.py:31
+msgid "Output format"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:23
+#: cli/src/cadastral_cli/commands/discovery.py:79
+#: cli/src/cadastral_cli/commands/registry.py:54
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:508
+#: cli/src/cadastral_cli/commands/batch.py:91
+#: cli/src/cadastral_cli/commands/search.py:27
+#: cli/src/cadastral_cli/commands/search.py:125
+#: cli/src/cadastral_cli/commands/parcel.py:32
+#: cli/src/cadastral_cli/commands/gis.py:31
+msgid "Save output to file"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/discovery.py:29
@@ -235,10 +377,44 @@ msgstr ""
 
 #: cli/src/cadastral_cli/commands/discovery.py:61
 #: cli/src/cadastral_cli/commands/discovery.py:157
+#: cli/src/cadastral_cli/commands/registry.py:141
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:618
+#: cli/src/cadastral_cli/commands/batch.py:214
+#: cli/src/cadastral_cli/commands/search.py:107
+#: cli/src/cadastral_cli/commands/search.py:210
+#: cli/src/cadastral_cli/commands/parcel.py:86
 #: cli/src/cadastral_cli/commands/gis.py:134
 #: cli/src/cadastral_cli/commands/gis.py:228
 #, python-brace-format
 msgid "API error: {error}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:65
+msgid ""
+"List municipalities with optional filtering.\n"
+"\n"
+"Examples:\n"
+"  cadastral list-municipalities\n"
+"  cadastral list-municipalities --office 114\n"
+"  cadastral list-municipalities --office 114 --department 116\n"
+"  cadastral list-municipalities --search ZADAR"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:75
+msgid "Filter by cadastral office ID"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:76
+msgid "Filter by department ID"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:77
+msgid "Search by name"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:80
+#: cli/src/cadastral_cli/commands/search.py:126
+msgid "Show count only"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/discovery.py:103
@@ -298,6 +474,14 @@ msgstr ""
 msgid ""
 "\n"
 "{count} municipalities{filter_desc}:\n"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/discovery.py:161
+msgid ""
+"Display system information and cache status.\n"
+"\n"
+"Example:\n"
+"  cadastral info"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/discovery.py:173
@@ -372,29 +556,98 @@ msgstr ""
 msgid "Error getting system info: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:75
+#: cli/src/cadastral_cli/commands/registry.py:19
+msgid ""
+"Get detailed land registry unit information.\n"
+"\n"
+"Retrieve complete information about a land registry unit (zemljišnoknjižni "
+"uložak),\n"
+"including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet "
+"C).\n"
+"\n"
+"Examples:\n"
+"  # Get by unit number and main book ID\n"
+"  cadastral get-lr-unit --unit-number 769 --main-book 21277\n"
+"\n"
+"  # Get from parcel (automatic lookup)\n"
+"  cadastral get-lr-unit --from-parcel 279/6 -m SAVAR\n"
+"\n"
+"  # Show only ownership information\n"
+"  cadastral get-lr-unit -u 769 -b 21277 --show-owners\n"
+"\n"
+"  # Show all sheets\n"
+"  cadastral get-lr-unit -p 279/6 -m SAVAR --all\n"
+"\n"
+"  # Export to JSON\n"
+"  cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json\n"
+"\n"
+"⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:44
+msgid "Land registry unit number (e.g., '769')"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:45
+msgid "Main book ID (e.g., 21277)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:46
+msgid "Get LR unit from parcel number"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:47
+msgid "Municipality name or code (required with --from-parcel)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:48
+msgid "Display ownership details (Sheet B)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:49
+msgid "Display all parcels in unit (Sheet A)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:50
+msgid "Display encumbrances (Sheet C)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:51
+msgid ""
+"Resolve detail of pending entries (plombe) - one extra request per plomba"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:52
+msgid "Show all sheets"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:74
 msgid "--municipality is required when using --from-parcel"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:78
+#: cli/src/cadastral_cli/commands/registry.py:77
 msgid "Cannot use --unit-number or --main-book with --from-parcel"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:81
+#: cli/src/cadastral_cli/commands/registry.py:80
 msgid "Either --from-parcel or both --unit-number and --main-book are required"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:89
+#: cli/src/cadastral_cli/commands/registry.py:88
 #, python-brace-format
 msgid "Fetching land registry unit from parcel {parcel}..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:94
+#: cli/src/cadastral_cli/commands/registry.py:93
 #, python-brace-format
 msgid "Fetching land registry unit {unit}..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/registry.py:112
+#: cli/src/cadastral_cli/commands/registry.py:101
+msgid "Resolving pending entries (plombe) detail..."
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/registry.py:121
 #: cli/src/cadastral_cli/commands/parcel.py:190
 msgid ""
 "⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
@@ -403,227 +656,357 @@ msgstr ""
 "⚠️  Cadastre and land registry are NOT harmonized for this parcel - "
 "possessors (kataster) and registered owners (ZK) may differ."
 
-#: cli/src/cadastral_cli/commands/registry.py:122
+#: cli/src/cadastral_cli/commands/registry.py:131
 #: cli/src/cadastral_cli/commands/parcel.py:199
 #, python-brace-format
 msgid "To see the other register, run: {command}"
 msgstr "To see the other register, run: {command}"
 
-#: cli/src/cadastral_cli/commands/registry.py:128
-msgid "Land registry unit not found"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/registry.py:130
-msgid "Parcel not found"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/registry.py:132
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:616
-#: cli/src/cadastral_cli/commands/batch.py:212
-#: cli/src/cadastral_cli/commands/search.py:107
-#: cli/src/cadastral_cli/commands/search.py:210
-#: cli/src/cadastral_cli/commands/parcel.py:86
-#, python-brace-format
-msgid "API error: {error_type}"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:308
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:315
 msgid "Processing LR units..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:319
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:326
 #, python-brace-format
 msgid "Processing {current}/{total}: LR unit {unit}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:400
-#: cli/src/cadastral_cli/commands/batch.py:354
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:407
+#: cli/src/cadastral_cli/commands/batch.py:356
 msgid "ERRORS"
 msgstr "ERRORS"
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:406
-#: cli/src/cadastral_cli/commands/batch.py:306
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:413
+#: cli/src/cadastral_cli/commands/batch.py:308
 msgid "LR Unit"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:407
-#: cli/src/cadastral_cli/commands/batch.py:360
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:414
+#: cli/src/cadastral_cli/commands/batch.py:362
 msgid "Error Type"
 msgstr "Error Type"
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:408
-#: cli/src/cadastral_cli/commands/batch.py:361
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:415
+#: cli/src/cadastral_cli/commands/batch.py:363
 msgid "Error Message"
 msgstr "Error Message"
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:417
-#: cli/src/cadastral_cli/commands/batch.py:237
-#: cli/src/cadastral_cli/commands/batch.py:375
-msgid "unknown"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:418
-#: cli/src/cadastral_cli/commands/batch.py:238
-#: cli/src/cadastral_cli/commands/batch.py:376
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:425
+#: cli/src/cadastral_cli/commands/batch.py:240
+#: cli/src/cadastral_cli/commands/batch.py:378
 msgid "No error message"
 msgstr "No error message"
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:540
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:453
+msgid ""
+"Fetch information for multiple land registry units in batch mode.\n"
+"\n"
+"Supports two input methods:\n"
+"\n"
+"1. Direct LR unit file (CSV or JSON):\n"
+"   cadastral batch-lr-unit --input lr_units.csv\n"
+"\n"
+"2. From batch-fetch output (reads unique LR unit refs):\n"
+"   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o "
+"parcels.json\n"
+"   cadastral batch-lr-unit --from-batch-output parcels.json\n"
+"\n"
+"CSV Format:\n"
+"  lr_unit_number,main_book_id\n"
+"  769,21277\n"
+"  123,45678\n"
+"\n"
+"JSON Format:\n"
+"  [\n"
+"    {\"lr_unit_number\": \"769\", \"main_book_id\": 21277},\n"
+"    {\"lr_unit_number\": \"123\", \"main_book_id\": 45678}\n"
+"  ]\n"
+"\n"
+"Examples:\n"
+"  # From direct LR unit input\n"
+"  cadastral batch-lr-unit --input lr_units.csv\n"
+"\n"
+"  # From batch-fetch output (pipeline)\n"
+"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o "
+"parcels.json\n"
+"  cadastral batch-lr-unit --from-batch-output parcels.json\n"
+"\n"
+"  # With ownership details in JSON format\n"
+"  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o "
+"results.json\n"
+"\n"
+"⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:495
+msgid "Input file (CSV or JSON) with LR unit specifications"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:502
+msgid "Read LR unit refs from batch-fetch JSON output"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:521
+#: cli/src/cadastral_cli/commands/batch.py:110
+msgid "Include detailed ownership information in output"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:526
+#: cli/src/cadastral_cli/commands/batch.py:115
+msgid "Continue processing after errors (default: continue)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:542
 msgid "Must provide either --input file or --from-batch-output file"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:545
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:543
+#: cli/src/cadastral_cli/commands/batch.py:134
+#, python-brace-format
+msgid ""
+"\n"
+"Use '{command}' for usage information."
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:547
 msgid "Cannot use both --input and --from-batch-output"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:558
-#: cli/src/cadastral_cli/commands/batch.py:154
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:553
+#, python-brace-format
+msgid "📄 Reading LR unit refs from batch-fetch output: {file}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:556
+#, python-brace-format
+msgid "📄 Reading LR units from: {file}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:560
+#: cli/src/cadastral_cli/commands/batch.py:156
 #, python-brace-format
 msgid "Input parsing error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:562
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:564
 #, python-brace-format
 msgid "📊 Found {count} LR unit to process\n"
 msgid_plural "📊 Found {count} LR units to process\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:591
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:593
 #, python-brace-format
 msgid "✓ Successfully processed all {total} LR unit(s)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:597
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:599
 #, python-brace-format
 msgid "⚠️  Processed {successful}/{total} LR units ({rate}% success rate)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:605
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:607
 #, python-brace-format
 msgid "   {count} LR unit failed - see output for details"
 msgid_plural "   {count} LR units failed - see output for details"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:621
-#: cli/src/cadastral_cli/commands/batch.py:217
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:620
+#: cli/src/cadastral_cli/commands/batch.py:216
+#, python-brace-format
+msgid "   Details: {details}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:623
+#: cli/src/cadastral_cli/commands/batch.py:219
 #, python-brace-format
 msgid "Unexpected error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:131
+#: cli/src/cadastral_cli/commands/batch.py:23
+msgid ""
+"Fetch information for multiple parcels in batch mode.\n"
+"\n"
+"Supports two input methods:\n"
+"\n"
+"1. CLI comma-separated list (for quick batches):\n"
+"   cadastral batch-fetch \"103/2,45,396/1\" --municipality SAVAR\n"
+"\n"
+"2. File input (for large batches):\n"
+"   cadastral batch-fetch --input parcels.csv\n"
+"   cadastral batch-fetch --input parcels.json\n"
+"\n"
+"CSV Format (parcel numbers with municipality):\n"
+"  parcel_number,municipality\n"
+"  103/2,334979\n"
+"  45,\n"
+"  396/1,\n"
+"\n"
+"Note: Empty municipality cells inherit from the previous row.\n"
+"\n"
+"CSV Format (direct parcel IDs):\n"
+"  parcel_id\n"
+"  12345678\n"
+"  87654321\n"
+"\n"
+"JSON Format:\n"
+"  [\n"
+"    {\"parcel_number\": \"103/2\", \"municipality\": \"334979\"},\n"
+"    {\"parcel_number\": \"45\", \"municipality\": \"SAVAR\"}\n"
+"  ]\n"
+"\n"
+"Or:\n"
+"  [\n"
+"    {\"parcel_id\": \"12345678\"},\n"
+"    {\"parcel_id\": \"87654321\"}\n"
+"  ]\n"
+"\n"
+"Examples:\n"
+"  # Quick batch with CLI list\n"
+"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR\n"
+"\n"
+"  # Batch from CSV file\n"
+"  cadastral batch-fetch --input parcels.csv --format csv -o results.csv\n"
+"\n"
+"  # Batch with full details for each parcel (like get-parcel)\n"
+"  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --detail full\n"
+"\n"
+"  # Batch with ownership details in JSON format\n"
+"  cadastral batch-fetch --input parcels.json --show-owners --format json -o "
+"results.json"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch.py:80
+msgid "Input file (CSV or JSON) with parcel specifications"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch.py:85
+msgid "Municipality name or code (required for CLI list mode)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch.py:105
+msgid ""
+"Detail level: basic (summary only) or full (complete parcel info for each)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch.py:133
 msgid "Must provide either PARCELS argument or --input file"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:136
+#: cli/src/cadastral_cli/commands/batch.py:138
 msgid "Cannot use both PARCELS argument and --input file"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:148
+#: cli/src/cadastral_cli/commands/batch.py:145
+#, python-brace-format
+msgid "📄 Reading parcels from: {file}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/batch.py:150
 msgid "--municipality/-m required when using CLI list mode"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:158
+#: cli/src/cadastral_cli/commands/batch.py:160
 #, python-brace-format
 msgid "📊 Found {count} parcel to process\n"
 msgid_plural "📊 Found {count} parcels to process\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch.py:187
+#: cli/src/cadastral_cli/commands/batch.py:189
 #, python-brace-format
 msgid "✓ Successfully processed all {total} parcel(s)"
 msgstr "✓ Successfully processed all {total} parcel(s)"
 
-#: cli/src/cadastral_cli/commands/batch.py:193
+#: cli/src/cadastral_cli/commands/batch.py:195
 #, python-brace-format
 msgid "⚠️  Processed {successful}/{total} parcels ({rate}% success rate)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:201
+#: cli/src/cadastral_cli/commands/batch.py:203
 #, python-brace-format
 msgid "   {count} parcel failed - see output for details"
 msgid_plural "   {count} parcels failed - see output for details"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch.py:232
-#: cli/src/cadastral_cli/commands/batch.py:236
-#: cli/src/cadastral_cli/commands/batch.py:302
-#: cli/src/cadastral_cli/commands/batch.py:359
+#: cli/src/cadastral_cli/commands/batch.py:234
+#: cli/src/cadastral_cli/commands/batch.py:238
+#: cli/src/cadastral_cli/commands/batch.py:304
+#: cli/src/cadastral_cli/commands/batch.py:361
 #: cli/src/cadastral_cli/commands/parcel.py:137
 #: cli/src/cadastral_cli/commands/gis.py:245
 msgid "Parcel"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:232
+#: cli/src/cadastral_cli/commands/batch.py:234
 msgid "ERROR"
 msgstr "ERROR"
 
-#: cli/src/cadastral_cli/commands/batch.py:234
-#: cli/src/cadastral_cli/commands/batch.py:305
+#: cli/src/cadastral_cli/commands/batch.py:236
+#: cli/src/cadastral_cli/commands/batch.py:307
 #: cli/src/cadastral_cli/commands/parcel.py:176
 msgid "Parcel ID"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:237
+#: cli/src/cadastral_cli/commands/batch.py:239
 msgid "Error"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:238
+#: cli/src/cadastral_cli/commands/batch.py:240
 msgid "Message"
 msgstr ""
 
 # Batch command strings
-#: cli/src/cadastral_cli/commands/batch.py:273
+#: cli/src/cadastral_cli/commands/batch.py:275
 msgid "BATCH PROCESSING SUMMARY"
 msgstr "BATCH PROCESSING SUMMARY"
 
-#: cli/src/cadastral_cli/commands/batch.py:277
-#: cli/src/cadastral_cli/commands/parcel.py:172
-#: cli/src/cadastral_cli/commands/parcel.py:323
-#: cli/src/cadastral_cli/commands/parcel.py:345
-#: cli/src/cadastral_cli/commands/parcel.py:376
-#: cli/src/cadastral_cli/commands/gis.py:242
-msgid "Field"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/batch.py:278
-#: cli/src/cadastral_cli/commands/parcel.py:173
-#: cli/src/cadastral_cli/commands/parcel.py:324
-#: cli/src/cadastral_cli/commands/parcel.py:346
-#: cli/src/cadastral_cli/commands/parcel.py:377
-#: cli/src/cadastral_cli/commands/gis.py:243
-msgid "Value"
-msgstr ""
-
-#: cli/src/cadastral_cli/commands/batch.py:282
+#: cli/src/cadastral_cli/commands/batch.py:284
 msgid "Successful"
 msgstr "Successful"
 
-#: cli/src/cadastral_cli/commands/batch.py:284
+#: cli/src/cadastral_cli/commands/batch.py:286
 msgid "Failed"
 msgstr "Failed"
 
-#: cli/src/cadastral_cli/commands/batch.py:285
+#: cli/src/cadastral_cli/commands/batch.py:287
 msgid "Success Rate"
 msgstr "Success Rate"
 
-#: cli/src/cadastral_cli/commands/batch.py:296
+#: cli/src/cadastral_cli/commands/batch.py:298
 msgid "RESULTS"
 msgstr "RESULTS"
 
-#: cli/src/cadastral_cli/commands/batch.py:303
+#: cli/src/cadastral_cli/commands/batch.py:305
 #: cli/src/cadastral_cli/commands/cache.py:87
 #: cli/src/cadastral_cli/commands/search.py:59
 #: cli/src/cadastral_cli/commands/parcel.py:177
 msgid "Municipality"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch.py:309
+#: cli/src/cadastral_cli/commands/batch.py:311
 #: cli/src/cadastral_cli/commands/search.py:64
 msgid "Owners"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:14
+msgid ""
+"Cache management commands.\n"
+"\n"
+"Examples:\n"
+"  cadastral cache list\n"
+"  cadastral cache clear --municipality 334979\n"
+"  cadastral cache clear --all"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:27
+msgid ""
+"List cached municipalities.\n"
+"\n"
+"Example:\n"
+"  cadastral cache list"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/cache.py:76
@@ -662,6 +1045,28 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/cache.py:108
 #, python-brace-format
 msgid "Error listing cache: {error}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:112
+msgid ""
+"Clear cached GIS data.\n"
+"\n"
+"Examples:\n"
+"  cadastral cache clear --municipality 334979\n"
+"  cadastral cache clear --all\n"
+"  cadastral cache clear -m SAVAR --force"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:121
+msgid "Clear specific municipality"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:122
+msgid "Clear all cache"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/cache.py:123
+msgid "Skip confirmation"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/cache.py:128
@@ -719,6 +1124,14 @@ msgstr ""
 msgid "Error clearing cache: {error}"
 msgstr ""
 
+#: cli/src/cadastral_cli/commands/cache.py:191
+msgid ""
+"Show detailed cache information.\n"
+"\n"
+"Example:\n"
+"  cadastral cache info"
+msgstr ""
+
 #: cli/src/cadastral_cli/commands/cache.py:205
 msgid "CACHE INFORMATION"
 msgstr ""
@@ -765,6 +1178,24 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/cache.py:246
 #, python-brace-format
 msgid "Error getting cache info: {error}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/search.py:14
+msgid ""
+"Quick search for parcels with basic information.\n"
+"\n"
+"Examples:\n"
+"  cadastral search 103/2 --municipality SAVAR\n"
+"  cadastral search 103/2 -m 334979\n"
+"  cadastral search 114 -m 334979 --partial"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/search.py:24
+msgid "Municipality name or code (e.g., SAVAR or 334979)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/search.py:25
+msgid "Exact match or partial search"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/search.py:37
@@ -835,6 +1266,25 @@ msgstr "For full details"
 msgid "Municipality '{municipality}' not found"
 msgstr ""
 
+#: cli/src/cadastral_cli/commands/search.py:111
+msgid ""
+"Search and filter municipalities.\n"
+"\n"
+"Examples:\n"
+"  cadastral search-municipality SAVAR\n"
+"  cadastral search-municipality --office 114\n"
+"  cadastral search-municipality --office 114 --department 116\n"
+"  cadastral search-municipality SAVAR --office 114"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/search.py:122
+msgid "Filter by cadastral office ID (e.g., 114)"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/search.py:123
+msgid "Filter by department ID (e.g., 116)"
+msgstr ""
+
 #: cli/src/cadastral_cli/commands/search.py:139
 msgid "At least one of search_term, --office, or --department is required"
 msgstr ""
@@ -882,7 +1332,35 @@ msgstr ""
 
 #: cli/src/cadastral_cli/commands/search.py:264
 #, python-brace-format
-msgid "Failed to resolve municipality: {error_type}"
+msgid "Failed to resolve municipality: {error}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/parcel.py:16
+msgid ""
+"Get complete parcel information with ownership details.\n"
+"\n"
+"Examples:\n"
+"  cadastral get-parcel 103/2 -m SAVAR\n"
+"  cadastral get-parcel 103/2 -m 334979 --show-owners\n"
+"  cadastral get-parcel 103/2 -m 334979 --detail owners\n"
+"  cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/parcel.py:27
+#: cli/src/cadastral_cli/commands/gis.py:29
+msgid "Municipality name or code"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/parcel.py:28
+msgid "Detail level"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/parcel.py:29
+msgid "Include ownership details"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/parcel.py:30
+msgid "Include boundary coordinates"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:51
@@ -1047,6 +1525,25 @@ msgstr ""
 msgid "Detail Sheet"
 msgstr ""
 
+#: cli/src/cadastral_cli/commands/gis.py:18
+msgid ""
+"Get parcel boundary coordinates for GIS integration.\n"
+"\n"
+"Examples:\n"
+"  cadastral get-geometry 103/2 -m SAVAR\n"
+"  cadastral get-geometry 103/2 -m 334979 --format wkt\n"
+"  cadastral get-geometry 103/2 -m 334979 --format geojson -o parcel.geojson\n"
+"  cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:30
+msgid "Export format"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:32
+msgid "Include geometry statistics"
+msgstr ""
+
 #: cli/src/cadastral_cli/commands/gis.py:49
 #, python-brace-format
 msgid "Fetching geometry for parcel {parcel_number}..."
@@ -1081,6 +1578,28 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/gis.py:129
 #, python-brace-format
 msgid "JSON saved to: {output}"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:138
+msgid ""
+"Download complete GIS data for a municipality.\n"
+"\n"
+"Examples:\n"
+"  cadastral download-gis 334979 --output ./gis_data\n"
+"  cadastral download-gis SAVAR --output ./savar_gis --extract\n"
+"  cadastral download-gis 334979 -o ./data --clear-cache"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:148
+msgid "Output directory"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:149
+msgid "Extract ZIP file"
+msgstr ""
+
+#: cli/src/cadastral_cli/commands/gis.py:150
+msgid "Clear cached data first"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/gis.py:171
@@ -1169,38 +1688,390 @@ msgstr ""
 msgid "  Max Y"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:29
+#: cli/src/cadastral_cli/main.py:61
+msgid ""
+"Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
+"\n"
+"Examples:\n"
+"  cadastral search 103/2 --municipality SAVAR\n"
+"  cadastral get-parcel 103/2 -m 334979 --show-owners\n"
+"  cadastral list-municipalities --office 114\n"
+"  cadastral get-geometry 103/2 -m 334979 --format wkt\n"
+"\n"
+"Documentation: https://github.com/yourusername/croatian-cadastral-api"
+msgstr ""
+
+#: cli/src/cadastral_cli/main.py:75
 msgid "Verbose output"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:33
+#: cli/src/cadastral_cli/main.py:79
 msgid "Language for output (overrides system locale)"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:60
+#: cli/src/cadastral_cli/main.py:95
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:86
+#: cli/src/cadastral_cli/main.py:121
 #, python-brace-format
 msgid ""
 "\n"
 "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:89
+#: cli/src/cadastral_cli/main.py:124
 msgid ""
 "\n"
 "\n"
 "Operation cancelled by user."
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:92
+#: cli/src/cadastral_cli/main.py:127
 #, python-brace-format
 msgid ""
 "\n"
 "✗ Unexpected error: {error}"
+msgstr ""
+
+#: click/_termui_impl.py:186
+msgid "d"
+msgstr ""
+
+#: click/_termui_impl.py:736
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#: click/_termui_impl.py:740
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+#: click/_winconsole.py:156 click/_winconsole.py:173
+#, python-brace-format
+msgid "Windows error: {error}"
+msgstr ""
+
+#: click/core.py:104
+msgid "deprecated"
+msgstr ""
+
+#: click/core.py:1304
+msgid "Options"
+msgstr ""
+
+#: click/core.py:1316
+msgid "Positional arguments"
+msgstr ""
+
+#: click/core.py:1391
+#, no-python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/core.py:1407
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: click/core.py:1594
+msgid "Aborted!"
+msgstr ""
+
+#: click/core.py:1981
+msgid "Commands"
+msgstr ""
+
+#: click/core.py:2012
+msgid "Missing command."
+msgstr ""
+
+#: click/core.py:2547
+msgid "Value must be an iterable."
+msgstr ""
+
+#: click/core.py:2570
+#, no-python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/core.py:2767
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: click/core.py:3246
+#, python-brace-format
+msgid "Name '{name}' defined twice"
+msgstr ""
+
+#: click/core.py:3262
+msgid "Boolean option {decl!r} cannot use the same flag for true/false."
+msgstr ""
+
+#: click/core.py:3281
+msgid "Could not determine name for option with declarations {decls!r}"
+msgstr ""
+
+#: click/core.py:3288
+#, python-brace-format
+msgid ""
+"No options defined but a name was passed ({name}). Did you mean to declare "
+"an argument instead? Did you mean to pass '--{name}'?"
+msgstr ""
+
+#: click/core.py:3368
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+#: click/core.py:3371
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+#: click/core.py:3435
+msgid "(dynamic)"
+msgstr ""
+
+#: click/core.py:3754
+#, python-brace-format
+msgid ""
+"Arguments take exactly one parameter declaration, got {length}: {decls}."
+msgstr ""
+
+#: click/decorators.py:399
+msgid "Do you want to continue?"
+msgstr ""
+
+#: click/decorators.py:400
+msgid "Confirm the action without prompting."
+msgstr ""
+
+#: click/decorators.py:482
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+#: click/decorators.py:556 click/decorators.py:598
+msgid "Show the version and exit."
+msgstr ""
+
+#: click/decorators.py:624
+msgid "Show this message and exit."
+msgstr ""
+
+#: click/exceptions.py:29
+#, no-python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Did you mean one of: {possibilities}?)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/exceptions.py:62 click/exceptions.py:108 click/termui.py:275
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#: click/exceptions.py:99
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#: click/exceptions.py:152
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#: click/exceptions.py:154
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+#: click/exceptions.py:214
+msgid "Missing argument"
+msgstr ""
+
+#: click/exceptions.py:216
+msgid "Missing option"
+msgstr ""
+
+#: click/exceptions.py:218
+msgid "Missing parameter"
+msgstr ""
+
+#: click/exceptions.py:220
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#: click/exceptions.py:227
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#: click/exceptions.py:249
+msgid "No such option {name!r}."
+msgstr ""
+
+#: click/exceptions.py:285
+msgid "No such command {name!r}."
+msgstr ""
+
+#: click/exceptions.py:350
+msgid "unknown error"
+msgstr ""
+
+#: click/exceptions.py:357
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+#: click/formatting.py:167
+msgid "Usage:"
+msgstr ""
+
+#: click/parser.py:145
+#, python-brace-format
+msgid "Invalid start character for option ({option})"
+msgstr ""
+
+#: click/parser.py:203
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+#: click/parser.py:382
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+#: click/parser.py:445
+#, no-python-brace-format
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/shell_completion.py:417
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+#: click/shell_completion.py:424
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#: click/termui.py:256
+msgid "Repeat for confirmation"
+msgstr ""
+
+#: click/termui.py:286
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+#: click/termui.py:340
+msgid "Error: invalid input"
+msgstr ""
+
+#: click/termui.py:638
+msgid "Unknown color {colour!r}"
+msgstr ""
+
+#: click/termui.py:1003
+msgid "Press any key to continue..."
+msgstr ""
+
+#: click/types.py:439
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+#: click/types.py:476
+#, no-python-brace-format
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/types.py:482
+#, python-brace-format
+msgid "Choice({choices})"
+msgstr ""
+
+#: click/types.py:570
+#, no-python-brace-format
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/types.py:594
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#: click/types.py:679
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+#: click/types.py:866
+msgid "{value!r} is not a valid boolean. Recognized values: {states}"
+msgstr ""
+
+#: click/types.py:892
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+#: click/types.py:1116
+msgid "file"
+msgstr ""
+
+#: click/types.py:1118
+msgid "directory"
+msgstr ""
+
+#: click/types.py:1120
+msgid "path"
+msgstr ""
+
+#: click/types.py:1167
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+#: click/types.py:1176
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+#: click/types.py:1184
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+#: click/types.py:1193
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#: click/types.py:1202
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+#: click/types.py:1211
+msgid "{name} {filename!r} is not executable."
+msgstr ""
+
+#: click/types.py:1283
+#, no-python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: click/utils.py:362 click/utils.py:389
+#, python-brace-format
+msgid "Unknown standard stream '{name}'"
 msgstr ""
 
 #, python-brace-format

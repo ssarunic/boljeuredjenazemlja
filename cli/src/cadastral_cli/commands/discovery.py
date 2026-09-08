@@ -6,24 +6,24 @@ from rich.console import Console
 from cadastral_api import CadastralAPIClient, __version__
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _
-from cadastral_cli.formatters import print_error, print_output
+from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
 
 console = Console()
 
 
-@click.command("list-offices")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
-@click.option("--output", "-o", type=click.Path(), help="Save output to file")
+_LIST_OFFICES_HELP = command_help(_("""List all cadastral offices in Croatia.
+
+Example:
+  cadastral list-offices
+  cadastral list-offices --format json"""))
+
+
+@click.command("list-offices", help=_LIST_OFFICES_HELP)
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def list_offices(ctx: click.Context, output_format: str, output: str | None) -> None:
-    """
-    List all cadastral offices in Croatia.
-
-    \b
-    Example:
-      cadastral list-offices
-      cadastral list-offices --format json
-    """
+    """List all cadastral offices in Croatia."""
     try:
         with CadastralAPIClient() as client:
             with console.status(_("Fetching cadastral offices...")):
@@ -58,17 +58,26 @@ def list_offices(ctx: click.Context, output_format: str, output: str | None) -> 
                 print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error}").format(error=str(e)))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
-@click.command("list-municipalities")
-@click.option("--office", "-o", help="Filter by cadastral office ID")
-@click.option("--department", "-d", help="Filter by department ID")
-@click.option("--search", "-s", help="Search by name")
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help="Output format")
-@click.option("--output", "-out", type=click.Path(), help="Save output to file")
-@click.option("--count-only", is_flag=True, help="Show count only")
+_LIST_MUNICIPALITIES_HELP = command_help(_("""List municipalities with optional filtering.
+
+Examples:
+  cadastral list-municipalities
+  cadastral list-municipalities --office 114
+  cadastral list-municipalities --office 114 --department 116
+  cadastral list-municipalities --search ZADAR"""))
+
+
+@click.command("list-municipalities", help=_LIST_MUNICIPALITIES_HELP)
+@click.option("--office", "-o", help=_("Filter by cadastral office ID"))
+@click.option("--department", "-d", help=_("Filter by department ID"))
+@click.option("--search", "-s", help=_("Search by name"))
+@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
+@click.option("--count-only", is_flag=True, help=_("Show count only"))
 @click.pass_context
 def list_municipalities(
     ctx: click.Context,
@@ -79,16 +88,7 @@ def list_municipalities(
     output: str | None,
     count_only: bool
 ) -> None:
-    """
-    List municipalities with optional filtering.
-
-    \b
-    Examples:
-      cadastral list-municipalities
-      cadastral list-municipalities --office 114
-      cadastral list-municipalities --office 114 --department 116
-      cadastral list-municipalities --search ZADAR
-    """
+    """List municipalities with optional filtering."""
     try:
         with CadastralAPIClient() as client:
             # Build filter description
@@ -154,20 +154,20 @@ def list_municipalities(
                 print_output(export_data, output_format=output_format, file=output)
 
     except CadastralAPIError as e:
-        print_error(_("API error: {error}").format(error=str(e)))
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
-@click.command("info")
+_INFO_HELP = command_help(_("""Display system information and cache status.
+
+Example:
+  cadastral info"""))
+
+
+@click.command("info", help=_INFO_HELP)
 @click.pass_context
 def info(ctx: click.Context) -> None:
-    """
-    Display system information and cache status.
-
-    \b
-    Example:
-      cadastral info
-    """
+    """Display system information and cache status."""
     try:
         with CadastralAPIClient() as client:
             header = _("Croatian Cadastral CLI")

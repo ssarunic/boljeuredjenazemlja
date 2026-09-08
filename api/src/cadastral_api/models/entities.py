@@ -19,7 +19,7 @@ educational context using a mock server that closely mimics production behavior.
 
 from fractions import Fraction
 from enum import Enum
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import (
     AliasChoices,
@@ -1044,6 +1044,78 @@ class Plumb(BaseModel):
     cad_plumb: bool = Field(
         False, alias="cadPlumb", description="True if a cadastre plomba (else land registry)"
     )
+
+
+class FileStatusInstitution(BaseModel):
+    """Land-registry office that owns a file (spis)."""
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+    institution_id: int | None = Field(None, alias="institutionId")
+    institution_name: str | None = Field(None, alias="institutionName")
+
+
+class FileStatus(BaseModel):
+    """Processing status of a single land-registry file (plomba / spis).
+
+    Returned by ``POST /lr/file-status``. A :class:`Plumb` on a unit only
+    carries the bare file number; this is the detail behind it - what the
+    request is, where it is in processing, and the key dates. While the file is
+    unresolved the matching plomba stays active on the unit, so this is how you
+    tell *what* a pending change actually is (e.g. an ownership transfer vs an
+    inheritance vs a mortgage).
+
+    ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+    """
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+    file_id: int | None = Field(None, alias="fileId", description="Internal file ID")
+    lr_file_number: str = Field(
+        alias="lrFileNumber", description="File reference number, e.g. 'Z-12564/2026'"
+    )
+    institution: FileStatusInstitution | None = Field(
+        None, description="Owning land-registry office"
+    )
+
+    status_description: str | None = Field(
+        None,
+        alias="statusDescription",
+        description="Processing stage, e.g. 'IZRADA NACRTA RJEŠENJA', 'OTPREMA'",
+    )
+    application_content: str | None = Field(
+        None,
+        alias="applicationContent",
+        description="What the request is, e.g. 'Uknjižba prava vlasništva'",
+    )
+    registration_number: str | None = Field(
+        None,
+        alias="registrationNumber",
+        description="External reference (court/notary), e.g. 'OV-4021/2026'",
+    )
+    resolution_type_name: str | None = Field(
+        None,
+        alias="resolutionTypeName",
+        description="Outcome once resolved, e.g. 'Udovoljeno'",
+    )
+
+    # Key timestamps (timezone-aware ISO 8601 in the API)
+    info_date: datetime | None = Field(None, alias="infoDate")
+    receiving_date: datetime | None = Field(None, alias="receivingDate")
+    solving_date: datetime | None = Field(None, alias="solvingDate")
+    execution_date: datetime | None = Field(None, alias="executionDate")
+    file_shipment_date: datetime | None = Field(None, alias="fileShipmentDate")
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def is_resolved(self) -> bool:
+        """Whether the file has been decided (executed), i.e. the change is no longer pending."""
+        return self.execution_date is not None
+
+    @property
+    def institution_id(self) -> int | None:
+        """Owning office ID, if present."""
+        return self.institution.institution_id if self.institution else None
 
 
 class LandRegistryUnitDetailed(BaseModel):

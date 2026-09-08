@@ -1,0 +1,99 @@
+{
+  "lrUnitId": 13140449,
+  "lrUnitNumber": "449",
+  "mainBookId": 21277,
+  "mainBookName": "TESTMUNICIPALITY",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Test Land Registry Office",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": false,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-15677/2026",
+  "activePlumbs": [
+    { "cadPlumb": false, "fileNumber": "Z-12564/2026" },
+    { "cadPlumb": false, "fileNumber": "Z-18444/2026" }
+  ],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "lrUnitShareId": 46600127,
+        "description": "127. Suvlasnički dio: 1/4",
+        "orderNumber": "127",
+        "status": 0,
+        "subSharesAndEntries": [],
+        "lrOwners": [
+          {
+            "lrOwnerId": 70000127,
+            "name": "Test Owner One",
+            "address": "Test Street 1, Test City",
+            "taxNumber": "00000000001"
+          }
+        ]
+      },
+      {
+        "lrUnitShareId": 46600130,
+        "description": "130. Suvlasnički dio: 1/12",
+        "orderNumber": "130",
+        "status": 0,
+        "subSharesAndEntries": [],
+        "lrOwners": [
+          {
+            "lrOwnerId": 70000130,
+            "name": "Test Nephew A",
+            "address": "Test Street 17, Test City",
+            "taxNumber": "00000000130"
+          }
+        ]
+      },
+      {
+        "lrUnitShareId": 46600131,
+        "description": "131. Suvlasnički dio: 1/12",
+        "orderNumber": "131",
+        "status": 0,
+        "subSharesAndEntries": [],
+        "lrOwners": [
+          {
+            "lrOwnerId": 70000131,
+            "name": "Test Nephew B",
+            "address": "Test Street 110, Test City",
+            "taxNumber": "00000000131"
+          }
+        ]
+      },
+      {
+        "lrUnitShareId": 46600132,
+        "description": "132. Suvlasnički dio: 1/12",
+        "orderNumber": "132",
+        "status": 0,
+        "subSharesAndEntries": [],
+        "lrOwners": [
+          {
+            "lrOwnerId": 70000132,
+            "name": "Test Nephew C",
+            "address": "Test Street 110, Test City",
+            "taxNumber": "00000000132"
+          }
+        ]
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "lrParcels": [
+      {
+        "parcelId": 36370854,
+        "parcelNumber": "1122/1",
+        "address": "OVČJA",
+        "area": "3291",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      }
+    ]
+  },
+  "possessionSheetA2": { "lrEntries": [] },
+  "encumbranceSheetC": { "lrEntryGroups": [] }
+}

@@ -36,11 +36,8 @@ for PO_FILE in po/*.po; do
             "${POT_FILE}"
 
         # Statistics
-        TOTAL=$(msggrep --no-wrap -v -T -e "." "${PO_FILE}" | grep -c "^msgid" || echo "0")
-        TRANSLATED=$(msggrep --no-wrap -T -e "." "${PO_FILE}" | grep -c "^msgid" || echo "0")
-        UNTRANSLATED=$((TOTAL - TRANSLATED))
-
-        echo "  ✓ Total: ${TOTAL}, Translated: ${TRANSLATED}, Untranslated: ${UNTRANSLATED}"
+        echo -n "  ✓ "
+        msgfmt --statistics --output-file=/dev/null "${PO_FILE}"
     fi
 done
 

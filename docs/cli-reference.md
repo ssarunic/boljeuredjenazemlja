@@ -261,7 +261,8 @@ cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
 - `--all, -a` - Show all sheets
 - `--format, -f` - Output format: table (default), json, csv
 - `--output` - Save output to file
-- `--lang` - Language for output (hr, en)
+
+Language is a global option: `cadastral --lang en get-lr-unit ...` (or `CADASTRAL_LANG=en`).
 
 **Output (default - summary):**
 
