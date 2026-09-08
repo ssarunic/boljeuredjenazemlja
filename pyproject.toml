@@ -74,11 +74,20 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 
 [tool.pytest.ini_options]
-testpaths = ["src/cadastral_api/tests"]
+# Every project's suite, so a bare `pytest` from the repository root runs all
+# of them. Two suites contain a `test_file_status.py`; importlib import mode
+# lets same-named test files coexist without package markers.
+testpaths = [
+    "api/tests",
+    "api/src/cadastral_api/tests",
+    "cli/tests",
+    "mcp/tests",
+    "mock-server/tests",
+]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=cadastral_api --cov-report=term-missing"
+addopts = "-v --import-mode=importlib --cov=cadastral_api --cov-report=term-missing"
 
 [tool.pylint.main]
 py-version = "3.12"
