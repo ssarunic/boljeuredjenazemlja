@@ -64,7 +64,7 @@ msgid ""
 "`parcel_number` and `municipality`, and looks like this:"
 msgstr ""
 
-#: commands/batch-fetch.md:35
+#: commands/batch-fetch.md:37
 msgid ""
 "An empty municipality cell means \"same as the row above\". A JSON file with "
 "the same content is accepted too. Example files: "
@@ -72,7 +72,7 @@ msgid ""
 "[parcels.json](../examples/parcels.json)."
 msgstr ""
 
-#: commands/batch-fetch.md:39 commands/batch-lr-unit.md:34
+#: commands/batch-fetch.md:41 commands/batch-lr-unit.md:36
 #: commands/cache-clear.md:26 commands/cache-info.md:23
 #: commands/cache-list.md:24 commands/download-gis.md:26
 #: commands/get-geometry.md:31 commands/get-lr-unit.md:34
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Step by step"
 msgstr ""
 
-#: commands/batch-fetch.md:41 commands/cache-clear.md:28
+#: commands/batch-fetch.md:43 commands/cache-clear.md:28
 #: commands/cache-info.md:25 commands/cache-list.md:26
 #: commands/download-gis.md:28 commands/get-geometry.md:33
 #: commands/get-lr-unit.md:36 commands/get-parcel.md:34 commands/info.md:26
@@ -91,12 +91,12 @@ msgstr ""
 msgid "Open Terminal."
 msgstr ""
 
-#: commands/batch-fetch.md:42
+#: commands/batch-fetch.md:44
 msgid ""
 "Type the following line and press Enter. The quotes around the list matter."
 msgstr ""
 
-#: commands/batch-fetch.md:48 commands/batch-lr-unit.md:43
+#: commands/batch-fetch.md:50 commands/batch-lr-unit.md:45
 #: commands/cache-clear.md:36 commands/cache-info.md:32
 #: commands/cache-list.md:33 commands/download-gis.md:35
 #: commands/get-geometry.md:40 commands/get-lr-unit.md:43
@@ -106,7 +106,7 @@ msgstr ""
 msgid "You will see something like this:"
 msgstr ""
 
-#: commands/batch-fetch.md:74
+#: commands/batch-fetch.md:76
 msgid ""
 "**BATCH PROCESSING SUMMARY** counts how many parcels were found. **RESULTS** "
 "has one row per parcel. **Status** shows a tick for found and a cross for not"
@@ -114,7 +114,7 @@ msgid ""
 " need for the next step."
 msgstr ""
 
-#: commands/batch-fetch.md:79 commands/batch-lr-unit.md:142
+#: commands/batch-fetch.md:81 commands/batch-lr-unit.md:144
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
 #: commands/get-geometry.md:70 commands/get-lr-unit.md:84
@@ -124,34 +124,41 @@ msgstr ""
 msgid "Choices you can make"
 msgstr ""
 
-#: commands/batch-fetch.md:81
+#: commands/batch-fetch.md:83
 msgid ""
 "To read the list from a file, use `--input` with the file name instead of "
 "typing the parcels. Open Terminal in the folder where the file is:"
 msgstr ""
 
-#: commands/batch-fetch.md:88
+#: commands/batch-fetch.md:90
 msgid ""
 "When one parcel is not found, the tool continues with the rest and lists the "
 "failures at the end. If you would rather stop at the first problem, add "
 "`--stop-on-error`."
 msgstr ""
 
-#: commands/batch-fetch.md:92
+#: commands/batch-fetch.md:94
 msgid ""
 "To go on to the land registry, keep the result as a JSON file with `--format "
 "json` and `--output`. The [batch-lr-unit](batch-lr-unit.md) page can read "
 "that file directly:"
 msgstr ""
 
-#: commands/batch-fetch.md:101
+#: commands/batch-fetch.md:103
 msgid ""
 "Add `--detail full` to print the whole cadastral record of every parcel, as "
 "the [get-parcel](get-parcel.md) page does, and `--show-owners` to include the"
 " possessors."
 msgstr ""
 
-#: commands/batch-fetch.md:118 commands/batch-lr-unit.md:172
+#: commands/batch-fetch.md:107
+msgid ""
+"The field names in a JSON or CSV file follow the language of the tool, so a "
+"colleague who runs it in the other language gets the names of that language. "
+"The tool reads files back in either language."
+msgstr ""
+
+#: commands/batch-fetch.md:124 commands/batch-lr-unit.md:174
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
 #: commands/get-geometry.md:93 commands/get-lr-unit.md:154
@@ -161,24 +168,24 @@ msgstr ""
 msgid "If something goes wrong"
 msgstr ""
 
-#: commands/batch-fetch.md:120
+#: commands/batch-fetch.md:126
 msgid ""
 "A parcel that does not exist does not stop the run. It gets a cross in the "
 "**Status** column and an explanation in an **ERRORS** table at the end:"
 msgstr ""
 
-#: commands/batch-fetch.md:153
+#: commands/batch-fetch.md:159
 msgid "Correct the number and run the command again for that parcel alone."
 msgstr ""
 
-#: commands/batch-fetch.md:155
+#: commands/batch-fetch.md:161
 msgid ""
 "If the tool cannot find the file you named, check that Terminal is in the "
 "folder where the file is, or type the full path to it. Other messages are "
 "explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/batch-fetch.md:159 commands/batch-lr-unit.md:182
+#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:184
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
 #: commands/get-geometry.md:112 commands/get-lr-unit.md:170
@@ -188,16 +195,16 @@ msgstr ""
 msgid "Related pages"
 msgstr ""
 
-#: commands/batch-fetch.md:161
+#: commands/batch-fetch.md:167
 msgid ""
 "[batch-lr-unit](batch-lr-unit.md) reads the land registry units found here."
 msgstr ""
 
-#: commands/batch-fetch.md:162
+#: commands/batch-fetch.md:168
 msgid "[search](search.md) checks one parcel."
 msgstr ""
 
-#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:188
+#: commands/batch-fetch.md:171 commands/batch-lr-unit.md:190
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
 #: commands/get-geometry.md:118 commands/get-lr-unit.md:177
@@ -238,11 +245,11 @@ msgid ""
 "`main_book_id`, like the example [lr_units.csv](../examples/lr_units.csv):"
 msgstr ""
 
-#: commands/batch-lr-unit.md:36
+#: commands/batch-lr-unit.md:38
 msgid "Open Terminal in the folder where your file is."
 msgstr ""
 
-#: commands/batch-lr-unit.md:37 commands/cache-info.md:26
+#: commands/batch-lr-unit.md:39 commands/cache-info.md:26
 #: commands/cache-list.md:27 commands/download-gis.md:29
 #: commands/get-geometry.md:34 commands/get-lr-unit.md:37
 #: commands/get-parcel.md:35 commands/info.md:27
@@ -252,7 +259,7 @@ msgstr ""
 msgid "Type the following line and press Enter:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:135
+#: commands/batch-lr-unit.md:137
 msgid ""
 "The units are printed one after another, separated by a line of dashes. Each "
 "is laid out as on the [get-lr-unit](get-lr-unit.md) page: **LAND REGISTRY "
@@ -261,45 +268,45 @@ msgid ""
 " **Pending entries (plombe)** line and warning."
 msgstr ""
 
-#: commands/batch-lr-unit.md:144
+#: commands/batch-lr-unit.md:146
 msgid ""
 "To continue from a batch-fetch result, use `--from-batch-output` with the "
 "JSON file it wrote:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:151
+#: commands/batch-lr-unit.md:153
 msgid ""
 "For a long list, screen output is hard to read. Keep it as a file instead "
 "with `--format json` and `--output`:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:158
+#: commands/batch-lr-unit.md:160
 msgid ""
 "When one unit cannot be read, the tool continues with the rest. Add `--stop-"
 "on-error` to stop at the first problem instead."
 msgstr ""
 
-#: commands/batch-lr-unit.md:174
+#: commands/batch-lr-unit.md:176
 msgid ""
 "If the tool cannot find the file you named, it stops before reading anything."
 " Check that Terminal is in the folder where the file is, or type the full "
 "path to it."
 msgstr ""
 
-#: commands/batch-lr-unit.md:178
+#: commands/batch-lr-unit.md:180
 msgid ""
 "If one unit in the list does not exist, that unit is reported as failed and "
 "the others are still printed. Check its number and main book ID in your file."
 " Other messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/batch-lr-unit.md:184
+#: commands/batch-lr-unit.md:186
 msgid ""
 "[batch-fetch](batch-fetch.md) produces the list of units from a list of "
 "parcels."
 msgstr ""
 
-#: commands/batch-lr-unit.md:185
+#: commands/batch-lr-unit.md:187
 msgid "[get-lr-unit](get-lr-unit.md) reads one unit and explains the sheets."
 msgstr ""
 

@@ -27,14 +27,16 @@ odjednom.
 Za nekoliko čestica u istoj općini upisujete ih u istom retku, odvojene
 zarezima. Za dulje popise pripremite datoteku. Najjednostavnija je CSV datoteka,
 koju možete spremiti iz bilo kojeg programa za tablice. Ima dva stupca,
-`parcel_number` i `municipality`, i izgleda ovako:
+`broj_cestice` i `opcina`, i izgleda ovako:
 
+<!-- BEGIN GENERATED: file parcels.csv -->
 ```text
-parcel_number,municipality
+broj_cestice,opcina
 103/2,SAVAR
 45,
 396/1,
 ```
+<!-- END GENERATED: file -->
 
 Prazno polje općine znači „isto kao u retku iznad”. Prihvaća se i JSON datoteka
 istog sadržaja. Primjeri datoteka: [parcels.csv](../examples/parcels.csv),
@@ -104,6 +106,10 @@ uz skupno-ulošci --iz-skupnog-ispisa parcels-found.json
 
 Dodajte `--detalji full` za ispis cijelog katastarskog zapisa svake čestice, kao
 na stranici [čestica](get-parcel.md), i `--posjednici` da uključite posjednike.
+
+Nazivi polja u JSON ili CSV datoteci slijede jezik alata, pa kolega koji ga
+pokreće na drugom jeziku dobiva nazive tog jezika. Alat datoteke čita natrag na
+oba jezika.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |

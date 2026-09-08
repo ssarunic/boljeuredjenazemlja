@@ -10,6 +10,7 @@ from rich.console import Console
 from rich.table import Table
 
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_success
+from cadastral_cli.output_keys import key_display, localize_keys
 
 from .search import _resolve_municipality
 
@@ -107,7 +108,7 @@ def get_geometry(
                     console.print(output_data)
 
             elif output_format == "csv":
-                csv_output = "x,y,vertex\n"
+                csv_output = ",".join(key_display(k) for k in ("x", "y", "vertex")) + "\n"
                 for i, coord in enumerate(geometry.coordinates, 1):
                     csv_output += f"{coord.x},{coord.y},{i}\n"
 
@@ -133,7 +134,7 @@ def get_geometry(
                     },
                     "coordinates": [[c.x, c.y] for c in geometry.coordinates]
                 }
-                output_data = json.dumps(json_data, indent=2, ensure_ascii=False)
+                output_data = json.dumps(localize_keys(json_data), indent=2, ensure_ascii=False)
                 if output:
                     with open(output, "w", encoding="utf-8") as f:
                         f.write(output_data)

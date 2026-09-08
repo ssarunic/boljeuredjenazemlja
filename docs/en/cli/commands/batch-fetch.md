@@ -25,12 +25,14 @@ separated by commas. For longer lists, prepare a file. The simplest file is a
 CSV, which you can save from any spreadsheet program. It has two columns,
 `parcel_number` and `municipality`, and looks like this:
 
+<!-- BEGIN GENERATED: file parcels.csv -->
 ```text
 parcel_number,municipality
 103/2,SAVAR
 45,
 396/1,
 ```
+<!-- END GENERATED: file -->
 
 An empty municipality cell means "same as the row above". A JSON file with the
 same content is accepted too. Example files:
@@ -101,6 +103,10 @@ cadastral batch-lr-unit --from-batch-output parcels-found.json
 Add `--detail full` to print the whole cadastral record of every parcel, as
 the [get-parcel](get-parcel.md) page does, and `--show-owners` to include the
 possessors.
+
+The field names in a JSON or CSV file follow the language of the tool, so a
+colleague who runs it in the other language gets the names of that language.
+The tool reads files back in either language.
 
 <!-- BEGIN GENERATED: options -->
 | Type this | What it does | If you leave it out |

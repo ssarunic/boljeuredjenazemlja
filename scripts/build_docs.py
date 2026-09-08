@@ -357,6 +357,52 @@ def _localize_cmdlines(lang: str, cmdlines: list[str]) -> list[str]:
     return [localized.localize_cmdline(line, cli) for line in cmdlines]
 
 
+def _localize_files(lang: str, files: dict[str, str]) -> dict[str, str]:
+    """Run inside a subprocess: rewrite CSV column names and JSON keys into ``lang``."""
+    import csv
+    import io
+
+    os.environ["CADASTRAL_LANG"] = lang
+    from cadastral_api.i18n import set_language
+
+    set_language(lang)
+    from cadastral_cli import output_keys
+
+    out: dict[str, str] = {}
+    for name, content in files.items():
+        if name.endswith(".json"):
+            data = output_keys.localize_keys(json.loads(content))
+            out[name] = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+        elif name.endswith(".csv"):
+            rows = list(csv.reader(io.StringIO(content)))
+            if rows:
+                rows[0] = [output_keys.key_display(column) for column in rows[0]]
+            buffer = io.StringIO()
+            csv.writer(buffer, lineterminator="\n").writerows(rows)
+            out[name] = buffer.getvalue()
+        else:
+            out[name] = content
+    return out
+
+
+def localize_files(lang: str, files: dict[str, bytes]) -> dict[str, bytes]:
+    """Example input files with column names and keys in ``lang``."""
+    if not files:
+        return {}
+    env = _clean_env()
+    env["CADASTRAL_LANG"] = lang
+    text_files = {name: data.decode("utf-8") for name, data in files.items()}
+    result = subprocess.run(
+        [sys.executable, str(Path(__file__).resolve()), "--localize-files", lang],
+        input=json.dumps(text_files),
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    return {name: text.encode("utf-8") for name, text in json.loads(result.stdout).items()}
+
+
 def localize_cmdlines(lang: str, cmdlines: list[str]) -> dict[str, str]:
     """Map each documented command line to its spelling in ``lang``."""
     unique = sorted(set(cmdlines))
@@ -489,7 +535,7 @@ class OutputCapture:
         self.cwd = self._root / "work"
         self._cache: dict[tuple[str, str], str] = {}
 
-    def _reset(self) -> None:
+    def _reset(self, examples: dict[str, bytes]) -> None:
         for path in (self.home, self.cwd):
             shutil.rmtree(path, ignore_errors=True)
             path.mkdir(parents=True)
@@ -502,23 +548,20 @@ class OutputCapture:
             shutil.copyfile(zip_path, target)
             os.utime(target, (FIXTURE_MTIME, FIXTURE_MTIME))
             os.utime(target_dir, (FIXTURE_MTIME, FIXTURE_MTIME))
-        examples = EN / EXAMPLES_DIR_NAME
-        if examples.is_dir():
-            for path in examples.iterdir():
-                if path.is_file():
-                    shutil.copyfile(path, self.cwd / path.name)
+        for rel, data in examples.items():
+            (self.cwd / Path(rel).name).write_bytes(data)
 
-    def run(self, lang: str, cmdline: str) -> str:
+    def run(self, lang: str, cmdline: str, examples: dict[str, bytes] | None = None) -> str:
         key = (lang, cmdline)
         if key not in self._cache:
-            self._cache[key] = self._run(lang, cmdline)
+            self._cache[key] = self._run(lang, cmdline, examples or {})
         return self._cache[key]
 
-    def _run(self, lang: str, cmdline: str) -> str:
+    def _run(self, lang: str, cmdline: str, examples: dict[str, bytes]) -> str:
         words = shlex.split(cmdline)
         if not words or words[0] not in PROGRAM_NAMES:
             raise ValueError(f"output regions must run one of {PROGRAM_NAMES}, got: {cmdline}")
-        self._reset()
+        self._reset(examples)
         env = _clean_env()
         env.update(
             {
@@ -860,6 +903,7 @@ class RenderContext:
     titles: dict[str, str]  # page rel -> H1 title in this language
     capture: OutputCapture | None
     existing: dict[str, str] = field(default_factory=dict)  # rel -> text on disk (this lang)
+    examples: dict[str, bytes] = field(default_factory=dict)  # example files in this language
 
 
 def _relative_link(from_lang: str, from_rel: str, to_lang: str, to_rel: str) -> str:
@@ -906,6 +950,11 @@ def render_region(kind: str, args: str, rel: str, ctx: RenderContext) -> list[st
         return _render_reference(rel, ctx)
     if kind == "errors":
         return _render_errors(ctx)
+    if kind == "file":
+        data = ctx.examples.get(f"{EXAMPLES_DIR_NAME}/{args}")
+        if data is None:
+            raise ValueError(f"{rel}: no example file named '{args}'")
+        return ["```text", *data.decode("utf-8").rstrip("\n").splitlines(), "```"]
     raise ValueError(f"{rel}: unknown generated region '{kind}'")
 
 
@@ -978,7 +1027,7 @@ def _render_output(cmdline: str, rel: str, ctx: RenderContext) -> list[str]:
     if not cmdline.startswith(tuple(f"{p} " for p in PROGRAM_NAMES)):
         raise ValueError(f"{rel}: output region must start with the program name")
     if ctx.capture is not None:
-        text = ctx.capture.run(ctx.lang, cmdline)
+        text = ctx.capture.run(ctx.lang, cmdline, ctx.examples)
     else:
         text = _existing_region_body(ctx.existing.get(rel, ""), "output", cmdline)
         if text is None:
@@ -1204,6 +1253,7 @@ def render_tree(
     pages_en: dict[str, str],
     po: polib.POFile | None,
     capture: OutputCapture | None,
+    examples: dict[str, bytes],
 ) -> dict[str, str]:
     """Render every page of one language tree; returns rel path -> text."""
     existing: dict[str, str] = {}
@@ -1219,7 +1269,9 @@ def render_tree(
             rel: localize_page_cmdlines(text, mapping) for rel, text in translated.items()
         }
     titles = {rel: (page_title(text) or rel) for rel, text in translated.items()}
-    ctx = RenderContext(lang=lang, tree=tree, titles=titles, capture=capture, existing=existing)
+    ctx = RenderContext(
+        lang=lang, tree=tree, titles=titles, capture=capture, existing=existing, examples=examples
+    )
     rendered: dict[str, str] = {}
     for rel, text in translated.items():
         out = fill_regions(text, rel, ctx)
@@ -1247,11 +1299,12 @@ def build(capture_output: bool = True, write: bool = True) -> dict:
             capture = OutputCapture(server.base_url)
         for lang in TREES:
             po = catalogs.get(lang)
-            rendered = render_tree(lang, trees[lang], pages_en, po, capture)
+            lang_examples = examples if lang == SOURCE_LANG else localize_files(lang, examples)
+            rendered = render_tree(lang, trees[lang], pages_en, po, capture, lang_examples)
             for rel, text in rendered.items():
                 files[TREES[lang] / rel] = text
             if lang != SOURCE_LANG:
-                for rel, data in examples.items():
+                for rel, data in lang_examples.items():
                     files[TREES[lang] / rel] = data
     finally:
         if capture:
@@ -1330,6 +1383,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--dump-tree", metavar="LANG", help=argparse.SUPPRESS)
     parser.add_argument("--localize", metavar="LANG", help=argparse.SUPPRESS)
+    parser.add_argument("--localize-files", metavar="LANG", help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
 
     if args.dump_tree:
@@ -1338,6 +1392,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.localize:
         localized_lines = _localize_cmdlines(args.localize, json.load(sys.stdin))
         json.dump(localized_lines, sys.stdout, ensure_ascii=False)
+        return 0
+    if args.localize_files:
+        localized_files = _localize_files(args.localize_files, json.load(sys.stdin))
+        json.dump(localized_files, sys.stdout, ensure_ascii=False)
         return 0
 
     result = build(capture_output=not args.no_output, write=not args.check)

@@ -24,12 +24,14 @@ get both is the JSON file that [batch-fetch](batch-fetch.md) writes. You can
 also prepare a CSV file with two columns, `lr_unit_number` and `main_book_id`,
 like the example [lr_units.csv](../examples/lr_units.csv):
 
+<!-- BEGIN GENERATED: file lr_units.csv -->
 ```text
 lr_unit_number,main_book_id
 657,21277
 769,21277
 449,21277
 ```
+<!-- END GENERATED: file -->
 
 ## Step by step
 

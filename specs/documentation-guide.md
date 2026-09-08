@@ -301,6 +301,7 @@ code writes.** A human writes only what the code cannot know.
 | Option help text, command descriptions, in both languages | gettext catalog `po/hr.po` via `set_language()` | Generated |
 | Error message labels (`errors.md` table) | `ErrorType` and `error_type_label()` | Generated |
 | Screen output under "You will see" | Command run against the mock server at build time | Generated |
+| Contents of an example input file (`file` region) | `docs/en/cli/examples/`, column names and keys localized by the CLI for the Croatian tree | Generated |
 | Demo disclaimer, language switcher, version stamp | Build script | Generated |
 | Purpose, situations, prerequisites, step narrative, tips, troubleshooting advice, related pages | The writer | Authored (English) |
 | Croatian edition of authored text | `po/docs-hr.po`, written against the Croatian CLI as the reference | Authored (localization, not literal translation) |

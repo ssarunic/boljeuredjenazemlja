@@ -84,9 +84,35 @@ Convention for Croatian names:
 `cli/tests/test_localized_cli.py` fails when a command or long option has no
 entry, when two spellings collide, or when help shows the wrong language.
 
-## 5. Do not write
+## 5. Output field names
 
-`cli/tests/test_terminology.py` reads this table (section 5). The first column is a
+JSON keys and CSV column names follow the language of the tool. The English
+names are canonical (`cli/src/cadastral_cli/output_keys.py`); the Croatian
+spelling of each is a gettext entry with context `key`, translated in
+`po/hr.po`. Consumers that need English (the MCP server, skills, scripts)
+run the tool in English; nothing is hard-coded in the CLI.
+
+Convention for Croatian key names:
+
+- ASCII `snake_case`, no diacritics (`broj_cestice`, `povrsina_m2`,
+  `maticni_broj_opcine`): they are identifiers for spreadsheets and
+  scripts.
+- The same vocabulary as section 2: `posjednici` and `broj_posjednika` on
+  cadastre data, `vlasnici` on land registry data, `nacin_uporabe`,
+  `prijedlog` in plomba fields.
+- Values are not translated: `"status": "success"` and error type codes are
+  machine values.
+- GeoJSON is a standard and keeps its keys.
+- Files are read back in any language: a CSV with `broj_cestice,opcina`
+  columns and one with `parcel_number,municipality` are both accepted.
+
+`cli/tests/test_output_keys.py` runs every structured command against the
+mock server and fails on an English key in Croatian output or on a key that
+has no entry.
+
+## 6. Do not write
+
+`cli/tests/test_terminology.py` reads this table (section 6). The first column is a
 regular expression (Python syntax, `(?i)` for case-insensitive). "hr" rows
 are checked against the Croatian strings of `po/hr.po`, all of
 `po/docs-hr.po`, `docs/hr/cli/` and the Croatian text in

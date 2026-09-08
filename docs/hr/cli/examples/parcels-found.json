@@ -1,49 +1,49 @@
 {
-  "summary": {
-    "total": 3,
-    "successful": 3,
-    "failed": 0,
-    "success_rate": "100.0%"
+  "sazetak": {
+    "ukupno": 3,
+    "uspjesno": 3,
+    "neuspjesno": 0,
+    "stopa_uspjeha": "100.0%"
   },
-  "results": [
+  "rezultati": [
     {
       "status": "success",
-      "parcel_number": "103/2",
-      "municipality": "SAVAR",
-      "parcel_id": 6564817,
-      "municipality_code": "334979",
-      "municipality_name": "SAVAR",
-      "area_m2": 1200,
-      "building_permitted": false,
-      "total_owners": 2,
-      "lr_unit_number": "657",
-      "main_book_id": 21277
+      "broj_cestice": "103/2",
+      "opcina": "SAVAR",
+      "id_cestice": 6564817,
+      "maticni_broj_opcine": "334979",
+      "naziv_opcine": "SAVAR",
+      "povrsina_m2": 1200,
+      "dozvoljeno_gradenje": false,
+      "broj_posjednika": 2,
+      "broj_zk_uloska": "657",
+      "id_glavne_knjige": 21277
     },
     {
       "status": "success",
-      "parcel_number": "45",
-      "municipality": "SAVAR",
-      "parcel_id": 6564715,
-      "municipality_code": "334979",
-      "municipality_name": "SAVAR",
-      "area_m2": 981,
-      "building_permitted": false,
-      "total_owners": 2,
-      "lr_unit_number": "138",
-      "main_book_id": 21277
+      "broj_cestice": "45",
+      "opcina": "SAVAR",
+      "id_cestice": 6564715,
+      "maticni_broj_opcine": "334979",
+      "naziv_opcine": "SAVAR",
+      "povrsina_m2": 981,
+      "dozvoljeno_gradenje": false,
+      "broj_posjednika": 2,
+      "broj_zk_uloska": "138",
+      "id_glavne_knjige": 21277
     },
     {
       "status": "success",
-      "parcel_number": "396/1",
-      "municipality": "SAVAR",
-      "parcel_id": 6565198,
-      "municipality_code": "334979",
-      "municipality_name": "SAVAR",
-      "area_m2": 2077,
-      "building_permitted": false,
-      "total_owners": 18,
-      "lr_unit_number": "645",
-      "main_book_id": 21277
+      "broj_cestice": "396/1",
+      "opcina": "SAVAR",
+      "id_cestice": 6565198,
+      "maticni_broj_opcine": "334979",
+      "naziv_opcine": "SAVAR",
+      "povrsina_m2": 2077,
+      "dozvoljeno_gradenje": false,
+      "broj_posjednika": 18,
+      "broj_zk_uloska": "645",
+      "id_glavne_knjige": 21277
     }
   ]
 }

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 13:15+0100\n"
+"POT-Creation-Date: 2026-09-08 13:32+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -26,64 +26,64 @@ msgid "Processing {current}/{total}: {input}"
 msgstr ""
 
 #: cli/src/cadastral_cli/batch_processor.py:233
-#: cli/src/cadastral_cli/formatters.py:123
+#: cli/src/cadastral_cli/formatters.py:129
 #: cli/src/cadastral_cli/commands/registry.py:156
 msgid "Parcel not found"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:28
+#: cli/src/cadastral_cli/formatters.py:30
 msgid "No results found."
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:70
+#: cli/src/cadastral_cli/formatters.py:76
 #, python-brace-format
 msgid "✓ Output saved to: {file}"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:77
+#: cli/src/cadastral_cli/formatters.py:83
 #, python-brace-format
 msgid "✗ Error: {message}"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:119
+#: cli/src/cadastral_cli/formatters.py:125
 msgid "Connection error"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:120
+#: cli/src/cadastral_cli/formatters.py:126
 msgid "Request timed out"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:121
+#: cli/src/cadastral_cli/formatters.py:127
 msgid "Rate limit exceeded"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:122
+#: cli/src/cadastral_cli/formatters.py:128
 msgid "Invalid response from server"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:124
+#: cli/src/cadastral_cli/formatters.py:130
 msgid "Municipality not found"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:125
+#: cli/src/cadastral_cli/formatters.py:131
 #: cli/src/cadastral_cli/commands/registry.py:154
 msgid "Land registry unit not found"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:126
+#: cli/src/cadastral_cli/formatters.py:132
 msgid "Server error"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:142
+#: cli/src/cadastral_cli/formatters.py:148
 #, python-brace-format
 msgid "- caused by: {cause}"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:150
+#: cli/src/cadastral_cli/formatters.py:156
 msgid "unknown"
 msgstr ""
 
-#: cli/src/cadastral_cli/formatters.py:152
+#: cli/src/cadastral_cli/formatters.py:158
 msgid "Unexpected error"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/parcel.py:340
 #: cli/src/cadastral_cli/commands/parcel.py:362
 #: cli/src/cadastral_cli/commands/parcel.py:393
-#: cli/src/cadastral_cli/commands/gis.py:258
+#: cli/src/cadastral_cli/commands/gis.py:259
 msgid "Field"
 msgstr ""
 
@@ -108,7 +108,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/parcel.py:341
 #: cli/src/cadastral_cli/commands/parcel.py:363
 #: cli/src/cadastral_cli/commands/parcel.py:394
-#: cli/src/cadastral_cli/commands/gis.py:259
+#: cli/src/cadastral_cli/commands/gis.py:260
 msgid "Value"
 msgstr ""
 
@@ -664,7 +664,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/search.py:45
 #: cli/src/cadastral_cli/commands/search.py:168
 #: cli/src/cadastral_cli/commands/parcel.py:45
-#: cli/src/cadastral_cli/commands/gis.py:39
+#: cli/src/cadastral_cli/commands/gis.py:40
 msgid "Save output to file"
 msgstr ""
 
@@ -702,8 +702,8 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/search.py:143
 #: cli/src/cadastral_cli/commands/search.py:253
 #: cli/src/cadastral_cli/commands/parcel.py:101
-#: cli/src/cadastral_cli/commands/gis.py:145
-#: cli/src/cadastral_cli/commands/gis.py:244
+#: cli/src/cadastral_cli/commands/gis.py:146
+#: cli/src/cadastral_cli/commands/gis.py:245
 #, python-brace-format
 msgid "API error: {error}"
 msgstr ""
@@ -1255,7 +1255,7 @@ msgstr[1] ""
 #: cli/src/cadastral_cli/commands/batch.py:315
 #: cli/src/cadastral_cli/commands/batch.py:377
 #: cli/src/cadastral_cli/commands/parcel.py:154
-#: cli/src/cadastral_cli/commands/gis.py:261
+#: cli/src/cadastral_cli/commands/gis.py:262
 msgid "Parcel"
 msgstr ""
 
@@ -1664,7 +1664,7 @@ msgid ""
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:28
-#: cli/src/cadastral_cli/commands/gis.py:30
+#: cli/src/cadastral_cli/commands/gis.py:31
 msgid "Municipality name or code"
 msgstr ""
 
@@ -1791,12 +1791,12 @@ msgid "GEOMETRY"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:365
-#: cli/src/cadastral_cli/commands/gis.py:262
+#: cli/src/cadastral_cli/commands/gis.py:263
 msgid "Coordinate System"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:366
-#: cli/src/cadastral_cli/commands/gis.py:263
+#: cli/src/cadastral_cli/commands/gis.py:264
 msgid "Vertices"
 msgstr ""
 
@@ -1805,17 +1805,17 @@ msgid "GIS Area"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:370
-#: cli/src/cadastral_cli/commands/gis.py:268
+#: cli/src/cadastral_cli/commands/gis.py:269
 msgid "Bounding Box"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:375
-#: cli/src/cadastral_cli/commands/gis.py:273
+#: cli/src/cadastral_cli/commands/gis.py:274
 msgid "  Width"
 msgstr ""
 
 #: cli/src/cadastral_cli/commands/parcel.py:376
-#: cli/src/cadastral_cli/commands/gis.py:274
+#: cli/src/cadastral_cli/commands/gis.py:275
 msgid "  Height"
 msgstr ""
 
@@ -1835,7 +1835,7 @@ msgstr ""
 msgid "Detail Sheet"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:19
+#: cli/src/cadastral_cli/commands/gis.py:20
 msgid ""
 "Get parcel boundary coordinates for GIS integration.\n"
 "\n"
@@ -1846,51 +1846,51 @@ msgid ""
 "  cadastral get-geometry 103/2 -m 334979 --format csv -o coords.csv"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:37
+#: cli/src/cadastral_cli/commands/gis.py:38
 msgid "Export format"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:40
+#: cli/src/cadastral_cli/commands/gis.py:41
 msgid "Include geometry statistics"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:57
+#: cli/src/cadastral_cli/commands/gis.py:58
 #, python-brace-format
 msgid "Fetching geometry for parcel {parcel_number}..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:63
+#: cli/src/cadastral_cli/commands/gis.py:64
 #, python-brace-format
 msgid "Geometry not found for parcel '{parcel_number}'"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:67
+#: cli/src/cadastral_cli/commands/gis.py:68
 msgid ""
 "\n"
 "Note: GIS data must be downloaded first (this happens automatically)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:83
+#: cli/src/cadastral_cli/commands/gis.py:84
 #, python-brace-format
 msgid "WKT saved to: {output}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:105
+#: cli/src/cadastral_cli/commands/gis.py:106
 #, python-brace-format
 msgid "GeoJSON saved to: {output}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:117
+#: cli/src/cadastral_cli/commands/gis.py:118
 #, python-brace-format
 msgid "CSV saved to: {output}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:140
+#: cli/src/cadastral_cli/commands/gis.py:141
 #, python-brace-format
 msgid "JSON saved to: {output}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:149
+#: cli/src/cadastral_cli/commands/gis.py:150
 msgid ""
 "Download complete GIS data for a municipality.\n"
 "\n"
@@ -1900,68 +1900,68 @@ msgid ""
 "  cadastral download-gis 334979 -o ./data --clear-cache"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:159
+#: cli/src/cadastral_cli/commands/gis.py:160
 msgid "Output directory"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:160
+#: cli/src/cadastral_cli/commands/gis.py:161
 msgid "Extract ZIP file"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:161
+#: cli/src/cadastral_cli/commands/gis.py:162
 msgid "Clear cached data first"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:182
+#: cli/src/cadastral_cli/commands/gis.py:183
 msgid "Clearing cache..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:184
+#: cli/src/cadastral_cli/commands/gis.py:185
 msgid "Cache cleared"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:187
+#: cli/src/cadastral_cli/commands/gis.py:188
 #, python-brace-format
 msgid "Downloading GIS data for municipality {municipality_code}..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:191
+#: cli/src/cadastral_cli/commands/gis.py:192
 msgid "Downloading..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:197
+#: cli/src/cadastral_cli/commands/gis.py:198
 #, python-brace-format
 msgid "Downloaded: {filename} ({size} KB)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:207
+#: cli/src/cadastral_cli/commands/gis.py:208
 msgid "Extracting..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:211
+#: cli/src/cadastral_cli/commands/gis.py:212
 #, python-brace-format
 msgid "Extracted to: {output_path}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:214
+#: cli/src/cadastral_cli/commands/gis.py:215
 msgid ""
 "\n"
 "Files:"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:228
+#: cli/src/cadastral_cli/commands/gis.py:229
 #, python-brace-format
 msgid ""
 "\n"
 "Total parcels: {count}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:236
+#: cli/src/cadastral_cli/commands/gis.py:237
 #, python-brace-format
 msgid "ZIP file copied to: {dest_zip}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:239
+#: cli/src/cadastral_cli/commands/gis.py:240
 #, python-brace-format
 msgid ""
 "\n"
@@ -1969,32 +1969,32 @@ msgid ""
 "{municipality_code}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:247
+#: cli/src/cadastral_cli/commands/gis.py:248
 #, python-brace-format
 msgid "Error downloading GIS data: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:253
+#: cli/src/cadastral_cli/commands/gis.py:254
 msgid "GEOMETRY STATISTICS"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:264
+#: cli/src/cadastral_cli/commands/gis.py:265
 msgid "Area (GIS)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:269
+#: cli/src/cadastral_cli/commands/gis.py:270
 msgid "  Min X"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:270
+#: cli/src/cadastral_cli/commands/gis.py:271
 msgid "  Min Y"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:271
+#: cli/src/cadastral_cli/commands/gis.py:272
 msgid "  Max X"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/gis.py:272
+#: cli/src/cadastral_cli/commands/gis.py:273
 msgid "  Max Y"
 msgstr ""
 
@@ -2047,6 +2047,501 @@ msgstr ""
 msgid ""
 "\n"
 "✗ Unexpected error: {error}"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:38
+msgctxt "key"
+msgid "parcel_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:39
+msgctxt "key"
+msgid "parcel_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:40
+msgctxt "key"
+msgid "parcel"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:41
+msgctxt "key"
+msgid "parcels"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:42
+msgctxt "key"
+msgid "municipality"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:43
+msgctxt "key"
+msgid "municipality_code"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:44
+msgctxt "key"
+msgid "municipality_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:45
+msgctxt "key"
+msgid "address"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:46
+msgctxt "key"
+msgid "area"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:47
+msgctxt "key"
+msgid "area_m2"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:48
+msgctxt "key"
+msgid "total_area_m2"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:49
+msgctxt "key"
+msgid "land_use"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:50
+msgctxt "key"
+msgid "parcel_parts"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:51
+msgctxt "key"
+msgid "type"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:52
+msgctxt "key"
+msgid "has_building"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:53
+msgctxt "key"
+msgid "building_permitted"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:54
+msgctxt "key"
+msgid "cadastre_lr_harmonized"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:55
+msgctxt "key"
+msgid "cadastre_harmonized"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:56
+msgctxt "key"
+msgid "total_owners"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:57
+msgctxt "key"
+msgid "ownership"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:58
+msgctxt "key"
+msgid "sheet_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:59
+msgctxt "key"
+msgid "possessors"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:60
+msgctxt "key"
+msgid "ownership_decimal"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:61
+msgctxt "key"
+msgid "name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:62
+msgctxt "key"
+msgid "name_normalized"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:64
+msgctxt "key"
+msgid "land_registry"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:65
+msgctxt "key"
+msgid "lr_unit_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:66
+msgctxt "key"
+msgid "unit_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:67
+msgctxt "key"
+msgid "unit_type"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:68
+msgctxt "key"
+msgid "main_book"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:69
+msgctxt "key"
+msgid "main_book_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:70
+msgctxt "key"
+msgid "main_book_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:71
+msgctxt "key"
+msgid "institution"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:72
+msgctxt "key"
+msgid "institution_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:73
+msgctxt "key"
+msgid "institution_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:74
+msgctxt "key"
+msgid "active"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:75
+msgctxt "key"
+msgid "status"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:76
+msgctxt "key"
+msgid "status_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:77
+msgctxt "key"
+msgid "status_description"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:78
+msgctxt "key"
+msgid "last_diary_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:79
+msgctxt "key"
+msgid "owners"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:80
+msgctxt "key"
+msgid "num_owners"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:81
+msgctxt "key"
+msgid "share"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:82
+msgctxt "key"
+msgid "share_description"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:83
+msgctxt "key"
+msgid "num"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:84
+msgctxt "key"
+msgid "den"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:85
+msgctxt "key"
+msgid "decimal"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:86
+msgctxt "key"
+msgid "register"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:87
+msgctxt "key"
+msgid "tax_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:88
+msgctxt "key"
+msgid "condominium_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:89
+msgctxt "key"
+msgid "is_condominium"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:90
+msgctxt "key"
+msgid "encumbrances"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:91
+msgctxt "key"
+msgid "has_encumbrances"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:92
+msgctxt "key"
+msgid "description"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:93
+msgctxt "key"
+msgid "entries"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:94
+msgctxt "key"
+msgid "total_parcels"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:95
+msgctxt "key"
+msgid "summary"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:97
+msgctxt "key"
+msgid "active_plumbs"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:98
+msgctxt "key"
+msgid "cad_plumb"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:99
+msgctxt "key"
+msgid "file_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:100
+msgctxt "key"
+msgid "has_pending_plombe"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:101
+msgctxt "key"
+msgid "pending_plombe"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:102
+msgctxt "key"
+msgid "plombe_detail"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:103
+msgctxt "key"
+msgid "application_content"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:104
+msgctxt "key"
+msgid "execution_date"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:105
+msgctxt "key"
+msgid "file_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:106
+msgctxt "key"
+msgid "file_shipment_date"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:107
+msgctxt "key"
+msgid "info_date"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:108
+msgctxt "key"
+msgid "is_resolved"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:109
+msgctxt "key"
+msgid "lr_file_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:110
+msgctxt "key"
+msgid "receiving_date"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:111
+msgctxt "key"
+msgid "registration_number"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:112
+msgctxt "key"
+msgid "resolution_type_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:113
+msgctxt "key"
+msgid "solving_date"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:115
+msgctxt "key"
+msgid "results"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:116
+msgctxt "key"
+msgid "total"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:117
+msgctxt "key"
+msgid "successful"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:118
+msgctxt "key"
+msgid "failed"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:119
+msgctxt "key"
+msgid "success_rate"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:120
+msgctxt "key"
+msgid "error_type"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:121
+msgctxt "key"
+msgid "error_message"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:122
+msgctxt "key"
+msgid "full_data"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:124
+msgctxt "key"
+msgid "coordinates"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:125
+msgctxt "key"
+msgid "bounds"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:126
+msgctxt "key"
+msgid "min_x"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:127
+msgctxt "key"
+msgid "min_y"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:128
+msgctxt "key"
+msgid "max_x"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:129
+msgctxt "key"
+msgid "max_y"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:130
+msgctxt "key"
+msgid "srs"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:131
+msgctxt "key"
+msgid "vertex_count"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:132
+msgctxt "key"
+msgid "vertex"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:133
+msgctxt "key"
+msgid "x"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:134
+msgctxt "key"
+msgid "y"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:136
+msgctxt "key"
+msgid "code"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:137
+msgctxt "key"
+msgid "display_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:138
+msgctxt "key"
+msgid "office_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:139
+msgctxt "key"
+msgid "office_name"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:140
+msgctxt "key"
+msgid "department_id"
+msgstr ""
+
+#: cli/src/cadastral_cli/output_keys.py:147
+msgctxt "key possessors"
+msgid "ownership"
 msgstr ""
 
 #: click/_termui_impl.py:608

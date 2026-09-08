@@ -24,6 +24,7 @@ from cadastral_cli.formatters import (
     print_success,
 )
 from cadastral_cli.lr_unit_output import print_lr_unit_full
+from cadastral_cli.output_keys import canonical_key, canonical_keys
 
 console = Console()
 
@@ -140,10 +141,12 @@ def _parse_lr_unit_csv(file_path: Path) -> list[LRUnitInput]:
         if not reader.fieldnames:
             raise ValueError("CSV file is empty or has no header")
 
-        if "lr_unit_number" not in reader.fieldnames or "main_book_id" not in reader.fieldnames:
+        fieldnames = [canonical_key(name) for name in reader.fieldnames]  # any language
+        if "lr_unit_number" not in fieldnames or "main_book_id" not in fieldnames:
             raise ValueError("CSV must have 'lr_unit_number' and 'main_book_id' columns")
 
         for row_num, row in enumerate(reader, start=2):
+            row = canonical_keys(row)
             lr_unit_number = row.get("lr_unit_number", "").strip()
             main_book_id_str = row.get("main_book_id", "").strip()
 
@@ -184,7 +187,7 @@ def _parse_lr_unit_json(file_path: Path) -> list[LRUnitInput]:
         raise FileNotFoundError(f"File not found: {file_path}")
 
     with file_path.open(encoding="utf-8") as f:
-        data = json.load(f)
+        data = canonical_keys(json.load(f))  # files may be written in any language
 
     if not isinstance(data, list):
         raise ValueError("JSON must be an array of LR unit objects")
@@ -196,6 +199,7 @@ def _parse_lr_unit_json(file_path: Path) -> list[LRUnitInput]:
     for idx, item in enumerate(data):
         if not isinstance(item, dict):
             raise ValueError(f"Item {idx}: must be an object with lr_unit_number and main_book_id")
+        item = canonical_keys(item)
 
         lr_unit_number = str(item.get("lr_unit_number", "")).strip()
         main_book_id = item.get("main_book_id")
@@ -228,7 +232,7 @@ def _parse_batch_fetch_output(file_path: Path) -> list[LRUnitInput]:
         raise FileNotFoundError(f"File not found: {file_path}")
 
     with file_path.open(encoding="utf-8") as f:
-        data = json.load(f)
+        data = canonical_keys(json.load(f))  # files may be written in any language
 
     # Handle both direct array and object with "results" key
     if isinstance(data, dict) and "results" in data:

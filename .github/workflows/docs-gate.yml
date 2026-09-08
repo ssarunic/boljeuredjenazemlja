@@ -28,6 +28,10 @@ jobs:
         working-directory: cli
         run: pytest tests/test_terminology.py -q --no-cov
 
+      - name: Output field names gate
+        working-directory: cli
+        run: pytest tests/test_output_keys.py -q --no-cov
+
       - name: Documentation coverage gate
         working-directory: cli
         run: pytest tests/test_docs_coverage.py -q --no-cov

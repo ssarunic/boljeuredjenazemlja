@@ -543,6 +543,7 @@ boljeuredjenazemlja/
 8. **CLI documentation**: Any change to a CLI command (new, changed, or removed) must update the user docs in the same commit, following [specs/documentation-guide.md](specs/documentation-guide.md)
 9. **Changelog**: Any user-visible change (SDK, CLI, MCP server) gets a bullet under `[Unreleased]` in `CHANGELOG.md` in the same commit; see [specs/release-process.md](specs/release-process.md)
 9. **Croatian command and option names**: every command, long option, positional argument and word-like choice value needs an entry in `cli/src/cadastral_cli/localized.py` and a translation in `po/hr.po` (naming convention in [specs/terminology.md](specs/terminology.md) section 4); `cd cli && pytest tests/test_localized_cli.py` enforces it. English names stay canonical; the Croatian program name is `uz`
+10. **Output field names**: every JSON key or CSV column the CLI emits needs an entry in `cli/src/cadastral_cli/output_keys.py` and a Croatian spelling in `po/hr.po` (ASCII snake_case, [specs/terminology.md](specs/terminology.md) section 5). Output goes through `print_output`, which localizes keys; input parsers accept any language via `canonical_keys`. The MCP server uses the SDK models directly, so its JSON is always English; anything that reuses the CLI formatters and needs English must run with `--lang en` or `CADASTRAL_LANG=en`. `cd cli && pytest tests/test_output_keys.py` enforces it
 
 ### Documentation Style
 

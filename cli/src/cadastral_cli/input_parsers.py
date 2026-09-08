@@ -4,6 +4,8 @@ import csv
 import json
 from pathlib import Path
 
+from cadastral_cli.output_keys import canonical_key, canonical_keys
+
 
 class ParcelInput:
     """Represents a single parcel input specification."""
@@ -153,9 +155,12 @@ def parse_csv_file(file_path: str | Path) -> list[ParcelInput]:
             msg = "CSV file is empty or has no header"
             raise ValueError(msg)
 
+        # Column names may be in any supported language (see output_keys).
+        fieldnames = [canonical_key(name) for name in reader.fieldnames]
+
         # Detect CSV format
-        has_parcel_number = "parcel_number" in reader.fieldnames
-        has_parcel_id = "parcel_id" in reader.fieldnames
+        has_parcel_number = "parcel_number" in fieldnames
+        has_parcel_id = "parcel_id" in fieldnames
 
         if has_parcel_number and has_parcel_id:
             msg = "Cannot have both parcel_number and parcel_id columns (no mixing allowed)"
@@ -167,6 +172,7 @@ def parse_csv_file(file_path: str | Path) -> list[ParcelInput]:
 
         # Parse rows
         for row_num, row in enumerate(reader, start=2):  # Start at 2 (after header)
+            row = canonical_keys(row)
             if has_parcel_id:
                 # Direct parcel ID format
                 parcel_id = row.get("parcel_id", "").strip()
@@ -258,6 +264,7 @@ def parse_json_file(file_path: str | Path) -> list[ParcelInput]:
         if not isinstance(item, dict):
             msg = f"Item {idx}: must be an object with parcel_number or parcel_id"
             raise ValueError(msg)
+        item = canonical_keys(item)
 
         parcel_number = item.get("parcel_number", "").strip() if "parcel_number" in item else None
         parcel_id = item.get("parcel_id", "").strip() if "parcel_id" in item else None

@@ -28,6 +28,18 @@ newer click: bump the pin, run `./scripts/generate_pot.sh` and
 `./scripts/update_translations.sh`, translate the new click messages in
 `po/hr.po`, compile.
 
+## Output Field Names
+
+JSON keys and CSV column names are localized at the output boundary
+(`print_output` calls `output_keys.localize_keys`). Each canonical English key
+is a `pgettext("key", ...)` entry in `cli/src/cadastral_cli/output_keys.py`;
+Croatian spellings are ASCII snake_case. The input parsers call
+`canonical_keys` so files written in either language are read back. The MCP
+server never goes through the CLI formatters; if a consumer needs English
+from the CLI, it sets `--lang en` or `CADASTRAL_LANG=en` rather than the CLI
+hard-coding it. `cd cli && pytest tests/test_output_keys.py` checks the
+catalog against the real output.
+
 ## Command and Option Names
 
 Command names, long options, positional argument metavars and word-like

@@ -1,5 +1,14 @@
 [
-  {"parcel_number": "103/2", "municipality": "SAVAR"},
-  {"parcel_number": "45", "municipality": "SAVAR"},
-  {"parcel_number": "396/1", "municipality": "334979"}
+  {
+    "broj_cestice": "103/2",
+    "opcina": "SAVAR"
+  },
+  {
+    "broj_cestice": "45",
+    "opcina": "SAVAR"
+  },
+  {
+    "broj_cestice": "396/1",
+    "opcina": "334979"
+  }
 ]

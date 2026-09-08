@@ -11,6 +11,8 @@ from rich.console import Console
 from rich.table import Table
 from tabulate import tabulate
 
+from cadastral_cli.output_keys import localize_keys
+
 console = Console()
 
 
@@ -54,13 +56,17 @@ def format_csv(data: list[dict[str, Any]]) -> str:
 
 
 def print_output(data: Any, output_format: str = "table", file: str | None = None) -> None:
-    """Print output in specified format."""
+    """Print output in specified format.
+
+    JSON keys and CSV column names follow the active language (see
+    ``output_keys``); tables are built from translated labels by the caller.
+    """
     if output_format == "json":
-        output = format_json(data)
+        output = format_json(localize_keys(data))
     elif output_format == "csv":
         if not isinstance(data, list):
             data = [data]
-        output = format_csv(data)
+        output = format_csv(localize_keys(data))
     else:  # table
         output = format_table(data)
 

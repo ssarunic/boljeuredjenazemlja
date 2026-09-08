@@ -25,15 +25,17 @@ drugim.
 Svaki je uložak određen svojim brojem i identifikatorom glavne knjige (main book
 ID). Najlakše ćete oboje dobiti iz JSON datoteke koju zapisuje
 [skupno-čestice](batch-fetch.md). Možete pripremiti i CSV datoteku s dva stupca,
-`lr_unit_number` i `main_book_id`, poput primjera
+`broj_zk_uloska` i `id_glavne_knjige`, poput primjera
 [lr_units.csv](../examples/lr_units.csv):
 
+<!-- BEGIN GENERATED: file lr_units.csv -->
 ```text
-lr_unit_number,main_book_id
+broj_zk_uloska,id_glavne_knjige
 657,21277
 769,21277
 449,21277
 ```
+<!-- END GENERATED: file -->
 
 ## Korak po korak
 
