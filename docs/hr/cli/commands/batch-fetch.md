@@ -115,10 +115,10 @@ oba jezika.
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `ČESTICE` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
-| `--ulaz`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom čestica | Ne koristi se |
+| `--ulaz`, `-ul` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom čestica | Ne koristi se |
 | `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno kod popisa u naredbenom retku) | Ne koristi se |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--detalji` | Razina detalja: basic (samo sažetak) ili full (potpuni podaci za svaku česticu) (`basic`, `full`) | Koristi se `basic` |
 | `--posjednici` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
 | `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
@@ -221,21 +221,22 @@ Uporaba: uz skupno-čestice [OPCIJE] ČESTICE
     uz skupno-čestice "103/2,45,396/1" -ko SAVAR
 
     # Skupna obrada iz CSV datoteke
-    uz skupno-čestice --ulaz parcels.csv --oblik csv -o results.csv
+    uz skupno-čestice --ulaz parcels.csv --oblik csv -dt results.csv
 
     # Skupna obrada s potpunim podacima za svaku česticu (kao get-parcel)
     uz skupno-čestice "103/2,45,396/1" -ko SAVAR --detalji full
 
     # Skupna obrada s podacima o vlasništvu u JSON formatu
-    uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -o results.json
+    uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -dt results.json
 
 Opcije:
-  -i, --ulaz PUTANJA              Ulazna datoteka (CSV ili JSON) s popisom
+  -ul, --ulaz PUTANJA             Ulazna datoteka (CSV ili JSON) s popisom
                                   čestica
   -ko, --općina TEKST             Naziv ili šifra općine (obavezno kod popisa u
                                   naredbenom retku)
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
-  -f, --oblik [tablica|json|csv]  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
   --detalji [basic|full]          Razina detalja: basic (samo sažetak) ili full
                                   (potpuni podaci za svaku česticu)
   --posjednici                    Uključi detaljne podatke o vlasništvu u izlaz

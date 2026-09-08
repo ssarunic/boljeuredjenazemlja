@@ -65,10 +65,10 @@ spremite u datoteku, dodajte `--oblik csv` i `--datoteka` s nazivom datoteke.
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `POJAM` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
-| `--ured`, `-o` `TEKST` | Filtriraj prema ID-u katastarskog ureda (npr. 114) | Ne koristi se |
-| `--odjel`, `-d` `TEKST` | Filtriraj prema ID-u odjela (npr. 116) | Ne koristi se |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
-| `--datoteka`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--ured`, `-ur` `TEKST` | Filtriraj prema ID-u katastarskog ureda (npr. 114) | Ne koristi se |
+| `--odjel`, `-od` `TEKST` | Filtriraj prema ID-u odjela (npr. 116) | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--samo-broj` | Prikaži samo broj | Nije uključeno |
 <!-- END GENERATED: options -->
 
@@ -110,11 +110,12 @@ Uporaba: uz traži-općinu [OPCIJE] POJAM
     uz traži-općinu SAVAR --ured 114
 
 Opcije:
-  -o, --ured TEKST                Filtriraj prema ID-u katastarskog ureda (npr.
+  -ur, --ured TEKST               Filtriraj prema ID-u katastarskog ureda (npr.
                                   114)
-  -d, --odjel TEKST               Filtriraj prema ID-u odjela (npr. 116)
-  -f, --oblik [tablica|json|csv]  Format izlaza
-  -out, --datoteka PUTANJA        Spremi izlaz u datoteku
+  -od, --odjel TEKST              Filtriraj prema ID-u odjela (npr. 116)
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --samo-broj                     Prikaži samo broj
   --help                          Prikaži ovu poruku i izađi.
 ```

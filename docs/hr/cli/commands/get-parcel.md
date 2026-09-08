@@ -128,8 +128,8 @@ uz čestica 103/2 -ko SAVAR --posjednici --oblik json --datoteka parcel-103-2.js
 | `--detalji` | Razina detalja (`basic`, `full`, `owners`, `landuse`, `geometry`) | Koristi se `full` |
 | `--posjednici` | Uključi vlasničke podatke | Nije uključeno |
 | `--geometrija` | Uključi koordinate granica | Nije uključeno |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `yaml`, `csv`) | Koristi se `tablica` |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `yaml`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -171,7 +171,7 @@ Uporaba: uz čestica [OPCIJE] BROJ_ČESTICE
     uz čestica 103/2 -ko SAVAR
     uz čestica 103/2 -ko 334979 --posjednici
     uz čestica 103/2 -ko 334979 --detalji owners
-    uz čestica 103/2 -ko 334979 --oblik json -o parcel.json
+    uz čestica 103/2 -ko 334979 --oblik json -dt parcel.json
 
 Opcije:
   -ko, --općina TEKST             Naziv ili šifra općine  [obavezno]
@@ -179,9 +179,9 @@ Opcije:
                                   Razina detalja
   --posjednici                    Uključi vlasničke podatke
   --geometrija                    Uključi koordinate granica
-  -f, --oblik [tablica|json|yaml|csv]
+  -ob, --oblik [tablica|json|yaml|csv]
                                   Format izlaza
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

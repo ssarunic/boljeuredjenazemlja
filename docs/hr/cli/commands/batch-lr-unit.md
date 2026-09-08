@@ -165,10 +165,10 @@ Kada se jedan uložak ne može pročitati, alat nastavlja s ostalima. Dodajte
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--ulaz`, `-i` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom ZK uložaka | Ne koristi se |
-| `--iz-skupnog-ispisa`, `-b` `PUTANJA` | Učitaj reference ZK uložaka iz JSON izlaza naredbe batch-fetch | Ne koristi se |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--ulaz`, `-ul` `PUTANJA` | Ulazna datoteka (CSV ili JSON) s popisom ZK uložaka | Ne koristi se |
+| `--iz-skupnog-ispisa`, `-gk` `PUTANJA` | Učitaj reference ZK uložaka iz JSON izlaza naredbe batch-fetch | Ne koristi se |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--vlasnici` | Uključi detaljne podatke o vlasništvu u izlaz | Nije uključeno |
 | `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
 <!-- END GENERATED: options -->
@@ -206,7 +206,7 @@ Uporaba: uz skupno-ulošci [OPCIJE]
      uz skupno-ulošci --ulaz lr_units.csv
 
   2. Izlaz naredbe batch-fetch (učitava jedinstvene reference ZK uložaka):
-     uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -o parcels.json
+     uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -dt parcels.json
      uz skupno-ulošci --iz-skupnog-ispisa parcels.json
 
   CSV format:
@@ -225,22 +225,23 @@ Uporaba: uz skupno-ulošci [OPCIJE]
     uz skupno-ulošci --ulaz lr_units.csv
 
     # Iz izlaza naredbe batch-fetch (lanac naredbi)
-    uz skupno-čestice "103/2,45,396/1" -ko SAVAR --oblik json -o parcels.json
+    uz skupno-čestice "103/2,45,396/1" -ko SAVAR --oblik json -dt parcels.json
     uz skupno-ulošci --iz-skupnog-ispisa parcels.json
 
     # S podacima o vlasništvu u JSON formatu
-    uz skupno-ulošci -i lr_units.json --vlasnici --oblik json -o results.json
+    uz skupno-ulošci -ul lr_units.json --vlasnici --oblik json -dt results.json
 
   ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
 
 Opcije:
-  -i, --ulaz PUTANJA              Ulazna datoteka (CSV ili JSON) s popisom ZK
+  -ul, --ulaz PUTANJA             Ulazna datoteka (CSV ili JSON) s popisom ZK
                                   uložaka
-  -b, --iz-skupnog-ispisa PUTANJA
+  -gk, --iz-skupnog-ispisa PUTANJA
                                   Učitaj reference ZK uložaka iz JSON izlaza
                                   naredbe batch-fetch
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
-  -f, --oblik [tablica|json|csv]  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
   --vlasnici                      Uključi detaljne podatke o vlasništvu u izlaz
   --nastavi-kod-greške / --stani-kod-greške
                                   Nastavi obradu nakon grešaka (zadano: nastavi)

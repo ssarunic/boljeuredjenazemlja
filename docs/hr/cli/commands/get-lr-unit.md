@@ -138,16 +138,16 @@ spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom datoteke.
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--broj-uloška`, `-u` `TEKST` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
-| `--glavna-knjiga`, `-b` `CIJELI_BROJ` | ID glavne knjige (npr. 21277) | Ne koristi se |
-| `--od-čestice`, `-p` `TEKST` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
+| `--broj-uloška`, `-bu` `TEKST` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
+| `--glavna-knjiga`, `-gk` `CIJELI_BROJ` | ID glavne knjige (npr. 21277) | Ne koristi se |
+| `--od-čestice`, `-oc` `TEKST` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
 | `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
-| `--vlasnici`, `-o` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
-| `--čestice`, `-P` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
-| `--tereti`, `-e` | Prikaži terete (list C) | Nije uključeno |
-| `--plombe`, `-D` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
-| `--sve`, `-a` | Prikaži sve listove | Nije uključeno |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--vlasnici`, `-vl` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
+| `--čestice`, `-ce` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
+| `--tereti`, `-te` | Prikaži terete (list C) | Nije uključeno |
+| `--plombe`, `-pl` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
+| `--sve`, `-sv` | Prikaži sve listove | Nije uključeno |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--datoteka` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
@@ -196,30 +196,31 @@ Uporaba: uz uložak [OPCIJE]
     uz uložak --od-čestice 279/6 -ko SAVAR
 
     # Samo podaci o vlasništvu
-    uz uložak -u 769 -b 21277 --vlasnici
+    uz uložak -bu 769 -gk 21277 --vlasnici
 
     # Svi listovi
-    uz uložak -p 279/6 -ko SAVAR --sve
+    uz uložak -oc 279/6 -ko SAVAR --sve
 
     # Izvoz u JSON
-    uz uložak -u 769 -b 21277 --oblik json -o lr-unit.json
+    uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json
 
   ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
 
 Opcije:
-  -u, --broj-uloška TEKST         Broj zemljišnoknjižnog uloška (npr. '769')
-  -b, --glavna-knjiga CIJELI_BROJ
+  -bu, --broj-uloška TEKST        Broj zemljišnoknjižnog uloška (npr. '769')
+  -gk, --glavna-knjiga CIJELI_BROJ
                                   ID glavne knjige (npr. 21277)
-  -p, --od-čestice TEKST          Dohvati ZK uložak prema broju čestice
+  -oc, --od-čestice TEKST         Dohvati ZK uložak prema broju čestice
   -ko, --općina TEKST             Naziv ili šifra općine (obavezno uz --from-
                                   parcel)
-  -o, --vlasnici                  Prikaži podatke o vlasništvu (list B)
-  -P, --čestice                   Prikaži sve čestice u ulošku (list A)
-  -e, --tereti                    Prikaži terete (list C)
-  -D, --plombe                    Razriješi detalje plombi - jedan dodatni
+  -vl, --vlasnici                 Prikaži podatke o vlasništvu (list B)
+  -ce, --čestice                  Prikaži sve čestice u ulošku (list A)
+  -te, --tereti                   Prikaži terete (list C)
+  -pl, --plombe                   Razriješi detalje plombi - jedan dodatni
                                   zahtjev po plombi
-  -a, --sve                       Prikaži sve listove
-  -f, --oblik [tablica|json|csv]  Format izlaza
+  -sv, --sve                      Prikaži sve listove
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
   --datoteka PUTANJA              Spremi izlaz u datoteku
   --help                          Prikaži ovu poruku i izađi.
 ```

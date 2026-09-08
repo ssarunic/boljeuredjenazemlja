@@ -46,7 +46,7 @@ geografskih podataka koji kartografski programi čitaju.
 
    Ukupno čestica: 3
 
-   Za dohvaćanje geometrije čestice: cadastral get-geometry <čestica> -m 334979
+   Za dohvaćanje geometrije čestice: uz granica <čestica> -ko 334979
    ```
    <!-- END GENERATED: output -->
 
@@ -64,7 +64,7 @@ za novo preuzimanje čak i ako alat već ima podatke iz ranijeg pokretanja.
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `OPĆINA` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--mapa`, `-o` `PUTANJA` | Izlazni direktorij | Obavezno |
+| `--mapa`, `-mp` `PUTANJA` | Izlazni direktorij | Obavezno |
 | `--raspakiraj` / `--bez-raspakiravanja` | Raspakiraj ZIP datoteku | Koristi se `--raspakiraj` |
 | `--obriši-predmemoriju` | Najprije očisti predmemorirane podatke | Nije uključeno |
 <!-- END GENERATED: options -->
@@ -78,7 +78,7 @@ Ako zaboravite `--mapa`, alat staje i kaže vam da opcija nedostaje:
 Uporaba: uz preuzmi-gis [OPCIJE] OPĆINA
 Za pomoć pokrenite 'uz preuzmi-gis --help'.
 
-Greška: Nedostaje opcija '--mapa' / '-o'.
+Greška: Nedostaje opcija '--mapa' / '-mp'.
 ```
 <!-- END GENERATED: output -->
 
@@ -107,10 +107,10 @@ Uporaba: uz preuzmi-gis [OPCIJE] OPĆINA
   Primjeri:
     uz preuzmi-gis 334979 --mapa ./gis_data
     uz preuzmi-gis SAVAR --mapa ./savar_gis --raspakiraj
-    uz preuzmi-gis 334979 -o ./data --obriši-predmemoriju
+    uz preuzmi-gis 334979 -mp ./data --obriši-predmemoriju
 
 Opcije:
-  -o, --mapa PUTANJA              Izlazni direktorij  [obavezno]
+  -mp, --mapa PUTANJA             Izlazni direktorij  [obavezno]
   --raspakiraj / --bez-raspakiravanja
                                   Raspakiraj ZIP datoteku
   --obriši-predmemoriju           Najprije očisti predmemorirane podatke

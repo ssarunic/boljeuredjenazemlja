@@ -21,6 +21,11 @@ number and one tag.
 
 ### Changed
 
+- CLI: short option flags now have Croatian spellings as well, two letters taken
+  from the Croatian long option (`-bu` for `--broj-uloška`, `-gk` for
+  `--glavna-knjiga`, `-vl` for `--vlasnici`, `-ob` for `--oblik`, ...). Croatian
+  help and documentation show them; the English single-letter flags keep working
+  in every language, like `-ko` did before.
 - Top-level README rewritten as a short teaser: three usage examples and a
   capability table linking to the per-command CLI documentation. Stale SDK method
   names, the wrong rate-limit default, and the unimplemented HTTP transport claim

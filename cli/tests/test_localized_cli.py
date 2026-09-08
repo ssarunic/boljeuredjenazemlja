@@ -1,7 +1,10 @@
 """Localized command and option names (cadastral_cli.localized).
 
-- Every command and every long option of the CLI has an entry in the alias
-  tables, so a new command cannot ship without a Croatian spelling.
+- Every command and every option (long and short) of the CLI has an entry in
+  the alias tables, so a new command cannot ship without a Croatian spelling.
+- A Croatian short spelling never equals a pair of English single-letter flags
+  of the same command (``-ae``), which click would otherwise read as a
+  combination.
 - Croatian spellings are unique within their scope (no two commands, and no
   two options of one command, share a spelling in any language).
 - Aliases resolve, with and without diacritics, in either active language.
@@ -42,17 +45,57 @@ def test_every_command_has_an_alias_entry() -> None:
     assert not stale, f"alias entries without a command: {stale}"
 
 
-def test_every_long_option_has_an_alias_entry() -> None:
+def test_every_option_has_an_alias_entry() -> None:
     missing = []
     for path, command in [("", cli), *_walk(cli)]:
         for param in command.params:
             if not isinstance(param, click.Option):
                 continue
             for canonical in [*param._canonical_opts, *param._canonical_secondary_opts]:  # type: ignore[attr-defined]
-                if canonical.startswith("--") and canonical not in localized.OPTIONS:
+                if canonical not in localized.OPTIONS:
                     if (path, canonical) not in localized.OPTION_OVERRIDES:
                         missing.append(f"{path} {canonical}")
-    assert not missing, f"long options without an alias entry: {missing}"
+    assert not missing, f"options without an alias entry: {missing}"
+
+
+def test_short_spellings_are_ascii_and_short() -> None:
+    bad = []
+    for lang in SUPPORTED_LANGUAGES:
+        catalog = localized._catalog(lang)
+        entries = [(localized.OPTION_CONTEXT, c) for c in localized.OPTIONS]
+        entries += [(f"{localized.OPTION_CONTEXT} {p}", c) for p, c in localized.OPTION_OVERRIDES]
+        for context, canonical in entries:
+            if canonical.startswith("--"):
+                continue
+            spelling = localized._lookup(catalog, context, canonical)
+            if spelling == canonical:
+                continue  # untranslated (English): the canonical spelling is used
+            body = spelling[1:]
+            if not (
+                spelling.startswith("-") and len(body) == 2 and body.isascii() and body.isalpha()
+            ):
+                bad.append(f"{lang}: {canonical} -> {spelling}")
+    assert not bad, f"localized short spellings must be '-' plus two ASCII letters: {bad}"
+
+
+def test_short_spellings_do_not_shadow_combined_flags() -> None:
+    """``-sv`` must not be readable as ``-s -v`` where both are boolean flags."""
+    shadowed = []
+    for path, command in _walk(cli):
+        flags: set[str] = set()
+        for param in command.params:
+            if isinstance(param, click.Option) and param.is_flag:
+                flags.update(o[1:] for o in param._canonical_opts if len(o) == 2)  # type: ignore[attr-defined]
+        for param in command.params:
+            if not isinstance(param, click.Option):
+                continue
+            for canonical in [*param._canonical_opts, *param._canonical_secondary_opts]:  # type: ignore[attr-defined]
+                for spelling in localized.option_spellings(path, canonical):
+                    if len(spelling) == 3 and spelling[1] in flags and spelling[2] in flags:
+                        shadowed.append(
+                            f"{path}: {spelling} reads as -{spelling[1]} -{spelling[2]}"
+                        )
+    assert not shadowed, shadowed
 
 
 @pytest.mark.parametrize("lang", SUPPORTED_LANGUAGES)
@@ -103,6 +146,10 @@ def test_croatian_spellings_differ_from_english() -> None:
         ["čestica", "--pomoć"],
         ["cestica", "--help"],
         ["uložak", "--od-čestice", "103/2", "-ko", "SAVAR", "--sve", "--help"],
+        ["uložak", "-bu", "769", "-gk", "21277", "-vl", "-ce", "-te", "--help"],
+        ["get-lr-unit", "-oc", "103/2", "-m", "SAVAR", "-sv", "-ob", "json", "--help"],
+        ["cache", "clear", "-sv", "-bp", "--help"],
+        ["list-municipalities", "-ur", "114", "-od", "116", "-tr", "ZADAR", "--help"],
         ["predmemorija", "popis", "--help"],
         ["cache", "obriši", "--help"],
         ["pretraži", "103/2", "--općina", "SAVAR", "--oblik", "tablica", "--help"],
@@ -119,10 +166,17 @@ def test_help_shows_only_the_active_spelling() -> None:
     croatian = CliRunner().invoke(cli, ["čestica", "--help"]).output
     assert "--općina" in croatian and "--municipality" not in croatian
     assert "--posjednici" in croatian and "--show-owners" not in croatian
+    assert "-ko, " in croatian and "-m, " not in croatian
+    assert "-ob, --oblik" in croatian and "-f, " not in croatian
     assert "tablica" in croatian
+    croatian = CliRunner().invoke(cli, ["uložak", "--pomoć"]).output
+    assert "-bu, --broj-uloška" in croatian and "-u, " not in croatian
+    assert "-gk, --glavna-knjiga" in croatian and "-b, " not in croatian
+    assert "-vl, --vlasnici" in croatian and "-o, " not in croatian
     set_language("en")
     english = CliRunner().invoke(cli, ["get-parcel", "--help"]).output
     assert "--municipality" in english and "--općina" not in english
+    assert "-m, --municipality" in english and "-ko, --municipality" not in english
     assert "table" in english and "tablica" not in english
 
 
@@ -158,9 +212,25 @@ def test_localized_choice_value_is_canonical_inside() -> None:
             "cadastral get-parcel 103/2 -m SAVAR --show-owners",
             "uz čestica 103/2 -ko SAVAR --posjednici",
         ),
-        ("hr", 'cadastral batch-fetch "103/2,45" -m SAVAR --format json -o out.json',
-         'uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -o out.json'),
+        (
+            "hr",
+            'cadastral batch-fetch "103/2,45" -m SAVAR --format json -o out.json',
+            'uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -dt out.json',
+        ),
         ("hr", "cadastral cache clear --all --force", "uz predmemorija obriši --sve --bez-pitanja"),
+        ("hr", "cadastral cache clear -a -f", "uz predmemorija obriši -sv -bp"),
+        (
+            "hr",
+            "cadastral get-lr-unit -u 769 -b 21277 -o -P -e -D",
+            "uz uložak -bu 769 -gk 21277 -vl -ce -te -pl",
+        ),
+        (
+            "hr",
+            "cadastral list-municipalities -o 114 -d 116 -f json",
+            "uz općine -ur 114 -od 116 -ob json",
+        ),
+        ("hr", "cadastral download-gis 334979 -o ./gis", "uz preuzmi-gis 334979 -mp ./gis"),
+        ("en", "uz uložak -bu 769 -gk 21277 -vl", "cadastral get-lr-unit -u 769 -b 21277 -o"),
         (
             "hr",
             "cadastral search 1 -m SAVAR --partial --format=table",

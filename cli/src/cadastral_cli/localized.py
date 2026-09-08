@@ -91,6 +91,23 @@ OPTIONS: dict[str, str] = {
     "--no-extract": pgettext("option", "--no-extract"),
     "--clear-cache": pgettext("option", "--clear-cache"),
     "--force": pgettext("option", "--force"),
+    # Short spellings. English ones are single letters; Croatian ones are two
+    # ASCII letters taken from the Croatian long spelling (``-gk`` for
+    # ``--glavna-knjiga``), see specs/terminology.md section 4.
+    "-u": pgettext("option", "-u"),
+    "-b": pgettext("option", "-b"),
+    "-p": pgettext("option", "-p"),
+    "-o": pgettext("option", "-o"),
+    "-P": pgettext("option", "-P"),
+    "-e": pgettext("option", "-e"),
+    "-D": pgettext("option", "-D"),
+    "-a": pgettext("option", "-a"),
+    "-f": pgettext("option", "-f"),
+    "-i": pgettext("option", "-i"),
+    "-d": pgettext("option", "-d"),
+    "-s": pgettext("option", "-s"),
+    "-v": pgettext("option", "-v"),
+    "-out": pgettext("option", "-out"),
 }
 
 # Per-command spellings that differ from the shared one. The same English
@@ -100,6 +117,13 @@ OPTION_OVERRIDES: dict[tuple[str, str], str] = {
     ("get-parcel", "--show-owners"): pgettext("option get-parcel", "--show-owners"),
     ("batch-fetch", "--show-owners"): pgettext("option batch-fetch", "--show-owners"),
     ("download-gis", "--output"): pgettext("option download-gis", "--output"),
+    # ``-o`` is --output by default; on these commands it is something else.
+    ("get-lr-unit", "-o"): pgettext("option get-lr-unit", "-o"),
+    ("list-municipalities", "-o"): pgettext("option list-municipalities", "-o"),
+    ("search-municipality", "-o"): pgettext("option search-municipality", "-o"),
+    ("download-gis", "-o"): pgettext("option download-gis", "-o"),
+    # ``-f`` is --format by default; on ``cache clear`` it is --force.
+    ("cache clear", "-f"): pgettext("option cache clear", "-f"),
 }
 
 # Choice values that are words rather than format names.
@@ -260,7 +284,15 @@ def localize_command(command: click.Command, command_path: str) -> None:
             if canonical in ARGUMENTS and param.metavar is None:
                 param.metavar = active_spelling("argument", canonical)
             continue
-        if not isinstance(param, click.Option) or isinstance(param, LocalizedOption):
+        if not isinstance(param, click.Option):
+            continue
+        if isinstance(param, LocalizedOption):
+            # Already localized under another path (a subcommand registered
+            # before its group was): redo the spellings under the full path,
+            # which decides the per-command overrides.
+            param._command_path = command_path
+            param.opts = _expand(command_path, param._canonical_opts)
+            param.secondary_opts = _expand(command_path, param._canonical_secondary_opts)
             continue
         type_metavar = param.type.name.upper()
         if param.metavar is None and type_metavar in METAVARS and not param.is_flag:

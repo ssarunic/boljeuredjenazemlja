@@ -81,11 +81,11 @@ popis spremite kao datoteku za tablice.
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--ured`, `-o` `TEKST` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
-| `--odjel`, `-d` `TEKST` | Filtriraj po ID-u odjela | Ne koristi se |
-| `--traži`, `-s` `TEKST` | Pretraži po nazivu | Ne koristi se |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
-| `--datoteka`, `-out` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--ured`, `-ur` `TEKST` | Filtriraj po ID-u katastarskog ureda | Ne koristi se |
+| `--odjel`, `-od` `TEKST` | Filtriraj po ID-u odjela | Ne koristi se |
+| `--traži`, `-tr` `TEKST` | Pretraži po nazivu | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--samo-broj` | Prikaži samo broj | Nije uključeno |
 <!-- END GENERATED: options -->
 
@@ -125,11 +125,12 @@ Uporaba: uz općine [OPCIJE]
     uz općine --traži ZADAR
 
 Opcije:
-  -o, --ured TEKST                Filtriraj po ID-u katastarskog ureda
-  -d, --odjel TEKST               Filtriraj po ID-u odjela
-  -s, --traži TEKST               Pretraži po nazivu
-  -f, --oblik [tablica|json|csv]  Format izlaza
-  -out, --datoteka PUTANJA        Spremi izlaz u datoteku
+  -ur, --ured TEKST               Filtriraj po ID-u katastarskog ureda
+  -od, --odjel TEKST              Filtriraj po ID-u odjela
+  -tr, --traži TEKST              Pretraži po nazivu
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --samo-broj                     Prikaži samo broj
   --help                          Prikaži ovu poruku i izađi.
 ```

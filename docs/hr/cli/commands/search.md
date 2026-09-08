@@ -91,8 +91,8 @@ uz pretraži 103/2 -ko SAVAR --oblik csv --datoteka parcel.csv
 | `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
 | `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (npr. SAVAR ili 334979) | Obavezno |
 | `--točno` / `--djelomično` | Točno podudaranje ili djelomična pretraga | Koristi se `--točno` |
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -140,8 +140,9 @@ Opcije:
   -ko, --općina TEKST             Naziv ili šifra općine (npr. SAVAR ili 334979)
                                   [obavezno]
   --točno / --djelomično          Točno podudaranje ili djelomična pretraga
-  -f, --oblik [tablica|json|csv]  Format izlaza
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

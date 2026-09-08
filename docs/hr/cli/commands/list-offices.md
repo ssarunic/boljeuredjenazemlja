@@ -87,8 +87,8 @@ uz uredi --oblik csv --datoteka offices.csv
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `--oblik`, `-f` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -118,8 +118,9 @@ Uporaba: uz uredi [OPCIJE]
     uz uredi --oblik json
 
 Opcije:
-  -f, --oblik [tablica|json|csv]  Format izlaza
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -ob, --oblik [tablica|json|csv]
+                                  Format izlaza
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

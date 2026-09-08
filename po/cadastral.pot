@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 13:32+0100\n"
+"POT-Creation-Date: 2026-09-08 16:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -559,82 +559,177 @@ msgctxt "option"
 msgid "--force"
 msgstr ""
 
+#: cli/src/cadastral_cli/localized.py:97
+msgctxt "option"
+msgid "-u"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:98
+msgctxt "option"
+msgid "-b"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:99
+msgctxt "option"
+msgid "-p"
+msgstr ""
+
 #: cli/src/cadastral_cli/localized.py:100
+msgctxt "option"
+msgid "-o"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:101
+msgctxt "option"
+msgid "-P"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:102
+msgctxt "option"
+msgid "-e"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:103
+msgctxt "option"
+msgid "-D"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:104
+msgctxt "option"
+msgid "-a"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:105
+msgctxt "option"
+msgid "-f"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:106
+msgctxt "option"
+msgid "-i"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:107
+msgctxt "option"
+msgid "-d"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:108
+msgctxt "option"
+msgid "-s"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:109
+msgctxt "option"
+msgid "-v"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:110
+msgctxt "option"
+msgid "-out"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:117
 msgctxt "option get-parcel"
 msgid "--show-owners"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:101
+#: cli/src/cadastral_cli/localized.py:118
 msgctxt "option batch-fetch"
 msgid "--show-owners"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:102
+#: cli/src/cadastral_cli/localized.py:119
 msgctxt "option download-gis"
 msgid "--output"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:107
+#: cli/src/cadastral_cli/localized.py:121
+msgctxt "option get-lr-unit"
+msgid "-o"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:122
+msgctxt "option list-municipalities"
+msgid "-o"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:123
+msgctxt "option search-municipality"
+msgid "-o"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:124
+msgctxt "option download-gis"
+msgid "-o"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:126
+msgctxt "option cache clear"
+msgid "-f"
+msgstr ""
+
+#: cli/src/cadastral_cli/localized.py:131
 msgctxt "choice"
 msgid "table"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:111
+#: cli/src/cadastral_cli/localized.py:135
 msgctxt "program"
 msgid "cadastral"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:116
+#: cli/src/cadastral_cli/localized.py:140
 msgctxt "argument"
 msgid "PARCEL_NUMBER"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:117
+#: cli/src/cadastral_cli/localized.py:141
 msgctxt "argument"
 msgid "SEARCH_TERM"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:118
+#: cli/src/cadastral_cli/localized.py:142
 msgctxt "argument"
 msgid "PARCELS"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:119
+#: cli/src/cadastral_cli/localized.py:143
 msgctxt "argument"
 msgid "MUNICIPALITY"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:121
+#: cli/src/cadastral_cli/localized.py:145
 msgctxt "usage"
 msgid "[OPTIONS]"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:122
+#: cli/src/cadastral_cli/localized.py:146
 msgctxt "usage"
 msgid "COMMAND [ARGS]..."
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:126
+#: cli/src/cadastral_cli/localized.py:150
 msgctxt "metavar"
 msgid "TEXT"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:127
+#: cli/src/cadastral_cli/localized.py:151
 msgctxt "metavar"
 msgid "INTEGER"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:128
+#: cli/src/cadastral_cli/localized.py:152
 msgctxt "metavar"
 msgid "FLOAT"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:129
+#: cli/src/cadastral_cli/localized.py:153
 msgctxt "metavar"
 msgid "PATH"
 msgstr ""
 
-#: cli/src/cadastral_cli/localized.py:337 click/core.py:1799
+#: cli/src/cadastral_cli/localized.py:369 click/core.py:1799
 msgid "Commands"
 msgstr ""
 
@@ -650,7 +745,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/discovery.py:28
 #: cli/src/cadastral_cli/commands/discovery.py:91
 #: cli/src/cadastral_cli/commands/registry.py:67
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:522
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:526
 #: cli/src/cadastral_cli/commands/batch.py:99
 #: cli/src/cadastral_cli/commands/search.py:43
 #: cli/src/cadastral_cli/commands/search.py:166
@@ -661,7 +756,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/discovery.py:30
 #: cli/src/cadastral_cli/commands/discovery.py:93
 #: cli/src/cadastral_cli/commands/registry.py:69
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:514
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:518
 #: cli/src/cadastral_cli/commands/batch.py:91
 #: cli/src/cadastral_cli/commands/search.py:45
 #: cli/src/cadastral_cli/commands/search.py:168
@@ -699,7 +794,7 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/discovery.py:68
 #: cli/src/cadastral_cli/commands/discovery.py:173
 #: cli/src/cadastral_cli/commands/registry.py:158
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:635
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:639
 #: cli/src/cadastral_cli/commands/batch.py:220
 #: cli/src/cadastral_cli/commands/search.py:143
 #: cli/src/cadastral_cli/commands/search.py:253
@@ -981,42 +1076,42 @@ msgstr ""
 msgid "To see the other register, run: {command}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:318
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:322
 msgid "Processing LR units..."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:329
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:333
 #, python-brace-format
 msgid "Processing {current}/{total}: LR unit {unit}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:410
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:414
 #: cli/src/cadastral_cli/commands/batch.py:372
 msgid "ERRORS"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:416
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:420
 #: cli/src/cadastral_cli/commands/batch.py:319
 msgid "LR Unit"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:417
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:421
 #: cli/src/cadastral_cli/commands/batch.py:378
 msgid "Error Type"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:418
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:422
 #: cli/src/cadastral_cli/commands/batch.py:379
 msgid "Error Message"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:428
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:432
 #: cli/src/cadastral_cli/commands/batch.py:251
 #: cli/src/cadastral_cli/commands/batch.py:394
 msgid "No error message"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:459
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:463
 msgid ""
 "Fetch information for multiple land registry units in batch mode.\n"
 "\n"
@@ -1057,29 +1152,29 @@ msgid ""
 "⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:501
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:505
 msgid "Input file (CSV or JSON) with LR unit specifications"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:508
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:512
 msgid "Read LR unit refs from batch-fetch JSON output"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:527
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:531
 #: cli/src/cadastral_cli/commands/batch.py:110
 msgid "Include detailed ownership information in output"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:532
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:536
 #: cli/src/cadastral_cli/commands/batch.py:115
 msgid "Continue processing after errors (default: continue)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:548
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:552
 msgid "Must provide either --input file or --from-batch-output file"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:550
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:554
 #: cli/src/cadastral_cli/commands/batch.py:135
 #, python-brace-format
 msgid ""
@@ -1087,57 +1182,57 @@ msgid ""
 "Use '{command}' for usage information."
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:557
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:561
 msgid "Cannot use both --input and --from-batch-output"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:564
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:568
 #, python-brace-format
 msgid "📄 Reading LR unit refs from batch-fetch output: {file}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:572
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:576
 #, python-brace-format
 msgid "📄 Reading LR units from: {file}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:577
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:581
 #: cli/src/cadastral_cli/commands/batch.py:162
 #, python-brace-format
 msgid "Input parsing error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:581
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:585
 #, python-brace-format
 msgid "📊 Found {count} LR unit to process\n"
 msgid_plural "📊 Found {count} LR units to process\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:610
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:614
 #, python-brace-format
 msgid "✓ Successfully processed all {total} LR unit(s)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:616
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:620
 #, python-brace-format
 msgid "⚠️  Processed {successful}/{total} LR units ({rate}% success rate)"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:624
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:628
 #, python-brace-format
 msgid "   {count} LR unit failed - see output for details"
 msgid_plural "   {count} LR units failed - see output for details"
 msgstr[0] ""
 msgstr[1] ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:637
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:641
 #: cli/src/cadastral_cli/commands/batch.py:222
 #, python-brace-format
 msgid "   Details: {details}"
 msgstr ""
 
-#: cli/src/cadastral_cli/commands/batch_lr_unit.py:640
+#: cli/src/cadastral_cli/commands/batch_lr_unit.py:644
 #: cli/src/cadastral_cli/commands/batch.py:225
 #, python-brace-format
 msgid "Unexpected error: {error}"

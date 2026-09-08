@@ -58,8 +58,8 @@ uz predmemorija obriši --sve
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `--općina`, `-ko` `TEKST` | Očisti specifičnu općinu | Ne koristi se |
-| `--sve`, `-a` | Očisti svu predmemoriju | Nije uključeno |
-| `--bez-pitanja`, `-f` | Preskoči potvrdu | Nije uključeno |
+| `--sve`, `-sv` | Očisti svu predmemoriju | Nije uključeno |
+| `--bez-pitanja`, `-bp` | Preskoči potvrdu | Nije uključeno |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -106,8 +106,8 @@ Uporaba: uz predmemorija obriši [OPCIJE]
 
 Opcije:
   -ko, --općina TEKST  Očisti specifičnu općinu
-  -a, --sve            Očisti svu predmemoriju
-  -f, --bez-pitanja    Preskoči potvrdu
+  -sv, --sve           Očisti svu predmemoriju
+  -bp, --bez-pitanja   Preskoči potvrdu
   --help               Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

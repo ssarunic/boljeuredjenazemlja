@@ -75,14 +75,21 @@ Convention for Croatian names:
 - Options: the thing the option asks for, not a translation of the English
   word (`--općina`, `--posjednici` on cadastre commands but `--vlasnici` on
   land registry commands, `--sve`, `--oblik`, `--datoteka`, `--od-čestice`).
-- Short flags stay single letters except `-ko` for the cadastral municipality.
+- Short flags: the English ones are single letters; the Croatian ones are
+  two ASCII letters taken from the Croatian long spelling, without diacritics
+  (`-ko` katastarska općina, `-bu` broj uloška, `-gk` glavna knjiga, `-oc`
+  od čestice, `-vl` vlasnici, `-ce` čestice, `-te` tereti, `-pl` plombe,
+  `-sv` sve, `-ob` oblik, `-dt` datoteka, `-ul` ulaz, `-ur` ured, `-od`
+  odjel, `-tr` traži, `-bp` bez pitanja, `-mp` mapa). A Croatian short flag
+  must not equal a pair of English single-letter flags of the same command,
+  because click would otherwise read `-sv` as `-s -v`.
 - Every spelling of every language is accepted at all times, with and without
   diacritics. Help shows only the active language.
 - Format names (`json`, `csv`, `wkt`, `geojson`) are not translated; `table`
   is `tablica`.
 
-`cli/tests/test_localized_cli.py` fails when a command or long option has no
-entry, when two spellings collide, or when help shows the wrong language.
+`cli/tests/test_localized_cli.py` fails when a command or option (long or
+short) has no entry, when two spellings collide, or when help shows the wrong language.
 
 ## 5. Output field names
 

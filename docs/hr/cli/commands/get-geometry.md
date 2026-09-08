@@ -87,8 +87,8 @@ uz granica 103/2 -ko SAVAR --oblik geojson --datoteka parcel-103-2.geojson
 |---|---|---|
 | `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
 | `--općina`, `-ko` `TEKST` | Naziv ili šifra općine | Obavezno |
-| `--oblik`, `-f` | Format izvoza (`wkt`, `geojson`, `csv`, `json`) | Koristi se `wkt` |
-| `--datoteka`, `-o` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--oblik`, `-ob` | Format izvoza (`wkt`, `geojson`, `csv`, `json`) | Koristi se `wkt` |
+| `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
 | `--statistika` | Uključi statistiku geometrije | Nije uključeno |
 <!-- END GENERATED: options -->
 
@@ -131,14 +131,14 @@ Uporaba: uz granica [OPCIJE] BROJ_ČESTICE
   Primjeri:
     uz granica 103/2 -ko SAVAR
     uz granica 103/2 -ko 334979 --oblik wkt
-    uz granica 103/2 -ko 334979 --oblik geojson -o parcel.geojson
-    uz granica 103/2 -ko 334979 --oblik csv -o coords.csv
+    uz granica 103/2 -ko 334979 --oblik geojson -dt parcel.geojson
+    uz granica 103/2 -ko 334979 --oblik csv -dt coords.csv
 
 Opcije:
   -ko, --općina TEKST             Naziv ili šifra općine  [obavezno]
-  -f, --oblik [wkt|geojson|csv|json]
+  -ob, --oblik [wkt|geojson|csv|json]
                                   Format izvoza
-  -o, --datoteka PUTANJA          Spremi izlaz u datoteku
+  -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
   --statistika                    Uključi statistiku geometrije
   --help                          Prikaži ovu poruku i izađi.
 ```
