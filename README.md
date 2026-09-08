@@ -378,6 +378,20 @@ mypy src/cadastral_api
 ruff check src/
 ```
 
+### Releases
+
+Releases are occasional, cut after a major feature or an important fix, and
+marked by an annotated git tag `vX.Y.Z` on `main`. All four projects share
+one version number. Changes are listed in [CHANGELOG.md](CHANGELOG.md); the
+full procedure is in [specs/release-process.md](specs/release-process.md).
+
+```bash
+# Describe the change under [Unreleased] in CHANGELOG.md, then:
+scripts/release.py 0.2.0 --dry-run   # preview
+scripts/release.py 0.2.0             # bump versions, date the changelog, commit, tag
+git push origin main v0.2.0
+```
+
 ### Project Structure
 
 ```text

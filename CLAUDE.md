@@ -541,6 +541,7 @@ boljeuredjenazemlja/
 6. **Testing**: Add tests for new features
 7. **File naming**: Follow [specs/naming-conventions.md](specs/naming-conventions.md)
 8. **CLI documentation**: Any change to a CLI command (new, changed, or removed) must update the user docs in the same commit, following [specs/documentation-guide.md](specs/documentation-guide.md)
+9. **Changelog**: Any user-visible change (SDK, CLI, MCP server) gets a bullet under `[Unreleased]` in `CHANGELOG.md` in the same commit; see [specs/release-process.md](specs/release-process.md)
 9. **Croatian command and option names**: every command, long option, positional argument and word-like choice value needs an entry in `cli/src/cadastral_cli/localized.py` and a translation in `po/hr.po` (naming convention in [specs/terminology.md](specs/terminology.md) section 4); `cd cli && pytest tests/test_localized_cli.py` enforces it. English names stay canonical; the Croatian program name is `uz`
 
 ### Documentation Style
@@ -601,7 +602,27 @@ cd cli && pytest tests/test_i18n_coverage.py
 
 # Documentation gate (needs the mock server dependencies; rebuild first with python scripts/build_docs.py)
 cd cli && pytest tests/test_docs_coverage.py
+
+# Release consistency gate (version strings + CHANGELOG)
+cd cli && pytest tests/test_release_consistency.py
 ```
+
+### Releases
+
+Releases are occasional (after a major feature or an important bug fix), not
+scheduled. The whole monorepo shares one version number, written in seven
+files and kept identical by `scripts/release.py`. Each release is an annotated
+tag `vX.Y.Z` on `main` whose message is the matching `CHANGELOG.md` section;
+pushing the tag creates a GitHub Release. Full rules: [specs/release-process.md](specs/release-process.md).
+
+```bash
+scripts/release.py 0.2.0 --dry-run   # preview: versions, changelog, commit, tag
+scripts/release.py 0.2.0             # do it (never pushes)
+git push origin main v0.2.0
+```
+
+Never edit the version strings by hand and never move or delete a tag; fix a
+bad release with a new PATCH release.
 
 ## Documentation
 
@@ -629,6 +650,7 @@ cd cli && pytest tests/test_docs_coverage.py
 - **[specs/i18n-guide.md](specs/i18n-guide.md)** - Internationalization developer guide
 - **[specs/terminology.md](specs/terminology.md)** - Croatian legal and cadastral vocabulary the CLI and docs must use; enforced by `cli/tests/test_terminology.py`
 - **[specs/documentation-guide.md](specs/documentation-guide.md)** - CLI user documentation guide (audience, page template, generated vs authored, Croatian edition, update procedure)
+- **[specs/release-process.md](specs/release-process.md)** - Versioning, release tags, changelog and the release gate
 - **[specs/i18n-status.md](specs/i18n-status.md)** - i18n implementation status
 - **[specs/refactoring-todo.md](specs/refactoring-todo.md)** - Monorepo refactoring checklist
 

@@ -16,6 +16,7 @@ This directory contains technical specifications, architecture documentation, an
 
 - [naming-conventions.md](naming-conventions.md) - File and directory naming standards
 - [documentation-structure.md](documentation-structure.md) - Documentation organization guide
+- [release-process.md](release-process.md) - Versioning, release tags, changelog and the release gate
 
 ## Internationalization (i18n)
 

@@ -1,0 +1,44 @@
+name: GitHub Release from tag
+
+# A pushed tag vX.Y.Z becomes a GitHub Release whose notes are the matching
+# CHANGELOG.md section. The tag and the changelog remain the source of truth;
+# see specs/release-process.md.
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify the tag matches the version strings and the changelog
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          python3 scripts/release.py --check
+          actual="$(python3 -c 'import re,pathlib; print(re.search(r"^version = \"([^\"]+)\"", pathlib.Path("pyproject.toml").read_text(), re.M).group(1))')"
+          if [ "$actual" != "$version" ]; then
+            echo "tag $GITHUB_REF_NAME does not match version $actual in pyproject.toml" >&2
+            exit 1
+          fi
+          python3 scripts/release.py --notes "$version" > release-notes.md
+          cat release-notes.md
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            --verify-tag

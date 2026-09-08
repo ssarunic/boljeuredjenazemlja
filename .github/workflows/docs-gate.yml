@@ -31,3 +31,7 @@ jobs:
       - name: Documentation coverage gate
         working-directory: cli
         run: pytest tests/test_docs_coverage.py -q --no-cov
+
+      - name: Release consistency gate
+        working-directory: cli
+        run: pytest tests/test_release_consistency.py -q --no-cov
