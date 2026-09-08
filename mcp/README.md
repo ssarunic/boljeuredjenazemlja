@@ -1,56 +1,18 @@
-# Cadastral MCP Server
+# cadastral_mcp: MCP server
 
-Model Context Protocol (MCP) server for AI agent integration with the Croatian Cadastral System API.
-
-## Features
-
-- MCP-compliant server for AI agent integration
-- Tools for parcel search and information retrieval
-- Resources for cadastral offices and municipalities
-- Prompts for common cadastral queries
-- HTTP transport support
-
-## Installation
+Model Context Protocol server that lets Claude Desktop and other MCP clients look
+up parcels, owners, land registry units, encumbrances, and geometry.
 
 ```bash
-cd mcp
-pip install -e .
+pip install -e ./api -e ./mcp
+cadastral-mcp --transport stdio
 ```
 
-## Quick Start
+Claude Desktop configuration and a tool-by-tool guide:
+[docs/mcp-usage-guide.md](../docs/mcp-usage-guide.md). Architecture:
+[specs/mcp-server.md](../specs/mcp-server.md).
 
-```bash
-# Start the MCP server
-cadastral-mcp
+The `--transport http` mode is a placeholder. A hosted REST and remote MCP service
+is specified in [specs/gateway-service.md](../specs/gateway-service.md).
 
-# Or with HTTP transport
-cadastral-mcp --http --port 8080
-```
-
-## Command-Line Interface
-
-Prefer working from a terminal instead of an AI agent? The project also ships a
-full-featured CLI (`cadastral`) for parcel search, detailed parcel and land
-registry lookups, batch processing, and GIS data export:
-
-```bash
-# Search for a parcel
-cadastral search 103/2 --municipality SAVAR
-
-# Get detailed information with owners
-cadastral get-parcel 103/2 -m 334979 --show-owners
-
-# Get a land registry unit
-cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
-```
-
-See [CLI Reference](../docs/cli-reference.md) for the complete command reference.
-
-## Documentation
-
-- [MCP Server Documentation](docs/mcp-server.md)
-- [CLI Reference](../docs/cli-reference.md)
-
-## License
-
-MIT
+Runs against the included mock server only; see [docs/legal.md](../docs/legal.md).

@@ -1,45 +1,16 @@
-# Cadastral CLI
+# cadastral_cli: command-line tool
 
-Command-line interface for the Croatian Cadastral System API.
-
-## Features
-
-- Rich terminal interface with formatted tables
-- Multiple output formats (table, JSON, CSV, WKT, GeoJSON)
-- Batch processing support
-- Internationalization (Croatian, English)
-- Interactive parcel search and information retrieval
-
-## Installation
+The `cadastral` command (also `uz`, with Croatian command names) for looking up
+parcels, owners, land registry units, encumbrances, and parcel geometry.
 
 ```bash
-cd cli
-pip install -e .
+pip install -e ./api -e ./cli
+cadastral get-lr-unit --from-parcel 103/2 -m SAVAR --all
 ```
 
-## Quick Start
+Documentation, one page per command, in two languages:
 
-```bash
-# Search for a parcel
-cadastral search 103/2 --municipality SAVAR
+- English: [start here](../docs/en/cli/start-here.md), [complete reference](../docs/en/cli/reference.md), [installation](../docs/en/cli/install.md)
+- Hrvatski: [vodič za početak](../docs/hr/cli/start-here.md), [sve naredbe](../docs/hr/cli/reference.md)
 
-# Get detailed parcel information with owners
-cadastral get-parcel 103/2 -m 334979 --show-owners
-
-# Get land registry unit information
-cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
-
-# Batch processing
-cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
-
-# Get parcel geometry
-cadastral get-geometry 103/2 -m 334979 --format wkt
-```
-
-## Documentation
-
-- [Command Reference](docs/command-reference.md)
-
-## License
-
-MIT
+Runs against the included mock server only; see [docs/legal.md](../docs/legal.md).

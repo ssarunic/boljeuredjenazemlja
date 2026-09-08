@@ -17,6 +17,10 @@ See the main [README](../README.md) for installation instructions and quick star
 The Croatian pages are generated from the English ones and `po/docs-hr.po`;
 see [specs/documentation-guide.md](../specs/documentation-guide.md) before editing.
 
+## Python SDK
+
+- [sdk-guide.md](sdk-guide.md) - Client, models, land registry units, geometry, errors
+
 ## MCP Server (AI Integration)
 
 - [mcp-usage-guide.md](mcp-usage-guide.md) - Guide for using the MCP server with Claude Desktop
@@ -30,4 +34,6 @@ see [specs/documentation-guide.md](../specs/documentation-guide.md) before editi
 
 ## Developer Documentation
 
-For technical specifications, architecture docs, and implementation details, see [specs/](../specs/).
+- [development-guide.md](development-guide.md) - Setup, checks, translations, docs build, releases
+- [legal.md](legal.md) - Terms of use and the mock-server-only restriction
+- [specs/](../specs/) - Technical specifications and architecture

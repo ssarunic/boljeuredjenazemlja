@@ -10,6 +10,23 @@ number and one tag.
 
 ## [Unreleased]
 
+### Added
+
+- `specs/gateway-service.md`: specification for a hosted gateway exposing the SDK
+  as a REST API and as a remote MCP server (single container, SQLite, no external
+  services).
+- `docs/sdk-guide.md`, `docs/development-guide.md`, `docs/legal.md`: SDK reference,
+  developer setup and release procedure, and the full terms of use, moved out of
+  the top-level README.
+
+### Changed
+
+- Top-level README rewritten as a short teaser: three usage examples and a
+  capability table linking to the per-command CLI documentation. Stale SDK method
+  names, the wrong rate-limit default, and the unimplemented HTTP transport claim
+  were removed.
+- `api/`, `cli/`, and `mcp/` READMEs trimmed to short pointers into `docs/`.
+
 ## [0.1.0] - 2026-09-08
 
 Baseline release. Everything the repository contained when release tagging
