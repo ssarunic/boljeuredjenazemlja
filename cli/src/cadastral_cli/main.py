@@ -17,8 +17,13 @@ import sys
 
 import click
 from cadastral_api.exceptions import CadastralAPIError
-from cadastral_api.i18n import SUPPORTED_LANGUAGES, _, get_current_language, set_language
+from cadastral_api.i18n import N_, SUPPORTED_LANGUAGES, _, get_current_language, set_language
 from rich.console import Console
+
+# click renders the "[required]" marker in option help as _(extra["required"]),
+# i.e. through a variable, so xgettext never extracts the literal. Mark it here
+# so it lands in the catalogs and the translated form is used at runtime.
+N_("required")
 
 
 def _preselect_language(argv: list[str]) -> None:

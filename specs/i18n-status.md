@@ -8,7 +8,7 @@
 - Automated coverage gate: complete (`cd cli && pytest tests/test_i18n_coverage.py`)
 - Code localization: complete for the CLI (option help, command help, output,
   error messages, and click's own messages such as "Usage:" / "Missing option")
-- Croatian translations: 387/387 extracted strings translated
+- Croatian translations: 377/377 extracted strings translated (click 8.3.0)
 - `--lang` flag: switches help texts and runtime output at any position
   (`cadastral --lang en search ...`); `CADASTRAL_LANG` and the system locale
   are still honoured
@@ -35,8 +35,19 @@ on 2025-11-14; the gate output is authoritative.
    (`formatters.describe_error`, `error_type_label`, `error_type_value_label`)
    instead of the raw `ErrorType` value.
 6. click's own messages are extracted into the catalog
-   (`scripts/generate_pot.sh` scans the installed click package; set `PYTHON`
-   to an interpreter that has click importable) and translated to Croatian.
+   (`scripts/generate_pot.sh` scans the installed click package) and
+   translated to Croatian.
+7. The catalog had been extracted from a stray user-site click 8.1.8 while the
+   venv (and therefore the CLI and the gate) run click 8.3.0, so 4 messages
+   were missing and 16 were stale (`No such option: --x` leaked in English).
+   `generate_pot.sh` now defaults to the repository `.venv` interpreter; the
+   click version it scanned is printed. Override with `PYTHON=...` only when
+   that interpreter is the one the CLI runs with.
+8. click builds the `[required]` help marker as `_(extra["required"])`, a
+   variable xgettext cannot see, so it stayed English. `i18n.N_()` was added
+   and `main.py` marks `N_("required")`; the help now shows `[obavezno]`.
+   Use the same trick for any other library string reached via a variable;
+   the gate cannot detect this class of gap on its own.
 
 ## ✅ Completed
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 10:58+0100\n"
+"POT-Creation-Date: 2026-09-08 11:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1680,7 +1680,11 @@ msgstr ""
 msgid "  Max Y"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:61
+#: cli/src/cadastral_cli/main.py:26
+msgid "required"
+msgstr ""
+
+#: cli/src/cadastral_cli/main.py:66
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -1693,375 +1697,320 @@ msgid ""
 "Documentation: https://github.com/yourusername/croatian-cadastral-api"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:75
+#: cli/src/cadastral_cli/main.py:80
 msgid "Verbose output"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:79
+#: cli/src/cadastral_cli/main.py:84
 msgid "Language for output (overrides system locale)"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:95
+#: cli/src/cadastral_cli/main.py:100
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:121
+#: cli/src/cadastral_cli/main.py:126
 #, python-brace-format
 msgid ""
 "\n"
 "✗ Error: {error}"
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:124
+#: cli/src/cadastral_cli/main.py:129
 msgid ""
 "\n"
 "\n"
 "Operation cancelled by user."
 msgstr ""
 
-#: cli/src/cadastral_cli/main.py:127
+#: cli/src/cadastral_cli/main.py:132
 #, python-brace-format
 msgid ""
 "\n"
 "✗ Unexpected error: {error}"
 msgstr ""
 
-#: click/_termui_impl.py:186
-msgid "d"
-msgstr ""
-
-#: click/_termui_impl.py:736
+#: click/_termui_impl.py:608
 #, python-brace-format
 msgid "{editor}: Editing failed"
 msgstr ""
 
-#: click/_termui_impl.py:740
+#: click/_termui_impl.py:612
 #, python-brace-format
 msgid "{editor}: Editing failed: {e}"
 msgstr ""
 
-#: click/_winconsole.py:156 click/_winconsole.py:173
+#: click/core.py:1104 click/core.py:1141
 #, python-brace-format
-msgid "Windows error: {error}"
+msgid "{text} {deprecated_message}"
 msgstr ""
 
-#: click/core.py:104
-msgid "deprecated"
-msgstr ""
-
-#: click/core.py:1304
+#: click/core.py:1160
 msgid "Options"
 msgstr ""
 
-#: click/core.py:1316
-msgid "Positional arguments"
-msgstr ""
-
-#: click/core.py:1391
+#: click/core.py:1222
 #, no-python-brace-format
 msgid "Got unexpected extra argument ({args})"
 msgid_plural "Got unexpected extra arguments ({args})"
 msgstr[0] ""
 msgstr[1] ""
 
-#: click/core.py:1407
+#: click/core.py:1241
 msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
 msgstr ""
 
-#: click/core.py:1594
+#: click/core.py:1425
 msgid "Aborted!"
 msgstr ""
 
-#: click/core.py:1981
+#: click/core.py:1799
 msgid "Commands"
 msgstr ""
 
-#: click/core.py:2012
+#: click/core.py:1830
 msgid "Missing command."
 msgstr ""
 
-#: click/core.py:2547
+#: click/core.py:1908
+msgid "No such command {name!r}."
+msgstr ""
+
+#: click/core.py:2332
 msgid "Value must be an iterable."
 msgstr ""
 
-#: click/core.py:2570
+#: click/core.py:2355
 #, no-python-brace-format
 msgid "Takes {nargs} values but 1 was given."
 msgid_plural "Takes {nargs} values but {len} were given."
 msgstr[0] ""
 msgstr[1] ""
 
-#: click/core.py:2767
+#: click/core.py:2505
 msgid ""
 "DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
 msgstr ""
 
-#: click/core.py:3246
-#, python-brace-format
-msgid "Name '{name}' defined twice"
-msgstr ""
-
-#: click/core.py:3262
-msgid "Boolean option {decl!r} cannot use the same flag for true/false."
-msgstr ""
-
-#: click/core.py:3281
-msgid "Could not determine name for option with declarations {decls!r}"
-msgstr ""
-
-#: click/core.py:3288
-#, python-brace-format
-msgid ""
-"No options defined but a name was passed ({name}). Did you mean to declare "
-"an argument instead? Did you mean to pass '--{name}'?"
-msgstr ""
-
-#: click/core.py:3368
+#: click/core.py:2956
 #, python-brace-format
 msgid "env var: {var}"
 msgstr ""
 
-#: click/core.py:3371
+#: click/core.py:2959
 #, python-brace-format
 msgid "default: {default}"
 msgstr ""
 
-#: click/core.py:3435
+#: click/core.py:3023
 msgid "(dynamic)"
 msgstr ""
 
-#: click/core.py:3754
-#, python-brace-format
-msgid ""
-"Arguments take exactly one parameter declaration, got {length}: {decls}."
-msgstr ""
-
-#: click/decorators.py:399
-msgid "Do you want to continue?"
-msgstr ""
-
-#: click/decorators.py:400
-msgid "Confirm the action without prompting."
-msgstr ""
-
-#: click/decorators.py:482
+#: click/decorators.py:465
 #, python-format
 msgid "%(prog)s, version %(version)s"
 msgstr ""
 
-#: click/decorators.py:556 click/decorators.py:598
+#: click/decorators.py:522
 msgid "Show the version and exit."
 msgstr ""
 
-#: click/decorators.py:624
+#: click/decorators.py:548
 msgid "Show this message and exit."
 msgstr ""
 
-#: click/exceptions.py:29
-#, no-python-brace-format
-msgid "Did you mean {possibility}?"
-msgid_plural "(Did you mean one of: {possibilities}?)"
-msgstr[0] ""
-msgstr[1] ""
-
-#: click/exceptions.py:62 click/exceptions.py:108 click/termui.py:275
+#: click/exceptions.py:50 click/exceptions.py:89
 #, python-brace-format
 msgid "Error: {message}"
 msgstr ""
 
-#: click/exceptions.py:99
+#: click/exceptions.py:81
 #, python-brace-format
 msgid "Try '{command} {option}' for help."
 msgstr ""
 
-#: click/exceptions.py:152
+#: click/exceptions.py:130
 #, python-brace-format
 msgid "Invalid value: {message}"
 msgstr ""
 
-#: click/exceptions.py:154
+#: click/exceptions.py:132
 #, python-brace-format
 msgid "Invalid value for {param_hint}: {message}"
 msgstr ""
 
-#: click/exceptions.py:214
+#: click/exceptions.py:190
 msgid "Missing argument"
 msgstr ""
 
-#: click/exceptions.py:216
+#: click/exceptions.py:192
 msgid "Missing option"
 msgstr ""
 
-#: click/exceptions.py:218
+#: click/exceptions.py:194
 msgid "Missing parameter"
 msgstr ""
 
-#: click/exceptions.py:220
+#: click/exceptions.py:196
 #, python-brace-format
 msgid "Missing {param_type}"
 msgstr ""
 
-#: click/exceptions.py:227
+#: click/exceptions.py:203
 #, python-brace-format
 msgid "Missing parameter: {param_name}"
 msgstr ""
 
-#: click/exceptions.py:249
-msgid "No such option {name!r}."
+#: click/exceptions.py:223
+#, python-brace-format
+msgid "No such option: {name}"
 msgstr ""
 
-#: click/exceptions.py:285
-msgid "No such command {name!r}."
-msgstr ""
+#: click/exceptions.py:235
+#, no-python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
 
-#: click/exceptions.py:350
+#: click/exceptions.py:282
 msgid "unknown error"
 msgstr ""
 
-#: click/exceptions.py:357
+#: click/exceptions.py:289
 msgid "Could not open file {filename!r}: {message}"
 msgstr ""
 
-#: click/formatting.py:167
+#: click/formatting.py:156
 msgid "Usage:"
 msgstr ""
 
-#: click/parser.py:145
-#, python-brace-format
-msgid "Invalid start character for option ({option})"
-msgstr ""
-
-#: click/parser.py:203
+#: click/parser.py:199
 msgid "Argument {name!r} takes {nargs} values."
 msgstr ""
 
-#: click/parser.py:382
+#: click/parser.py:381
 msgid "Option {name!r} does not take a value."
 msgstr ""
 
-#: click/parser.py:445
+#: click/parser.py:444
 #, no-python-brace-format
 msgid "Option {name!r} requires an argument."
 msgid_plural "Option {name!r} requires {nargs} arguments."
 msgstr[0] ""
 msgstr[1] ""
 
-#: click/shell_completion.py:417
+#: click/shell_completion.py:332
 msgid "Shell completion is not supported for Bash versions older than 4.4."
 msgstr ""
 
-#: click/shell_completion.py:424
+#: click/shell_completion.py:339
 msgid "Couldn't detect Bash version, shell completion is not supported."
 msgstr ""
 
-#: click/termui.py:256
+#: click/termui.py:162
 msgid "Repeat for confirmation"
 msgstr ""
 
-#: click/termui.py:286
+#: click/termui.py:178
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#: click/termui.py:180
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr ""
+
+#: click/termui.py:191
 msgid "Error: The two entered values do not match."
 msgstr ""
 
-#: click/termui.py:340
+#: click/termui.py:247
 msgid "Error: invalid input"
 msgstr ""
 
-#: click/termui.py:638
-msgid "Unknown color {colour!r}"
-msgstr ""
-
-#: click/termui.py:1003
+#: click/termui.py:866
 msgid "Press any key to continue..."
 msgstr ""
 
-#: click/types.py:439
+#: click/types.py:332
 #, python-brace-format
 msgid ""
 "Choose from:\n"
 "\t{choices}"
 msgstr ""
 
-#: click/types.py:476
+#: click/types.py:369
 #, no-python-brace-format
 msgid "{value!r} is not {choice}."
 msgid_plural "{value!r} is not one of {choices}."
 msgstr[0] ""
 msgstr[1] ""
 
-#: click/types.py:482
-#, python-brace-format
-msgid "Choice({choices})"
-msgstr ""
-
-#: click/types.py:570
+#: click/types.py:460
 #, no-python-brace-format
 msgid "{value!r} does not match the format {format}."
 msgid_plural "{value!r} does not match the formats {formats}."
 msgstr[0] ""
 msgstr[1] ""
 
-#: click/types.py:594
+#: click/types.py:482
 msgid "{value!r} is not a valid {number_type}."
 msgstr ""
 
-#: click/types.py:679
+#: click/types.py:538
 #, python-brace-format
 msgid "{value} is not in the range {range}."
 msgstr ""
 
-#: click/types.py:866
+#: click/types.py:719
 msgid "{value!r} is not a valid boolean. Recognized values: {states}"
 msgstr ""
 
-#: click/types.py:892
+#: click/types.py:747
 msgid "{value!r} is not a valid UUID."
 msgstr ""
 
-#: click/types.py:1116
+#: click/types.py:937
 msgid "file"
 msgstr ""
 
-#: click/types.py:1118
+#: click/types.py:939
 msgid "directory"
 msgstr ""
 
-#: click/types.py:1120
+#: click/types.py:941
 msgid "path"
 msgstr ""
 
-#: click/types.py:1167
+#: click/types.py:988
 msgid "{name} {filename!r} does not exist."
 msgstr ""
 
-#: click/types.py:1176
+#: click/types.py:997
 msgid "{name} {filename!r} is a file."
 msgstr ""
 
-#: click/types.py:1184
+#: click/types.py:1005
 msgid "{name} {filename!r} is a directory."
 msgstr ""
 
-#: click/types.py:1193
+#: click/types.py:1014
 msgid "{name} {filename!r} is not readable."
 msgstr ""
 
-#: click/types.py:1202
+#: click/types.py:1023
 msgid "{name} {filename!r} is not writable."
 msgstr ""
 
-#: click/types.py:1211
+#: click/types.py:1032
 msgid "{name} {filename!r} is not executable."
 msgstr ""
 
-#: click/types.py:1283
+#: click/types.py:1099
 #, no-python-brace-format
 msgid "{len_type} values are required, but {len_value} was given."
 msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] ""
 msgstr[1] ""
-
-#: click/utils.py:362 click/utils.py:389
-#, python-brace-format
-msgid "Unknown standard stream '{name}'"
-msgstr ""

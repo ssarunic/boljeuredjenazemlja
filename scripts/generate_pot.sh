@@ -42,10 +42,22 @@ xgettext \
 
 # click renders its own messages ("Usage:", "Options", "Missing option" ...)
 # through the same catalog (see cadastral_api.i18n), so extract them as well.
-PYTHON="${PYTHON:-python3}"
+#
+# The strings must come from the *same* click the CLI and the coverage gate run
+# with, so prefer the repository venv over whatever python3 is on PATH (a stray
+# user-site click of another version silently produces a drifted catalog).
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -z "${PYTHON:-}" ]; then
+    if [ -x "${REPO_ROOT}/.venv/bin/python" ]; then
+        PYTHON="${REPO_ROOT}/.venv/bin/python"
+    else
+        PYTHON="python3"
+    fi
+fi
 CLICK_DIR=$("${PYTHON}" -c "import click, os; print(os.path.dirname(click.__file__))" 2>/dev/null || true)
 if [ -n "${CLICK_DIR}" ]; then
-    echo "Adding click messages from ${CLICK_DIR}"
+    CLICK_VERSION=$("${PYTHON}" -c "from importlib.metadata import version; print(version(\"click\"))")
+    echo "Adding click ${CLICK_VERSION} messages from ${CLICK_DIR} (via ${PYTHON})"
     (
         cd "$(dirname "${CLICK_DIR}")" && xgettext \
             --language=Python \

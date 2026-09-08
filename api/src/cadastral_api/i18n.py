@@ -159,6 +159,15 @@ def pgettext(context: str, message: str) -> str:
     return TRANSLATIONS.pgettext(context, message)
 
 
+def N_(message: str) -> str:  # noqa: N802 - conventional gettext marker name
+    """Mark ``message`` for extraction without translating it here.
+
+    Use it for strings that are translated later (or by a library) via a
+    variable, which xgettext cannot see: ``N_("required")``.
+    """
+    return message
+
+
 def get_current_language() -> str:
     """
     Get the currently active language.

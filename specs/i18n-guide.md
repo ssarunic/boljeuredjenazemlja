@@ -211,8 +211,16 @@ print(_("New message"))
 
 The script also extracts click's own messages ("Usage:", "Options", "Missing
 option" ...) from the installed click package, because `cadastral_api.i18n`
-routes click's gettext calls to our catalog. It needs an interpreter that can
-import click; set `PYTHON=/path/to/python` if `python3` cannot.
+routes click's gettext calls to our catalog. Those strings differ between click
+releases, so they must come from the click the CLI actually runs with: the
+script uses the repository `.venv/bin/python` when it exists and falls back to
+`python3`. It prints which click version it scanned; set `PYTHON=/path/to/python`
+only to point it at the interpreter the CLI and the coverage gate use.
+
+A library string that reaches gettext through a variable (click's `[required]`
+marker is `_(extra["required"])`) is invisible to xgettext. Mark it with
+`N_("...")` from `cadastral_api.i18n` in our own code (see `main.py`) so it is
+extracted and translated while remaining a no-op at runtime.
 ```bash
 ./scripts/generate_pot.sh
 ```

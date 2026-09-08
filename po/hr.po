@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-08 10:53+0100\n"
+"POT-Creation-Date: 2026-09-08 11:14+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -1910,7 +1910,11 @@ msgstr "  Max X"
 msgid "  Max Y"
 msgstr "  Max Y"
 
-#: cli/src/cadastral_cli/main.py:61
+#: cli/src/cadastral_cli/main.py:26
+msgid "required"
+msgstr "obavezno"
+
+#: cli/src/cadastral_cli/main.py:66
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -1934,20 +1938,20 @@ msgstr ""
 "Dokumentacija: https://github.com/yourusername/croatian-cadastral-api"
 
 # Common UI strings
-#: cli/src/cadastral_cli/main.py:75
+#: cli/src/cadastral_cli/main.py:80
 msgid "Verbose output"
 msgstr "Opširni ispis"
 
-#: cli/src/cadastral_cli/main.py:79
+#: cli/src/cadastral_cli/main.py:84
 msgid "Language for output (overrides system locale)"
 msgstr "Jezik za ispis (nadjačava postavke sustava)"
 
-#: cli/src/cadastral_cli/main.py:95
+#: cli/src/cadastral_cli/main.py:100
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:121
+#: cli/src/cadastral_cli/main.py:126
 #, python-brace-format
 msgid ""
 "\n"
@@ -1956,7 +1960,7 @@ msgstr ""
 "\n"
 "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:124
+#: cli/src/cadastral_cli/main.py:129
 msgid ""
 "\n"
 "\n"
@@ -1966,7 +1970,7 @@ msgstr ""
 "\n"
 "Operacija otkazana od strane korisnika."
 
-#: cli/src/cadastral_cli/main.py:127
+#: cli/src/cadastral_cli/main.py:132
 #, python-brace-format
 msgid ""
 "\n"
@@ -1975,38 +1979,26 @@ msgstr ""
 "\n"
 "✗ Neočekivana greška: {error}"
 
-#: click/_termui_impl.py:186
-msgid "d"
-msgstr "d"
-
-#: click/_termui_impl.py:736
+#: click/_termui_impl.py:608
 #, python-brace-format
 msgid "{editor}: Editing failed"
 msgstr "{editor}: uređivanje nije uspjelo"
 
-#: click/_termui_impl.py:740
+#: click/_termui_impl.py:612
 #, python-brace-format
 msgid "{editor}: Editing failed: {e}"
 msgstr "{editor}: uređivanje nije uspjelo: {e}"
 
-#: click/_winconsole.py:156 click/_winconsole.py:173
+#: click/core.py:1104 click/core.py:1141
 #, python-brace-format
-msgid "Windows error: {error}"
-msgstr "Windows greška: {error}"
+msgid "{text} {deprecated_message}"
+msgstr "{text} {deprecated_message}"
 
-#: click/core.py:104
-msgid "deprecated"
-msgstr "zastarjelo"
-
-#: click/core.py:1304
+#: click/core.py:1160
 msgid "Options"
 msgstr "Opcije"
 
-#: click/core.py:1316
-msgid "Positional arguments"
-msgstr "Pozicijski argumenti"
-
-#: click/core.py:1391
+#: click/core.py:1222
 #, no-python-brace-format
 msgid "Got unexpected extra argument ({args})"
 msgid_plural "Got unexpected extra arguments ({args})"
@@ -2014,27 +2006,31 @@ msgstr[0] "Neočekivani dodatni argument ({args})"
 msgstr[1] "Neočekivani dodatni argumenti ({args})"
 msgstr[2] "Neočekivani dodatni argumenti ({args})"
 
-#: click/core.py:1407
+#: click/core.py:1241
 msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
 msgstr "DeprecationWarning: naredba {name!r} je zastarjela.{extra_message}"
 
-#: click/core.py:1594
+#: click/core.py:1425
 msgid "Aborted!"
 msgstr "Prekinuto!"
 
-#: click/core.py:1981
+#: click/core.py:1799
 msgid "Commands"
 msgstr "Naredbe"
 
-#: click/core.py:2012
+#: click/core.py:1830
 msgid "Missing command."
 msgstr "Nedostaje naredba."
 
-#: click/core.py:2547
+#: click/core.py:1908
+msgid "No such command {name!r}."
+msgstr "Nepostojeća naredba {name!r}."
+
+#: click/core.py:2332
 msgid "Value must be an iterable."
 msgstr "Vrijednost mora biti iterabilna."
 
-#: click/core.py:2570
+#: click/core.py:2355
 #, no-python-brace-format
 msgid "Takes {nargs} values but 1 was given."
 msgid_plural "Takes {nargs} values but {len} were given."
@@ -2042,162 +2038,115 @@ msgstr[0] "Prima {nargs} vrijednosti, a zadana je 1."
 msgstr[1] "Prima {nargs} vrijednosti, a zadane su {len}."
 msgstr[2] "Prima {nargs} vrijednosti, a zadano ih je {len}."
 
-#: click/core.py:2767
+#: click/core.py:2505
 msgid ""
 "DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
 msgstr ""
 "DeprecationWarning: {param_type} {name!r} je zastarjelo.{extra_message}"
 
-#: click/core.py:3246
-#, python-brace-format
-msgid "Name '{name}' defined twice"
-msgstr "Naziv '{name}' definiran je dvaput"
-
-#: click/core.py:3262
-msgid "Boolean option {decl!r} cannot use the same flag for true/false."
-msgstr ""
-"Logička opcija {decl!r} ne može koristiti istu zastavicu za true/false."
-
-#: click/core.py:3281
-msgid "Could not determine name for option with declarations {decls!r}"
-msgstr "Nije moguće odrediti naziv opcije s deklaracijama {decls!r}"
-
-#: click/core.py:3288
-#, python-brace-format
-msgid ""
-"No options defined but a name was passed ({name}). Did you mean to declare "
-"an argument instead? Did you mean to pass '--{name}'?"
-msgstr ""
-"Nijedna opcija nije definirana, ali je proslijeđen naziv ({name}). Jeste li "
-"htjeli deklarirati argument? Jeste li htjeli proslijediti '--{name}'?"
-
-#: click/core.py:3368
+#: click/core.py:2956
 #, python-brace-format
 msgid "env var: {var}"
 msgstr "varijabla okruženja: {var}"
 
-#: click/core.py:3371
+#: click/core.py:2959
 #, python-brace-format
 msgid "default: {default}"
 msgstr "zadano: {default}"
 
-#: click/core.py:3435
+#: click/core.py:3023
 msgid "(dynamic)"
 msgstr "(dinamički)"
 
-#: click/core.py:3754
-#, python-brace-format
-msgid ""
-"Arguments take exactly one parameter declaration, got {length}: {decls}."
-msgstr ""
-"Argumenti primaju točno jednu deklaraciju parametra, zadano {length}: "
-"{decls}."
-
-#: click/decorators.py:399
-msgid "Do you want to continue?"
-msgstr "Želite li nastaviti?"
-
-#: click/decorators.py:400
-msgid "Confirm the action without prompting."
-msgstr "Potvrdi radnju bez pitanja."
-
-#: click/decorators.py:482
+#: click/decorators.py:465
 #, python-format
 msgid "%(prog)s, version %(version)s"
 msgstr "%(prog)s, verzija %(version)s"
 
-#: click/decorators.py:556 click/decorators.py:598
+#: click/decorators.py:522
 msgid "Show the version and exit."
 msgstr "Prikaži verziju i izađi."
 
-#: click/decorators.py:624
+#: click/decorators.py:548
 msgid "Show this message and exit."
 msgstr "Prikaži ovu poruku i izađi."
 
-#: click/exceptions.py:29
-#, no-python-brace-format
-msgid "Did you mean {possibility}?"
-msgid_plural "(Did you mean one of: {possibilities}?)"
-msgstr[0] "Jeste li mislili {possibility}?"
-msgstr[1] "(Jeste li mislili jedno od: {possibilities}?)"
-msgstr[2] "(Jeste li mislili jedno od: {possibilities}?)"
-
-#: click/exceptions.py:62 click/exceptions.py:108 click/termui.py:275
+#: click/exceptions.py:50 click/exceptions.py:89
 #, python-brace-format
 msgid "Error: {message}"
 msgstr "Greška: {message}"
 
-#: click/exceptions.py:99
+#: click/exceptions.py:81
 #, python-brace-format
 msgid "Try '{command} {option}' for help."
 msgstr "Za pomoć pokrenite '{command} {option}'."
 
-#: click/exceptions.py:152
+#: click/exceptions.py:130
 #, python-brace-format
 msgid "Invalid value: {message}"
 msgstr "Neispravna vrijednost: {message}"
 
-#: click/exceptions.py:154
+#: click/exceptions.py:132
 #, python-brace-format
 msgid "Invalid value for {param_hint}: {message}"
 msgstr "Neispravna vrijednost za {param_hint}: {message}"
 
-#: click/exceptions.py:214
+#: click/exceptions.py:190
 msgid "Missing argument"
 msgstr "Nedostaje argument"
 
-#: click/exceptions.py:216
+#: click/exceptions.py:192
 msgid "Missing option"
 msgstr "Nedostaje opcija"
 
-#: click/exceptions.py:218
+#: click/exceptions.py:194
 msgid "Missing parameter"
 msgstr "Nedostaje parametar"
 
-#: click/exceptions.py:220
+#: click/exceptions.py:196
 #, python-brace-format
 msgid "Missing {param_type}"
 msgstr "Nedostaje {param_type}"
 
-#: click/exceptions.py:227
+#: click/exceptions.py:203
 #, python-brace-format
 msgid "Missing parameter: {param_name}"
 msgstr "Nedostaje parametar: {param_name}"
 
-#: click/exceptions.py:249
-msgid "No such option {name!r}."
-msgstr "Nepostojeća opcija {name!r}."
+#: click/exceptions.py:223
+#, python-brace-format
+msgid "No such option: {name}"
+msgstr "Nepostojeća opcija: {name}"
 
-#: click/exceptions.py:285
-msgid "No such command {name!r}."
-msgstr "Nepostojeća naredba {name!r}."
+#: click/exceptions.py:235
+#, no-python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] "Jeste li mislili {possibility}?"
+msgstr[1] "(Jeste li mislili jedno od: {possibilities}?)"
+msgstr[2] "(Jeste li mislili jedno od: {possibilities}?)"
 
-#: click/exceptions.py:350
+#: click/exceptions.py:282
 msgid "unknown error"
 msgstr "nepoznata greška"
 
-#: click/exceptions.py:357
+#: click/exceptions.py:289
 msgid "Could not open file {filename!r}: {message}"
 msgstr "Nije moguće otvoriti datoteku {filename!r}: {message}"
 
-#: click/formatting.py:167
+#: click/formatting.py:156
 msgid "Usage:"
 msgstr "Uporaba:"
 
-#: click/parser.py:145
-#, python-brace-format
-msgid "Invalid start character for option ({option})"
-msgstr "Neispravan početni znak opcije ({option})"
-
-#: click/parser.py:203
+#: click/parser.py:199
 msgid "Argument {name!r} takes {nargs} values."
 msgstr "Argument {name!r} prima {nargs} vrijednosti."
 
-#: click/parser.py:382
+#: click/parser.py:381
 msgid "Option {name!r} does not take a value."
 msgstr "Opcija {name!r} ne prima vrijednost."
 
-#: click/parser.py:445
+#: click/parser.py:444
 #, no-python-brace-format
 msgid "Option {name!r} requires an argument."
 msgid_plural "Option {name!r} requires {nargs} arguments."
@@ -2205,36 +2154,41 @@ msgstr[0] "Opcija {name!r} zahtijeva {nargs} argument."
 msgstr[1] "Opcija {name!r} zahtijeva {nargs} argumenta."
 msgstr[2] "Opcija {name!r} zahtijeva {nargs} argumenata."
 
-#: click/shell_completion.py:417
+#: click/shell_completion.py:332
 msgid "Shell completion is not supported for Bash versions older than 4.4."
 msgstr "Dovršavanje u ljusci nije podržano za verzije Basha starije od 4.4."
 
-#: click/shell_completion.py:424
+#: click/shell_completion.py:339
 msgid "Couldn't detect Bash version, shell completion is not supported."
 msgstr ""
 "Nije moguće utvrditi verziju Basha, dovršavanje u ljusci nije podržano."
 
-#: click/termui.py:256
+#: click/termui.py:162
 msgid "Repeat for confirmation"
 msgstr "Ponovite za potvrdu"
 
-#: click/termui.py:286
+#: click/termui.py:178
+msgid "Error: The value you entered was invalid."
+msgstr "Greška: Unesena vrijednost nije valjana."
+
+#: click/termui.py:180
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr "Greška: {e.message}"
+
+#: click/termui.py:191
 msgid "Error: The two entered values do not match."
 msgstr "Greška: dvije unesene vrijednosti se ne podudaraju."
 
-#: click/termui.py:340
+#: click/termui.py:247
 msgid "Error: invalid input"
 msgstr "Greška: neispravan unos"
 
-#: click/termui.py:638
-msgid "Unknown color {colour!r}"
-msgstr "Nepoznata boja {colour!r}"
-
-#: click/termui.py:1003
+#: click/termui.py:866
 msgid "Press any key to continue..."
 msgstr "Pritisnite bilo koju tipku za nastavak..."
 
-#: click/types.py:439
+#: click/types.py:332
 #, python-brace-format
 msgid ""
 "Choose from:\n"
@@ -2243,7 +2197,7 @@ msgstr ""
 "Odaberite između:\n"
 "\t{choices}"
 
-#: click/types.py:476
+#: click/types.py:369
 #, no-python-brace-format
 msgid "{value!r} is not {choice}."
 msgid_plural "{value!r} is not one of {choices}."
@@ -2251,12 +2205,7 @@ msgstr[0] "{value!r} nije {choice}."
 msgstr[1] "{value!r} nije jedno od {choices}."
 msgstr[2] "{value!r} nije jedno od {choices}."
 
-#: click/types.py:482
-#, python-brace-format
-msgid "Choice({choices})"
-msgstr "Choice({choices})"
-
-#: click/types.py:570
+#: click/types.py:460
 #, no-python-brace-format
 msgid "{value!r} does not match the format {format}."
 msgid_plural "{value!r} does not match the formats {formats}."
@@ -2264,61 +2213,61 @@ msgstr[0] "{value!r} ne odgovara formatu {format}."
 msgstr[1] "{value!r} ne odgovara formatima {formats}."
 msgstr[2] "{value!r} ne odgovara formatima {formats}."
 
-#: click/types.py:594
+#: click/types.py:482
 msgid "{value!r} is not a valid {number_type}."
 msgstr "{value!r} nije valjan {number_type}."
 
-#: click/types.py:679
+#: click/types.py:538
 #, python-brace-format
 msgid "{value} is not in the range {range}."
 msgstr "{value} nije u rasponu {range}."
 
-#: click/types.py:866
+#: click/types.py:719
 msgid "{value!r} is not a valid boolean. Recognized values: {states}"
 msgstr ""
 "{value!r} nije valjana logička vrijednost. Prihvaćene vrijednosti: {states}"
 
-#: click/types.py:892
+#: click/types.py:747
 msgid "{value!r} is not a valid UUID."
 msgstr "{value!r} nije valjan UUID."
 
-#: click/types.py:1116
+#: click/types.py:937
 msgid "file"
 msgstr "datoteka"
 
-#: click/types.py:1118
+#: click/types.py:939
 msgid "directory"
 msgstr "direktorij"
 
-#: click/types.py:1120
+#: click/types.py:941
 msgid "path"
 msgstr "putanja"
 
-#: click/types.py:1167
+#: click/types.py:988
 msgid "{name} {filename!r} does not exist."
 msgstr "{name} {filename!r} ne postoji."
 
-#: click/types.py:1176
+#: click/types.py:997
 msgid "{name} {filename!r} is a file."
 msgstr "{name} {filename!r} je datoteka."
 
-#: click/types.py:1184
+#: click/types.py:1005
 msgid "{name} {filename!r} is a directory."
 msgstr "{name} {filename!r} je direktorij."
 
-#: click/types.py:1193
+#: click/types.py:1014
 msgid "{name} {filename!r} is not readable."
 msgstr "{name} {filename!r} nije čitljiva."
 
-#: click/types.py:1202
+#: click/types.py:1023
 msgid "{name} {filename!r} is not writable."
 msgstr "{name} {filename!r} nije zapisiva."
 
-#: click/types.py:1211
+#: click/types.py:1032
 msgid "{name} {filename!r} is not executable."
 msgstr "{name} {filename!r} nije izvršna."
 
-#: click/types.py:1283
+#: click/types.py:1099
 #, no-python-brace-format
 msgid "{len_type} values are required, but {len_value} was given."
 msgid_plural "{len_type} values are required, but {len_value} were given."
@@ -2326,10 +2275,68 @@ msgstr[0] "Potrebno je {len_type} vrijednosti, a zadana je {len_value}."
 msgstr[1] "Potrebno je {len_type} vrijednosti, a zadane su {len_value}."
 msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 
-#: click/utils.py:362 click/utils.py:389
+#~ msgid "d"
+#~ msgstr "d"
+
 #, python-brace-format
-msgid "Unknown standard stream '{name}'"
-msgstr "Nepoznat standardni tok '{name}'"
+#~ msgid "Windows error: {error}"
+#~ msgstr "Windows greška: {error}"
+
+#~ msgid "deprecated"
+#~ msgstr "zastarjelo"
+
+#~ msgid "Positional arguments"
+#~ msgstr "Pozicijski argumenti"
+
+#, python-brace-format
+#~ msgid "Name '{name}' defined twice"
+#~ msgstr "Naziv '{name}' definiran je dvaput"
+
+#~ msgid "Boolean option {decl!r} cannot use the same flag for true/false."
+#~ msgstr ""
+#~ "Logička opcija {decl!r} ne može koristiti istu zastavicu za true/false."
+
+#~ msgid "Could not determine name for option with declarations {decls!r}"
+#~ msgstr "Nije moguće odrediti naziv opcije s deklaracijama {decls!r}"
+
+#, python-brace-format
+#~ msgid ""
+#~ "No options defined but a name was passed ({name}). Did you mean to "
+#~ "declare an argument instead? Did you mean to pass '--{name}'?"
+#~ msgstr ""
+#~ "Nijedna opcija nije definirana, ali je proslijeđen naziv ({name}). Jeste "
+#~ "li htjeli deklarirati argument? Jeste li htjeli proslijediti '--{name}'?"
+
+#, python-brace-format
+#~ msgid ""
+#~ "Arguments take exactly one parameter declaration, got {length}: {decls}."
+#~ msgstr ""
+#~ "Argumenti primaju točno jednu deklaraciju parametra, zadano {length}: "
+#~ "{decls}."
+
+#~ msgid "Do you want to continue?"
+#~ msgstr "Želite li nastaviti?"
+
+#~ msgid "Confirm the action without prompting."
+#~ msgstr "Potvrdi radnju bez pitanja."
+
+#~ msgid "No such option {name!r}."
+#~ msgstr "Nepostojeća opcija {name!r}."
+
+#, python-brace-format
+#~ msgid "Invalid start character for option ({option})"
+#~ msgstr "Neispravan početni znak opcije ({option})"
+
+#~ msgid "Unknown color {colour!r}"
+#~ msgstr "Nepoznata boja {colour!r}"
+
+#, python-brace-format
+#~ msgid "Choice({choices})"
+#~ msgstr "Choice({choices})"
+
+#, python-brace-format
+#~ msgid "Unknown standard stream '{name}'"
+#~ msgstr "Nepoznat standardni tok '{name}'"
 
 #, python-brace-format
 #~ msgid "API error: {error_type}"
