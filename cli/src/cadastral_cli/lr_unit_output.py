@@ -3,12 +3,11 @@
 import re
 from datetime import datetime
 
-from rich.console import Console
-from rich.table import Table
-
 from cadastral_api.i18n import _
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.utils import parse_fraction
+from rich.console import Console
+from rich.table import Table
 
 console = Console()
 

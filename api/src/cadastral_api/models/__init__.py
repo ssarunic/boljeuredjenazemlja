@@ -18,8 +18,8 @@ from .entities import (
     ParcelSearchResult,
     Party,
     Plumb,
-    Possessor,
     PossessionSheet,
+    Possessor,
     SheetAAdditionalInfo,
     SheetAParcelList,
 )

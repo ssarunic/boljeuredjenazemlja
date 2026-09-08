@@ -1,11 +1,11 @@
 """Discovery commands for CLI - list offices, municipalities, etc."""
 
 import click
-from rich.console import Console
-
 from cadastral_api import CadastralAPIClient, __version__
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _
+from rich.console import Console
+
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
 
 console = Console()
@@ -19,7 +19,14 @@ Example:
 
 
 @click.command("list-offices", help=_LIST_OFFICES_HELP)
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def list_offices(ctx: click.Context, output_format: str, output: str | None) -> None:
@@ -75,7 +82,14 @@ Examples:
 @click.option("--office", "-o", help=_("Filter by cadastral office ID"))
 @click.option("--department", "-d", help=_("Filter by department ID"))
 @click.option("--search", "-s", help=_("Search by name"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
 @click.option("--count-only", is_flag=True, help=_("Show count only"))
 @click.pass_context
@@ -134,7 +148,9 @@ def list_municipalities(
             ]
 
             if output_format == "table":
-                filter_desc = _(" ({filters})").format(filters=', '.join(filter_parts)) if filter_parts else ""
+                filter_desc = ""
+                if filter_parts:
+                    filter_desc = _(" ({filters})").format(filters=", ".join(filter_parts))
                 console.print(_("\n{count} municipalities{filter_desc}:\n").format(
                     count=len(municipalities),
                     filter_desc=filter_desc

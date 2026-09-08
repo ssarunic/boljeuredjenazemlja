@@ -3,13 +3,13 @@
 from unittest.mock import MagicMock, Mock
 
 import pytest
-
 from cadastral_cli.batch_processor import (
     BatchResult,
     BatchSummary,
     process_batch,
 )
 from cadastral_cli.input_parsers import ParcelInput
+
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.models.entities import ParcelInfo
 
@@ -283,7 +283,9 @@ class TestProcessBatch:
 
         # Verify municipality was resolved
         mock_client.find_municipality.assert_called_once_with(search_term="SAVAR")
-        mock_client.get_parcel_by_number.assert_called_once_with("103/2", "334979", exact_match=True)
+        mock_client.get_parcel_by_number.assert_called_once_with(
+            "103/2", "334979", exact_match=True
+        )
         assert summary.successful == 1
 
     def test_process_municipality_not_found(self, mock_client):

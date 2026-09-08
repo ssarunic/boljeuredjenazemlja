@@ -21,7 +21,9 @@ logger = logging.getLogger(__name__)
 def main() -> None:
     """Main entry point for the MCP server CLI."""
     parser = argparse.ArgumentParser(
-        description="Cadastral MCP Server - Model Context Protocol server for land registry queries",
+        description=(
+            "Cadastral MCP Server - Model Context Protocol server for land registry queries"
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

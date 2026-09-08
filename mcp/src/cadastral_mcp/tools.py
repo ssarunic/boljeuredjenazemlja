@@ -171,7 +171,10 @@ class CadastralTools:
                         municipality = spec.get("municipality")
 
                         if not parcel_number or not municipality:
-                            raise ValueError("Each parcel must have either parcel_id or both parcel_number and municipality")
+                            raise ValueError(
+                                "Each parcel must have either parcel_id "
+                                "or both parcel_number and municipality"
+                            )
 
                         search_result = await self.search_parcel(parcel_number, municipality)
                         parcel_id = search_result["parcel_id"]
@@ -276,7 +279,9 @@ class CadastralTools:
             }
         """
         try:
-            logger.info(f"Fetching geometry for {parcel_number} in {municipality} (format: {format})")
+            logger.info(
+                f"Fetching geometry for {parcel_number} in {municipality} (format: {format})"
+            )
 
             # Resolve municipality
             muni_code = await self._resolve_municipality(municipality)
@@ -474,7 +479,8 @@ class CadastralTools:
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
             raise ValueError(
-                f"Could not retrieve land registry unit '{unit_number}' from main book {main_book_id}. "
+                f"Could not retrieve land registry unit '{unit_number}' "
+                f"from main book {main_book_id}. "
                 f"Please verify the unit number and main book ID."
             ) from e
 

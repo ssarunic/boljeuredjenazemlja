@@ -141,16 +141,20 @@ async def list_offices():
 @app.get("/search-cad-parcels/municipalities")
 async def find_municipalities(
     search: Optional[str] = Query(None, description="Municipality name or code to search"),
-    officeId: Optional[str] = Query(None, description="Filter by cadastral office ID"),
-    departmentId: Optional[str] = Query(None, description="Filter by department ID"),
+    office_id: Optional[str] = Query(
+        None, alias="officeId", description="Filter by cadastral office ID"
+    ),
+    department_id: Optional[str] = Query(
+        None, alias="departmentId", description="Filter by department ID"
+    ),
 ):
     """
     Find municipalities by name, code, office, or department.
 
     Args:
         search: Municipality name or registration code (optional)
-        officeId: Cadastral office ID filter (optional)
-        departmentId: Department ID filter (optional)
+        office_id: Cadastral office ID filter (optional)
+        department_id: Department ID filter (optional)
 
     Returns:
         List of matching municipalities.
@@ -158,12 +162,12 @@ async def find_municipalities(
     results = _municipalities
 
     # Filter by office ID (value2 field)
-    if officeId:
-        results = [m for m in results if m.get("value2") == officeId]
+    if office_id:
+        results = [m for m in results if m.get("value2") == office_id]
 
     # Filter by department ID (value3 field)
-    if departmentId:
-        results = [m for m in results if m.get("value3") == departmentId]
+    if department_id:
+        results = [m for m in results if m.get("value3") == department_id]
 
     # Filter by search term (case-insensitive substring match on value1)
     if search:
@@ -181,7 +185,9 @@ async def find_municipalities(
 @app.get("/search-cad-parcels/parcel-numbers")
 async def find_parcel_numbers(
     search: str = Query(..., description="Parcel number to search"),
-    municipalityRegNum: str = Query(..., description="Municipality registration number"),
+    municipality_reg_num: str = Query(
+        ..., alias="municipalityRegNum", description="Municipality registration number"
+    ),
 ):
     """
     Find parcel numbers in a municipality.
@@ -190,13 +196,13 @@ async def find_parcel_numbers(
 
     Args:
         search: Parcel number (supports partial matching)
-        municipalityRegNum: Municipality registration number
+        municipality_reg_num: Municipality registration number
 
     Returns:
         List of matching parcels with parcel IDs.
     """
     # Get parcels for this municipality
-    parcels = _parcels.get(municipalityRegNum, [])
+    parcels = _parcels.get(municipality_reg_num, [])
 
     # Perform partial search on parcel numbers
     search_normalized = search.strip()
@@ -223,18 +229,18 @@ async def find_parcel_numbers(
 
 @app.get("/cad/parcel-info")
 async def get_parcel_info(
-    parcelId: str = Query(..., description="Parcel ID"),
+    parcel_id: str = Query(..., alias="parcelId", description="Parcel ID"),
 ):
     """
     Get detailed information about a parcel.
 
     Args:
-        parcelId: Parcel ID from search endpoint
+        parcel_id: Parcel ID from search endpoint
 
     Returns:
         Complete parcel information including ownership, land use, and registry data.
     """
-    parcel_id_int = int(parcelId)
+    parcel_id_int = int(parcel_id)
 
     # Search for parcel across all municipalities
     for municipality_code, parcels in _parcels.items():
@@ -245,15 +251,19 @@ async def get_parcel_info(
     # Parcel not found
     return JSONResponse(
         status_code=404,
-        content={"error": "Parcel not found", "parcelId": parcelId},
+        content={"error": "Parcel not found", "parcelId": parcel_id},
     )
 
 
 @app.get("/lr/lr-unit")
 async def get_lr_unit(
-    lrUnitNumber: str = Query(..., description="Land registry unit number"),
-    mainBookId: int = Query(..., description="Main book ID"),
-    historicalOverview: bool = Query(False, description="Include historical data"),
+    lr_unit_number: str = Query(
+        ..., alias="lrUnitNumber", description="Land registry unit number"
+    ),
+    main_book_id: int = Query(..., alias="mainBookId", description="Main book ID"),
+    historical_overview: bool = Query(
+        False, alias="historicalOverview", description="Include historical data"
+    ),
 ):
     """
     Get detailed land registry unit information.
@@ -262,9 +272,9 @@ async def get_lr_unit(
     including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).
 
     Args:
-        lrUnitNumber: Land registry unit number (e.g., "769")
-        mainBookId: Main book ID (e.g., 21277)
-        historicalOverview: Include historical data (default: False)
+        lr_unit_number: Land registry unit number (e.g., "769")
+        main_book_id: Main book ID (e.g., 21277)
+        historical_overview: Include historical data (default: False)
 
     Returns:
         List containing land registry unit data (typically 1 element).
@@ -274,7 +284,7 @@ async def get_lr_unit(
         The real API returns a list with typically one element.
     """
     # Create lookup key
-    key = f"{mainBookId}-{lrUnitNumber}"
+    key = f"{main_book_id}-{lr_unit_number}"
 
     # Check if LR unit exists
     if key in _lr_units:
@@ -287,8 +297,8 @@ async def get_lr_unit(
         status_code=404,
         content={
             "error": "Land registry unit not found",
-            "lrUnitNumber": lrUnitNumber,
-            "mainBookId": mainBookId,
+            "lrUnitNumber": lr_unit_number,
+            "mainBookId": main_book_id,
         },
     )
 

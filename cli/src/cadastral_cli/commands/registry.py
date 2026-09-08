@@ -3,14 +3,15 @@
 from typing import Any
 
 import click
-from rich.console import Console
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
-from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.i18n import _
+from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
+from rich.console import Console
+
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
 from cadastral_cli.lr_unit_output import print_lr_unit_full
+
 from .search import _resolve_municipality
 
 console = Console()
@@ -44,13 +45,27 @@ Examples:
 @click.option("--unit-number", "-u", help=_("Land registry unit number (e.g., '769')"))
 @click.option("--main-book", "-b", type=int, help=_("Main book ID (e.g., 21277)"))
 @click.option("--from-parcel", "-p", help=_("Get LR unit from parcel number"))
-@click.option("--municipality", "-m", help=_("Municipality name or code (required with --from-parcel)"))
+@click.option(
+    "--municipality", "-m", help=_("Municipality name or code (required with --from-parcel)")
+)
 @click.option("--show-owners", "-o", is_flag=True, help=_("Display ownership details (Sheet B)"))
 @click.option("--show-parcels", "-P", is_flag=True, help=_("Display all parcels in unit (Sheet A)"))
 @click.option("--show-encumbrances", "-e", is_flag=True, help=_("Display encumbrances (Sheet C)"))
-@click.option("--plombe-detail", "-D", is_flag=True, help=_("Resolve detail of pending entries (plombe) - one extra request per plomba"))
+@click.option(
+    "--plombe-detail",
+    "-D",
+    is_flag=True,
+    help=_("Resolve detail of pending entries (plombe) - one extra request per plomba"),
+)
 @click.option("--all", "-a", "show_all", is_flag=True, help=_("Show all sheets"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def get_lr_unit(
@@ -128,7 +143,9 @@ def get_lr_unit(
                         f"-m {municipality} --show-owners"
                     )
                     console.print(
-                        "   " + _("To see the other register, run: {command}").format(command=drill),
+                        "   " + _("To see the other register, run: {command}").format(
+                            command=drill
+                        ),
                         style="dim",
                     )
 

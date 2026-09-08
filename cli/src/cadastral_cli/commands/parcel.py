@@ -1,13 +1,14 @@
 """Parcel information commands for CLI."""
 
 import click
-from rich.console import Console
-from rich.table import Table
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
+from rich.console import Console
+from rich.table import Table
+
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
+
 from .search import _resolve_municipality
 
 console = Console()
@@ -25,10 +26,22 @@ Examples:
 @click.command("get-parcel", help=_GET_PARCEL_HELP)
 @click.argument("parcel_number")
 @click.option("--municipality", "-m", required=True, help=_("Municipality name or code"))
-@click.option("--detail", type=click.Choice(["basic", "full", "owners", "landuse", "geometry"]), default="full", help=_("Detail level"))
+@click.option(
+    "--detail",
+    type=click.Choice(["basic", "full", "owners", "landuse", "geometry"]),
+    default="full",
+    help=_("Detail level"),
+)
 @click.option("--show-owners", is_flag=True, help=_("Include ownership details"))
 @click.option("--show-geometry", is_flag=True, help=_("Include boundary coordinates"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "yaml", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "yaml", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
 def get_parcel(
@@ -78,16 +91,20 @@ def get_parcel(
         if e.error_type == ErrorType.PARCEL_NOT_FOUND:
             parcel_num = e.details.get("parcel_number", parcel_number)
             muni_code = e.details.get("municipality_reg_num", municipality_code)
-            print_error(_("Parcel '{parcel_number}' not found in municipality {municipality}").format(
-                parcel_number=parcel_num,
-                municipality=muni_code
-            ))
+            print_error(
+                _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
+                    parcel_number=parcel_num,
+                    municipality=muni_code,
+                )
+            )
         else:
             print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 
-def _print_table_output(parcel, geometry, detail: str, show_owners: bool, show_geometry: bool) -> None:
+def _print_table_output(
+    parcel, geometry, detail: str, show_owners: bool, show_geometry: bool
+) -> None:
     """Print rich formatted table output."""
 
     if detail == "basic":
@@ -242,9 +259,9 @@ def _print_ownership_info(parcel) -> None:
     land-registry owners. Registered owners (vlasnici) come from the land
     registry B-list - use ``cadastral get-lr-unit`` for those.
     """
-    possessors_text = ngettext("{count} possessor", "{count} possessors", parcel.total_owners).format(
-        count=parcel.total_owners
-    )
+    possessors_text = ngettext(
+        "{count} possessor", "{count} possessors", parcel.total_owners
+    ).format(count=parcel.total_owners)
     header = f"{_('POSSESSION SHEET (cadastre / posjedovni list)')} ({possessors_text})"
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
@@ -433,8 +450,16 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
                         "ownership_decimal": p.ownership_decimal,
                         "address": p.address,
                         # Condominium-specific fields (included when present)
-                        **({"condominium_unit": p.condominium_share_number} if p.condominium_share_number else {}),
-                        **({"condominium_common_share": p.condominium_share_ownership} if p.condominium_share_ownership else {}),
+                        **(
+                            {"condominium_unit": p.condominium_share_number}
+                            if p.condominium_share_number
+                            else {}
+                        ),
+                        **(
+                            {"condominium_common_share": p.condominium_share_ownership}
+                            if p.condominium_share_ownership
+                            else {}
+                        ),
                     }
                     for p in sheet.possessors
                 ]

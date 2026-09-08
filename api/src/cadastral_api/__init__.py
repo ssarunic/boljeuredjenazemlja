@@ -15,8 +15,8 @@ from .models import (
     ParcelPart,
     ParcelSearchResult,
     Plumb,
-    Possessor,
     PossessionSheet,
+    Possessor,
 )
 
 __version__ = "0.1.0"

@@ -3,13 +3,14 @@
 import json
 
 import click
-from rich.console import Console
-from rich.table import Table
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.i18n import _
+from rich.console import Console
+from rich.table import Table
+
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_success
+
 from .search import _resolve_municipality
 
 console = Console()
@@ -27,7 +28,14 @@ Examples:
 @click.command("get-geometry", help=_GET_GEOMETRY_HELP)
 @click.argument("parcel_number")
 @click.option("--municipality", "-m", required=True, help=_("Municipality name or code"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["wkt", "geojson", "csv", "json"]), default="wkt", help=_("Export format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["wkt", "geojson", "csv", "json"]),
+    default="wkt",
+    help=_("Export format"),
+)
 @click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.option("--show-stats", is_flag=True, help=_("Include geometry statistics"))
 @click.pass_context
@@ -55,7 +63,10 @@ def get_geometry(
                 print_error(_("Geometry not found for parcel '{parcel_number}'").format(
                     parcel_number=parcel_number
                 ))
-                console.print(_("\nNote: GIS data must be downloaded first (this happens automatically)"), style="yellow")
+                console.print(
+                    _("\nNote: GIS data must be downloaded first (this happens automatically)"),
+                    style="yellow",
+                )
                 raise SystemExit(1)
 
             # Show statistics if requested
@@ -158,9 +169,9 @@ def download_gis(
 ) -> None:
     """Download complete GIS data for a municipality."""
     try:
-        from pathlib import Path
         import shutil
         import zipfile
+        from pathlib import Path
 
         with CadastralAPIClient() as client:
             # Resolve municipality
@@ -178,7 +189,9 @@ def download_gis(
             ), style="cyan")
 
             with console.status(_("Downloading...")):
-                zip_path = client.gis_cache.download_municipality(municipality_code, force=clear_cache)
+                zip_path = client.gis_cache.download_municipality(
+                    municipality_code, force=clear_cache
+                )
 
             zip_size = zip_path.stat().st_size / 1024
             print_success(_("Downloaded: {filename} ({size} KB)").format(
@@ -211,7 +224,9 @@ def download_gis(
                     if parcel_file.exists():
                         parser = GMLParser(parcel_file)
                         count = parser.count_parcels()
-                        console.print(_("\nTotal parcels: {count}").format(count=count), style="bold green")
+                        console.print(
+                            _("\nTotal parcels: {count}").format(count=count), style="bold green"
+                        )
                 except Exception:
                     pass
             else:
@@ -220,9 +235,10 @@ def download_gis(
                 shutil.copy(zip_path, dest_zip)
                 print_success(_("ZIP file copied to: {dest_zip}").format(dest_zip=dest_zip))
 
-            console.print(_("\nTo get parcel geometry: cadastral get-geometry <parcel> -m {municipality_code}").format(
-                municipality_code=municipality_code
-            ), style="dim")
+            hint = _(
+                "\nTo get parcel geometry: cadastral get-geometry <parcel> -m {municipality_code}"
+            ).format(municipality_code=municipality_code)
+            console.print(hint, style="dim")
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=describe_error(e)))

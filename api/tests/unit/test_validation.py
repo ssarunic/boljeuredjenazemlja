@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.12
 """Test Pydantic validation with actual API response."""
 
-import json
 
 # Sample response from API (truncated possessors list for testing)
 response_data = {
@@ -64,7 +63,7 @@ try:
     from cadastral_api.models.entities import ParcelInfo
 
     parcel = ParcelInfo.model_validate(response_data)
-    print(f"\n✓ Validation successful!")
+    print("\n✓ Validation successful!")
     print(f"  Parcel: {parcel.parcel_number}")
     print(f"  Area: {parcel.area_numeric} m²")
     print(f"  Owners: {parcel.total_owners}")

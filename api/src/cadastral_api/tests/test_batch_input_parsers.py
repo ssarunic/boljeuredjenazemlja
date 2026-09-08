@@ -5,7 +5,6 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import pytest
-
 from cadastral_cli.input_parsers import (
     ParcelInput,
     parse_cli_list,

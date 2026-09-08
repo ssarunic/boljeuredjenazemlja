@@ -1,12 +1,18 @@
 """Search commands for CLI."""
 
 import click
-from rich.console import Console
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
-from cadastral_cli.formatters import command_help, describe_error, format_table, print_error, print_output
+from rich.console import Console
+
+from cadastral_cli.formatters import (
+    command_help,
+    describe_error,
+    format_table,
+    print_error,
+    print_output,
+)
 
 console = Console()
 
@@ -21,12 +27,31 @@ Examples:
 
 @click.command(help=_SEARCH_HELP)
 @click.argument("parcel_number")
-@click.option("--municipality", "-m", required=True, help=_("Municipality name or code (e.g., SAVAR or 334979)"))
+@click.option(
+    "--municipality",
+    "-m",
+    required=True,
+    help=_("Municipality name or code (e.g., SAVAR or 334979)"),
+)
 @click.option("--exact/--partial", default=True, help=_("Exact match or partial search"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
 @click.pass_context
-def search(ctx: click.Context, parcel_number: str, municipality: str, exact: bool, output_format: str, output: str | None) -> None:
+def search(
+    ctx: click.Context,
+    parcel_number: str,
+    municipality: str,
+    exact: bool,
+    output_format: str,
+    output: str | None,
+) -> None:
     """Quick search for parcels with basic information."""
     try:
         with CadastralAPIClient() as client:
@@ -37,13 +62,17 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
             with console.status(_("Searching for parcel {parcel_number}...").format(
                 parcel_number=parcel_number
             )):
-                parcel = client.get_parcel_by_number(parcel_number, municipality_code, exact_match=exact)
+                parcel = client.get_parcel_by_number(
+                    parcel_number, municipality_code, exact_match=exact
+                )
 
             if not parcel:
-                print_error(_("Parcel '{parcel_number}' not found in municipality {municipality}").format(
-                    parcel_number=parcel_number,
-                    municipality=municipality
-                ))
+                print_error(
+                    _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
+                        parcel_number=parcel_number,
+                        municipality=municipality,
+                    )
+                )
                 console.print(f"\n{_('Suggestions')}:", style="yellow")
                 console.print(
                     f"  • {_('Try partial search')}: cadastral search {parcel_number} "
@@ -59,7 +88,11 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
                 _("Municipality"): f"{parcel.municipality_name} ({parcel.municipality_reg_num})",
                 _("Address"): parcel.address or _("N/A"),
                 _("Area"): f"{parcel.area_numeric:,} m²" if parcel.area_numeric else _("N/A"),
-                _("Land Use"): ", ".join(parcel.land_use_summary.keys()) if parcel.land_use_summary else _("N/A"),
+                _("Land Use"): (
+                    ", ".join(parcel.land_use_summary.keys())
+                    if parcel.land_use_summary
+                    else _("N/A")
+                ),
                 _("Building Permitted"): _("Yes") if parcel.has_building_right else _("No"),
                 _("Owners"): (
                     ngettext("{count} owner", "{count} owners", parcel.total_owners).format(
@@ -96,10 +129,12 @@ def search(ctx: click.Context, parcel_number: str, municipality: str, exact: boo
         if e.error_type == ErrorType.PARCEL_NOT_FOUND:
             parcel_num = e.details.get("parcel_number", parcel_number)
             muni_code = e.details.get("municipality_reg_num", municipality)
-            print_error(_("Parcel '{parcel_number}' not found in municipality {municipality}").format(
-                parcel_number=parcel_num,
-                municipality=muni_code
-            ))
+            print_error(
+                _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
+                    parcel_number=parcel_num,
+                    municipality=muni_code,
+                )
+            )
         elif e.error_type == ErrorType.MUNICIPALITY_NOT_FOUND:
             search = e.details.get("search_term", municipality)
             print_error(_("Municipality '{municipality}' not found").format(municipality=search))
@@ -121,7 +156,14 @@ Examples:
 @click.argument("search_term", required=False)
 @click.option("--office", "-o", help=_("Filter by cadastral office ID (e.g., 114)"))
 @click.option("--department", "-d", help=_("Filter by department ID (e.g., 116)"))
-@click.option("--format", "-f", "output_format", type=click.Choice(["table", "json", "csv"]), default="table", help=_("Output format"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
 @click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
 @click.option("--count-only", is_flag=True, help=_("Show count only"))
 @click.pass_context

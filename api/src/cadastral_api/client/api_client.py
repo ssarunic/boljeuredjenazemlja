@@ -68,7 +68,8 @@ class CadastralAPIClient:
 
         Args:
             base_url: API base URL (default: from CADASTRAL_API_BASE_URL env or http://localhost:8000)
-            rate_limit: Minimum seconds between requests (default: from CADASTRAL_API_RATE_LIMIT env or 0.75)
+            rate_limit: Minimum seconds between requests
+                (default: from CADASTRAL_API_RATE_LIMIT env or 0.75)
             timeout: Request timeout in seconds (default: from CADASTRAL_API_TIMEOUT env or 10.0)
             cache_dir: Directory for GIS data cache (default: ~/.cadastral_api_cache)
 
@@ -447,7 +448,11 @@ class CadastralAPIClient:
         if not response_data:
             raise CadastralAPIError(
                 error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint, "parcel_id": str(parcel_id), "reason": "empty_response"},
+                details={
+                    "endpoint": endpoint,
+                    "parcel_id": str(parcel_id),
+                    "reason": "empty_response",
+                },
             )
 
         try:
@@ -455,7 +460,11 @@ class CadastralAPIClient:
         except ValidationError as e:
             raise CadastralAPIError(
                 error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint, "parcel_id": str(parcel_id), "reason": "validation_failed"},
+                details={
+                    "endpoint": endpoint,
+                    "parcel_id": str(parcel_id),
+                    "reason": "validation_failed",
+                },
                 cause=e,
             ) from e
 
@@ -593,8 +602,8 @@ class CadastralAPIClient:
         """
         Get detailed land registry unit information including all sheets (A, B, C).
 
-        This method retrieves complete information about a land registry unit (zemljišnoknjižni uložak),
-        including:
+        This method retrieves complete information about a land registry unit
+        (zemljišnoknjižni uložak), including:
         - Sheet A: List of all cadastral parcels in the unit
         - Sheet B: Ownership information with co-owners and shares
         - Sheet C: Encumbrances (mortgages, liens, easements, etc.)

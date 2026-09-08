@@ -20,7 +20,6 @@ from cadastral_api import CadastralAPIClient
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.utils import parse_file_number
 
-
 # --- parse_file_number -------------------------------------------------------
 
 class TestParseFileNumber:

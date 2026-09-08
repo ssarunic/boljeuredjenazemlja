@@ -37,7 +37,10 @@ class LRUnitInput:
 
     def __repr__(self) -> str:
         """String representation."""
-        return f"LRUnitInput(lr_unit_number={self.lr_unit_number}, main_book_id={self.main_book_id})"
+        return (
+            f"LRUnitInput(lr_unit_number={self.lr_unit_number}, "
+            f"main_book_id={self.main_book_id})"
+        )
 
 
 @dataclass
@@ -441,7 +444,9 @@ def _format_csv_data(summary: LRUnitBatchSummary, show_owners: bool) -> list[dic
             owners = []
             for owner_row in result.lr_unit_data.ownership_sheet_b.owner_rows():
                 frac = owner_row["share"]
-                share_text = f"{frac['num']}/{frac['den']}" if frac else owner_row["share_description"]
+                share_text = (
+                    f"{frac['num']}/{frac['den']}" if frac else owner_row["share_description"]
+                )
                 owners.append(f"{owner_row['name']} ({share_text})")
             row["owners_list"] = "; ".join(owners)
 
@@ -450,7 +455,8 @@ def _format_csv_data(summary: LRUnitBatchSummary, show_owners: bool) -> list[dic
     return rows
 
 
-_BATCH_LR_UNIT_HELP = command_help(_("""Fetch information for multiple land registry units in batch mode.
+_BATCH_LR_UNIT_HELP = command_help(
+    _("""Fetch information for multiple land registry units in batch mode.
 
 Supports two input methods:
 
@@ -540,7 +546,11 @@ def batch_lr_unit(
         # Validate input
         if not input_file and not batch_output_file:
             print_error(_("Must provide either --input file or --from-batch-output file"))
-            console.print(_("\nUse '{command}' for usage information.").format(command="cadastral batch-lr-unit --help"))
+            console.print(
+                _("\nUse '{command}' for usage information.").format(
+                    command="cadastral batch-lr-unit --help"
+                )
+            )
             raise SystemExit(1)
 
         if input_file and batch_output_file:
@@ -550,10 +560,17 @@ def batch_lr_unit(
         # Parse input
         try:
             if batch_output_file:
-                console.print(_("📄 Reading LR unit refs from batch-fetch output: {file}").format(file=batch_output_file), style="dim")
+                console.print(
+                    _("📄 Reading LR unit refs from batch-fetch output: {file}").format(
+                        file=batch_output_file
+                    ),
+                    style="dim",
+                )
                 lr_unit_list = _parse_batch_fetch_output(Path(batch_output_file))
             else:
-                console.print(_("📄 Reading LR units from: {file}").format(file=input_file), style="dim")
+                console.print(
+                    _("📄 Reading LR units from: {file}").format(file=input_file), style="dim"
+                )
                 lr_unit_list = _parse_lr_unit_input(input_file)
 
         except (ValueError, FileNotFoundError) as e:

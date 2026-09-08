@@ -1,11 +1,11 @@
 """Cache management commands for CLI."""
 
 import click
+from cadastral_api import CadastralAPIClient
+from cadastral_api.i18n import _
 from rich.console import Console
 from rich.table import Table
 
-from cadastral_api import CadastralAPIClient
-from cadastral_api.i18n import _
 from cadastral_cli.formatters import command_help, print_error, print_success
 
 console = Console()
@@ -73,7 +73,10 @@ def cache_list(ctx: click.Context) -> None:
 
             if not cached:
                 console.print(_("Cache is empty"), style="yellow")
-                console.print(_("\nDownload GIS data: cadastral download-gis <municipality> -o ./output"), style="dim")
+                console.print(
+                    _("\nDownload GIS data: cadastral download-gis <municipality> -o ./output"),
+                    style="dim",
+                )
                 return
 
             # Sort by municipality code
@@ -173,15 +176,18 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
                 muni_dir = client.gis_cache.get_municipality_dir(municipality_code)
                 dir_size = sum(f.stat().st_size for f in muni_dir.rglob('*') if f.is_file())
 
-                with console.status(_("Clearing cache for municipality {municipality_code}...").format(
+                status_text = _("Clearing cache for municipality {municipality_code}...").format(
                     municipality_code=municipality_code
-                )):
+                )
+                with console.status(status_text):
                     client.gis_cache.clear_municipality(municipality_code)
 
-                print_success(_("Cleared municipality {municipality_code} ({size} KB freed)").format(
-                    municipality_code=municipality_code,
-                    size=f"{dir_size / 1024:.1f}"
-                ))
+                print_success(
+                    _("Cleared municipality {municipality_code} ({size} KB freed)").format(
+                        municipality_code=municipality_code,
+                        size=f"{dir_size / 1024:.1f}",
+                    )
+                )
 
     except Exception as e:
         print_error(_("Error clearing cache: {error}").format(error=str(e)))

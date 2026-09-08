@@ -131,7 +131,11 @@ def batch_fetch(
         # Validate input
         if not parcels and not input_file:
             print_error(_("Must provide either PARCELS argument or --input file"))
-            console.print(_("\nUse '{command}' for usage information.").format(command="cadastral batch-fetch --help"))
+            console.print(
+                _("\nUse '{command}' for usage information.").format(
+                    command="cadastral batch-fetch --help"
+                )
+            )
             raise SystemExit(1)
 
         if parcels and input_file:
@@ -142,7 +146,9 @@ def batch_fetch(
         try:
             if input_file:
                 # File input mode
-                console.print(_("📄 Reading parcels from: {file}").format(file=input_file), style="dim")
+                console.print(
+                    _("📄 Reading parcels from: {file}").format(file=input_file), style="dim"
+                )
                 parcel_list = parse_input_file(input_file)
             else:
                 # CLI list mode
@@ -231,11 +237,16 @@ def _print_detailed_parcels(summary, show_owners: bool) -> None:
         for i, result in enumerate(summary.results, 1):
             if result.status == "error":
                 # Print error info
-                console.print(f"\n[bold red]━━━ {_('Parcel')} {i}/{summary.total}: ✗ {_('ERROR')} ━━━[/bold red]")
+                console.print(
+                    f"\n[bold red]━━━ {_('Parcel')} {i}/{summary.total}: "
+                    f"✗ {_('ERROR')} ━━━[/bold red]"
+                )
                 if result.input.parcel_id:
                     console.print(f"{_('Parcel ID')}: {result.input.parcel_id}")
                 else:
-                    console.print(f"{_('Parcel')}: {result.input.parcel_number} ({result.input.municipality})")
+                    console.print(
+                        f"{_('Parcel')}: {result.input.parcel_number} ({result.input.municipality})"
+                    )
                 console.print(f"{_('Error')}: {error_type_value_label(result.error_type)}")
                 console.print(f"{_('Message')}: {result.error_message or _('No error message')}")
                 continue
@@ -325,8 +336,12 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
 
         # Format row data
         if result.status == "success" and result.parcel_data:
-            municipality = f"{result.parcel_data.municipality_name} ({result.parcel_data.municipality_reg_num})"
-            area = f"{result.parcel_data.area_numeric:,}" if result.parcel_data.area_numeric else "N/A"
+            municipality = (
+                f"{result.parcel_data.municipality_name} "
+                f"({result.parcel_data.municipality_reg_num})"
+            )
+            area_numeric = result.parcel_data.area_numeric
+            area = f"{area_numeric:,}" if area_numeric else "N/A"
             parcel_id = str(result.parcel_data.parcel_id)
             # Format LR unit reference
             if result.parcel_data.lr_unit:

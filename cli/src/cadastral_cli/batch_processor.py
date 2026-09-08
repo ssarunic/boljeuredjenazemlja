@@ -3,14 +3,15 @@
 from dataclasses import dataclass
 from typing import Any
 
-from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
-
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _
-from cadastral_cli.formatters import describe_error
 from cadastral_api.models.entities import ParcelInfo
+from rich.console import Console
+from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn, TextColumn
+
+from cadastral_cli.formatters import describe_error
+
 from .input_parsers import ParcelInput
 
 console = Console()

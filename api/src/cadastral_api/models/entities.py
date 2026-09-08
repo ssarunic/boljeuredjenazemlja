@@ -17,9 +17,9 @@ Purpose: Demonstrating how LLMs could be connected to land books in a safe,
 educational context using a mock server that closely mimics production behavior.
 """
 
-from fractions import Fraction
-from enum import Enum
 from datetime import date, datetime
+from enum import Enum
+from fractions import Fraction
 
 from pydantic import (
     AliasChoices,
@@ -962,7 +962,9 @@ class LRUnitParcel(BaseModel):
     )
     legal_regime: bool = Field(False, alias="legalRegime", description="Legal regime indicator")
     graphic: bool = Field(True, description="Graphical data available")
-    alpha_numeric: bool = Field(True, alias="alphaNumeric", description="Alphanumeric data available")
+    alpha_numeric: bool = Field(
+        True, alias="alphaNumeric", description="Alphanumeric data available"
+    )
     status: int = Field(0, description="Parcel status code")
     # Sheet A1 (lrParcels) reports the parcel's status within the LR unit under
     # this distinct key; without an explicit field it is silently dropped.
@@ -970,7 +972,9 @@ class LRUnitParcel(BaseModel):
         None, alias="statusInLrUnit", description="Status of the parcel within the LR unit"
     )
     resource_code: int = Field(0, alias="resourceCode", description="Resource code")
-    is_harmonized: bool = Field(False, alias="isHarmonized", description="Data harmonization status")
+    is_harmonized: bool = Field(
+        False, alias="isHarmonized", description="Data harmonization status"
+    )
 
     @computed_field  # type: ignore[misc]
     @property
@@ -1146,7 +1150,8 @@ class LandRegistryUnitDetailed(BaseModel):
     )
     institution_id: int = Field(alias="institutionId", description="Land registry institution ID")
     institution_name: str = Field(
-        alias="institutionName", description="Institution name (e.g., 'Zemljišnoknjižni odjel Zadar')"
+        alias="institutionName",
+        description="Institution name (e.g., 'Zemljišnoknjižni odjel Zadar')",
     )
 
     # Status

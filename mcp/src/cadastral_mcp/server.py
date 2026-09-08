@@ -4,9 +4,8 @@ import logging
 import sys
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
-
 from cadastral_api import CadastralAPIClient
+from mcp.server.fastmcp import FastMCP
 
 from .config import config
 from .prompts import CadastralPrompts
@@ -376,9 +375,11 @@ def create_mcp_server() -> FastMCP:
         return await prompts_handler.land_use_summary(parcel_id)
 
     logger.info("MCP server initialized successfully")
-    logger.info("Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
-                "get_parcel_geometry, list_cadastral_offices, get_lr_unit, get_lr_unit_from_parcel, "
-                "batch_lr_units")
+    logger.info(
+        "Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
+        "get_parcel_geometry, list_cadastral_offices, get_lr_unit, "
+        "get_lr_unit_from_parcel, batch_lr_units"
+    )
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")
     logger.info("Available resources: cadastral://parcel/{id}, cadastral://municipality/{code}, "

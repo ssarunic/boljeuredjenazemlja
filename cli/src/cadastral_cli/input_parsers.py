@@ -191,7 +191,10 @@ def parse_csv_file(file_path: str | Path) -> list[ParcelInput]:
                 elif last_municipality:
                     municipality = last_municipality
                 else:
-                    msg = f"Row {row_num}: municipality required (no previous municipality to inherit)"
+                    msg = (
+                        f"Row {row_num}: municipality required "
+                        "(no previous municipality to inherit)"
+                    )
                     raise ValueError(msg)
 
                 parcels.append(

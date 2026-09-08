@@ -3,9 +3,6 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 # Sample LR unit response from mock server
 lr_unit_response_data = {
     "lrUnitId": 13122553,
@@ -32,7 +29,10 @@ lr_unit_response_data = {
                         "lrOwnerId": 60930291,
                         "name": "Test Owner A",
                         "lrEntry": {
-                            "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA",
+                            "description": (
+                                "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012"
+                                "<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA"
+                            ),
                             "orderNumber": "1.1"
                         }
                     }
@@ -148,7 +148,10 @@ lr_unit_response_data = {
                 "shareOrderNumber": "1",
                 "lrEntries": [
                     {
-                        "description": "Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016<br><br>ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI",
+                        "description": (
+                            "Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016"
+                            "<br><br>ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI"
+                        ),
                         "lrEntryId": 93358400,
                         "orderNumber": "1.1"
                     }
@@ -195,7 +198,9 @@ condominium_lr_unit_data = {
                 "lrUnitShareId": 32618214,
                 "condominiumNumber": "E-16",
                 "condominiums": [
-                    "STAN na PR (prizemlju), označen br. 1, površine 61,27 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom."
+                    "STAN na PR (prizemlju), označen br. 1, površine 61,27 m2, "
+                    "koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, "
+                    "hodnika i lođe, s pripadajućom drvarnicom."
                 ],
                 "subSharesAndEntries": [],
                 "status": 0,
@@ -297,7 +302,7 @@ def main():
         print("Test 1: Basic LR Unit Validation")
         print("-" * 70)
         lr_unit = LandRegistryUnitDetailed.model_validate(lr_unit_response_data)
-        print(f"✓ Validation successful!")
+        print("✓ Validation successful!")
         print(f"  LR Unit Number: {lr_unit.lr_unit_number}")
         print(f"  Main Book: {lr_unit.main_book_name}")
         print(f"  Institution: {lr_unit.institution_name}")
@@ -308,7 +313,7 @@ def main():
         print("Test 2: Ownership Sheet B Validation")
         print("-" * 70)
         ownership = lr_unit.ownership_sheet_b
-        print(f"✓ Ownership sheet parsed")
+        print("✓ Ownership sheet parsed")
         print(f"  Total shares: {len(ownership.lr_unit_shares)}")
 
         for share in ownership.lr_unit_shares:
@@ -325,16 +330,19 @@ def main():
         print("Test 3: Parcel List (Sheet A) Validation")
         print("-" * 70)
         parcels = lr_unit.get_all_parcels()
-        print(f"✓ Parcel list parsed")
+        print("✓ Parcel list parsed")
         print(f"  Total parcels: {len(parcels)}")
         for parcel in parcels:
-            print(f"  - {parcel.parcel_number}: {parcel.area_numeric} m² ({parcel.address or 'No address'})")
+            print(
+                f"  - {parcel.parcel_number}: {parcel.area_numeric} m² "
+                f"({parcel.address or 'No address'})"
+            )
         print()
 
         print("Test 4: Encumbrance Sheet C Validation")
         print("-" * 70)
         has_encumbrances = lr_unit.has_encumbrances()
-        print(f"✓ Encumbrance sheet parsed")
+        print("✓ Encumbrance sheet parsed")
         print(f"  Has encumbrances: {has_encumbrances}")
 
         if has_encumbrances:
@@ -347,7 +355,7 @@ def main():
         print("Test 5: Summary Statistics")
         print("-" * 70)
         summary = lr_unit.summary()
-        print(f"✓ Summary generated")
+        print("✓ Summary generated")
         print(f"  Total parcels: {summary['total_parcels']}")
         print(f"  Total area: {summary['total_area_m2']} m²")
         print(f"  Number of owners: {summary['num_owners']}")
@@ -357,7 +365,7 @@ def main():
         print("Test 6: Total Area Calculation")
         print("-" * 70)
         total_area = lr_unit.possessory_sheet_a1.total_area()
-        print(f"✓ Total area calculated")
+        print("✓ Total area calculated")
         print(f"  Total: {total_area} m²")
         print()
 
@@ -365,7 +373,7 @@ def main():
         print("Test 7: Standard Unit is_condominium() Check")
         print("-" * 70)
         assert lr_unit.is_condominium() is False, "Standard unit should not be a condominium"
-        print(f"✓ is_condominium() returns False for VLASNIČKI unit")
+        print("✓ is_condominium() returns False for VLASNIČKI unit")
         print(f"  Unit type: {lr_unit.lr_unit_type_name}")
         print()
 
@@ -373,34 +381,40 @@ def main():
         print("Test 8: Condominium LR Unit Validation")
         print("-" * 70)
         condo_unit = LandRegistryUnitDetailed.model_validate(condominium_lr_unit_data)
-        print(f"✓ Condominium unit validated")
+        print("✓ Condominium unit validated")
         print(f"  Unit: {condo_unit.lr_unit_number}")
         print(f"  Type: {condo_unit.lr_unit_type_name}")
         print(f"  is_condominium(): {condo_unit.is_condominium()}")
-        assert condo_unit.is_condominium() is True, "ETAŽNO VLASNIŠTVO should be detected as condominium"
+        assert condo_unit.is_condominium() is True, (
+            "ETAŽNO VLASNIŠTVO should be detected as condominium"
+        )
         print()
 
         print("Test 9: Condominium Share Fields")
         print("-" * 70)
         first_share = condo_unit.ownership_sheet_b.lr_unit_shares[0]
-        print(f"✓ First share parsed")
+        print("✓ First share parsed")
         print(f"  Condominium number: {first_share.condominium_number}")
         print(f"  Apartment description: {first_share.condominium_descriptions[0][:50]}...")
         print(f"  is_condominium_share(): {first_share.is_condominium_share()}")
         assert first_share.condominium_number == "E-16", "Condominium number should be E-16"
-        assert first_share.is_condominium_share() is True, "Share with condominium number should be condominium share"
+        assert first_share.is_condominium_share() is True, (
+            "Share with condominium number should be condominium share"
+        )
         print()
 
         print("Test 10: Nested Co-owners (subSharesAndEntries)")
         print("-" * 70)
         second_share = condo_unit.ownership_sheet_b.lr_unit_shares[1]
-        print(f"✓ Share with nested co-owners parsed")
+        print("✓ Share with nested co-owners parsed")
         print(f"  has_sub_owners(): {second_share.has_sub_owners()}")
         print(f"  Direct owners: {len(second_share.owners)}")
         print(f"  All owners (including nested): {len(second_share.get_all_owners())}")
         assert second_share.has_sub_owners() is True, "Share should have sub-owners"
         assert len(second_share.owners) == 0, "No direct owners expected"
-        assert len(second_share.get_all_owners()) == 2, "Should have 2 co-owners from subSharesAndEntries"
+        assert len(second_share.get_all_owners()) == 2, (
+            "Should have 2 co-owners from subSharesAndEntries"
+        )
         for owner in second_share.get_all_owners():
             print(f"  - {owner.name}")
         print()
@@ -408,7 +422,7 @@ def main():
         print("Test 11: Condominium Units Count")
         print("-" * 70)
         units_count = condo_unit.get_condominium_units_count()
-        print(f"✓ Condominium units counted")
+        print("✓ Condominium units counted")
         print(f"  Number of units: {units_count}")
         assert units_count == 2, "Should have 2 condominium units in test data"
         print()
@@ -417,18 +431,20 @@ def main():
         print("-" * 70)
         from cadastral_api.models.entities import Possessor
         possessor = Possessor.model_validate(possessor_with_condominium_data)
-        print(f"✓ Possessor with condominium fields validated")
+        print("✓ Possessor with condominium fields validated")
         print(f"  Name: {possessor.name}")
         print(f"  Condominium share number: {possessor.condominium_share_number}")
         print(f"  Condominium share ownership: {possessor.condominium_share_ownership}")
         assert possessor.condominium_share_number == "0", "Condominium share number should be '0'"
-        assert possessor.condominium_share_ownership == "4531/4651", "Condominium share ownership should be '4531/4651'"
+        assert possessor.condominium_share_ownership == "4531/4651", (
+            "Condominium share ownership should be '4531/4651'"
+        )
         print()
 
         print("Test 13: Summary Includes Condominium Info")
         print("-" * 70)
         condo_summary = condo_unit.summary()
-        print(f"✓ Summary generated for condominium unit")
+        print("✓ Summary generated for condominium unit")
         print(f"  is_condominium: {condo_summary['is_condominium']}")
         print(f"  condominium_units: {condo_summary.get('condominium_units', 'N/A')}")
         assert condo_summary["is_condominium"] is True, "Summary should indicate condominium"
