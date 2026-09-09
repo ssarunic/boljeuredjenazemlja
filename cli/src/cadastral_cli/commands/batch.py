@@ -349,7 +349,7 @@ def _print_table_output(summary, detail: str, show_owners: bool) -> None:
                 lr_unit = result.parcel_data.lr_unit.lr_unit_number
             else:
                 lr_unit = "-"
-            owners = str(result.parcel_data.total_owners) if show_owners else ""
+            owners = str(result.parcel_data.total_possessors) if show_owners else ""
 
             row = [str(i), status, parcel_display, municipality, area, parcel_id, lr_unit]
             if show_owners:

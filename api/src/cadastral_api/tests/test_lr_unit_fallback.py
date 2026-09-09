@@ -12,7 +12,7 @@ from pathlib import Path
 from cadastral_api.client.api_client import CadastralAPIClient
 from cadastral_api.models.entities import LandRegistryUnitDetailed, ParcelInfo
 
-FIXTURE = Path(__file__).parent / "fixtures" / "parcel_info_1122_1.json"
+FIXTURE = Path(__file__).parent / "fixtures" / "parcel_info_linked.json"
 
 
 def _parcel() -> ParcelInfo:
@@ -45,7 +45,7 @@ def test_prefers_direct_lr_unit_over_links() -> None:
 
 def test_derived_flag_defaults_false() -> None:
     raw = json.loads(
-        (FIXTURE.parent / "lr_unit_449_21277.json").read_text(encoding="utf-8")
+        (FIXTURE.parent / "lr_unit_lrparcels.json").read_text(encoding="utf-8")
     )
     payload = raw[0] if isinstance(raw, list) else raw
     unit = LandRegistryUnitDetailed.model_validate(payload)
@@ -57,7 +57,7 @@ def test_get_lr_unit_from_parcel_integration_sets_derived_flag(monkeypatch) -> N
     and the returned unit is flagged lr_unit_derived_from_links=True."""
     parcel = _parcel()  # 1122/1: lr_unit=null, link-derived unit 449
     raw = json.loads(
-        (FIXTURE.parent / "lr_unit_449_21277.json").read_text(encoding="utf-8")
+        (FIXTURE.parent / "lr_unit_lrparcels.json").read_text(encoding="utf-8")
     )
     unit = LandRegistryUnitDetailed.model_validate(raw[0] if isinstance(raw, list) else raw)
 

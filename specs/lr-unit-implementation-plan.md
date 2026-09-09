@@ -1,16 +1,8 @@
 # Land Registry Unit (`/lr/lr-unit`) Implementation Plan
 
-## ⚠️ CRITICAL: DEMO/EDUCATIONAL PROJECT ONLY
+## Demo project: check your rights before using another server
 
-**This is a demonstration and educational project showing how cadastral and land registry systems could theoretically be connected to AI systems via modern APIs.**
-
-### ABSOLUTE RESTRICTIONS
-
-1. **DO NOT** configure or connect this code to Croatian government production systems
-2. **DO NOT** bypass authorization or terms of service restrictions
-3. **DO NOT** access real cadastral or land registry data without proper legal authorization
-4. **ALWAYS** use this only with the included mock server
-5. **ALWAYS** emphasize this is a theoretical demonstration
+**This is a demonstration and educational project showing how cadastral and land registry systems could be connected to AI systems via modern APIs.** The defaults, examples and tests use the included mock server. Before pointing the code at any other server, including the Croatian government systems, verify that you have the rights to use that server and its data; use at your own risk (see `docs/legal.md`). Do not bypass authorization or terms of service.
 
 ### Purpose
 
@@ -25,7 +17,7 @@ The mock server provides a safe environment for:
 - Demonstrating AI agent capabilities with structured land data
 - Educational purposes and proof-of-concept development
 
-**This implementation is NOT authorized for use with production Croatian government systems.** It is designed exclusively for the mock server.
+**This implementation targets the included mock server.** Before using it with any other server, including the Croatian government systems, verify that you have the rights to use that server and its data; use at your own risk (see `docs/legal.md`).
 
 The author is available to advise the Croatian government on AI and API modernization if requested.
 
@@ -39,7 +31,7 @@ This document outlines the architecture and implementation plan for adding suppo
 - Legal encumbrances (Sheet C - List tereta)
 - Land registry entries and history
 
-**Important:** All development is for the localhost mock server (`http://localhost:8000`). Do not use with production systems.
+**Important:** All development runs against the localhost mock server (`http://localhost:8000`). Any other server only after verifying your rights to use it, at your own risk.
 
 ## Project Scope
 
@@ -646,7 +638,7 @@ msgid "No encumbrances found"
 - [ ] Integration tests: `api/tests/integration/test_lr_unit_flow.py` - **mock server only**
 - [ ] CLI tests: `cli/tests/test_registry_command.py` - **mock server only**
 - [ ] Manual testing with mock server
-- [ ] **DO NOT test with production API**
+- [ ] Tests run against the mock server only
 
 #### Task 10: Batch Processing (Optional)
 
@@ -1260,10 +1252,11 @@ A new endpoint was discovered: `/lr/file-status` (POST)
 
 ### Final Warnings
 
-⚠️ **DO NOT:**
-- Connect to production Croatian government systems
-- Use this code to access real personal or land registry data without authorization
-- Deploy this as a production service without proper legal authorization
+Before using any server other than the included mock, verify your rights to use
+it and its data; you do so at your own risk. Do not:
+
+- Bypass authorization, rate limits or terms of service of any server
+- Deploy this as a production service without the legal basis that requires
 - Suggest this code can be used for real estate transactions
 
 ✅ **DO:**

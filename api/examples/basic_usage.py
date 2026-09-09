@@ -59,7 +59,7 @@ def print_parcel_summary(parcel_number: str, municipality_code: str) -> None:
                 print(f"   {land_type}: {area:,} m²")
 
             # Ownership information
-            print(f"\n👥 Ownership ({parcel_info.total_owners} owner(s)):")
+            print(f"\n👥 Ownership ({parcel_info.total_possessors} possessor(s)):")
             for sheet in parcel_info.possession_sheets:
                 print(f"   Possession Sheet: {sheet.possession_sheet_number}")
                 for possessor in sheet.possessors:

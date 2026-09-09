@@ -1,0 +1,689 @@
+{
+  "lrUnitId": 2690773,
+  "lrUnitNumber": "289",
+  "mainBookId": 21277,
+  "mainBookName": "SAVAR",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Zemljišnoknjižni odjel Zadar",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": true,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-3937/2020",
+  "activePlumbs": [
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-12564/2026"
+    }
+  ],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "2. Suvlasnički dio: 214/644",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60175380,
+            "name": "Vlasnik 495",
+            "address": "Adresa 204",
+            "taxNumber": "00000002007",
+            "lrEntry": {
+              "description": "Zaprimljeno 13.07.2018.g. pod brojem Z-15648/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI OVJEREN KOD JAVNOG BILJEŽNIKA N.N. IZ ZADRA POD BROJEM OV-7377/16 DANA 17. LISTOPADA 2016. 17.10.2016, UVJERENJE UPRAVNOG ODJELA ZA PROSTORNO UREĐENJE, ZAŠTITU OKOLIŠA I KOMUNALNE POSLOVE ZADARSKE ŽUPANIJE, KLASA:350-07/18-01/500, URBROJ:2198/1-07/21-18-2 05.07.2018",
+              "orderNumber": "2.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 6724106,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "2"
+      },
+      {
+        "description": "3. Suvlasnički dio: 12900/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155421,
+            "name": "Vlasnik 126",
+            "address": "Adresa 24",
+            "taxNumber": "00000000116",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "3.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322956,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "3"
+      },
+      {
+        "description": "4. Suvlasnički dio: 12900/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155422,
+            "name": "Vlasnik 127",
+            "address": "Adresa 24",
+            "taxNumber": "00000000124",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "4.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322957,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "4"
+      },
+      {
+        "description": "5. Suvlasnički dio: 25800/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155423,
+            "name": "Vlasnik 128",
+            "address": "Adresa 35",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "5.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322958,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "5"
+      },
+      {
+        "description": "7. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155425,
+            "name": "Vlasnik 129",
+            "address": "Adresa 51",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "7.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322960,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "7"
+      },
+      {
+        "description": "8. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155426,
+            "name": "Vlasnik 130",
+            "address": "Adresa 71",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "8.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322961,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "8"
+      },
+      {
+        "description": "9. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155427,
+            "name": "Vlasnik 131",
+            "address": "Adresa 22",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "9.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322962,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "9"
+      },
+      {
+        "description": "10. Suvlasnički dio: 51600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155428,
+            "name": "Vlasnik 132",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "10.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322963,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "10"
+      },
+      {
+        "description": "11. Suvlasnički dio: 12900/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9552197,
+            "name": "Vlasnik 120",
+            "address": "Adresa 14",
+            "taxNumber": "00000000044",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "11.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322964,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "11"
+      },
+      {
+        "description": "12. Suvlasnički dio: 12900/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155430,
+            "name": "Vlasnik 115",
+            "address": "Adresa 41",
+            "taxNumber": "00000000028",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "12.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322965,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "12"
+      },
+      {
+        "description": "13. Suvlasnički dio: 12900/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 40636830,
+            "name": "Vlasnik 116",
+            "address": "Adresa 31",
+            "taxNumber": "00000000036",
+            "lrEntry": {
+              "description": "Zaprimljeno 14.02.2020.g. pod brojem Z-3937/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSL.BR. O-4004/19 UPP/OS-109/19-12 20.01.2020",
+              "orderNumber": "13.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322966,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "13"
+      },
+      {
+        "description": "14. Suvlasnički dio: 3225/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155432,
+            "name": "Vlasnik 133",
+            "address": "Adresa 32",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "14.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322967,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "14"
+      },
+      {
+        "description": "15. Suvlasnički dio: 3225/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155433,
+            "name": "Vlasnik 134",
+            "address": "Adresa 32",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "15.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322968,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "15"
+      },
+      {
+        "description": "16. Suvlasnički dio: 3225/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155434,
+            "name": "Vlasnik 135",
+            "address": "Adresa 10",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "16.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322969,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "16"
+      },
+      {
+        "description": "17. Suvlasnički dio: 3225/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155435,
+            "name": "Vlasnik 136",
+            "address": "Adresa 10",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "17.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322970,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "17"
+      },
+      {
+        "description": "18. Suvlasnički dio: 6880/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155436,
+            "name": "Vlasnik 137",
+            "address": "Adresa 20",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "18.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322971,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "18"
+      },
+      {
+        "description": "19. Suvlasnički dio: 6880/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155437,
+            "name": "Vlasnik 138",
+            "address": "Adresa 11",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "19.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322972,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "19"
+      },
+      {
+        "description": "20. Suvlasnički dio: 6880/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155438,
+            "name": "Vlasnik 139",
+            "taxNumber": "00000000132",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "20.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322973,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "20"
+      },
+      {
+        "description": "21. Suvlasnički dio: 6880/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155439,
+            "name": "Vlasnik 140",
+            "address": "Adresa 69",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "21.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322974,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "21"
+      },
+      {
+        "description": "22. Suvlasnički dio: 6880/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155440,
+            "name": "Vlasnik 141",
+            "address": "Adresa 11",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "22.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322975,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "22"
+      },
+      {
+        "description": "23. Suvlasnički dio: 34400/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155441,
+            "name": "Vlasnik 142",
+            "address": "Adresa 12",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "23.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322976,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "23"
+      },
+      {
+        "description": "24. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155442,
+            "name": "Vlasnik 143",
+            "address": "Adresa 70",
+            "taxNumber": "00000000149",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "24.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322977,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "24"
+      },
+      {
+        "description": "25. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155443,
+            "name": "Vlasnik 144",
+            "address": "Adresa 53",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "25.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322978,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "25"
+      },
+      {
+        "description": "26. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155444,
+            "name": "Vlasnik 145",
+            "address": "Adresa 3",
+            "taxNumber": "00000000157",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "26.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322979,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "26"
+      },
+      {
+        "description": "27. Suvlasnički dio: 8600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155445,
+            "name": "Vlasnik 146",
+            "address": "Adresa 54",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "27.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322980,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "27"
+      },
+      {
+        "description": "28. Suvlasnički dio: 51600/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155446,
+            "name": "Vlasnik 147",
+            "address": "Adresa 43",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "28.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322981,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "28"
+      },
+      {
+        "description": "29. Suvlasnički dio: 17200/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155447,
+            "name": "Vlasnik 148",
+            "address": "Adresa 26",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "29.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322982,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "29"
+      },
+      {
+        "description": "30. Suvlasnički dio: 17200/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155448,
+            "name": "Vlasnik 149",
+            "address": "Adresa 26",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "30.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322983,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "30"
+      },
+      {
+        "description": "31. Suvlasnički dio: 17200/618240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 9155449,
+            "name": "Vlasnik 150",
+            "address": "Adresa 44",
+            "lrEntry": {
+              "description": "Zaprimljeno 08.08.2012.g. pod brojem Z-8920/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "31.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 7322984,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "31"
+      },
+      {
+        "description": "32. Suvlasnički dio: 215/20608",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120055,
+            "name": "Vlasnik 127",
+            "address": "Adresa 24",
+            "taxNumber": "00000000124",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "32.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903168,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "32"
+      },
+      {
+        "description": "33. Suvlasnički dio: 215/61824",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120056,
+            "name": "Vlasnik 126",
+            "address": "Adresa 24",
+            "taxNumber": "00000000116",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "33.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903169,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "33"
+      },
+      {
+        "description": "34. Suvlasnički dio: 215/15456",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120057,
+            "name": "Vlasnik 128",
+            "address": "Adresa 42",
+            "taxNumber": "00000000261",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "34.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903170,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "34"
+      },
+      {
+        "description": "35. Suvlasnički dio: 215/46368",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120058,
+            "name": "Vlasnik 130",
+            "address": "Adresa 36",
+            "taxNumber": "00000000270",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "35.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903171,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "35"
+      },
+      {
+        "description": "36. Suvlasnički dio: 215/46368",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120059,
+            "name": "Vlasnik 169",
+            "address": "Adresa 59",
+            "taxNumber": "00000000288",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "36.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903172,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "36"
+      },
+      {
+        "description": "37. Suvlasnički dio: 215/46368",
+        "lrOwners": [
+          {
+            "lrOwnerId": 21120060,
+            "name": "Vlasnik 131",
+            "address": "Adresa 67",
+            "taxNumber": "00000000296",
+            "lrEntry": {
+              "description": "Zaprimljeno 18.01.2016.g. pod brojem Z-799/2016<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "37.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 16903173,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "37"
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "lrParcels": [
+      {
+        "parcelId": 5859380,
+        "parcelNumber": "469/1",
+        "address": "VRT",
+        "area": "644",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": []
+  }
+}

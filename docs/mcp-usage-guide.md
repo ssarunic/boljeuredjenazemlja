@@ -240,6 +240,43 @@ Fetches multiple land registry units in a single operation. Use this after `batc
 
 ---
 
+### 9. `find_main_book` - Find a land registry main book
+
+**Query examples:**
+- "Which main book holds the land registry units of SAVAR?"
+- "What is the main book ID for k.o. Savar?"
+
+Returns `main_books` with `main_book_id`, `main_book_name`, `institution_id`
+(land registry office) and `court_name`. `get_lr_unit` also accepts
+`main_book_name` directly and resolves it the same way.
+
+### 10. `find_book_of_dc` - Find a book of deposited contracts (KPU)
+
+**Query examples:**
+- "Which books of deposited contracts does the Zadar land registry office keep?"
+
+Returns `books_of_dc` with `book_id`, `book_name`, `office_id` and `office_name`.
+
+### 11. `find_possession_sheet` - Find a cadastre possession sheet by number
+
+**Query examples:**
+- "Does possession sheet 363 exist in k.o. Savar?"
+
+Returns `possession_sheets` with `possession_sheet_id` and `sheet_number`. The
+cadastre has no lookup by sheet id; use `find_parcel` / `batch_fetch_parcels`
+on one of the sheet's parcels to see its possessors.
+
+### Entry provenance in `get_lr_unit` / `get_lr_unit_from_parcel`
+
+At `detail="ownership"` every owner row carries `entry`: the registration entry
+that put the owner on the share (`order_number`, `entry_date`, `diary_number`,
+`priority_diary_number`, `action_type`, `basis_document`,
+`transferred_from_unit`, `description_text`). The result also carries
+`share_entries` (annotations registered on individual shares) and
+`sheet_a1_source_key` (`lrParcels` or `cadParcels`). `detail="full"` dumps every
+field, including `amount` / `amount_value` / `amount_currency` on list C entries
+and `plumb_mark` on pending entries.
+
 ## ✅ Recently Fixed (2025-11-18)
 
 ### `get_lr_unit_from_parcel` - Land Registry Unit

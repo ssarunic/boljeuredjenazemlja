@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 [English](../../en/cli/glossary.md) | **Hrvatski**
 
-> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
+> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
 > Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
@@ -19,7 +19,10 @@ navedeni onako kako stoje na službenim ispravama.
 | Posjedovni list | Posjedovni list katastra: tko posjeduje česticu prema katastru. Nije dokaz vlasništva. | [čestica](commands/get-parcel.md) uz `--posjednici`. |
 | Posjednik | Posjednik upisan u katastru. | Reci posjedovnog lista na [čestica](commands/get-parcel.md). |
 | Zemljišnoknjižni uložak (ZK uložak) | Sadrži pravno stanje nekretnine; vodi ga zemljišnoknjižni odjel općinskog suda. | [uložak](commands/get-lr-unit.md). Njegov broj pojavljuje se i na [čestica](commands/get-parcel.md) te u rezultatima grupne obrade. |
-| Glavna knjiga | Svezak zemljišne knjige koji sadrži uloške jedne katastarske općine. | `--glavna-knjiga` na [uložak](commands/get-lr-unit.md). |
+| Čestica zgrade (zgr.) | Čestica starog katastra koja obuhvaća samo zgradu. Piše se `35/1 ZGR`, `35/1.ZGR` ili `zgr. 35/1`; nema vlastiti zemljišnoknjižni uložak. | Broj čestice u naredbama [get-parcel](commands/get-parcel.md) i [search](commands/search.md), ispisan kao `zgr. 35/1`. |
+| Glavna knjiga | Svezak zemljišne knjige koji sadrži uloške jedne katastarske općine. | `--main-book` ili `--main-book-name` u naredbi [get-lr-unit](commands/get-lr-unit.md); [list-main-books](commands/list-main-books.md) pronalazi broj. |
+| Knjiga položenih ugovora (KPU) | Zemljišnoknjižna knjiga za stanove i poslovne prostore prodane prije nego što je zgrada dobila zemljišnoknjižni uložak. | [list-books-of-dc](commands/list-books-of-dc.md). |
+| Upis | Čin kojim je vlasnik, pravo ili zabilježba unesen u uložak. Upis svakog vlasnika prikazuje redni broj, datum zaprimanja i broj dnevnika. | Stupac Upis u vlastovnici naredbe [get-lr-unit](commands/get-lr-unit.md). |
 | Posjedovnica (list A) | List A: čestice koje čine uložak. | Prva tablica iza zaglavlja uloška na [uložak](commands/get-lr-unit.md). |
 | Vlastovnica (list B) | List B: vlasnici i njihovi udjeli. | `--vlasnici` na [uložak](commands/get-lr-unit.md). |
 | Teretovnica (list C) | List C: založna prava (hipoteke), služnosti, stvarni tereti i zabilježbe. | `--tereti` na [uložak](commands/get-lr-unit.md). |

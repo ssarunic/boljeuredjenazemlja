@@ -97,9 +97,9 @@ def search(
                 else _("No"),
                 # Using ngettext for plural forms
                 _("Owners"): ngettext(
-                    "{count} owner", "{count} owners", parcel.total_owners
-                ).format(count=parcel.total_owners)
-                if parcel.total_owners
+                    "{count} possessor", "{count} possessors", parcel.total_possessors
+                ).format(count=parcel.total_possessors)
+                if parcel.total_possessors
                 else _("Unknown"),
             }
 
@@ -124,7 +124,7 @@ def search(
                     "area_m2": parcel.area_numeric,
                     "land_use": list(parcel.land_use_summary.keys()),
                     "building_permitted": parcel.has_building_right,
-                    "total_owners": parcel.total_owners,
+                    "total_possessors": parcel.total_possessors,
                     "parcel_id": parcel.parcel_id,
                 }
                 print_output(export_data, format=output_format, file=output)

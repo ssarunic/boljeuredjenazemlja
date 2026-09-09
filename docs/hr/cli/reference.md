@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 [English](../../en/cli/reference.md) | **Hrvatski**
 
-> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
+> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
 > Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
@@ -40,6 +40,12 @@ Sve naredbe, s poveznicom na stranicu svake od njih. Naredba je ono što upisuje
 - `uz predmemorija popis`: [Koje su općine pohranjene na vašem računalu](commands/cache-list.md). Popis predmemoriranih općina.
 - `uz predmemorija info`: [Koliko je podataka o granicama pohranjeno](commands/cache-info.md). Prikaz detaljnih informacija o predmemoriji.
 - `uz predmemorija obriši`: [Brisanje pohranjenih podataka o granicama](commands/cache-clear.md). Brisanje predmemoriranih GIS podataka.
+
+## Ostalo
+
+- `uz kpu`: [Popis knjiga položenih ugovora](commands/list-books-of-dc.md). Popis knjiga položenih ugovora (KPU).
+- `uz glavne-knjige`: [Pronađite glavnu knjigu katastarske općine](commands/list-main-books.md). Popis glavnih knjiga zemljišne knjige.
+- `uz posjedovni-list`: [Pronađite posjedovni list po broju](commands/search-possession-sheet.md). Pretraga posjedovnog lista po broju.
 <!-- END GENERATED: reference -->
 
 ## Ostale stranice

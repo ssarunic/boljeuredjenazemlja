@@ -5,11 +5,11 @@
 This client demonstrates how a cadastral API integration could work.
 It is configured to use a MOCK SERVER by default for safe testing and learning.
 
-CRITICAL RESTRICTIONS:
-- DO NOT configure this client to use Croatian government production systems
-- Production use is NOT AUTHORIZED due to terms of service and sensitive data
-- This is a theoretical demonstration of API design patterns only
-- Use only with the included mock server for educational purposes
+BEFORE USING ANOTHER SERVER:
+- Verify that you have the rights to use that server and its data (terms of
+  service, data protection); real cadastral data is personal data
+- You do so at your own risk; see docs/legal.md
+- Do not bypass authorization, rate limits or access restrictions
 
 The author is available to advise the Croatian government on official AI and API
 implementation if requested.
@@ -17,29 +17,44 @@ implementation if requested.
 See README.md and CLAUDE.md for complete disclaimer.
 """
 
+import logging
 import os
 import time
 from pathlib import Path
+from typing import Any, Literal, TypeVar
 
 import httpx
 from dotenv import load_dotenv
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from ..exceptions import CadastralAPIError, ErrorType
 from ..gis import GISCache, GMLParser
 from ..models import (
+    BookOfDCSearchResult,
     CadastralOffice,
     FileStatus,
     LandRegistryUnitDetailed,
+    MainBookSearchResult,
     MunicipalitySearchResult,
     ParcelInfo,
     ParcelSearchResult,
+    PossessionSheetSearchResult,
 )
 from ..models.gis_entities import ParcelGeometry
-from ..utils import parse_file_number
+from ..utils import is_building_parcel_number, normalize_parcel_number, parse_file_number
 
 # Load environment variables from .env file
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+UnknownFieldsPolicy = Literal["warn", "ignore", "error"]
+UNKNOWN_FIELDS_POLICIES: tuple[str, ...] = ("warn", "ignore", "error")
+
+# Unknown key paths already reported by this process (logged once each).
+_REPORTED_UNKNOWN_FIELDS: set[str] = set()
+
+M = TypeVar("M", bound=BaseModel)
 
 
 class CadastralAPIClient:
@@ -54,6 +69,7 @@ class CadastralAPIClient:
     BASE_URL = os.getenv("CADASTRAL_API_BASE_URL", "http://localhost:8000")
     DEFAULT_TIMEOUT = float(os.getenv("CADASTRAL_API_TIMEOUT", "10.0"))
     DEFAULT_RATE_LIMIT = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.375"))
+    DEFAULT_UNKNOWN_FIELDS = os.getenv("CADASTRAL_API_UNKNOWN_FIELDS", "warn")
     MAX_RETRIES = 3
 
     def __init__(
@@ -62,6 +78,7 @@ class CadastralAPIClient:
         rate_limit: float | None = None,
         timeout: float | None = None,
         cache_dir: Path | str | None = None,
+        unknown_fields: UnknownFieldsPolicy | None = None,
     ) -> None:
         """
         Initialize the API client.
@@ -69,22 +86,35 @@ class CadastralAPIClient:
         Args:
             base_url: API base URL (default: from CADASTRAL_API_BASE_URL env or http://localhost:8000)
             rate_limit: Minimum seconds between requests
-                (default: from CADASTRAL_API_RATE_LIMIT env or 0.75)
+                (default: from CADASTRAL_API_RATE_LIMIT env or 0.375)
             timeout: Request timeout in seconds (default: from CADASTRAL_API_TIMEOUT env or 10.0)
             cache_dir: Directory for GIS data cache (default: ~/.cadastral_api_cache)
+            unknown_fields: What to do when a response carries a key no model
+                declares (it is kept in ``source_fields`` either way):
+                ``"warn"`` logs each new key path once per process (default),
+                ``"ignore"`` stays silent, ``"error"`` raises
+                ``CadastralAPIError(INVALID_RESPONSE, reason="unknown_fields")``.
 
         Environment Variables:
             CADASTRAL_API_BASE_URL: API base URL (default: http://localhost:8000)
-            CADASTRAL_API_RATE_LIMIT: Rate limit in seconds (default: 0.75)
+            CADASTRAL_API_RATE_LIMIT: Rate limit in seconds (default: 0.375)
             CADASTRAL_API_TIMEOUT: Request timeout in seconds (default: 10.0)
+            CADASTRAL_API_UNKNOWN_FIELDS: warn | ignore | error (default: warn)
 
         Note:
-            The production API (https://oss.uredjenazemlja.hr/oss/public) is protected
-            and may require authorization. Use a local test server for development.
+            Before pointing the client at any server other than the included
+            mock, verify that you have the rights to use that server; see
+            docs/legal.md. Use is at your own risk.
         """
         self.base_url = base_url or self.BASE_URL
         self.rate_limit = rate_limit if rate_limit is not None else self.DEFAULT_RATE_LIMIT
         self.timeout = timeout if timeout is not None else self.DEFAULT_TIMEOUT
+        policy = unknown_fields or self.DEFAULT_UNKNOWN_FIELDS
+        if policy not in UNKNOWN_FIELDS_POLICIES:
+            raise ValueError(
+                f"unknown_fields must be one of {UNKNOWN_FIELDS_POLICIES}, got {policy!r}"
+            )
+        self.unknown_fields: UnknownFieldsPolicy = policy  # type: ignore[assignment]
         self._last_request_time: float = 0.0
 
         self.headers = {
@@ -280,6 +310,61 @@ class CadastralAPIClient:
                 cause=e,
             ) from e
 
+    # ------------------------------------------------------------------
+    # Response validation
+    # ------------------------------------------------------------------
+
+    def _parse(
+        self, model: type[M], data: Any, endpoint: str, details: dict[str, Any] | None = None
+    ) -> M:
+        """Validate one server object into ``model`` and apply the unknown-fields policy."""
+        try:
+            instance = model.model_validate(data)
+        except ValidationError as e:
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={"endpoint": endpoint, **(details or {}), "reason": "validation_failed"},
+                cause=e,
+            ) from e
+        self._check_unknown_fields(instance, endpoint, details)
+        return instance
+
+    def _parse_list(
+        self, model: type[M], data: Any, endpoint: str, details: dict[str, Any] | None = None
+    ) -> list[M]:
+        """Validate a list response; the unknown-fields policy applies to every item."""
+        if not isinstance(data, list):
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={"endpoint": endpoint, **(details or {}), "reason": "not_a_list"},
+            )
+        return [self._parse(model, item, endpoint, details) for item in data]
+
+    def _check_unknown_fields(
+        self, instance: BaseModel, endpoint: str, details: dict[str, Any] | None
+    ) -> None:
+        if self.unknown_fields == "ignore":
+            return
+        unknown = sorted(_unknown_field_paths(instance, endpoint))
+        if not unknown:
+            return
+        if self.unknown_fields == "error":
+            raise CadastralAPIError(
+                error_type=ErrorType.INVALID_RESPONSE,
+                details={
+                    "endpoint": endpoint,
+                    **(details or {}),
+                    "reason": "unknown_fields",
+                    "unknown_fields": ", ".join(unknown),
+                },
+            )
+        for path in unknown:
+            if path not in _REPORTED_UNKNOWN_FIELDS:
+                _REPORTED_UNKNOWN_FIELDS.add(path)
+                logger.warning(
+                    "Server sent a field no model declares: %s (kept in source_fields)", path
+                )
+
     def list_cadastral_offices(self) -> list[CadastralOffice]:
         """
         List all cadastral offices (Područni uredi za katastar) in Croatia.
@@ -304,14 +389,7 @@ class CadastralAPIClient:
                 details={"endpoint": endpoint, "reason": "empty_response"},
             )
 
-        try:
-            return [CadastralOffice.model_validate(item) for item in response_data]
-        except ValidationError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint, "reason": "validation_failed"},
-                cause=e,
-            ) from e
+        return self._parse_list(CadastralOffice, response_data, endpoint)
 
     def find_municipality(
         self,
@@ -373,14 +451,7 @@ class CadastralAPIClient:
                 },
             )
 
-        try:
-            return [MunicipalitySearchResult.model_validate(item) for item in response_data]
-        except ValidationError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint, "reason": "validation_failed"},
-                cause=e,
-            ) from e
+        return self._parse_list(MunicipalitySearchResult, response_data, endpoint)
 
     def find_parcel(
         self, parcel_number: str, municipality_reg_num: str
@@ -389,7 +460,9 @@ class CadastralAPIClient:
         Find parcel IDs by parcel number and municipality.
 
         Args:
-            parcel_number: Parcel number (e.g., "103/2", "114")
+            parcel_number: Parcel number (e.g., "103/2", "114"). Building parcels
+                may be written as "35/1.ZGR", "35/1 ZGR", "zgr. 35/1" or "*35/1";
+                every form is sent as the API spelling "*35/1".
             municipality_reg_num: Municipality registration number (e.g., "334979")
 
         Returns:
@@ -399,11 +472,13 @@ class CadastralAPIClient:
             CadastralAPIError: Any API error occurred
 
         Note:
-            Partial searches return multiple results (e.g., "114" returns 114, 1140/1, etc.)
+            The server matches on the prefix: "114" returns 114, 1140/1, etc.;
+            "1072/1" returns 1072/1, 1072/10, 1072/11, ... A leading asterisk acts
+            as a wildcard ("*35/1" also returns 135/1).
         """
         endpoint = "/search-cad-parcels/parcel-numbers"
         params = {
-            "search": str(parcel_number),
+            "search": normalize_parcel_number(str(parcel_number)),
             "municipalityRegNum": municipality_reg_num,
         }
 
@@ -418,14 +493,126 @@ class CadastralAPIClient:
                 },
             )
 
-        try:
-            return [ParcelSearchResult.model_validate(item) for item in response_data]
-        except ValidationError as e:
+        return self._parse_list(ParcelSearchResult, response_data, endpoint)
+
+    def find_possession_sheet(
+        self, sheet_number: str, municipality_reg_num: str
+    ) -> list[PossessionSheetSearchResult]:
+        """
+        Find possession sheets (posjedovni listovi) by sheet number.
+
+        ``GET /search-cad-parcels/possession-sheet-numbers``. The records carry
+        the ``possessionSheetId`` that parcel-info ``possessionSheets[]`` use and
+        the sheet number; no endpoint returns a sheet by id, so this search is
+        all the API offers (open question OQ4 of the coverage specification).
+
+        Args:
+            sheet_number: Possession sheet number (prefix match, e.g. "363")
+            municipality_reg_num: Municipality registration number (e.g., "334979")
+
+        Returns:
+            List of PossessionSheetSearchResult objects (empty when nothing matches)
+        """
+        endpoint = "/search-cad-parcels/possession-sheet-numbers"
+        params = {"search": str(sheet_number), "municipalityRegNum": municipality_reg_num}
+        response_data = self._make_request(endpoint, params)
+        return self._parse_list(PossessionSheetSearchResult, response_data or [], endpoint)
+
+    def find_main_book(
+        self,
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> list[MainBookSearchResult]:
+        """
+        Find land-registry main books (glavne knjige) by name, office or institution.
+
+        ``GET /search-lr-parcels/main-books``. This is the link from a
+        municipality name to the ``main_book_id`` that ``get_lr_unit_detailed``
+        needs: searching "SAVAR" returns main book 21277 of the Zadar court
+        (institution 284).
+
+        Args:
+            search: Book name to search for (e.g., "SAVAR"); empty returns every book
+            office_id: Filter by land-registry office (institution) id, e.g. "284"
+            institution_name: Filter by institution name
+
+        Returns:
+            List of MainBookSearchResult objects (empty when nothing matches)
+        """
+        endpoint = "/search-lr-parcels/main-books"
+        params = {
+            "search": search or "",
+            "officeId": office_id or "",
+            "institutionName": institution_name or "",
+        }
+        response_data = self._make_request(endpoint, params)
+        return self._parse_list(MainBookSearchResult, response_data or [], endpoint)
+
+    def find_book_of_dc(
+        self,
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> list[BookOfDCSearchResult]:
+        """
+        Find books of deposited contracts (knjige položenih ugovora, KPU).
+
+        ``GET /search-lr-parcels/books-of-dc``. Same parameters as
+        :meth:`find_main_book`. Whether a book id can be passed to the lr-unit
+        endpoint as ``mainBookId`` is unverified (OQ5), so this returns the
+        search records only.
+
+        Args:
+            search: Book name to search for (e.g., "ZADAR")
+            office_id: Filter by land-registry office id
+            institution_name: Filter by institution name
+
+        Returns:
+            List of BookOfDCSearchResult objects (empty when nothing matches)
+        """
+        endpoint = "/search-lr-parcels/books-of-dc"
+        params = {
+            "search": search or "",
+            "officeId": office_id or "",
+            "institutionName": institution_name or "",
+        }
+        response_data = self._make_request(endpoint, params)
+        return self._parse_list(BookOfDCSearchResult, response_data or [], endpoint)
+
+    def resolve_main_book_id(self, main_book_name: str) -> int:
+        """
+        Resolve a main book name ("SAVAR") to its id through :meth:`find_main_book`.
+
+        Raises:
+            CadastralAPIError: ``LR_UNIT_NOT_FOUND`` with reason
+                ``main_book_not_found`` when no book matches the name exactly, or
+                ``main_book_ambiguous`` (with the candidates) when several do.
+        """
+        books = self.find_main_book(main_book_name)
+        wanted = main_book_name.strip().casefold()
+        exact = [b for b in books if b.main_book_name.strip().casefold() == wanted]
+        if len(exact) == 1:
+            return exact[0].main_book_id
+        if not exact:
             raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint, "reason": "validation_failed"},
-                cause=e,
-            ) from e
+                error_type=ErrorType.LR_UNIT_NOT_FOUND,
+                details={
+                    "main_book_name": main_book_name,
+                    "reason": "main_book_not_found",
+                    "candidates": ", ".join(b.main_book_name for b in books) or None,
+                },
+            )
+        raise CadastralAPIError(
+            error_type=ErrorType.LR_UNIT_NOT_FOUND,
+            details={
+                "main_book_name": main_book_name,
+                "reason": "main_book_ambiguous",
+                "candidates": ", ".join(
+                    f"{b.main_book_name} ({b.main_book_id}, {b.court_name})" for b in exact
+                ),
+            },
+        )
 
     def get_parcel_info(self, parcel_id: str | int) -> ParcelInfo:
         """
@@ -455,18 +642,7 @@ class CadastralAPIClient:
                 },
             )
 
-        try:
-            return ParcelInfo.model_validate(response_data)
-        except ValidationError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={
-                    "endpoint": endpoint,
-                    "parcel_id": str(parcel_id),
-                    "reason": "validation_failed",
-                },
-                cause=e,
-            ) from e
+        return self._parse(ParcelInfo, response_data, endpoint, {"parcel_id": str(parcel_id)})
 
     def get_parcel_by_number(
         self, parcel_number: str, municipality_reg_num: str, exact_match: bool = True
@@ -475,7 +651,8 @@ class CadastralAPIClient:
         Convenience method to find and retrieve parcel info in one call.
 
         Args:
-            parcel_number: Parcel number (e.g., "103/2")
+            parcel_number: Parcel number (e.g., "103/2"); building parcels in any
+                spelling ("35/1.ZGR", "zgr. 35/1", "*35/1")
             municipality_reg_num: Municipality registration number
             exact_match: If True, only return exact parcel number match
 
@@ -483,9 +660,13 @@ class CadastralAPIClient:
             ParcelInfo object if found, None otherwise
 
         Raises:
-            CadastralAPIError: Any API error occurred
+            CadastralAPIError: Any API error occurred; ``PARCEL_NOT_FOUND`` with
+                reason ``only_building_parcel_exists`` when the caller asked for
+                a land parcel ("35/1") and only the building parcel ("*35/1")
+                exists, so the two are never confused.
         """
-        search_results = self.find_parcel(parcel_number, municipality_reg_num)
+        wanted = normalize_parcel_number(parcel_number)
+        search_results = self.find_parcel(wanted, municipality_reg_num)
 
         if not search_results:
             return None
@@ -493,8 +674,19 @@ class CadastralAPIClient:
         # Find exact match if requested
         if exact_match:
             for result in search_results:
-                if result.parcel_number == parcel_number:
+                if result.parcel_number == wanted:
                     return self.get_parcel_info(result.parcel_id)
+            candidates = [r.parcel_number for r in search_results]
+            if not is_building_parcel_number(wanted) and f"*{wanted}" in candidates:
+                raise CadastralAPIError(
+                    error_type=ErrorType.PARCEL_NOT_FOUND,
+                    details={
+                        "parcel_number": parcel_number,
+                        "municipality_reg_num": municipality_reg_num,
+                        "reason": "only_building_parcel_exists",
+                        "candidates": ", ".join(candidates),
+                    },
+                )
             return None
 
         # Return first result
@@ -596,8 +788,10 @@ class CadastralAPIClient:
     def get_lr_unit_detailed(
         self,
         lr_unit_number: str,
-        main_book_id: int,
+        main_book_id: int | None = None,
         historical_overview: bool = False,
+        *,
+        main_book_name: str | None = None,
     ) -> LandRegistryUnitDetailed:
         """
         Get detailed land registry unit information including all sheets (A, B, C).
@@ -610,18 +804,25 @@ class CadastralAPIClient:
 
         Args:
             lr_unit_number: Land registry unit number (e.g., "769")
-            main_book_id: Main book ID (e.g., 21277 for SAVAR)
+            main_book_id: Main book ID (e.g., 21277 for SAVAR). May be omitted
+                when ``main_book_name`` is given.
             historical_overview: Include historical data (default: False)
+            main_book_name: Main book name (e.g., "SAVAR"), resolved to its id
+                through the main-book search (:meth:`resolve_main_book_id`)
+                when ``main_book_id`` is not given.
 
         Returns:
             LandRegistryUnitDetailed object with complete unit information
 
         Raises:
-            CadastralAPIError: Any API error occurred
+            CadastralAPIError: Any API error occurred; ``LR_UNIT_NOT_FOUND`` with
+                reason ``main_book_ambiguous`` when the name matches several books.
+            ValueError: Neither ``main_book_id`` nor ``main_book_name`` was given.
 
         Example:
             # Get LR unit details
             lr_unit = client.get_lr_unit_detailed("769", 21277)
+            lr_unit = client.get_lr_unit_detailed("769", main_book_name="SAVAR")
 
             # Access ownership information
             owners = lr_unit.get_all_owners()
@@ -629,7 +830,7 @@ class CadastralAPIClient:
                 print(f"Owner: {owner.name}, OIB: {owner.tax_number}")
 
             # Check for encumbrances
-            if lr_unit.has_encumbrances():
+            if lr_unit.has_sheet_c_entries():
                 print("Unit has encumbrances (mortgages, liens, etc.)")
 
             # Get summary
@@ -638,9 +839,14 @@ class CadastralAPIClient:
             print(f"Total area: {summary['total_area_m2']} m²")
 
         Note:
-            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+            ⚠️ Demo project: verify your rights before using any server other than the mock.
             The API response is returned as a list with typically one element.
         """
+        if main_book_id is None:
+            if not main_book_name:
+                raise ValueError("get_lr_unit_detailed needs main_book_id or main_book_name")
+            main_book_id = self.resolve_main_book_id(main_book_name)
+
         endpoint = "/lr/lr-unit"
         params = {
             "lrUnitNumber": str(lr_unit_number),
@@ -673,19 +879,12 @@ class CadastralAPIClient:
                 )
             response_data = response_data[0]
 
-        try:
-            return LandRegistryUnitDetailed.model_validate(response_data)
-        except ValidationError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={
-                    "endpoint": endpoint,
-                    "lr_unit_number": lr_unit_number,
-                    "main_book_id": main_book_id,
-                    "reason": "validation_failed",
-                },
-                cause=e,
-            ) from e
+        return self._parse(
+            LandRegistryUnitDetailed,
+            response_data,
+            endpoint,
+            {"lr_unit_number": lr_unit_number, "main_book_id": main_book_id},
+        )
 
     def get_lr_unit_from_parcel(
         self,
@@ -725,9 +924,12 @@ class CadastralAPIClient:
             print(f"Number of co-owners: {len(owners)}")
 
         Note:
-            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+            ⚠️ Demo project: verify your rights before using any server other than the mock.
             This is a convenience wrapper that combines parcel lookup with LR unit retrieval.
         """
+        parcel_number = normalize_parcel_number(parcel_number)
+        municipality = str(municipality)
+
         # If municipality is a name, find it
         if not municipality.isdigit():
             municipalities = self.find_municipality(str(municipality))
@@ -757,12 +959,15 @@ class CadastralAPIClient:
         # reachable via lr_units_from_parcel_links / parcel_links).
         ref = self._resolve_lr_unit_ref(parcel_info)
         if ref is None:
+            # Building parcels never carry a land-registry reference: the
+            # building is registered on its land parcel.
             raise CadastralAPIError(
                 error_type=ErrorType.LR_UNIT_NOT_FOUND,
                 details={
                     "parcel_number": parcel_number,
                     "municipality": municipality,
                     "reason": "parcel_not_in_land_registry",
+                    "is_building_parcel": parcel_info.is_building_parcel or None,
                 },
             )
         lr_unit_number, main_book_id = ref
@@ -784,11 +989,25 @@ class CadastralAPIClient:
 
         Prefers the direct ``lr_unit``; otherwise falls back to the units
         carried by parcel links. Returns None when the parcel is not in the
-        land registry at all.
+        land registry at all, and raises ``LR_UNIT_NOT_FOUND`` with reason
+        ``lr_unit_ambiguous`` when the links name different units.
         """
         unit = parcel_info.resolved_lr_unit()
         if unit is None:
             return None
+        if parcel_info.lr_unit is None:
+            # Without a direct unit, links that disagree must not be resolved
+            # by taking the first one.
+            refs = {(c.lr_unit_number, c.main_book_id) for c in parcel_info.lr_unit_candidates()}
+            if len(refs) > 1:
+                raise CadastralAPIError(
+                    error_type=ErrorType.LR_UNIT_NOT_FOUND,
+                    details={
+                        "parcel_number": parcel_info.parcel_number,
+                        "reason": "lr_unit_ambiguous",
+                        "candidates": ", ".join(f"{n}/{b}" for n, b in sorted(refs)),
+                    },
+                )
         return unit.lr_unit_number, unit.main_book_id
 
     def get_file_status(
@@ -818,7 +1037,7 @@ class CadastralAPIClient:
             CadastralAPIError: A transport/server error occurred.
 
         Note:
-            ⚠️ DEMO/EDUCATIONAL USE ONLY - For mock server testing only.
+            ⚠️ Demo project: verify your rights before using any server other than the mock.
         """
         parts = parse_file_number(file_number)
         if parts is None:
@@ -839,18 +1058,9 @@ class CadastralAPIClient:
         if not response_data:
             return None
 
-        try:
-            return FileStatus.model_validate(response_data)
-        except ValidationError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={
-                    "endpoint": "/lr/file-status",
-                    "file_number": file_number,
-                    "reason": "validation_failed",
-                },
-                cause=e,
-            ) from e
+        return self._parse(
+            FileStatus, response_data, "/lr/file-status", {"file_number": file_number}
+        )
 
     def get_plombe_details(
         self, lr_unit: LandRegistryUnitDetailed
@@ -883,3 +1093,22 @@ class CadastralAPIClient:
             if status is not None:
                 details[plumb.file_number] = status
         return details
+
+
+def _unknown_field_paths(instance: BaseModel, prefix: str) -> set[str]:
+    """Key paths (``endpoint.field.subfield[].key``) of every undeclared server key."""
+    paths: set[str] = set()
+    extra = getattr(instance, "source_fields", None)
+    if extra is None:
+        extra = dict(instance.model_extra or {})
+    for key in extra:
+        paths.add(f"{prefix}.{key}")
+    for name in type(instance).model_fields:
+        value = getattr(instance, name, None)
+        if isinstance(value, BaseModel):
+            paths |= _unknown_field_paths(value, f"{prefix}.{name}")
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, BaseModel):
+                    paths |= _unknown_field_paths(item, f"{prefix}.{name}[]")
+    return paths

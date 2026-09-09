@@ -86,7 +86,9 @@ Preconditions, all checked by the script:
 - The new version is greater than the current one and the tag does not exist.
 - `[Unreleased]` in `CHANGELOG.md` is not empty, or a `[X.Y.Z]` section
   already exists.
-- All test suites and gates pass (`pytest` from the repository root).
+- All test suites and gates pass (`pytest` from the repository root), including
+  the API coverage gate `api/src/cadastral_api/tests/test_api_coverage.py`
+  (every key of the redacted fixtures is a declared field, no `source_fields`).
 
 Steps:
 

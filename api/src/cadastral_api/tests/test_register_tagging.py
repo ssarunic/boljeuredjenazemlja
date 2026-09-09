@@ -30,7 +30,7 @@ def test_party_tagged_land_registry() -> None:
 
 def test_parcel_info_possessors_are_cadastre() -> None:
     """Possessors from a real parcel-info response are tagged cadastre."""
-    raw = json.loads((FIXTURES / "parcel_info_1122_1.json").read_text(encoding="utf-8"))
+    raw = json.loads((FIXTURES / "parcel_info_linked.json").read_text(encoding="utf-8"))
     parcel = ParcelInfo.model_validate(raw)
     possessors = parcel.possession_sheets[0].possessors
     assert possessors
@@ -39,7 +39,7 @@ def test_parcel_info_possessors_are_cadastre() -> None:
 
 def test_lr_unit_owners_are_land_registry() -> None:
     """B-list owners from a real LR-unit response are tagged land_registry."""
-    raw = json.loads((FIXTURES / "lr_unit_449_21277.json").read_text(encoding="utf-8"))
+    raw = json.loads((FIXTURES / "lr_unit_lrparcels.json").read_text(encoding="utf-8"))
     payload = raw[0] if isinstance(raw, list) else raw
     unit = LandRegistryUnitDetailed.model_validate(payload)
     owners = unit.get_all_owners()

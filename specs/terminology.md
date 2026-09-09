@@ -27,6 +27,9 @@ documentation guides point here.
 |---|---|---|
 | Parcel | katastarska čestica, k.č. | "čestica" alone is fine after first use. |
 | Cadastral municipality | katastarska općina, k.o. | Its identifier is the **matični broj** (MBKO). The CLI prints it under the label **Šifra**; prose says "matični broj (na zaslonu: Šifra)". |
+| Building parcel | čestica zgrade, zgr. | The API spells it with a leading asterisk (`*35/1`). The tool prints `zgr. 35/1` and accepts `35/1.ZGR`, `35/1 ZGR`, `zgr. 35/1` and `*35/1`. Never "građevinska čestica", which is a spatial-planning term. |
+| Book of deposited contracts | knjiga položenih ugovora, KPU | The API calls it "books-of-dc". Not "knjiga društava". |
+| Registration entry | upis | The act that put an owner or a right into the unit; its "prvenstveni red upisa" is the rank it inherits. |
 | Municipality registration number | matični broj katastarske općine | Not "registarski broj". |
 | Possession sheet | posjedovni list | A cadastre record. Never proof of ownership. |
 | Possessor | posjednik | Everyone listed in the cadastre. The cadastre never has "vlasnici"; only the land registry does. |

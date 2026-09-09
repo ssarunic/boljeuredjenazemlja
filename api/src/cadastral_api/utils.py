@@ -2,6 +2,7 @@
 
 import re
 from datetime import date
+from decimal import Decimal, InvalidOperation
 
 _FRACTION_RE = re.compile(r"(\d+)\s*/\s*(\d+)")
 
@@ -30,6 +31,54 @@ def parse_file_number(file_number: str | None) -> tuple[str, int, int] | None:
     if not match:
         return None
     return match.group(1), int(match.group(2)), int(match.group(3))
+
+
+# Building parcels (katastarska čestica zgrade) are stored by the API with a
+# leading asterisk: "*35/1". Users write them in several ways; every form below
+# normalises to the API spelling. "35/1.ZGR" / "35/1 ZGR" / "35/1zgr" (suffix) and
+# "zgr. 35/1" / "ZGR 35/1" (prefix).
+_ZGR_SUFFIX_RE = re.compile(r"^(?P<num>.+?)\s*\.?\s*zgr\.?\s*$", re.IGNORECASE)
+_ZGR_PREFIX_RE = re.compile(r"^zgr\.?\s*(?P<num>\S+)\s*$", re.IGNORECASE)
+_STAR_RE = re.compile(r"^\*\s*(?P<num>\S+)\s*$")
+
+BUILDING_PARCEL_PREFIX = "*"
+
+
+def normalize_parcel_number(text: str | None) -> str:
+    """Map every user spelling of a parcel number to the API spelling.
+
+    Building parcels: ``"35/1.ZGR"``, ``"35/1 ZGR"``, ``"35/1 zgr"``,
+    ``"zgr. 35/1"`` and ``"* 35/1"`` all become ``"*35/1"``. Other numbers are
+    returned stripped of surrounding whitespace and otherwise untouched.
+    """
+    if text is None:
+        return ""
+    value = text.strip()
+    if not value:
+        return value
+    match = _STAR_RE.match(value) or _ZGR_PREFIX_RE.match(value) or _ZGR_SUFFIX_RE.match(value)
+    if match:
+        return BUILDING_PARCEL_PREFIX + match.group("num").strip()
+    return value
+
+
+def is_building_parcel_number(parcel_number: str | None) -> bool:
+    """True for the API spelling of a building parcel (leading asterisk)."""
+    return bool(parcel_number) and parcel_number.lstrip().startswith(BUILDING_PARCEL_PREFIX)
+
+
+def display_parcel_number(parcel_number: str | None) -> str:
+    """Croatian display form of a parcel number: ``"*35/1"`` renders as ``"zgr. 35/1"``.
+
+    Land parcels are returned unchanged. The API spelling stays in
+    ``parcel_number``; this is what the CLI prints next to it
+    (see specs/terminology.md, "Building parcel").
+    """
+    if not parcel_number:
+        return parcel_number or ""
+    if is_building_parcel_number(parcel_number):
+        return f"zgr. {parcel_number.lstrip().lstrip(BUILDING_PARCEL_PREFIX).strip()}"
+    return parcel_number
 
 
 def parse_fraction(text: str | None) -> tuple[int, int] | None:
@@ -125,13 +174,30 @@ _DATE_WORDS_RE = re.compile(
 )
 _DATE_NUMERIC_RE = re.compile(r"\b(\d{1,2})\.\s?(\d{1,2})\.\s?(\d{4})\b")
 _DIARY_RE = re.compile(r"\b(Z)\s*[-–]?\s*(\d+)\s*/\s*(\d{2,4})\b", re.IGNORECASE)
-# Action verbs, most decisive first: a deletion of an annotation is a deletion.
+# "Prvenstveni red upisa: Z-8920/2012" - the entry whose priority (rank) this
+# entry inherits; rendered in bold in the server's HTML.
+_PRIORITY_RE = re.compile(
+    r"prvenstveni\s+red\s+upisa\s*:?\s*(Z)\s*[-–]?\s*(\d+)\s*/\s*(\d{2,4})", re.IGNORECASE
+)
+# Owners carried over when the unit was formed from another unit.
+_TRANSFERRED_RE = re.compile(r"iz\s+zk\s+ulo[šs]ka\s+preneseni", re.IGNORECASE)
+# Leading style span: <span class='lr-entry-black' > (often never closed).
+_STYLE_CLASS_RE = re.compile(r"^\s*<span\s+class\s*=\s*['\"]([^'\"]+)['\"]", re.IGNORECASE)
+# Croatian number format with an optional currency: "134.000,00 EUR", "43.000,00 KN".
+_AMOUNT_RE = re.compile(r"^\s*(-?[\d.]+(?:,\d+)?)\s*([A-Za-z]{2,4})?\s*$")
+# The statutory kinds of entry (Land Registry Act): uknjižba (unconditional
+# registration), predbilježba (conditional registration), zabilježba (note);
+# "upis" is the generic fallback when only "upisuje se" is said. A deletion
+# ("briše se") is an effect on an earlier entry, not a kind of its own: it is
+# reported through ``deletes_prior_entry`` and named as the action only when
+# the text names no kind at all.
 _ACTION_PATTERNS: tuple[tuple[str, str], ...] = (
-    ("brisanje", r"\bbri[sš]e\s+se\b|\bbrisanje\b|\bbri[sš]u\s+se\b"),
     ("predbilježba", r"\bpredbilje[žz]"),
     ("zabilježba", r"\bzabilje[žz]"),
-    ("upis", r"\buknji[žz]|\bupisuje\s+se\b|\bupis\b"),
+    ("uknjižba", r"\buknji[žz]"),
+    ("upis", r"\bupisuje\s+se\b|\bupis\b"),
 )
+_DELETION_RE = re.compile(r"\bbri[sš]e\s+se\b|\bbrisanje\b|\bbri[sš]u\s+se\b")
 _BASIS_RE = re.compile(
     r"\b(?:na\s+temelju|temeljem)\s+(.+?)"
     r"(?:,?\s+(?:uknji[žz]uje|upisuje|zabilje[žz]uje|predbilje[žz]uje|bri[sš]e|dopu[sš]ta|"
@@ -143,12 +209,19 @@ _BASIS_RE = re.compile(
 def parse_lr_entry(text: str | None) -> dict[str, object]:
     """Pull the structured parts out of a land-registry entry's Croatian text.
 
-    Returns a dict with ``action_type`` (an ``ActionType`` value or ``None``),
+    Returns a dict with ``action_type`` (an ``ActionType`` value or ``None``:
+    ``uknjižba``, ``predbilježba``, ``zabilježba``, the generic ``upis``, or
+    ``brisanje`` when a deletion names no kind), ``deletes_prior_entry`` (True
+    when the text says "briše se" / "brisanje"),
     ``diary_number`` (normalised to ``"Z-487/49"``), ``entry_date`` (the first
     date in the text, i.e. the receipt date after "Stig."/"Pr."/"Zaprimljeno")
     and ``basis_document`` (the phrase after "Na temelju" up to the action verb,
     e.g. ``"rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67,
-    Općinskog suda u Zadru"``). Missing parts are ``None``. HTML is stripped.
+    Općinskog suda u Zadru"``), ``priority_diary_number`` (the "Prvenstveni red
+    upisa" reference, when the entry inherits the rank of an earlier one) and
+    ``transferred_from_unit`` (True when the text says the owners were carried
+    over from another unit, "IZ ZK ULOŠKA PRENESENI VLASNICI"). Missing parts
+    are ``None``. HTML is stripped.
     """
     plain = strip_html(text)
     result: dict[str, object] = {
@@ -156,15 +229,29 @@ def parse_lr_entry(text: str | None) -> dict[str, object]:
         "diary_number": None,
         "entry_date": None,
         "basis_document": None,
+        "priority_diary_number": None,
+        "transferred_from_unit": False,
+        "deletes_prior_entry": False,
     }
     if not plain:
         return result
     lower = plain.lower()
 
+    priority = _PRIORITY_RE.search(plain)
+    if priority:
+        result["priority_diary_number"] = (
+            f"{priority.group(1).upper()}-{int(priority.group(2))}/{priority.group(3)}"
+        )
+    result["transferred_from_unit"] = _TRANSFERRED_RE.search(plain) is not None
+
     for value, pattern in _ACTION_PATTERNS:
         if re.search(pattern, lower):
             result["action_type"] = value
             break
+    if _DELETION_RE.search(lower):
+        result["deletes_prior_entry"] = True
+        if result["action_type"] is None:
+            result["action_type"] = "brisanje"
 
     diary = _DIARY_RE.search(plain)
     if diary:
@@ -215,3 +302,42 @@ def split_name_share(name: str | None) -> tuple[str, tuple[int, int] | None]:
     if not match or int(match.group(2)) == 0:
         return name, None
     return name[: match.start()].rstrip(), (int(match.group(1)), int(match.group(2)))
+
+
+def parse_style_class(description: str | None) -> str | None:
+    """The CSS class of the span an entry description opens with, if any.
+
+    Sheet A2 and sheet C entries start with ``<span class='lr-entry-black' >``
+    (the tag is usually never closed). The class is recorded so that a future
+    ``lr-entry-red`` or similar (expected for deleted entries in a historical
+    overview) is not lost when the HTML is stripped.
+    """
+    if not description:
+        return None
+    match = _STYLE_CLASS_RE.match(description)
+    return match.group(1) if match else None
+
+
+def parse_amount(text: str | None) -> tuple[Decimal, str | None] | None:
+    """Parse a Croatian-formatted monetary amount with an optional currency.
+
+        "134.000,00 EUR"      -> (Decimal("134000.00"), "EUR")
+        "43.000,00 KN"        -> (Decimal("43000.00"), "KN")
+        "10.092.021,00 HRD"   -> (Decimal("10092021.00"), "HRD")
+        "1500"                -> (Decimal("1500"), None)
+
+    Dots are thousands separators and the comma is the decimal mark. Returns
+    ``None`` when the text is not an amount.
+    """
+    if not text:
+        return None
+    match = _AMOUNT_RE.match(text)
+    if not match:
+        return None
+    number = match.group(1).replace(".", "").replace(",", ".")
+    try:
+        value = Decimal(number)
+    except InvalidOperation:
+        return None
+    currency = match.group(2).upper() if match.group(2) else None
+    return value, currency

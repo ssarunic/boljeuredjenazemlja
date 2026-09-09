@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 **English** | [Hrvatski](../../../hr/cli/commands/batch-lr-unit.md)
 
-> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it and must not be connected to the official Croatian cadastre or land registry. Nothing shown on this page is real property data.
+> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
 > Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
@@ -61,11 +61,13 @@ lr_unit_number,main_book_id
     Parcel Number  Address  Area (m²)
     103/2          POLJE         1200
     TOTAL                        1200
+   Parcel list as recorded in the land register; the address column is the culture or toponym of the
+   old land register, not a location.
 
-                    OWNERSHIP SHEET (LIST B)
-    Share  Owner                  Address                 OIB
-    1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
-    1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -
+                                    OWNERSHIP SHEET (LIST B)
+    Share  Owner                  Address                 OIB  Entry
+    1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -    1.1 · 2018-06-10 · Z-5678/2018
+    1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -    2.1 · 2018-06-10 · Z-5678/2018
 
                                        ENCUMBRANCES SHEET (LIST C)
     Description  Details
@@ -75,71 +77,84 @@ lr_unit_number,main_book_id
                  pravo ploduživanja do udaje, u korist:
                    In favour of:
                      IVIĆ MARIJA, KĆI PETRA, SAVAR
-                   In favour of:
-                     IVIĆ MARIJA, KĆI PETRA, SAVAR
     2.           • 2.1: Pr. 20. srpnja 1979.
                  Z 2444/79
                  Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67,
                  Općinskog suda u Zadru, uknjižuje se pravo ploduživanja u korist:
                    In favour of:
                      IVIĆ JELA UD. PETRA ZA 2/6
-                   In favour of:
-                     IVIĆ JELA UD. PETRA ZA 2/6
 
    ---
 
-                 LAND REGISTRY UNIT
+                  LAND REGISTRY UNIT
     Unit Number        769
-    Main Book          TESTMUNICIPALITY
-    Institution        Test Land Registry Office
+    Main Book          SAVAR
+    Institution        Zemljišnoknjižni odjel Zadar
     Status             Aktivan
     Unit Type          VLASNIČKI
     Last Diary Number  Z-27986/2025
 
-             PARCEL LIST (SHEET A)
-    Parcel Number  Address        Area (m²)
-    118/4          TEST FIELD           409
-    192/3          TEST AREA            322
-    279/6          TEST LOCATION       1890
-    TOTAL                              2621
+          PARCEL LIST (SHEET A)
+    Parcel Number  Address   Area (m²)
+    118/4          POLJE           409
+    192/3          BANIŠINA        322
+    198/3          BANIŠINA        255
+    202/1          BANIŠINA        312
+    221/6          BANIŠINA        501
+    267/6          BANIŠINA        680
+    279/6          VOLUNJAK       1890
+    TOTAL                         4369
+   Parcel list as recorded in the cadastre.
 
-                      OWNERSHIP SHEET (LIST B)
-    Share  Owner         Address                     OIB
-    4/8    Test Owner A  -                           -
-    1/8    Test Owner B  -                           -
-    1/8    Test Owner C  -                           -
-    1/8    Test Owner D  Test Street 123, Test City  12345678901
-    1/8    Test Owner E  Test Avenue 456, Test City  98765432109
+                             OWNERSHIP SHEET (LIST B)
+    Share  Owner        Address    OIB          Entry
+    4/8    Vlasnik 117  -          -            1.1 · 2012-04-05 · Z-3983/2012
+    1/8    Vlasnik 119  -          -            3.1 · 2012-04-05 · Z-3983/2012
+    1/8    Vlasnik 326  -          -            4.1 · 2012-04-05 · Z-3983/2012
+    1/8    Vlasnik 116  Adresa 31  00000000036  5.2 · 2020-02-14 · Z-3937/2020
+    1/24   Vlasnik 135  Adresa 10  00000000850  6.1 · 2018-03-21 · Z-6789/2018
+    1/24   Vlasnik 327  Adresa 10  00000000868  7.1 · 2018-03-21 · Z-6789/2018
+    1/24   Vlasnik 328  Adresa 32  00000000876  8.1 · 2018-03-21 · Z-6789/2018
 
-                                  ENCUMBRANCES SHEET (LIST C)
+                                       ENCUMBRANCES SHEET (LIST C)
     Description                     Details
     1. Na suvlasnički dio: 1 (4/8)  • 1.1: Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016
 
-                                    ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI
+                                    ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI, RJEŠENJE CENTRA ZA
+                                    SOCIJALNU SKRB ZADAR KLASA: UP/I-551-04/16-02/29, URBROJ:
+                                    2198-12-22-16-2 25.04.2016, počevši od 15. travnja 2016. godine pa
+                                    nadalje, utvrđeno rješenjem Centra za socijalnu skrb Zadar KLASA:
+                                    UP/I-551-04/16-02/29, URBROJ: 2198-12-22-16-2 od 25. travnja 2016.
+                                    godine i prijedloga RH po zz od 04. svibnja 2016. godine, na
+                                    nekretninamam, uknjiženog prava vlasništva na ime N.N. rođ. N.N.,
+                                    OIB: 00000000884, N.N., za korist REPUBLIKE HRVATSKE, Centar za
+                                    socijalnu skrb Zadar.
 
    ---
 
-                     LAND REGISTRY UNIT
+                      LAND REGISTRY UNIT
     Unit Number               449
-    Main Book                 TESTMUNICIPALITY
-    Institution               Test Land Registry Office
+    Main Book                 SAVAR
+    Institution               Zemljišnoknjižni odjel Zadar
     Status                    Aktivan
     Unit Type                 VLASNIČKI
-    Last Diary Number         Z-15677/2026
-    Pending entries (plombe)  Z-12564/2026, Z-18444/2026
+    Last Diary Number         Z-18444/2026
+    Pending entries (plombe)  Z-12564/2026
    ⚠️  This unit has pending entries (plombe) - a change may be in progress.
 
           PARCEL LIST (SHEET A)
     Parcel Number  Address  Area (m²)
     1122/1         OVČJA         3291
     TOTAL                        3291
+   Parcel list as recorded in the land register; the address column is the culture or toponym of the
+   old land register, not a location.
 
-                       OWNERSHIP SHEET (LIST B)
-    Share  Owner           Address                     OIB
-    1/4    Test Owner One  Test Street 1, Test City    00000000001
-    1/12   Test Nephew A   Test Street 17, Test City   00000000130
-    1/12   Test Nephew B   Test Street 110, Test City  00000000131
-    1/12   Test Nephew C   Test Street 110, Test City  00000000132
+                              OWNERSHIP SHEET (LIST B)
+    Share  Owner        Address    OIB          Entry
+    1/4    Vlasnik 114  Adresa 75  00000000010  127.2 · 2026-05-14 · Z-15677/2026
+    1/4    Vlasnik 115  Adresa 41  00000000028  128.1 · 2025-09-29 · Z-31325/2025
+    1/4    Vlasnik 116  Adresa 31  00000000036  129.1 · 2025-09-29 · Z-31325/2025
+    1/4    Vlasnik 116  Adresa 76  00000000036  133.1 · 2026-06-09 · Z-18444/2026
 
      ENCUMBRANCES SHEET (LIST C)
     Description            Details
@@ -243,7 +258,8 @@ Usage: cadastral batch-lr-unit [OPTIONS]
     # With ownership details in JSON format
     cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json
 
-  ⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only
+  ⚠️  Demo project: before using any server other than the included mock, verify
+  your rights to use it; use at your own risk
 
 Options:
   -i, --input PATH                Input file (CSV or JSON) with LR unit

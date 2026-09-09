@@ -1,0 +1,126 @@
+{
+  "lrUnitId": 14253318,
+  "lrUnitNumber": "879",
+  "mainBookId": 21277,
+  "mainBookName": "SAVAR",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Zemljišnoknjižni odjel Zadar",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": true,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-22905/2026",
+  "activePlumbs": [],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "181. Suvlasnički dio: 2760/3449",
+        "lrOwners": [
+          {
+            "lrOwnerId": 67482834,
+            "name": "Vlasnik 499",
+            "address": "Adresa 198",
+            "taxNumber": "00000002058",
+            "lrEntry": {
+              "description": "Zaprimljeno 19.09.2025.g. pod brojem Z-30174/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.br. Rz-760/2023 i čl. 210 ZZK-a NN53/19, 128/22.",
+              "orderNumber": "181.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51840015,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "181"
+      },
+      {
+        "description": "182. Suvlasnički dio: 689/3449",
+        "lrOwners": [
+          {
+            "lrOwnerId": 67482833,
+            "name": "Vlasnik 499",
+            "address": "Adresa 211",
+            "taxNumber": "00000002058",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.04.2026.g. pod brojem Z-12269/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI OVJEREN POD BR. OV-967/2026 U ZADRU DANA 16.TRAVNJA 2026.GODINE 16.04.2026",
+              "orderNumber": "182.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 51840014,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "182"
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "cadParcels": [
+      {
+        "parcelId": 6565169,
+        "parcelNumber": "375",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "STRŽINE",
+        "area": "3449",
+        "buildingRemark": 0,
+        "detailSheetNumber": "1",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 79073482,
+            "name": "PAŠNJAK",
+            "area": "2000",
+            "possessionSheetId": 16103475,
+            "possessionSheetNumber": "879",
+            "building": false
+          },
+          {
+            "parcelPartId": 79073481,
+            "name": "VINOGRAD",
+            "area": "760",
+            "possessionSheetId": 16103475,
+            "possessionSheetNumber": "879",
+            "building": false
+          },
+          {
+            "parcelPartId": 79073480,
+            "name": "ORANICA",
+            "area": "689",
+            "possessionSheetId": 16103475,
+            "possessionSheetNumber": "879",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 16103475,
+            "possessionSheetNumber": "879",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": []
+  }
+}

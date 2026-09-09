@@ -6,6 +6,7 @@ from typing import Any
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
+from cadastral_api.utils import normalize_parcel_number
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,8 @@ class CadastralTools:
             # Step 1: Resolve municipality if needed
             muni_code = await self._resolve_municipality(municipality)
 
-            # Step 2: Find parcel
+            # Step 2: Find parcel. The server matches on the prefix, so prefer
+            # the exact number (in the API spelling: "35/1.ZGR" -> "*35/1").
             results = self.client.find_parcel(parcel_number, muni_code)
 
             if not results:
@@ -70,11 +72,12 @@ class CadastralTools:
                     f"No parcels found matching '{parcel_number}' in {municipality}"
                 )
 
-            # Return first match
-            result = results[0]
+            wanted = normalize_parcel_number(parcel_number)
+            result = next((r for r in results if r.parcel_number == wanted), results[0])
             response: dict[str, Any] = {
                 "parcel_id": result.parcel_id,
                 "parcel_number": result.parcel_number,
+                "is_building_parcel": result.is_building_parcel,
                 "municipality": municipality,
                 "municipality_code": muni_code,
                 "success": True,
@@ -437,7 +440,10 @@ class CadastralTools:
                 result["condominium_units_count"] = lr_unit.get_condominium_units_count()
             return result
 
-        # detail == "ownership"
+        # detail == "ownership". Each owner row carries ``entry`` (the
+        # registration entry that put the owner on the share: order number,
+        # receipt date, diary number, action type); ``share_entries`` are the
+        # annotations (ZABILJEŽBA) registered on individual shares.
         owners, total, truncated = cls._ownership_rows(lr_unit, owners_limit)
         return {
             "lr_unit_number": lr_unit.lr_unit_number,
@@ -446,10 +452,12 @@ class CadastralTools:
             "institution_name": lr_unit.institution_name,
             "in_land_registry": True,
             "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+            "sheet_a1_source_key": lr_unit.sheet_a1_source_key,
             "is_condominium": is_condo,
             "owners": owners,
             "total_owners": total,
             "owners_truncated": truncated,
+            "share_entries": lr_unit.ownership_sheet_b.share_entry_rows(),
             "summary": summary,
         }
 
@@ -469,10 +477,11 @@ class CadastralTools:
     async def get_lr_unit(
         self,
         unit_number: str,
-        main_book_id: int,
+        main_book_id: int | None = None,
         detail: str = "ownership",
         owners_limit: int | None = None,
         include_plombe_detail: bool = False,
+        main_book_name: str | None = None,
     ) -> dict[str, Any]:
         """
         Get land registry unit (zemljišnoknjižni uložak) information.
@@ -487,26 +496,35 @@ class CadastralTools:
 
         Args:
             unit_number: LR unit number (e.g., "769")
-            main_book_id: Main book ID (e.g., 21277)
+            main_book_id: Main book ID (e.g., 21277); may be omitted when
+                ``main_book_name`` is given.
             detail: "summary" | "ownership" | "full" (default "ownership" -
                 B-list owners with structured shares + summary, no geometry/C-sheet).
             owners_limit: Cap the number of owner rows returned (ownership detail);
                 total_owners and owners_truncated report the full count.
+            main_book_name: Main book name (e.g., "SAVAR"), resolved through the
+                main-book search when ``main_book_id`` is not given.
 
         Returns:
             Dictionary shaped per ``detail``; owners carry a structured
-            ``share`` ({num, den, decimal}) and a ``register`` tag.
+            ``share`` ({num, den, decimal}), a ``register`` tag and their
+            registration ``entry``.
         """
         if detail not in self.VALID_DETAIL:
             raise ValueError(
                 f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
             )
+        if main_book_id is None and not main_book_name:
+            raise ValueError("Either main_book_id or main_book_name is required.")
 
         try:
             logger.info(
-                f"Fetching LR unit {unit_number} from main book {main_book_id} (detail={detail})"
+                f"Fetching LR unit {unit_number} from main book "
+                f"{main_book_id or main_book_name!r} (detail={detail})"
             )
-            lr_unit = self.client.get_lr_unit_detailed(unit_number, main_book_id)
+            lr_unit = self.client.get_lr_unit_detailed(
+                unit_number, main_book_id, main_book_name=main_book_name
+            )
             result = self._shape_lr_unit(lr_unit, detail, owners_limit)
             if include_plombe_detail and lr_unit.has_pending_plombe():
                 result["plombe_detail"] = self._plombe_detail(lr_unit)
@@ -516,8 +534,8 @@ class CadastralTools:
             logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
             raise ValueError(
                 f"Could not retrieve land registry unit '{unit_number}' "
-                f"from main book {main_book_id}. "
-                f"Please verify the unit number and main book ID."
+                f"from main book {main_book_id or main_book_name}. "
+                f"Please verify the unit number and main book ID or name. ({e})"
             ) from e
 
     async def get_lr_unit_from_parcel(
@@ -708,6 +726,79 @@ class CadastralTools:
         except Exception as e:
             logger.error(f"Batch LR unit operation failed: {e}", exc_info=True)
             raise ValueError(f"Batch LR unit operation failed: {e}") from e
+
+    async def find_main_book(
+        self,
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Find land-registry main books (glavne knjige) by name, office or institution.
+
+        The main book id is what ``get_lr_unit`` needs; searching a cadastral
+        municipality name ("SAVAR") returns the book that holds its units.
+
+        Returns:
+            {"main_books": [{main_book_id, main_book_name, institution_id,
+            court_name, ...}], "count": n}
+        """
+        try:
+            logger.info(f"Finding main books (search={search}, office={office_id})")
+            books = self.client.find_main_book(search, office_id, institution_name)
+            return {
+                "main_books": [book.model_dump(mode="json") for book in books],
+                "count": len(books),
+            }
+        except CadastralAPIError as e:
+            logger.error(f"Main book search failed: {e}", exc_info=True)
+            raise ValueError("Could not search land-registry main books.") from e
+
+    async def find_book_of_dc(
+        self,
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Find books of deposited contracts (knjige položenih ugovora, KPU).
+
+        Returns:
+            {"books_of_dc": [{book_id, book_name, office_id, office_name, ...}], "count": n}
+        """
+        try:
+            logger.info(f"Finding books of deposited contracts (search={search})")
+            books = self.client.find_book_of_dc(search, office_id, institution_name)
+            return {
+                "books_of_dc": [book.model_dump(mode="json") for book in books],
+                "count": len(books),
+            }
+        except CadastralAPIError as e:
+            logger.error(f"Books-of-DC search failed: {e}", exc_info=True)
+            raise ValueError("Could not search books of deposited contracts.") from e
+
+    async def find_possession_sheet(self, sheet_number: str, municipality: str) -> dict[str, Any]:
+        """
+        Find cadastre possession sheets (posjedovni listovi) by sheet number.
+
+        Returns:
+            {"possession_sheets": [{possession_sheet_id, sheet_number, ...}],
+            "municipality_code": code, "count": n}
+        """
+        try:
+            logger.info(f"Finding possession sheet {sheet_number} in {municipality}")
+            muni_code = await self._resolve_municipality(municipality)
+            sheets = self.client.find_possession_sheet(sheet_number, muni_code)
+            return {
+                "possession_sheets": [sheet.model_dump(mode="json") for sheet in sheets],
+                "municipality_code": muni_code,
+                "count": len(sheets),
+            }
+        except CadastralAPIError as e:
+            logger.error(f"Possession sheet search failed: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not search possession sheets for '{sheet_number}' in {municipality}."
+            ) from e
 
     def _map_url_for(self, parcel_number: str, muni_code: str) -> str | None:
         """

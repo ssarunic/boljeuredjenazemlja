@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 [English](../../../en/cli/commands/get-lr-unit.md) | **Hrvatski**
 
-> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
+> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
 > Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
@@ -58,11 +58,13 @@ lakši je put.
     Broj čestice  Adresa  Površina (m²)
     103/2         POLJE            1200
     UKUPNO                         1200
+   Popis čestica prema zemljišnoj knjizi; stupac Adresa je kultura ili toponim iz stare zemljišne
+   knjige, a ne lokacija.
 
-                      VLASTOVNICA (LIST B)
-    Udio  Vlasnik                Adresa                  OIB
-    1/2   IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
-    1/2   IVIĆ ANA, KĆI PETRA    SAVAR                   -
+                                      VLASTOVNICA (LIST B)
+    Udio  Vlasnik                Adresa                  OIB  Upis
+    1/2   IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -    1.1 · 2018-06-10 · Z-5678/2018
+    1/2   IVIĆ ANA, KĆI PETRA    SAVAR                   -    2.1 · 2018-06-10 · Z-5678/2018
 
                                            TERETOVNICA (LIST C)
     Opis  Detalji
@@ -72,14 +74,10 @@ lakši je put.
           ploduživanja do udaje, u korist:
             U korist:
               IVIĆ MARIJA, KĆI PETRA, SAVAR
-            U korist:
-              IVIĆ MARIJA, KĆI PETRA, SAVAR
     2.    • 2.1: Pr. 20. srpnja 1979.
           Z 2444/79
           Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67, Općinskog
           suda u Zadru, uknjižuje se pravo ploduživanja u korist:
-            U korist:
-              IVIĆ JELA UD. PETRA ZA 2/6
             U korist:
               IVIĆ JELA UD. PETRA ZA 2/6
    ```
@@ -115,32 +113,33 @@ uz uložak --broj-uloška 449 --glavna-knjiga 21277 --sve --plombe
 
 <!-- BEGIN GENERATED: output uz uložak --broj-uloška 449 --glavna-knjiga 21277 --sve --plombe -->
 ```text
-             ZEMLJIŠNOKNJIŽNI ULOŽAK
+              ZEMLJIŠNOKNJIŽNI ULOŽAK
  Broj uloška           449
- Glavna knjiga         TESTMUNICIPALITY
- Institucija           Test Land Registry Office
+ Glavna knjiga         SAVAR
+ Institucija           Zemljišnoknjižni odjel Zadar
  Status                Aktivan
  Tip uloška            VLASNIČKI
- Zadnji broj dnevnika  Z-15677/2026
- Plombe (u tijeku)     Z-12564/2026, Z-18444/2026
+ Zadnji broj dnevnika  Z-18444/2026
+ Plombe (u tijeku)     Z-12564/2026
 ⚠️  Ovaj uložak ima plombe (zaprimljeni neriješeni prijedlozi) - moguća je promjena u tijeku.
 
-                         DETALJ PLOMBI (ZAPRIMLJENI PRIJEDLOZI)
- Broj plombe   Prijedlog                  Status                  Zaprimljeno  Ishod
- Z-12564/2026  Rješenje o nasljeđivanju   IZRADA NACRTA RJEŠENJA   2026-04-20  U tijeku
- Z-18444/2026  Uknjižba prava vlasništva  IZRADA NACRTA RJEŠENJA   2026-06-09  U tijeku
+                        DETALJ PLOMBI (ZAPRIMLJENI PRIJEDLOZI)
+ Broj plombe   Prijedlog                 Status                  Zaprimljeno  Ishod
+ Z-12564/2026  Rješenje o nasljeđivanju  IZRADA NACRTA RJEŠENJA   2026-04-20  U tijeku
 
         POSJEDOVNICA (LIST A)
  Broj čestice  Adresa  Površina (m²)
  1122/1        OVČJA            3291
  UKUPNO                         3291
+Popis čestica prema zemljišnoj knjizi; stupac Adresa je kultura ili toponim iz stare zemljišne
+knjige, a ne lokacija.
 
-                     VLASTOVNICA (LIST B)
- Udio  Vlasnik         Adresa                      OIB
- 1/4   Test Owner One  Test Street 1, Test City    00000000001
- 1/12  Test Nephew A   Test Street 17, Test City   00000000130
- 1/12  Test Nephew B   Test Street 110, Test City  00000000131
- 1/12  Test Nephew C   Test Street 110, Test City  00000000132
+                             VLASTOVNICA (LIST B)
+ Udio  Vlasnik      Adresa     OIB          Upis
+ 1/4   Vlasnik 114  Adresa 75  00000000010  127.2 · 2026-05-14 · Z-15677/2026
+ 1/4   Vlasnik 115  Adresa 41  00000000028  128.1 · 2025-09-29 · Z-31325/2025
+ 1/4   Vlasnik 116  Adresa 31  00000000036  129.1 · 2025-09-29 · Z-31325/2025
+ 1/4   Vlasnik 116  Adresa 76  00000000036  133.1 · 2026-06-09 · Z-18444/2026
 
  TERETOVNICA (LIST C)
  Opis         Detalji
@@ -148,15 +147,29 @@ uz uložak --broj-uloška 449 --glavna-knjiga 21277 --sve --plombe
 ```
 <!-- END GENERATED: output -->
 
-Da uložak odredite izravno umjesto polaskom od čestice, upotrijebite zajedno
-`--broj-uloška` i `--glavna-knjiga`, kao u gornjem primjeru. Da rezultat
-spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom datoteke.
+Da biste uložak zadali izravno umjesto od čestice, upotrijebite zajedno
+`--unit-number` i `--main-book`, kao u gornjem primjeru. Ako znate naziv glavne
+knjige (u pravilu naziv katastarske općine), ali ne i njezin broj, zadajte naziv
+opcijom `--main-book-name` i alat će broj pronaći za vas:
+
+```bash
+uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR --vlasnici
+```
+
+Posljednji stupac vlastovnice, **Upis**, kaže kako je svaki vlasnik dospio u
+uložak: redni broj upisa, datum zaprimanja prijedloga i njegov broj dnevnika
+(Z-broj). Uz `--all` alat ispod udjela ispisuje i zabilježbe upisane samo na tom
+udjelu, na primjer ugovor o doživotnom uzdržavanju ili spor.
+
+Da biste rezultat spremili kao datoteku, dodajte `--format json` i `--output` s
+nazivom datoteke.
 
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
 | `--broj-uloška`, `-bu` `TEKST` | Broj zemljišnoknjižnog uloška (npr. '769') | Ne koristi se |
 | `--glavna-knjiga`, `-gk` `CIJELI_BROJ` | ID glavne knjige (npr. 21277) | Ne koristi se |
+| `--naziv-glavne-knjige`, `-ng` `TEKST` | Naziv glavne knjige (npr. SAVAR), umjesto identifikatora | Ne koristi se |
 | `--od-čestice`, `-oc` `TEKST` | Dohvati ZK uložak prema broju čestice | Ne koristi se |
 | `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno uz --from-parcel) | Ne koristi se |
 | `--vlasnici`, `-vl` | Prikaži podatke o vlasništvu (list B) | Nije uključeno |
@@ -221,12 +234,17 @@ Uporaba: uz uložak [OPCIJE]
     # Izvoz u JSON
     uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json
 
-  ⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja
+  ⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim
+  priloženog probnog provjerite svoja prava na njegovu uporabu; koristite na
+  vlastitu odgovornost
 
 Opcije:
   -bu, --broj-uloška TEKST        Broj zemljišnoknjižnog uloška (npr. '769')
   -gk, --glavna-knjiga CIJELI_BROJ
                                   ID glavne knjige (npr. 21277)
+  -ng, --naziv-glavne-knjige TEKST
+                                  Naziv glavne knjige (npr. SAVAR), umjesto
+                                  identifikatora
   -oc, --od-čestice TEKST         Dohvati ZK uložak prema broju čestice
   -ko, --općina TEKST             Naziv ili šifra općine (obavezno uz --from-
                                   parcel)

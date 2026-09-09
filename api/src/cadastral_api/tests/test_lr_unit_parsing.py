@@ -6,7 +6,7 @@ previously expected ``cadParcels`` with a richer shape. The mismatch made
 ``cad_parcels`` fall back to an empty list, so ``summary()`` reported
 ``total_parcels == 0`` / ``total_area_m2 == 0`` despite the unit having parcels.
 
-The fixture ``fixtures/lr_unit_449_21277.json`` is a real response for k.o. SAVAR
+The fixture ``fixtures/lr_unit_lrparcels.json`` is a real response for k.o. SAVAR
 LR unit 449 (book 21277), with all Sheet B personal data (names, addresses, tax
 numbers) redacted. The Sheet A1 parcel data is preserved as returned by the API.
 """
@@ -18,7 +18,7 @@ import pytest
 
 from cadastral_api.models.entities import LandRegistryUnitDetailed, SheetAParcelList
 
-FIXTURE = Path(__file__).parent / "fixtures" / "lr_unit_449_21277.json"
+FIXTURE = Path(__file__).parent / "fixtures" / "lr_unit_lrparcels.json"
 
 
 @pytest.fixture

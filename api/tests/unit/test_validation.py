@@ -66,7 +66,7 @@ try:
     print("\n✓ Validation successful!")
     print(f"  Parcel: {parcel.parcel_number}")
     print(f"  Area: {parcel.area_numeric} m²")
-    print(f"  Owners: {parcel.total_owners}")
+    print(f"  Owners: {parcel.total_possessors}")
 except Exception as e:
     print(f"\n✗ Validation failed: {type(e).__name__}")
     print(f"  Error: {e}")

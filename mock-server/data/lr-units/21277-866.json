@@ -1,0 +1,2542 @@
+{
+  "lrUnitId": 13975249,
+  "lrUnitNumber": "866",
+  "mainBookId": 21277,
+  "mainBookName": "SAVAR",
+  "cadastreMunicipalityId": 2387,
+  "institutionId": 284,
+  "institutionName": "Zemljišnoknjižni odjel Zadar",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": true,
+  "condominiums": false,
+  "lrUnitTypeId": 1,
+  "lrUnitTypeName": "VLASNIČKI",
+  "lastDiaryNumber": "Z-31325/2025",
+  "activePlumbs": [
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-12564/2026"
+    }
+  ],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "1. Suvlasnički dio: 2/80",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512405,
+            "name": "Vlasnik 22",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "1.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127681,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "1"
+      },
+      {
+        "description": "2. Suvlasnički dio: 1/120",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512406,
+            "name": "Vlasnik 22",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "2.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127682,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "2"
+      },
+      {
+        "description": "3. Suvlasnički dio: 9/120",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512407,
+            "name": "Vlasnik 90",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "3.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127683,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "3"
+      },
+      {
+        "description": "4. Suvlasnički dio: 3/120",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512408,
+            "name": "Vlasnik 54",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "4.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127684,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "4"
+      },
+      {
+        "description": "5. Suvlasnički dio: 2/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512409,
+            "name": "Vlasnik 37",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "5.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127685,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "5"
+      },
+      {
+        "description": "6. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512410,
+            "name": "Vlasnik 38",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "6.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127686,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "6"
+      },
+      {
+        "description": "7. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512411,
+            "name": "Vlasnik 103",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "7.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127687,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "7"
+      },
+      {
+        "description": "8. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512412,
+            "name": "Vlasnik 80",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "8.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127688,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "8"
+      },
+      {
+        "description": "9. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512413,
+            "name": "Vlasnik 23",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "9.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127689,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "9"
+      },
+      {
+        "description": "10. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512414,
+            "name": "Vlasnik 104",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "10.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127690,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "10"
+      },
+      {
+        "description": "11. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512415,
+            "name": "Vlasnik 105",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "11.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127691,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "11"
+      },
+      {
+        "description": "12. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512416,
+            "name": "Vlasnik 3",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "12.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127692,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "12"
+      },
+      {
+        "description": "13. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512417,
+            "name": "Vlasnik 64",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "13.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127693,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "13"
+      },
+      {
+        "description": "14. Suvlasnički dio: 1/96",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512418,
+            "name": "Vlasnik 4",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "14.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127694,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "14"
+      },
+      {
+        "description": "15. Suvlasnički dio: 9/600",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512419,
+            "name": "Vlasnik 91",
+            "address": "Adresa 60",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "15.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127695,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "15"
+      },
+      {
+        "description": "16. Suvlasnički dio: 2/48",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512420,
+            "name": "Vlasnik 93",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "16.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127696,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "16"
+      },
+      {
+        "description": "17. Suvlasnički dio: 1/48",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512421,
+            "name": "Vlasnik 65",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "17.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127697,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "17"
+      },
+      {
+        "description": "18. Suvlasnički dio: 1/48",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512422,
+            "name": "Vlasnik 66",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "18.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127698,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "18"
+      },
+      {
+        "description": "19. Suvlasnički dio: 1/48",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512423,
+            "name": "Vlasnik 122",
+            "address": "Adresa 25",
+            "taxNumber": "00000000052",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-33183/2022</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-251/2022 UPP-OS-20/2022 16.08.2022",
+              "orderNumber": "19.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127699,
+        "subSharesAndEntries": [
+          {
+            "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-16663/2023</b><br><br>ZABILJEŽBA, ODBIJENI PRIJEDLOG, predlagatelja N.N. radi ispravka adrese.",
+            "lrEntryId": 103217813,
+            "orderNumber": "19.2"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "19"
+      },
+      {
+        "description": "20. Suvlasnički dio: 1/960",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512424,
+            "name": "Vlasnik 55",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "20.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127700,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "20"
+      },
+      {
+        "description": "21. Suvlasnički dio: 1/128",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512425,
+            "name": "Vlasnik 24",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "21.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127701,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "21"
+      },
+      {
+        "description": "22. Suvlasnički dio: 1/128",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512426,
+            "name": "Vlasnik 6",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "22.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127702,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "22"
+      },
+      {
+        "description": "23. Suvlasnički dio: 1/128",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512427,
+            "name": "Vlasnik 53",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "23.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127703,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "23"
+      },
+      {
+        "description": "24. Suvlasnički dio: 1/128",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512428,
+            "name": "Vlasnik 2",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "24.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127704,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "24"
+      },
+      {
+        "description": "25. Suvlasnički dio: 9/1600",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512429,
+            "name": "Vlasnik 89",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "25.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127705,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "25"
+      },
+      {
+        "description": "26. Suvlasnički dio: 3/1600",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512430,
+            "name": "Vlasnik 63",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "26.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127706,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "26"
+      },
+      {
+        "description": "27. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512431,
+            "name": "Vlasnik 36",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "27.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127707,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "27"
+      },
+      {
+        "description": "28. Suvlasnički dio: 7/2160",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512432,
+            "name": "Vlasnik 101",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "28.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127708,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "28"
+      },
+      {
+        "description": "29. Suvlasnički dio: 1/480",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512433,
+            "name": "Vlasnik 102",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "29.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127709,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "29"
+      },
+      {
+        "description": "30. Suvlasnički dio: 1/480",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512434,
+            "name": "Vlasnik 123",
+            "address": "Adresa 33",
+            "taxNumber": "00000000069",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-3850/2020</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU, PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA, POSL. BR. O-2495/2017, UPP/OS-210/2017 23.12.2019",
+              "orderNumber": "30.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127710,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "30"
+      },
+      {
+        "description": "31. Suvlasnički dio: 1/80",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512435,
+            "name": "Vlasnik 76",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "31.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127711,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "31"
+      },
+      {
+        "description": "32. Suvlasnički dio: 1/80",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512436,
+            "name": "Vlasnik 124",
+            "address": "Adresa 40",
+            "taxNumber": "00000000077",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-6471/2023</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OVJEREN KOD JAVNOG BILJEŽNIKA N.N. U RIJECI POD BROJEM OV-1984/2023 24.02.2023",
+              "orderNumber": "32.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127712,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "32"
+      },
+      {
+        "description": "33. Suvlasnički dio: 1/80",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512437,
+            "name": "Vlasnik 30",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "33.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127713,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "33"
+      },
+      {
+        "description": "34. Suvlasnički dio: 1/112",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512438,
+            "name": "Vlasnik 17",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "34.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127714,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "34"
+      },
+      {
+        "description": "35. Suvlasnički dio: 1/112",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512439,
+            "name": "Vlasnik 49",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "35.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127715,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "35"
+      },
+      {
+        "description": "36. Suvlasnički dio: 1/112",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512440,
+            "name": "Vlasnik 18",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "36.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127716,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "36"
+      },
+      {
+        "description": "37. Suvlasnički dio: 7/360",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512441,
+            "name": "Vlasnik 31",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "37.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127717,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "37"
+      },
+      {
+        "description": "38. Suvlasnički dio: 15/896",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512442,
+            "name": "Vlasnik 77",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
+              "orderNumber": "38.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127718,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "38"
+      },
+      {
+        "description": "39. Suvlasnički dio: 1/320",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512443,
+            "name": "Vlasnik 59",
+            "address": "Adresa 39",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-5889/2008</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>Zaprimljeno 16.06.2008. broj Z-5889/08<br>Na temelju pravomoćnog Rješenja o nasljeđivanju Općinskog suda u Opatiji po javnom bilježniku N.N. iz Opatije kao povjereniku suda pod posl. br. O - 24/08 i UPP-OS-16/08 od 13. lipnja 2008. godine i prijedloga, uknjižuje se prijenos prava suvlasništva sa N.N., pok. N.N. za 1/80 dijela, u korist:",
+              "orderNumber": "39.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127719,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "39"
+      },
+      {
+        "description": "40. Suvlasnički dio: 1/320",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512444,
+            "name": "Vlasnik 124",
+            "address": "Adresa 40",
+            "taxNumber": "00000000077",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-6471/2023</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OVJEREN KOD JAVNOG BILJEŽNIKA N.N. U RIJECI POD BROJEM OV-1984/2023 24.02.2023",
+              "orderNumber": "40.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127720,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "40"
+      },
+      {
+        "description": "41. Suvlasnički dio: 1/320",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512445,
+            "name": "Vlasnik 50",
+            "address": "Adresa 34",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-5889/2008</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>Zaprimljeno 16.06.2008. broj Z-5889/08<br>Na temelju pravomoćnog Rješenja o nasljeđivanju Općinskog suda u Opatiji po javnom bilježniku N.N. iz Opatije kao povjereniku suda pod posl. br. O - 24/08 i UPP-OS-16/08 od 13. lipnja 2008. godine i prijedloga, uknjižuje se prijenos prava suvlasništva sa N.N., pok. N.N. za 1/80 dijela, u korist:",
+              "orderNumber": "41.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127721,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "41"
+      },
+      {
+        "description": "42. Suvlasnički dio: 3/1920",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512446,
+            "name": "Vlasnik 32",
+            "address": "Adresa 21",
+            "taxNumber": "00000000085",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-11055/2010</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>Zaprimljeno 02.11.2010. broj Z-11055/10<br>Na temelju pravomoćnog Rješenja o nasljeđivanju Općinskog suda u Zadru po javnom bilježniku N.N. iz Zadra  pod br. O-881/10, UPP/OS-108/10 od 07. listopada 2010. godine i prijedloga, uknjižuje se prijenos prava suvlasništva nekretnian u A, sa N.N., pok. N.N., u korist:",
+              "orderNumber": "42.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127722,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "42"
+      },
+      {
+        "description": "43. Suvlasnički dio: 3/1920",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512447,
+            "name": "Vlasnik 97",
+            "address": "Adresa 63",
+            "taxNumber": "00000000093",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-11055/2010</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>Zaprimljeno 02.11.2010. broj Z-11055/10<br>Na temelju pravomoćnog Rješenja o nasljeđivanju Općinskog suda u Zadru po javnom bilježniku N.N. iz Zadra  pod br. O-881/10, UPP/OS-108/10 od 07. listopada 2010. godine i prijedloga, uknjižuje se prijenos prava suvlasništva nekretnian u A, sa N.N., pok. N.N., u korist:",
+              "orderNumber": "43.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127723,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "43"
+      },
+      {
+        "description": "44. Suvlasnički dio: 3/200",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512448,
+            "name": "Vlasnik 125",
+            "address": "Adresa 64",
+            "taxNumber": "00000000108",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-18137/2021</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-3839/2021, UPP-OS-15/2021 24.06.2021",
+              "orderNumber": "44.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127724,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "44"
+      },
+      {
+        "description": "45. Suvlasnički dio: 60/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512449,
+            "name": "Vlasnik 127",
+            "address": "Adresa 24",
+            "taxNumber": "00000000124",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "45.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127725,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "45"
+      },
+      {
+        "description": "46. Suvlasnički dio: 120/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512450,
+            "name": "Vlasnik 128",
+            "address": "Adresa 35",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "46.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127726,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "46"
+      },
+      {
+        "description": "47. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512451,
+            "name": "Vlasnik 129",
+            "address": "Adresa 51",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "47.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127727,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "47"
+      },
+      {
+        "description": "48. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512452,
+            "name": "Vlasnik 130",
+            "address": "Adresa 71",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "48.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127728,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "48"
+      },
+      {
+        "description": "49. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512453,
+            "name": "Vlasnik 131",
+            "address": "Adresa 22",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "49.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127729,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "49"
+      },
+      {
+        "description": "50. Suvlasnički dio: 240/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512454,
+            "name": "Vlasnik 132",
+            "address": "Adresa 13",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "50.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127730,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "50"
+      },
+      {
+        "description": "51. Suvlasnički dio: 60/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512455,
+            "name": "Vlasnik 120",
+            "address": "Adresa 14",
+            "taxNumber": "00000000044",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "51.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127731,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "51"
+      },
+      {
+        "description": "52. Suvlasnički dio: 60/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512456,
+            "name": "Vlasnik 115",
+            "address": "Adresa 41",
+            "taxNumber": "00000000028",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "52.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127732,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "52"
+      },
+      {
+        "description": "53. Suvlasnički dio: 60/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512457,
+            "name": "Vlasnik 116",
+            "address": "Adresa 31",
+            "taxNumber": "00000000036",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-3937/2020</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSL.BR. O-4004/19 UPP/OS-109/19-12 20.01.2020",
+              "orderNumber": "53.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127733,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "53"
+      },
+      {
+        "description": "54. Suvlasnički dio: 15/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512458,
+            "name": "Vlasnik 133",
+            "address": "Adresa 32",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "54.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127734,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "54"
+      },
+      {
+        "description": "55. Suvlasnički dio: 15/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512459,
+            "name": "Vlasnik 134",
+            "address": "Adresa 32",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "55.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127735,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "55"
+      },
+      {
+        "description": "56. Suvlasnički dio: 15/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512460,
+            "name": "Vlasnik 135",
+            "address": "Adresa 10",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "56.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127736,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "56"
+      },
+      {
+        "description": "57. Suvlasnički dio: 32/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512461,
+            "name": "Vlasnik 137",
+            "address": "Adresa 20",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "57.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127737,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "57"
+      },
+      {
+        "description": "58. Suvlasnički dio: 32/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512462,
+            "name": "Vlasnik 138",
+            "address": "Adresa 11",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "58.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127738,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "58"
+      },
+      {
+        "description": "59. Suvlasnički dio: 32/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512463,
+            "name": "Vlasnik 139",
+            "taxNumber": "00000000132",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "59.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127739,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "59"
+      },
+      {
+        "description": "60. Suvlasnički dio: 32/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512464,
+            "name": "Vlasnik 140",
+            "address": "Adresa 69",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "60.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127740,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "60"
+      },
+      {
+        "description": "61. Suvlasnički dio: 32/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512465,
+            "name": "Vlasnik 141",
+            "address": "Adresa 11",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "61.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127741,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "61"
+      },
+      {
+        "description": "62. Suvlasnički dio: 160/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512466,
+            "name": "Vlasnik 142",
+            "address": "Adresa 12",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "62.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127742,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "62"
+      },
+      {
+        "description": "63. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512467,
+            "name": "Vlasnik 143",
+            "address": "Adresa 70",
+            "taxNumber": "00000000149",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "63.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127743,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "63"
+      },
+      {
+        "description": "64. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512468,
+            "name": "Vlasnik 144",
+            "address": "Adresa 53",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "64.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127744,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "64"
+      },
+      {
+        "description": "65. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512469,
+            "name": "Vlasnik 145",
+            "address": "Adresa 3",
+            "taxNumber": "00000000157",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "65.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127745,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "65"
+      },
+      {
+        "description": "66. Suvlasnički dio: 40/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512470,
+            "name": "Vlasnik 146",
+            "address": "Adresa 54",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "66.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127746,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "66"
+      },
+      {
+        "description": "67. Suvlasnički dio: 240/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512471,
+            "name": "Vlasnik 147",
+            "address": "Adresa 43",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "67.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127747,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "67"
+      },
+      {
+        "description": "68. Suvlasnički dio: 80/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512472,
+            "name": "Vlasnik 148",
+            "address": "Adresa 26",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "68.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127748,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "68"
+      },
+      {
+        "description": "69. Suvlasnički dio: 80/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512473,
+            "name": "Vlasnik 149",
+            "address": "Adresa 26",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "69.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127749,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "69"
+      },
+      {
+        "description": "70. Suvlasnički dio: 80/7680",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512474,
+            "name": "Vlasnik 150",
+            "address": "Adresa 44",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-8920/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-749/00, UPP-OS-4/03 06.12.2010",
+              "orderNumber": "70.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127750,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "70"
+      },
+      {
+        "description": "71. Suvlasnički dio: 1/192",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512475,
+            "name": "Vlasnik 151",
+            "address": "Adresa 27",
+            "taxNumber": "00000000165",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-1760/2013</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OV-12838/12 21.11.2012",
+              "orderNumber": "71.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127751,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "71"
+      },
+      {
+        "description": "72. Suvlasnički dio: 1/192",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512476,
+            "name": "Vlasnik 152",
+            "address": "Adresa 6",
+            "taxNumber": "00000000173",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-1760/2013</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OV-12838/12 21.11.2012",
+              "orderNumber": "72.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127752,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "72"
+      },
+      {
+        "description": "73. Suvlasnički dio: 1/192",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512477,
+            "name": "Vlasnik 153",
+            "address": "Adresa 27",
+            "taxNumber": "00000000181",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-1760/2013</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OV-12838/12 21.11.2012",
+              "orderNumber": "73.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127753,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "73"
+      },
+      {
+        "description": "74. Suvlasnički dio: 1/144",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512478,
+            "name": "Vlasnik 154",
+            "address": "Adresa 29",
+            "taxNumber": "00000000190",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-5708/2023</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSL.BR.O-4524/13 UPP-OGS-52/2013 24.11.2022, RJEŠENJE POSL.BR. O-4524/13 UPP-OGS-52/13 07.02.2023",
+              "orderNumber": "74.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127754,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "74"
+      },
+      {
+        "description": "75. Suvlasnički dio: 1/288",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512479,
+            "name": "Vlasnik 155",
+            "address": "Adresa 17",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15057/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-68 16.05.2012, ISPRAVKA RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-75 21.12.2012",
+              "orderNumber": "75.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127755,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "75"
+      },
+      {
+        "description": "76. Suvlasnički dio: 1/1152",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512480,
+            "name": "Vlasnik 156",
+            "address": "Adresa 18",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15057/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-68 16.05.2012, ISPRAVKA RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-75 21.12.2012",
+              "orderNumber": "76.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127756,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "76"
+      },
+      {
+        "description": "77. Suvlasnički dio: 1/1152",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512481,
+            "name": "Vlasnik 157",
+            "address": "Adresa 50",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15057/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-68 16.05.2012, ISPRAVKA RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-75 21.12.2012",
+              "orderNumber": "77.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127757,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "77"
+      },
+      {
+        "description": "78. Suvlasnički dio: 1/1152",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512482,
+            "name": "Vlasnik 158",
+            "address": "Adresa 7",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15057/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-68 16.05.2012, ISPRAVKA RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-75 21.12.2012",
+              "orderNumber": "78.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127758,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "78"
+      },
+      {
+        "description": "79. Suvlasnički dio: 1/1152",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512483,
+            "name": "Vlasnik 159",
+            "address": "Adresa 18",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15057/2012</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-68 16.05.2012, ISPRAVKA RJEŠENJA O NAKNADNO PRONAĐENOJ IMOVINI OPĆINSKOG SUDA U NOVOJ GRADIŠKI POSLOVNI BROJ 2 O-82/11-75 21.12.2012",
+              "orderNumber": "79.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127759,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "79"
+      },
+      {
+        "description": "80. Suvlasnički dio: 1/48",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512484,
+            "name": "Vlasnik 160",
+            "address": "Adresa 8",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-1564/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DOŽIVOTNOM UZDRŽAVANJU R2-105/10 OPĆINSKI SUD U NOVOJ GRADIŠKI 13.12.2010, SMRTNI LIST 31.01.2014",
+              "orderNumber": "80.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127760,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "80"
+      },
+      {
+        "description": "81. Suvlasnički dio: 1/144",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512485,
+            "name": "Vlasnik 161",
+            "address": "Adresa 30",
+            "taxNumber": "00000000204",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-2718/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA POSLOVNI BROJ O-1427/11, UPP/OS-176/11 22.12.2011",
+              "orderNumber": "81.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127761,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "81"
+      },
+      {
+        "description": "82. Suvlasnički dio: 1/144",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512486,
+            "name": "Vlasnik 162",
+            "address": "Adresa 9",
+            "taxNumber": "00000000212",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-2718/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA POSLOVNI BROJ O-1427/11, UPP/OS-176/11 22.12.2011",
+              "orderNumber": "82.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127762,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "82"
+      },
+      {
+        "description": "84. Suvlasnički dio: 7/1080",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512488,
+            "name": "Vlasnik 163",
+            "address": "Adresa 73",
+            "taxNumber": "00000000229",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-10809/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem Rješenja o nasljeđivanju Općinskog suda u Zadru po javnom bilježniku N.N., kao povjereniku suda od 19.studenog 2013.g. pod poslovnim br.O.1522/13, UPP-OS-279/13",
+              "orderNumber": "84.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127764,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "84"
+      },
+      {
+        "description": "85. Suvlasnički dio: 7/1080",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512489,
+            "name": "Vlasnik 164",
+            "address": "Adresa 57",
+            "taxNumber": "00000000237",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-10809/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem Rješenja o nasljeđivanju Općinskog suda u Zadru po javnom bilježniku N.N., kao povjereniku suda od 19.studenog 2013.g. pod poslovnim br.O.1522/13, UPP-OS-279/13",
+              "orderNumber": "85.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127765,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "85"
+      },
+      {
+        "description": "86. Suvlasnički dio: 7/1080",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512490,
+            "name": "Vlasnik 165",
+            "address": "Adresa 58",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-10809/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem Rješenja o nasljeđivanju Općinskog suda u Zadru po javnom bilježniku N.N., kao povjereniku suda od 19.studenog 2013.g. pod poslovnim br.O.1522/13, UPP-OS-279/13",
+              "orderNumber": "86.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127766,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "86"
+      },
+      {
+        "description": "87. Suvlasnički dio: 15/1792",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512491,
+            "name": "Vlasnik 166",
+            "address": "Adresa 15",
+            "taxNumber": "00000000245",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15008/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VINKOVCIMA BROJ O 754/2005-1 UPP-368/2005-1 28.07.2014, ISPRAVKA RJEŠENJA O NASLJEĐIVANJU OPĆINSKOG SUDA U VINKOVCIMA 25.09.2014",
+              "orderNumber": "87.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127767,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "87"
+      },
+      {
+        "description": "88. Suvlasnički dio: 15/1792",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512492,
+            "name": "Vlasnik 167",
+            "address": "Adresa 65",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-15008/2014</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VINKOVCIMA BROJ O 754/2005-1 UPP-368/2005-1 28.07.2014, ISPRAVKA RJEŠENJA O NASLJEĐIVANJU OPĆINSKOG SUDA U VINKOVCIMA 25.09.2014",
+              "orderNumber": "88.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127768,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "88"
+      },
+      {
+        "description": "89. Suvlasnički dio: 27/6400",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512493,
+            "name": "Vlasnik 272",
+            "address": "Adresa 66",
+            "taxNumber": "00000000583",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14336/2015</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA POSLOVNI BROJ O-223/14, UPP/OS-61/14 20.08.2014, RJEŠENJE OPĆINSKOG SUDA U ZADRU POSLOVNI BROJ 50 O-223/14 20.04.2015",
+              "orderNumber": "89.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127769,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "89"
+      },
+      {
+        "description": "90. Suvlasnički dio: 27/6400",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512494,
+            "name": "Vlasnik 168",
+            "address": "Adresa 52",
+            "taxNumber": "00000000253",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14336/2015</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA POSLOVNI BROJ O-223/14, UPP/OS-61/14 20.08.2014, RJEŠENJE OPĆINSKOG SUDA U ZADRU POSLOVNI BROJ 50 O-223/14 20.04.2015",
+              "orderNumber": "90.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127770,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "90"
+      },
+      {
+        "description": "91. Suvlasnički dio: 1/256",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512495,
+            "name": "Vlasnik 127",
+            "address": "Adresa 24",
+            "taxNumber": "00000000124",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-799/2016</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "91.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127771,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "91"
+      },
+      {
+        "description": "92. Suvlasnički dio: 1/192",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512496,
+            "name": "Vlasnik 128",
+            "address": "Adresa 42",
+            "taxNumber": "00000000261",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-799/2016</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "92.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127772,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "92"
+      },
+      {
+        "description": "93. Suvlasnički dio: 1/576",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512497,
+            "name": "Vlasnik 130",
+            "address": "Adresa 36",
+            "taxNumber": "00000000270",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-799/2016</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "93.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127773,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "93"
+      },
+      {
+        "description": "94. Suvlasnički dio: 1/576",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512498,
+            "name": "Vlasnik 169",
+            "address": "Adresa 59",
+            "taxNumber": "00000000288",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-799/2016</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "94.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127774,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "94"
+      },
+      {
+        "description": "95. Suvlasnički dio: 1/576",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512499,
+            "name": "Vlasnik 131",
+            "address": "Adresa 67",
+            "taxNumber": "00000000296",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-799/2016</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-323/2013, UPP-OS-59/13 08.07.2013",
+              "orderNumber": "95.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127775,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "95"
+      },
+      {
+        "description": "96. Suvlasnički dio: 15/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512500,
+            "name": "Vlasnik 170",
+            "address": "Adresa 45",
+            "taxNumber": "00000000307",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "96.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127776,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "96"
+      },
+      {
+        "description": "97. Suvlasnički dio: 15/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512501,
+            "name": "Vlasnik 171",
+            "address": "Adresa 46",
+            "taxNumber": "00000000315",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "97.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127777,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "97"
+      },
+      {
+        "description": "98. Suvlasnički dio: 15/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512502,
+            "name": "Vlasnik 172",
+            "address": "Adresa 16",
+            "taxNumber": "00000000323",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "98.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127778,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "98"
+      },
+      {
+        "description": "99. Suvlasnički dio: 5/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512503,
+            "name": "Vlasnik 173",
+            "address": "Adresa 4",
+            "taxNumber": "00000000331",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "99.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127779,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "99"
+      },
+      {
+        "description": "100. Suvlasnički dio: 5/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512504,
+            "name": "Vlasnik 174",
+            "address": "Adresa 47",
+            "taxNumber": "00000000340",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "100.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127780,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "100"
+      },
+      {
+        "description": "101. Suvlasnički dio: 5/3584",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512505,
+            "name": "Vlasnik 175",
+            "address": "Adresa 72",
+            "taxNumber": "00000000358",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-4226/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U VUKOVARU, STALNA SLUŽBA U VINKOVCIMA PODP OSL.BR. O-2475/16, UPP-OS-VK:5/17-9 27.01.2017",
+              "orderNumber": "101.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127781,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "101"
+      },
+      {
+        "description": "102. Suvlasnički dio: 1/256",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512506,
+            "name": "Vlasnik 176",
+            "address": "Adresa 61",
+            "taxNumber": "00000000366",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14637/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU, PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA, POD POSL. BROJEM: O-898/17, UPP/OS-82/17 26.05.2017",
+              "orderNumber": "102.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127782,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "102"
+      },
+      {
+        "description": "103. Suvlasnički dio: 1/256",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512507,
+            "name": "Vlasnik 177",
+            "address": "Adresa 28",
+            "taxNumber": "00000000374",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14637/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU, PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA, POD POSL. BROJEM: O-898/17, UPP/OS-82/17 26.05.2017",
+              "orderNumber": "103.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127783,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "103"
+      },
+      {
+        "description": "104. Suvlasnički dio: 1/224",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512508,
+            "name": "Vlasnik 176",
+            "address": "Adresa 61",
+            "taxNumber": "00000000366",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14637/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU, PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA, POD POSL. BROJEM: O-898/17, UPP/OS-82/17 26.05.2017",
+              "orderNumber": "104.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127784,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "104"
+      },
+      {
+        "description": "105. Suvlasnički dio: 1/224",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512509,
+            "name": "Vlasnik 177",
+            "address": "Adresa 28",
+            "taxNumber": "00000000374",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-14637/2017</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU, PO JAVNOM BILJEŽNIKU N.N. IZ ZADRA, POD POSL. BROJEM: O-898/17, UPP/OS-82/17 26.05.2017",
+              "orderNumber": "105.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127785,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "105"
+      },
+      {
+        "description": "106. Suvlasnički dio: 7/1728",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512510,
+            "name": "Vlasnik 178",
+            "address": "Adresa 37",
+            "taxNumber": "00000000382",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28870/2018</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU MR. SC. N.N. IZ ZADRA POD BR. O1907/18, UPP/OS-149/18",
+              "orderNumber": "106.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127786,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "106"
+      },
+      {
+        "description": "107. Suvlasnički dio: 7/1728",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512511,
+            "name": "Vlasnik 179",
+            "address": "Adresa 48",
+            "taxNumber": "00000000399",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28870/2018</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU MR. SC. N.N. IZ ZADRA POD BR. O1907/18, UPP/OS-149/18",
+              "orderNumber": "107.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127787,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "107"
+      },
+      {
+        "description": "108. Suvlasnički dio: 7/1728",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512512,
+            "name": "Vlasnik 180",
+            "address": "Adresa 62",
+            "taxNumber": "00000000403",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28870/2018</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU MR. SC. N.N. IZ ZADRA POD BR. O1907/18, UPP/OS-149/18",
+              "orderNumber": "108.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127788,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "108"
+      },
+      {
+        "description": "109. Suvlasnički dio: 7/1728",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512513,
+            "name": "Vlasnik 181",
+            "address": "Adresa 55",
+            "taxNumber": "00000000411",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28870/2018</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU PO JAVNOM BILJEŽNIKU MR. SC. N.N. IZ ZADRA POD BR. O1907/18, UPP/OS-149/18",
+              "orderNumber": "109.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127789,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "109"
+      },
+      {
+        "description": "110. Suvlasnički dio: 1/36",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512514,
+            "name": "Vlasnik 182",
+            "address": "Adresa 38",
+            "taxNumber": "00000000420",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-20584/2019</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U NOVOM ZAGREBU, PO JAVNOM BILJEŽNIKU N.N. IZ ZAGREBA, POD POSL. BROJEM: O-1576/2019-4, UPP/OS-110/19 22.08.2019",
+              "orderNumber": "110.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127790,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "110"
+      },
+      {
+        "description": "111. Suvlasnički dio: 7/768",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512515,
+            "name": "Vlasnik 325",
+            "address": "Adresa 56",
+            "taxNumber": "00000000841",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-26622/2020</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU 11.11.2020",
+              "orderNumber": "111.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127791,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "111"
+      },
+      {
+        "description": "112. Suvlasnički dio: 9/6400",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512516,
+            "name": "Vlasnik 290",
+            "address": "Adresa 49",
+            "taxNumber": "00000000751",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-20635/2022</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU PO VRŠITELJU DUŽNOSTI JAVNOG BILJEŽNIKA N.N. IZ ZADRA, KAO SUDSKOM POVJERENIKU OPĆINSKOG SUDA U ZADRU, U OSTAVINSKOM POSTUPKU IZA POK. N.N., POD POSL. BR. O-2210/21, UPP/OS-184/21 OD 28.06.2022",
+              "orderNumber": "112.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127792,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "112"
+      },
+      {
+        "description": "113. Suvlasnički dio: 9/6400",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512517,
+            "name": "Vlasnik 291",
+            "address": "Adresa 5",
+            "taxNumber": "00000000760",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-20635/2022</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU PO VRŠITELJU DUŽNOSTI JAVNOG BILJEŽNIKA N.N. IZ ZADRA, KAO SUDSKOM POVJERENIKU OPĆINSKOG SUDA U ZADRU, U OSTAVINSKOM POSTUPKU IZA POK. N.N., POD POSL. BR. O-2210/21, UPP/OS-184/21 OD 28.06.2022",
+              "orderNumber": "113.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127793,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "113"
+      },
+      {
+        "description": "114. Suvlasnički dio: 9/6400",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512518,
+            "name": "Vlasnik 292",
+            "address": "Adresa 68",
+            "taxNumber": "00000000778",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-20635/2022</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU PO VRŠITELJU DUŽNOSTI JAVNOG BILJEŽNIKA N.N. IZ ZADRA, KAO SUDSKOM POVJERENIKU OPĆINSKOG SUDA U ZADRU, U OSTAVINSKOM POSTUPKU IZA POK. N.N., POD POSL. BR. O-2210/21, UPP/OS-184/21 OD 28.06.2022",
+              "orderNumber": "114.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127794,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "114"
+      },
+      {
+        "description": "115. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512519,
+            "name": "Vlasnik 158",
+            "address": "Adresa 206",
+            "taxNumber": "00000002023",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-16825/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU POD POSL. BR. O-210/23 OD 06. OŽUJKA 2023. GODINE 06.03.2023",
+              "orderNumber": "115.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127795,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "115"
+      },
+      {
+        "description": "116. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512520,
+            "name": "Vlasnik 159",
+            "address": "Adresa 207",
+            "taxNumber": "00000002031",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-16825/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU POD POSL. BR. O-210/23 OD 06. OŽUJKA 2023. GODINE 06.03.2023",
+              "orderNumber": "116.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127796,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "116"
+      },
+      {
+        "description": "117. Suvlasnički dio: 1/240",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512521,
+            "name": "Vlasnik 498",
+            "address": "Adresa 208",
+            "taxNumber": "00000002040",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-16825/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU POD POSL. BR. O-210/23 OD 06. OŽUJKA 2023. GODINE 06.03.2023",
+              "orderNumber": "117.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127797,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "117"
+      },
+      {
+        "description": "118. Suvlasnički dio: 1/1536",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512522,
+            "name": "Vlasnik 327",
+            "address": "Adresa 209",
+            "taxNumber": "00000000868",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-37542/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O DOPUNI RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU OD 20.11.2017. PO JAVNOM BILJEŽNIKU N.N. KAO POVJERENIKU OPĆINSKOG SUDA U SPLITU IZA POK. N.N. POD POSL. BR. O-2050/17, UPP/OS-53/17 17.09.2024",
+              "orderNumber": "118.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127798,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "118"
+      },
+      {
+        "description": "119. Suvlasnički dio: 1/1536",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512523,
+            "name": "Vlasnik 135",
+            "address": "Adresa 209",
+            "taxNumber": "00000000850",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-37542/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O DOPUNI RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU OD 20.11.2017. PO JAVNOM BILJEŽNIKU N.N. KAO POVJERENIKU OPĆINSKOG SUDA U SPLITU IZA POK. N.N. POD POSL. BR. O-2050/17, UPP/OS-53/17 17.09.2024",
+              "orderNumber": "119.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127799,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "119"
+      },
+      {
+        "description": "120. Suvlasnički dio: 1/1536",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512524,
+            "name": "Vlasnik 328",
+            "address": "Adresa 210",
+            "taxNumber": "00000000876",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-37542/2024</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O DOPUNI RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU OD 20.11.2017. PO JAVNOM BILJEŽNIKU N.N. KAO POVJERENIKU OPĆINSKOG SUDA U SPLITU IZA POK. N.N. POD POSL. BR. O-2050/17, UPP/OS-53/17 17.09.2024",
+              "orderNumber": "120.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127800,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "120"
+      },
+      {
+        "description": "121. Suvlasnički dio: 33/1600",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512525,
+            "name": "Vlasnik 125",
+            "address": "Adresa 117",
+            "taxNumber": "00000000108",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-37208/2023</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG GRAĐANSKOG SUDA U ZAGREBU POSL.BR. O-8278/2010, UPP-OS-34/2023 24.10.2023",
+              "orderNumber": "121.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127801,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "121"
+      },
+      {
+        "description": "122. Suvlasnički dio: 27/12800",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512526,
+            "name": "Vlasnik 293",
+            "address": "Adresa 118",
+            "taxNumber": "00000000786",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28616/2025</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU POD POSL. BR. O-2751/2024, UPP/OS-O-103/2024 19.03.2025",
+              "orderNumber": "122.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127802,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "122"
+      },
+      {
+        "description": "123. Suvlasnički dio: 27/12800",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512527,
+            "name": "Vlasnik 294",
+            "address": "Adresa 119",
+            "taxNumber": "00000000794",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br><b>Prvenstveni red upisa: Z-28616/2025</b><br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ZADRU POD POSL. BR. O-2751/2024, UPP/OS-O-103/2024 19.03.2025",
+              "orderNumber": "123.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127803,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "123"
+      },
+      {
+        "description": "124. Suvlasnički dio: 1/288",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512576,
+            "name": "Vlasnik 183",
+            "address": "Adresa 78",
+            "taxNumber": "00000000438",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ŠIBENIKU POD POSL. BR. O-2064/2024, UPP/OS-O-8/2025 11.03.2025",
+              "orderNumber": "124.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127838,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "124"
+      },
+      {
+        "description": "125. Suvlasnički dio: 1/288",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66512577,
+            "name": "Vlasnik 184",
+            "address": "Adresa 79",
+            "taxNumber": "00000000446",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.07.2025.g. pod brojem Z-23374/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U ŠIBENIKU POD POSL. BR. O-2064/2024, UPP/OS-O-8/2025 11.03.2025",
+              "orderNumber": "125.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 51127839,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "125"
+      }
+    ],
+    "lrEntries": []
+  },
+  "possessionSheetA1": {
+    "lrParcels": [
+      {
+        "parcelId": 5781134,
+        "parcelNumber": "1090",
+        "address": "PAŠNJAK",
+        "area": "48494",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781143,
+        "parcelNumber": "1094",
+        "address": "ORANICA",
+        "area": "993",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781144,
+        "parcelNumber": "1096",
+        "address": "PAŠNJAK",
+        "area": "568",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781145,
+        "parcelNumber": "1097",
+        "address": "PAŠNJAK",
+        "area": "4007",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781146,
+        "parcelNumber": "1098/1",
+        "address": "PAŠNJAK",
+        "area": "4863",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781147,
+        "parcelNumber": "1098/2",
+        "address": "VINOGRAD",
+        "area": "410",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781148,
+        "parcelNumber": "1098/3",
+        "address": "PAŠNJAK",
+        "area": "1406",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781149,
+        "parcelNumber": "1102",
+        "address": "VINOGRAD",
+        "area": "2636",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781150,
+        "parcelNumber": "1106",
+        "address": "PAŠNJAK",
+        "area": "7132",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781151,
+        "parcelNumber": "1107",
+        "address": "PAŠNJAK",
+        "area": "5114",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781152,
+        "parcelNumber": "1109",
+        "address": "PAŠNJAK",
+        "area": "3143",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781153,
+        "parcelNumber": "1110/1",
+        "address": "VINOGRAD",
+        "area": "2604",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781154,
+        "parcelNumber": "1110/2",
+        "address": "PAŠNJAK",
+        "area": "1219",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781155,
+        "parcelNumber": "1111/1",
+        "address": "PAŠNJAK",
+        "area": "8610",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781156,
+        "parcelNumber": "1111/2",
+        "address": "VINOGRAD",
+        "area": "2885",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781157,
+        "parcelNumber": "1112",
+        "address": "PAŠNJAK",
+        "area": "151549",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781158,
+        "parcelNumber": "1113",
+        "address": "PAŠNJAK",
+        "area": "579",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781168,
+        "parcelNumber": "1116",
+        "address": "PAŠNJAK",
+        "area": "1388",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781135,
+        "parcelNumber": "1117",
+        "address": "PAŠNJAK",
+        "area": "205",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781140,
+        "parcelNumber": "1119/2",
+        "address": "PAŠNJAK",
+        "area": "3183",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781136,
+        "parcelNumber": "1120",
+        "address": "ORANICA",
+        "area": "4582",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781137,
+        "parcelNumber": "1121",
+        "address": "PAŠNJAK",
+        "area": "1093",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781160,
+        "parcelNumber": "1122/2",
+        "address": "PAŠNJAK",
+        "area": "914",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781161,
+        "parcelNumber": "1124",
+        "address": "PAŠNJAK",
+        "area": "5981",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781162,
+        "parcelNumber": "1125",
+        "address": "PAŠNJAK",
+        "area": "3442",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781163,
+        "parcelNumber": "1128",
+        "address": "PAŠNJAK",
+        "area": "770",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 7430466,
+        "parcelNumber": "1131/6",
+        "address": "PAŠNJAK",
+        "area": "59747",
+        "statusInLrUnit": 0,
+        "parcelParts": [
+          {
+            "name": "CESTA",
+            "area": "59747",
+            "building": false
+          }
+        ]
+      },
+      {
+        "parcelId": 5781165,
+        "parcelNumber": "1132",
+        "address": "ORANICA",
+        "area": "1173",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      },
+      {
+        "parcelId": 5781167,
+        "parcelNumber": "1198",
+        "address": "ORANICA",
+        "area": "1363",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": []
+  }
+}

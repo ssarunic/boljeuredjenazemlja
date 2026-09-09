@@ -5,6 +5,7 @@ This directory contains technical specifications, architecture documentation, an
 ## API Documentation
 
 - [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md) - Complete API endpoint documentation with request/response formats
+- [api-coverage-specification.md](api-coverage-specification.md) - Field-level inventory of every endpoint and the changes required for complete model, client, CLI, MCP and mock coverage
 
 ## Implementation Specifications
 

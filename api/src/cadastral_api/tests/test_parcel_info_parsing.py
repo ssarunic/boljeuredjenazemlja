@@ -1,6 +1,6 @@
 """Regression tests for cadastral parcel-info (/cad/parcel-info) parsing.
 
-The fixture ``fixtures/parcel_info_1122_1.json`` is a real response for parcel
+The fixture ``fixtures/parcel_info_linked.json`` is a real response for parcel
 1122/1, k.o. SAVAR (parcel id 6566195), with possessor personal data redacted.
 
 This parcel is a useful contract case because it has ``lrUnit: null`` while its
@@ -15,7 +15,7 @@ import pytest
 
 from cadastral_api.models.entities import ParcelInfo
 
-FIXTURE = Path(__file__).parent / "fixtures" / "parcel_info_1122_1.json"
+FIXTURE = Path(__file__).parent / "fixtures" / "parcel_info_linked.json"
 
 
 @pytest.fixture

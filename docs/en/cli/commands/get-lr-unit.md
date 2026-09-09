@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 **English** | [Hrvatski](../../../hr/cli/commands/get-lr-unit.md)
 
-> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it and must not be connected to the official Croatian cadastre or land registry. Nothing shown on this page is real property data.
+> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
 > Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
@@ -56,11 +56,13 @@ lookup. Starting from the parcel is the easier route.
     Parcel Number  Address  Area (m²)
     103/2          POLJE         1200
     TOTAL                        1200
+   Parcel list as recorded in the land register; the address column is the culture or toponym of the
+   old land register, not a location.
 
-                    OWNERSHIP SHEET (LIST B)
-    Share  Owner                  Address                 OIB
-    1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
-    1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -
+                                    OWNERSHIP SHEET (LIST B)
+    Share  Owner                  Address                 OIB  Entry
+    1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -    1.1 · 2018-06-10 · Z-5678/2018
+    1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -    2.1 · 2018-06-10 · Z-5678/2018
 
                                        ENCUMBRANCES SHEET (LIST C)
     Description  Details
@@ -70,14 +72,10 @@ lookup. Starting from the parcel is the easier route.
                  pravo ploduživanja do udaje, u korist:
                    In favour of:
                      IVIĆ MARIJA, KĆI PETRA, SAVAR
-                   In favour of:
-                     IVIĆ MARIJA, KĆI PETRA, SAVAR
     2.           • 2.1: Pr. 20. srpnja 1979.
                  Z 2444/79
                  Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67,
                  Općinskog suda u Zadru, uknjižuje se pravo ploduživanja u korist:
-                   In favour of:
-                     IVIĆ JELA UD. PETRA ZA 2/6
                    In favour of:
                      IVIĆ JELA UD. PETRA ZA 2/6
    ```
@@ -115,32 +113,33 @@ cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail
 
 <!-- BEGIN GENERATED: output cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail -->
 ```text
-                  LAND REGISTRY UNIT
+                   LAND REGISTRY UNIT
  Unit Number               449
- Main Book                 TESTMUNICIPALITY
- Institution               Test Land Registry Office
+ Main Book                 SAVAR
+ Institution               Zemljišnoknjižni odjel Zadar
  Status                    Aktivan
  Unit Type                 VLASNIČKI
- Last Diary Number         Z-15677/2026
- Pending entries (plombe)  Z-12564/2026, Z-18444/2026
+ Last Diary Number         Z-18444/2026
+ Pending entries (plombe)  Z-12564/2026
 ⚠️  This unit has pending entries (plombe) - a change may be in progress.
 
                              PENDING ENTRIES DETAIL (PLOMBE)
- File Number   Request                    Status                    Received  Outcome
- Z-12564/2026  Rješenje o nasljeđivanju   IZRADA NACRTA RJEŠENJA  2026-04-20  In progress
- Z-18444/2026  Uknjižba prava vlasništva  IZRADA NACRTA RJEŠENJA  2026-06-09  In progress
+ File Number   Request                   Status                    Received  Outcome
+ Z-12564/2026  Rješenje o nasljeđivanju  IZRADA NACRTA RJEŠENJA  2026-04-20  In progress
 
        PARCEL LIST (SHEET A)
  Parcel Number  Address  Area (m²)
  1122/1         OVČJA         3291
  TOTAL                        3291
+Parcel list as recorded in the land register; the address column is the culture or toponym of the
+old land register, not a location.
 
-                    OWNERSHIP SHEET (LIST B)
- Share  Owner           Address                     OIB
- 1/4    Test Owner One  Test Street 1, Test City    00000000001
- 1/12   Test Nephew A   Test Street 17, Test City   00000000130
- 1/12   Test Nephew B   Test Street 110, Test City  00000000131
- 1/12   Test Nephew C   Test Street 110, Test City  00000000132
+                           OWNERSHIP SHEET (LIST B)
+ Share  Owner        Address    OIB          Entry
+ 1/4    Vlasnik 114  Adresa 75  00000000010  127.2 · 2026-05-14 · Z-15677/2026
+ 1/4    Vlasnik 115  Adresa 41  00000000028  128.1 · 2025-09-29 · Z-31325/2025
+ 1/4    Vlasnik 116  Adresa 31  00000000036  129.1 · 2025-09-29 · Z-31325/2025
+ 1/4    Vlasnik 116  Adresa 76  00000000036  133.1 · 2026-06-09 · Z-18444/2026
 
   ENCUMBRANCES SHEET (LIST C)
  Description            Details
@@ -149,14 +148,30 @@ cadastral get-lr-unit --unit-number 449 --main-book 21277 --all --plombe-detail
 <!-- END GENERATED: output -->
 
 To name the unit directly instead of starting from a parcel, use
-`--unit-number` and `--main-book` together, as in the example above. To keep
-the result as a file, add `--format json` and `--output` with a file name.
+`--unit-number` and `--main-book` together, as in the example above. If you
+know the name of the main book (glavna knjiga, normally the cadastral
+municipality) but not its number, give the name with `--main-book-name` and the
+tool looks the number up for you:
+
+```bash
+cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR --show-owners
+```
+
+The last column of the ownership sheet, **Entry**, tells you how each owner
+got there: the order number of the registration entry (upis), the date the
+request was received and its diary number (Z-broj). With `--all` the tool also
+lists, under a share, the notes registered on that share alone, such as a
+lifetime maintenance contract or a dispute.
+
+To keep the result as a file, add `--format json` and `--output` with a file
+name.
 
 <!-- BEGIN GENERATED: options -->
 | Type this | What it does | If you leave it out |
 |---|---|---|
 | `--unit-number`, `-u` `TEXT` | Land registry unit number (e.g., '769') | Not used |
 | `--main-book`, `-b` `INTEGER` | Main book ID (e.g., 21277) | Not used |
+| `--main-book-name`, `-n` `TEXT` | Main book name (e.g., SAVAR), used instead of the ID | Not used |
 | `--from-parcel`, `-p` `TEXT` | Get LR unit from parcel number | Not used |
 | `--municipality`, `-m` `TEXT` | Municipality name or code (required with --from-parcel) | Not used |
 | `--show-owners`, `-o` | Display ownership details (Sheet B) | Not switched on |
@@ -209,6 +224,9 @@ Usage: cadastral get-lr-unit [OPTIONS]
     # Get by unit number and main book ID
     cadastral get-lr-unit --unit-number 769 --main-book 21277
 
+    # Get by unit number and main book name (resolved through the main-book search)
+    cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR
+
     # Get from parcel (automatic lookup)
     cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
 
@@ -221,11 +239,14 @@ Usage: cadastral get-lr-unit [OPTIONS]
     # Export to JSON
     cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
 
-  ⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only
+  ⚠️  Demo project: before using any server other than the included mock, verify
+  your rights to use it; use at your own risk
 
 Options:
   -u, --unit-number TEXT         Land registry unit number (e.g., '769')
   -b, --main-book INTEGER        Main book ID (e.g., 21277)
+  -n, --main-book-name TEXT      Main book name (e.g., SAVAR), used instead of
+                                 the ID
   -p, --from-parcel TEXT         Get LR unit from parcel number
   -m, --municipality TEXT        Municipality name or code (required with
                                  --from-parcel)

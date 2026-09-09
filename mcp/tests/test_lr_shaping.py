@@ -22,7 +22,7 @@ _tools = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_tools)
 CadastralTools = _tools.CadastralTools
 
-FIXTURE = REPO / "api" / "src" / "cadastral_api" / "tests" / "fixtures" / "lr_unit_449_21277.json"
+FIXTURE = REPO / "api" / "src" / "cadastral_api" / "tests" / "fixtures" / "lr_unit_lrparcels.json"
 
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def test_summary_is_minimal(unit) -> None:
     shaped = CadastralTools._shape_lr_unit(unit, "summary", None)
     assert "ownership_sheet_b" not in shaped
     assert "owners" not in shaped
-    assert shaped["summary"]["num_owners"] == 6
+    assert shaped["summary"]["num_owners"] == 4
 
 
 def test_ownership_returns_tagged_owners_with_structured_shares(unit) -> None:
@@ -50,10 +50,10 @@ def test_ownership_returns_tagged_owners_with_structured_shares(unit) -> None:
     assert "ownership_sheet_b" not in shaped  # raw sheets dropped
     assert "encumbrance_sheet_c" not in shaped
     assert shaped["in_land_registry"] is True
-    assert shaped["total_owners"] == 6
+    assert shaped["total_owners"] == 4
     assert shaped["owners_truncated"] is False
     owners = shaped["owners"]
-    assert len(owners) == 6
+    assert len(owners) == 4
     assert all(o["register"] == "land_registry" for o in owners)
     assert all(o["name_normalized"] for o in owners)
     # Structured share, not a description string.
@@ -63,7 +63,7 @@ def test_ownership_returns_tagged_owners_with_structured_shares(unit) -> None:
 def test_owners_limit_truncates_and_reports_total(unit) -> None:
     shaped = CadastralTools._shape_lr_unit(unit, "ownership", 2)
     assert len(shaped["owners"]) == 2
-    assert shaped["total_owners"] == 6
+    assert shaped["total_owners"] == 4
     assert shaped["owners_truncated"] is True
 
 

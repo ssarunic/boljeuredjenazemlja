@@ -60,7 +60,7 @@ with CadastralAPIClient() as client:
     # 3. Full details
     parcel = client.get_parcel_info(parcel_id)
     print(parcel.parcel_number, parcel.area_numeric, "m²")
-    print(parcel.total_owners, "possessors")
+    print(parcel.total_possessors, "possessors")
     for land_type, area in parcel.land_use_summary.items():
         print(f"  {land_type}: {area} m²")
 
@@ -88,7 +88,7 @@ with CadastralAPIClient() as client:
 
     print(unit.summary())
     # {'unit_number': ..., 'main_book': ..., 'total_parcels': ..., 'total_area_m2': ...,
-    #  'num_owners': ..., 'has_encumbrances': ..., 'is_condominium': ...,
+    #  'num_owners': ..., 'has_sheet_c_entries': ..., 'is_condominium': ...,
     #  'has_pending_plombe': ..., 'pending_plombe': [...]}
 
     for owner in unit.get_all_owners():
@@ -105,7 +105,82 @@ with CadastralAPIClient() as client:
 on the source parcel, when the unit was reached from a parcel. `unit.is_condominium()`
 detects condominium units (etažno vlasništvo) from `lr_unit_type_name`, which is more
 reliable than the upstream `condominiums` flag; individual apartments appear as
-shares in `unit.ownership_sheet_b.lr_unit_shares`.
+shares in `unit.ownership_sheet_b.lr_unit_shares`. `unit.lr_unit_type` is the same
+information as an enum (`LRUnitType.OWNERSHIP`, `CONDOMINIUM_DEFINED_SHARES`, `OTHER`).
+
+### Finding the main book
+
+The unit endpoint wants a main book id. When you only know the name (normally the
+cadastral municipality), let the client resolve it, or search yourself:
+
+```python
+with CadastralAPIClient() as client:
+    unit = client.get_lr_unit_detailed("769", main_book_name="SAVAR")
+
+    for book in client.find_main_book("SAVAR"):
+        print(book.main_book_id, book.main_book_name, book.court_name)   # 21277 SAVAR ZADAR
+    for book in client.find_book_of_dc("ZADAR"):        # knjige položenih ugovora (KPU)
+        print(book.book_id, book.book_name, book.office_name)
+    for sheet in client.find_possession_sheet("363", "334979"):   # cadastre possession sheets
+        print(sheet.possession_sheet_id, sheet.sheet_number)
+```
+
+A name that matches several books raises `LR_UNIT_NOT_FOUND` with reason
+`main_book_ambiguous` and the candidates in `details`.
+
+### Entry provenance
+
+Every owner on sheet B carries the registration entry that put them there:
+
+```python
+for share in unit.ownership_sheet_b.lr_unit_shares:
+    for owner in share.owners:
+        entry = owner.entry                       # None on older shares
+        if entry:
+            print(entry.order_number, entry.entry_date, entry.diary_number,
+                  entry.action_type, entry.priority_diary_number,
+                  entry.transferred_from_unit, entry.description_text)
+    for note in share.share_entries:              # zabilježbe on this share alone
+        print(note.order_number, note.description_text)
+    for sub in share.sub_shares:                  # co-owners of a divided share
+        print(sub.description, [o.name for o in sub.owners])
+```
+
+`share.sub_shares_and_entries` holds both kinds as typed objects (`LRShare` or
+`LREntry`), routed by the presence of `lrUnitShareId`. `OwnershipSheetB.owner_rows()`
+and `share_entry_rows()` flatten them into the dicts the CLI and the MCP server
+emit. On sheet C, `entry.amount` is the secured amount as sent ("134.000,00 EUR")
+and `entry.amount_value` / `entry.amount_currency` the parsed number and currency.
+
+### Sheet A1 variants
+
+The parcel list of a unit arrives under one of two keys, never both:
+`lrParcels` (lean land-register records, where `address` is the culture or
+toponym of the old land register, not a location) or `cadParcels` (full cadastre
+records). `unit.sheet_a1_source_key` says which; both populate
+`unit.possessory_sheet_a1.cad_parcels`, with `parcel_parts` typed as `ParcelPart`
+in both shapes.
+
+### Building parcels
+
+The API spells building parcels with a leading asterisk (`*35/1`). Pass any of
+`"35/1.ZGR"`, `"35/1 ZGR"`, `"zgr. 35/1"` or `"*35/1"` to `find_parcel`,
+`get_parcel_by_number` or `get_lr_unit_from_parcel`; `normalize_parcel_number`
+maps them to the API spelling. `parcel.is_building_parcel` is true for them,
+`parcel.parcel_number_display` renders `zgr. 35/1`, and they have no land
+registry unit of their own (`get_lr_unit_from_parcel` reports
+`parcel_not_in_land_registry`). Asking for the land parcel `"35/1"` when only
+`*35/1` exists raises `PARCEL_NOT_FOUND` with reason `only_building_parcel_exists`,
+so the two are never confused.
+
+### Unknown server fields
+
+Every model keeps keys it does not declare in `source_fields`. The client
+reports them according to `unknown_fields` (`"warn"` logs each new key path once,
+`"ignore"`, `"error"` raises `INVALID_RESPONSE` with reason `unknown_fields`;
+also `CADASTRAL_API_UNKNOWN_FIELDS`). The coverage gate
+`api/src/cadastral_api/tests/test_api_coverage.py` keeps `source_fields` empty
+on every committed fixture.
 
 ## Parcel geometry
 
@@ -170,7 +245,19 @@ Connection and rate-limit errors are retried with backoff before being raised.
 - The `condominiums` boolean on a land registry unit is unreliable; use
   `is_condominium()`.
 - Models validate strictly. Unexpected upstream data raises
-  `ErrorType.INVALID_RESPONSE`.
+  `ErrorType.INVALID_RESPONSE`; unknown keys are kept in `source_fields` and
+  reported per the client's `unknown_fields` setting.
+- Entry kinds are `uknjižba`, `predbilježba`, `zabilježba` and the generic
+  `upis`; a deletion sets `entry.deletes_prior_entry`. `share.share_status` is
+  `active` for status 0 and `historical` otherwise.
+- A parcel whose links name different units raises `LR_UNIT_NOT_FOUND` with
+  reason `lr_unit_ambiguous`; `parcel.lr_unit_candidates()` lists them.
+- Share totals are exact: `unit.ownership_sheet_b.total_ownership_fraction()`
+  is a `Fraction`, `total_ownership_accounted()` its float.
+- Parcels of a unit in the lean `lrParcels` shape carry only number, area,
+  address and status in the unit; the other cadastre fields are `None`, not false.
+- A share's `lrOwners` may be null or absent (co-owners then live in
+  `sub_shares`); `LRShare.has_direct_owners` tells the two apart.
 
 ## Reference
 

@@ -70,7 +70,7 @@ class LRUnitResult:
             result["total_parcels"] = summary["total_parcels"]
             result["total_area_m2"] = summary["total_area_m2"]
             result["num_owners"] = summary["num_owners"]
-            result["has_encumbrances"] = summary["has_encumbrances"]
+            result["has_sheet_c_entries"] = summary["has_sheet_c_entries"]
 
             if include_full_data:
                 # Include detailed ownership and parcel information
@@ -493,7 +493,8 @@ Examples:
   # With ownership details in JSON format
   cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json
 
-⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"""))
+⚠️  Demo project: before using any server other than the included mock, verify
+your rights to use it; use at your own risk"""))
 
 
 @click.command("batch-lr-unit", help=_BATCH_LR_UNIT_HELP)

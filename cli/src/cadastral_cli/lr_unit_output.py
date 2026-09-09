@@ -4,7 +4,13 @@ import re
 from datetime import datetime
 
 from cadastral_api.i18n import _
-from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
+from cadastral_api.models.entities import (
+    FileStatus,
+    LandRegistryUnitDetailed,
+    LREntry,
+    LRShare,
+    Party,
+)
 from cadastral_api.utils import parse_fraction
 from rich.console import Console
 from rich.table import Table
@@ -26,6 +32,22 @@ def _fraction_text(description: str) -> str:
     if parsed is not None:
         return f"{parsed[0]}/{parsed[1]}"
     return description.split(":")[-1].strip() if ":" in description else description
+
+
+def _entry_text(entry: LREntry | None) -> str:
+    """Provenance of an owner: entry order number, receipt date and diary number."""
+    if entry is None:
+        return "-"
+    parts = [
+        entry.order_number,
+        entry.entry_date.isoformat() if entry.entry_date else "-",
+        entry.diary_number or "-",
+    ]
+    return " · ".join(parts)
+
+
+def _shorten(text: str, max_length: int = 160) -> str:
+    return text if len(text) <= max_length else text[: max_length - 1] + "…"
 
 
 def clean_html(text: str) -> str:
@@ -76,7 +98,11 @@ def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
     # Pending entries (plombe) are shown here, in the always-printed basic info,
     # so they are never hidden behind the absence of a --show flag.
     if lr_unit.has_pending_plombe():
-        plombe = ", ".join(p.file_number for p in lr_unit.active_plumbs)
+        # On condominiums the plomba names the unit it concerns ("(E-80)").
+        plombe = ", ".join(
+            f"{p.file_number} {p.plumb_mark}" if p.plumb_mark else p.file_number
+            for p in lr_unit.active_plumbs
+        )
         table.add_row(_("Pending entries (plombe)"), f"[bold red]{plombe}[/bold red]")
 
     console.print(table)
@@ -150,8 +176,8 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
     table.add_row(_("Total Area"), f"{summary['total_area_m2']} m²")
     table.add_row(_("Number of Owners"), str(summary["num_owners"]))
     table.add_row(
-        _("Has Encumbrances"),
-        _("Yes") if summary["has_encumbrances"] else _("No")
+        _("Sheet C entries"),
+        _("Yes") if summary["has_sheet_c_entries"] else _("No")
     )
 
     console.print(table)
@@ -161,7 +187,7 @@ def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
         console.print(f"\n💡 {_('Use --show-owners to see ownership details')}")
     if summary["total_parcels"] > 0:
         console.print(f"💡 {_('Use --show-parcels to see all parcels')}")
-    if summary["has_encumbrances"]:
+    if summary["has_sheet_c_entries"]:
         console.print(f"💡 {_('Use --show-encumbrances to see encumbrances')}")
 
 
@@ -176,7 +202,7 @@ def print_lr_unit_parcel_list(lr_unit: LandRegistryUnitDetailed) -> None:
         table.add_row(
             parcel.parcel_number,
             parcel.address or "-",
-            str(parcel.area_numeric),
+            str(parcel.area_numeric) if parcel.area_numeric is not None else "-",
         )
 
     # Add total
@@ -186,11 +212,30 @@ def print_lr_unit_parcel_list(lr_unit: LandRegistryUnitDetailed) -> None:
 
     console.print(table)
 
+    # The server sends the list either as land-register records (lrParcels,
+    # where the address is the old culture or toponym) or as cadastre records
+    # (cadParcels). Say which, so the reader knows what the address column is.
+    source = lr_unit.sheet_a1_source_key
+    if source == "cadParcels":
+        console.print(_("Parcel list as recorded in the cadastre."), style="dim")
+    elif source == "lrParcels":
+        console.print(
+            _("Parcel list as recorded in the land register; the address column is the "
+              "culture or toponym of the old land register, not a location."),
+            style="dim",
+        )
 
-def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
+
+def print_lr_unit_ownership_sheet(
+    lr_unit: LandRegistryUnitDetailed, show_entries: bool = False
+) -> None:
     """Print ownership sheet (Sheet B).
 
-    For condominiums, also shows apartment descriptions and handles nested co-owners.
+    Each owner row ends with the registration entry that put the owner on the
+    share (order number, receipt date, diary number). For condominiums, also
+    shows apartment descriptions and handles nested co-owners. With
+    ``show_entries`` the annotations registered on a share (zabilježbe) are
+    listed under it.
     """
     is_condo = lr_unit.is_condominium()
 
@@ -199,52 +244,56 @@ def print_lr_unit_ownership_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
     table.add_column(_("Owner"), style="bold")
     table.add_column(_("Address"))
     table.add_column(_("OIB"))
+    table.add_column(_("Entry"), style="dim")
 
     # Add apartment description column for condominiums
     if is_condo:
         table.add_column(_("Apartment"), style="dim", max_width=50)
 
+    def add_owner(share_text: str, owner: Party, apt_desc: str) -> None:
+        row = [
+            share_text,
+            owner.name,
+            owner.address or "-",
+            owner.tax_number or "-",
+            _entry_text(owner.entry),
+        ]
+        if is_condo:
+            row.append(apt_desc)
+        table.add_row(*row)
+
+    def add_note(text: str) -> None:
+        row = ["", f"[dim]{text}[/dim]", "", "", ""]
+        if is_condo:
+            row.append("")
+        table.add_row(*row)
+
+    def add_share(share: LRShare, indent: str, apt_desc: str) -> None:
+        share_text = f"{indent}{_fraction_text(share.description)}"
+        if share.owners:
+            for owner in share.owners:
+                add_owner(share_text, owner, apt_desc)
+                apt_desc = ""
+        elif not share.sub_shares:
+            # The server sent no owner for this share (lrOwners missing).
+            row = [share_text, f"[dim]{_('No owner recorded')}[/dim]", "-", "-", "-"]
+            if is_condo:
+                row.append(apt_desc)
+            table.add_row(*row)
+        # Co-owners of a divided share (common in condominiums)
+        for sub in share.sub_shares:
+            add_share(sub, indent + "  ", apt_desc)
+            apt_desc = ""
+        if show_entries:
+            for entry in share.share_entries:
+                add_note(f"↳ {entry.order_number}: {_shorten(entry.description_text)}")
+
     for share in lr_unit.ownership_sheet_b.lr_unit_shares:
         if share.is_active:
-            # Structured fraction (e.g. "1/4") from the share description.
-            share_text = _fraction_text(share.description)
-
-            # Get apartment description for condominiums
             apt_desc = ""
             if is_condo and share.condominium_descriptions:
                 apt_desc = _format_apartment_description(share.condominium_descriptions[0])
-
-            # Handle direct owners
-            if share.owners:
-                for owner in share.owners:
-                    row = [
-                        share_text,
-                        owner.name,
-                        owner.address or "-",
-                        owner.tax_number or "-",
-                    ]
-                    if is_condo:
-                        row.append(apt_desc)
-                    table.add_row(*row)
-
-            # Handle nested co-owners (subSharesAndEntries) - common in condominiums
-            elif share.has_sub_owners():
-                # First, add a row for the share itself with the apartment description
-                for sub in share.sub_shares_and_entries:
-                    sub_desc = sub.get("description", "")
-                    sub_share_text = _fraction_text(sub_desc)
-                    sub_owners = sub.get("lrOwners", [])
-
-                    for owner_data in sub_owners:
-                        row = [
-                            f"  {sub_share_text}",  # Indent sub-share
-                            owner_data.get("name", "-"),
-                            owner_data.get("address", "-") or "-",
-                            owner_data.get("taxNumber", "-") or "-",
-                        ]
-                        if is_condo:
-                            row.append(apt_desc if sub == share.sub_shares_and_entries[0] else "")
-                        table.add_row(*row)
+            add_share(share, "", apt_desc)
 
     console.print(table)
 
@@ -293,7 +342,7 @@ def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
     table.add_column(_("Description"), style="yellow")
     table.add_column(_("Details"))
 
-    if not lr_unit.has_encumbrances():
+    if not lr_unit.has_sheet_c_entries():
         table.add_row(f"[green]{_('No encumbrances found')}[/green]", "")
     else:
         for group in lr_unit.encumbrance_sheet_c.lr_entry_groups:
@@ -302,8 +351,13 @@ def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
                 lines.append(
                     _format_encumbrance_entry(entry.order_number, clean_html(entry.description))
                 )
+                if entry.amount:
+                    lines.append(f"  {_('Amount')}: {entry.amount}")
                 lines.extend(_format_parties(entry.get_parties()))
-            if group.beneficiary:
+            # The derived beneficiary is normally one of the entry parties already
+            # printed; list it only when it is not.
+            listed = [party for entry in group.lr_entries for party in entry.get_parties()]
+            if group.beneficiary and group.beneficiary not in listed:
                 lines.extend(_format_parties([group.beneficiary]))
             table.add_row(group.description, "\n".join(lines))
 
@@ -363,10 +417,10 @@ def print_lr_unit_full(
         console.print()
         print_lr_unit_parcel_list(lr_unit)
 
-    # Print ownership if requested (Sheet B)
+    # Print ownership if requested (Sheet B); --all also lists the share entries
     if show_owners or show_all:
         console.print()
-        print_lr_unit_ownership_sheet(lr_unit)
+        print_lr_unit_ownership_sheet(lr_unit, show_entries=show_all)
 
     # Print encumbrances if requested (Sheet C)
     if show_encumbrances or show_all:

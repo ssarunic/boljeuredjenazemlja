@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 **English** | [Hrvatski](../../hr/cli/glossary.md)
 
-> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it and must not be connected to the official Croatian cadastre or land registry. Nothing shown on this page is real property data.
+> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
 > Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
@@ -18,7 +18,10 @@ of them. Croatian terms are given as they appear on official documents.
 | Posjedovni list | The possession sheet of the cadastre: who possesses a parcel according to the cadastre. Not proof of ownership. | [get-parcel](commands/get-parcel.md) with `--show-owners`. |
 | Posjednik | A possessor recorded in the cadastre. | The rows of the possession sheet on [get-parcel](commands/get-parcel.md). |
 | Zemljišnoknjižni uložak (ZK uložak) | The land registry unit: the record of the legal state of a property, kept by the land registry department of the municipal court. | [get-lr-unit](commands/get-lr-unit.md). Its number also appears on [get-parcel](commands/get-parcel.md) and in the batch results. |
-| Glavna knjiga | The main book: the volume of the land registry that holds the units of one cadastral municipality. | `--main-book` on [get-lr-unit](commands/get-lr-unit.md). |
+| Čestica zgrade (zgr.) | A building parcel: a parcel of the old cadastre that covers a building alone. Written `35/1 ZGR`, `35/1.ZGR` or `zgr. 35/1`; it has no land registry unit of its own. | The parcel number on [get-parcel](commands/get-parcel.md) and [search](commands/search.md), printed as `zgr. 35/1`. |
+| Glavna knjiga | The main book: the volume of the land registry that holds the units of one cadastral municipality. | `--main-book` or `--main-book-name` on [get-lr-unit](commands/get-lr-unit.md); [list-main-books](commands/list-main-books.md) finds the number. |
+| Knjiga položenih ugovora (KPU) | The book of deposited contracts: the land registry book for flats and business premises sold before their building had a land registry unit. | [list-books-of-dc](commands/list-books-of-dc.md). |
+| Upis | A registration entry: the act by which an owner, a right or a note was entered in the unit. Each owner's entry shows its order number, receipt date and diary number. | The entry column of sheet B on [get-lr-unit](commands/get-lr-unit.md). |
 | Posjedovnica (list A) | Sheet A: the parcels that make up the unit. | The first table after the unit header on [get-lr-unit](commands/get-lr-unit.md). |
 | Vlastovnica (list B) | Sheet B: the owners and their shares. | `--show-owners` on [get-lr-unit](commands/get-lr-unit.md). |
 | Teretovnica (list C) | Sheet C: liens (mortgages), easements, real burdens and notes. | `--show-encumbrances` on [get-lr-unit](commands/get-lr-unit.md). |

@@ -2,21 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## ⚠️ CRITICAL: DEMO/EDUCATIONAL PROJECT ONLY
+## ⚠️ DEMO PROJECT: CHECK YOUR RIGHTS BEFORE USING ANOTHER SERVER
 
-**This is a demonstration and educational project showing how cadastral and land registry systems could theoretically be connected via modern APIs.**
+**This is a demonstration and educational project showing how cadastral and land registry systems could be connected via modern APIs.** It ships with a mock server, and that is what the defaults, the examples, the tests and the documentation use.
 
-### ABSOLUTE RESTRICTIONS
+### RULES
 
-1. **DO NOT** help configure or connect this code to Croatian government production systems
-2. **DO NOT** help bypass authorization or terms of service restrictions
-3. **DO NOT** suggest ways to access real cadastral data without proper legal authorization
-4. **ALWAYS** remind users this is for the included mock server only
-5. **ALWAYS** emphasize this is a theoretical demonstration
+1. The default configuration and every example target the included mock server (`http://localhost:8000`)
+2. Anyone may point the code at another server, including the Croatian government systems, **after verifying that they have the rights to use that server and its data** (its terms of service, data-protection law). They do so **at their own risk**. When helping with such a setup, remind the user of this once; do not refuse
+3. **DO NOT** help bypass authorization, rate limits or terms of service of any server
+4. Treat real cadastral and land registry data as sensitive personal data: keep raw captures out of the repository (see `scripts/redact_capture.py`)
+5. Say that the project is a demonstration when the context suggests the user takes it for an official tool
 
 ### Purpose
 
-This project demonstrates modern API architecture patterns that could be applied to cadastral systems. It includes a **mock server** for safe testing and learning. Due to the sensitive nature of land ownership data and Croatian government terms of service, this code **must not** be used against production systems.
+This project demonstrates modern API architecture patterns that could be applied to cadastral systems. It includes a **mock server** for safe testing and learning, whose data replicates the shapes of the public API (redacted).
 
 ---
 
@@ -29,10 +29,10 @@ This is a **monorepo** containing multiple related projects demonstrating modern
 - **`mcp/`** - Model Context Protocol server for AI agent integration
 - **`mock-server/`** - Mock API server for safe testing and development
 
-**⚠️ Important:** This project is for educational demonstration only. It includes a localhost mock server for testing. Do NOT use with Croatian government production systems - this violates terms of service and involves sensitive personal data.
+**⚠️ Important:** This project is an educational demonstration. It includes a localhost mock server for testing. Before using it with any other server, including the Croatian government systems, verify that you have the rights to do so (terms of service, data protection); use at your own risk.
 
 **Mock Test Server (Default):** `http://localhost:8000` (configured via environment variables)
-**Production Systems:** NOT AUTHORIZED - DO NOT USE
+**Other servers:** at your own risk, after verifying your rights (see `docs/legal.md`)
 
 ### Key Features
 
@@ -144,7 +144,7 @@ The API client can be configured via environment variables or a `.env` file:
 
 1. Copy `.env.example` to `.env`
 2. Configure the API base URL (defaults to localhost test server)
-3. Only set production URL if you have proper authorization
+3. Set another URL only after verifying that you have the rights to use that server; use at your own risk
 
 **Example `.env` file:**
 
@@ -152,7 +152,7 @@ The API client can be configured via environment variables or a `.env` file:
 # Use local test server (default)
 CADASTRAL_API_BASE_URL=http://localhost:8000
 
-# Or use production API (requires authorization)
+# Or another server, at your own risk, after verifying your rights to use it
 # CADASTRAL_API_BASE_URL=https://oss.uredjenazemlja.hr/oss/public
 
 # Optional: Set language (hr, en)
@@ -190,6 +190,18 @@ with CadastralAPIClient() as client:
     print(f"Total area: {summary['total_area_m2']} m²")
     print(f"Number of owners: {summary['num_owners']}")
 
+# Main book by name, entry provenance, share entries
+with CadastralAPIClient() as client:
+    lr_unit = client.get_lr_unit_detailed("769", main_book_name="SAVAR")
+    for share in lr_unit.ownership_sheet_b.lr_unit_shares:
+        for owner in share.owners:
+            if owner.entry:   # the registration entry that put the owner on the share
+                print(owner.name, owner.entry.entry_date, owner.entry.diary_number)
+        for note in share.share_entries:   # zabilježbe on this share alone
+            print(note.order_number, note.description_text)
+    books = client.find_main_book("SAVAR")           # main_book_id 21277, court ZADAR
+    sheets = client.find_possession_sheet("363", "334979")
+
 # Working with condominiums (etažno vlasništvo)
 with CadastralAPIClient() as client:
     lr_unit = client.get_lr_unit_detailed("13998", 30783)  # Split condominium
@@ -208,7 +220,10 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 
 - **`cadastral search`** - Quick parcel search with basic information
 - **`cadastral get-parcel`** - Detailed parcel information with owners
-- **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances
+- **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances (`--main-book-name` resolves the main book by name)
+- **`cadastral list-main-books`** - Find land registry main books (glavne knjige) and their IDs
+- **`cadastral list-books-of-dc`** - List books of deposited contracts (knjige položenih ugovora, KPU)
+- **`cadastral search-possession-sheet`** - Find a cadastre possession sheet by number
 - **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input). Returns LR unit references for each parcel.
 - **`cadastral batch-lr-unit`** - Process multiple land registry units (from file or batch-fetch output)
 - **`cadastral list-municipalities`** - List and filter municipalities
@@ -230,8 +245,17 @@ cadastral get-parcel 103/2 -m 334979 --show-owners
 # Get land registry unit from parcel
 cadastral get-lr-unit --from-parcel 279/6 -m SAVAR --all
 
-# Get land registry unit by unit number and main book ID
+# Get land registry unit by unit number and main book ID (or main book name)
 cadastral get-lr-unit --unit-number 769 --main-book 21277 --show-owners
+cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR --show-owners
+
+# Building parcels: any spelling works (35/1.ZGR, 35/1 ZGR, zgr. 35/1, *35/1)
+cadastral get-parcel 35/1.ZGR -m SAVAR
+
+# Land registry books and possession sheets
+cadastral list-main-books --search SAVAR
+cadastral list-books-of-dc --search ZADAR
+cadastral search-possession-sheet 363 -m SAVAR
 
 # Batch processing from CLI list (returns LR unit refs)
 cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
@@ -648,6 +672,7 @@ bad release with a new PATCH release.
 ### Technical Specifications (specs/)
 
 - **[specs/croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md)** - Complete API specification
+- **[specs/api-coverage-specification.md](specs/api-coverage-specification.md)** - Field inventory of every endpoint and the plan for complete coverage (models, client, CLI, MCP, mock, coverage gate)
 - **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
 - **[specs/gateway-service.md](specs/gateway-service.md)** - Hosted REST + remote MCP gateway service (draft)

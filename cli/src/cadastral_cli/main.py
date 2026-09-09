@@ -2,12 +2,11 @@
 
 ⚠️ DEMO/EDUCATIONAL PROJECT ONLY ⚠️
 
-This is a demonstration showing how a cadastral API could work theoretically.
-DO NOT use with Croatian government production systems.
+This is a demonstration showing how a cadastral API could work.
 
-- Uses mock server by default (http://localhost:8000)
-- For educational and testing purposes only
-- Production use is NOT AUTHORIZED due to sensitive data and terms of service
+- Uses the mock server by default (http://localhost:8000)
+- Before using any other server, including the Croatian government systems,
+  verify that you have the rights to use it and its data; use at your own risk
 - Author available to advise Croatian government on official AI implementation
 
 See README.md for full disclaimer.
@@ -115,6 +114,7 @@ def cli(ctx: click.Context, verbose: bool, lang: str | None) -> None:
 # Register command groups
 cli.add_command(search.search)
 cli.add_command(search.search_municipality)
+cli.add_command(search.search_possession_sheet)
 cli.add_command(parcel.get_parcel)
 cli.add_command(registry.get_lr_unit)
 cli.add_command(batch.batch_fetch)
@@ -123,6 +123,8 @@ cli.add_command(gis.get_geometry)
 cli.add_command(gis.download_gis)
 cli.add_command(discovery.list_offices)
 cli.add_command(discovery.list_municipalities)
+cli.add_command(discovery.list_main_books)
+cli.add_command(discovery.list_books_of_dc)
 cli.add_command(discovery.info)
 cli.add_command(cache.cache_group)
 localize_command(cli, "")  # --verbose, --lang, --version answer to their Croatian spellings too

@@ -48,12 +48,15 @@ class BatchResult:
             result["municipality_name"] = self.parcel_data.municipality_name
             result["area_m2"] = self.parcel_data.area_numeric
             result["building_permitted"] = self.parcel_data.has_building_right
-            result["total_owners"] = self.parcel_data.total_owners
+            result["total_possessors"] = self.parcel_data.total_possessors
+            result["is_building_parcel"] = self.parcel_data.is_building_parcel
 
-            # Include LR unit references (always included when available)
-            if self.parcel_data.lr_unit:
-                result["lr_unit_number"] = self.parcel_data.lr_unit.lr_unit_number
-                result["main_book_id"] = self.parcel_data.lr_unit.main_book_id
+            # Include LR unit references (always included when available); the
+            # unit may be reachable only through parcel links.
+            lr_unit = self.parcel_data.resolved_lr_unit()
+            if lr_unit:
+                result["lr_unit_number"] = lr_unit.lr_unit_number
+                result["main_book_id"] = lr_unit.main_book_id
             else:
                 result["lr_unit_number"] = None
                 result["main_book_id"] = None

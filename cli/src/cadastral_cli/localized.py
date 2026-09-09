@@ -40,6 +40,7 @@ CHOICE_CONTEXT = "choice"
 COMMANDS: dict[str, str] = {
     "search": pgettext("command", "search"),
     "search-municipality": pgettext("command", "search-municipality"),
+    "search-possession-sheet": pgettext("command", "search-possession-sheet"),
     "get-parcel": pgettext("command", "get-parcel"),
     "get-lr-unit": pgettext("command", "get-lr-unit"),
     "batch-fetch": pgettext("command", "batch-fetch"),
@@ -48,6 +49,8 @@ COMMANDS: dict[str, str] = {
     "download-gis": pgettext("command", "download-gis"),
     "list-offices": pgettext("command", "list-offices"),
     "list-municipalities": pgettext("command", "list-municipalities"),
+    "list-main-books": pgettext("command", "list-main-books"),
+    "list-books-of-dc": pgettext("command", "list-books-of-dc"),
     "info": pgettext("command", "info"),
     "cache": pgettext("command", "cache"),
     "cache list": pgettext("command", "cache list"),
@@ -77,6 +80,8 @@ OPTIONS: dict[str, str] = {
     "--show-geometry": pgettext("option", "--show-geometry"),
     "--unit-number": pgettext("option", "--unit-number"),
     "--main-book": pgettext("option", "--main-book"),
+    "--main-book-name": pgettext("option", "--main-book-name"),
+    "--institution": pgettext("option", "--institution"),
     "--from-parcel": pgettext("option", "--from-parcel"),
     "--show-parcels": pgettext("option", "--show-parcels"),
     "--show-encumbrances": pgettext("option", "--show-encumbrances"),
@@ -96,6 +101,7 @@ OPTIONS: dict[str, str] = {
     # ``--glavna-knjiga``), see specs/terminology.md section 4.
     "-u": pgettext("option", "-u"),
     "-b": pgettext("option", "-b"),
+    "-n": pgettext("option", "-n"),
     "-p": pgettext("option", "-p"),
     "-o": pgettext("option", "-o"),
     "-P": pgettext("option", "-P"),
@@ -120,6 +126,8 @@ OPTION_OVERRIDES: dict[tuple[str, str], str] = {
     # ``-o`` is --output by default; on these commands it is something else.
     ("get-lr-unit", "-o"): pgettext("option get-lr-unit", "-o"),
     ("list-municipalities", "-o"): pgettext("option list-municipalities", "-o"),
+    ("list-main-books", "-o"): pgettext("option list-main-books", "-o"),
+    ("list-books-of-dc", "-o"): pgettext("option list-books-of-dc", "-o"),
     ("search-municipality", "-o"): pgettext("option search-municipality", "-o"),
     ("download-gis", "-o"): pgettext("option download-gis", "-o"),
     # ``-f`` is --format by default; on ``cache clear`` it is --force.
@@ -138,6 +146,7 @@ PROGRAM = pgettext("program", "cadastral")
 # upper case), and the usage placeholders click leaves untranslated.
 ARGUMENTS: dict[str, str] = {
     "PARCEL_NUMBER": pgettext("argument", "PARCEL_NUMBER"),
+    "SHEET_NUMBER": pgettext("argument", "SHEET_NUMBER"),
     "SEARCH_TERM": pgettext("argument", "SEARCH_TERM"),
     "PARCELS": pgettext("argument", "PARCELS"),
     "MUNICIPALITY": pgettext("argument", "MUNICIPALITY"),

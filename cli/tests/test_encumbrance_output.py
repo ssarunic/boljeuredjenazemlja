@@ -61,7 +61,7 @@ def test_json_entries_carry_beneficiaries_and_source_fields() -> None:
     assert group["right_type"] == "usufruct"
     entry = group["entries"][0]
     assert entry["order_number"] == "2.1"
-    assert entry["action_type"] == "upis"
+    assert entry["action_type"] == "uknjižba"
     assert entry["diary_number"] == "Z-2444/79"
     assert entry["entry_date"] == "1979-07-20"
     assert entry["basis_document"] is None  # fixture text has no "Na temelju"

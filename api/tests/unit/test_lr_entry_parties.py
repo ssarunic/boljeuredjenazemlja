@@ -72,7 +72,7 @@ def test_group_collects_parties_from_entries_and_itself() -> None:
 def test_sheet_keeps_undeclared_fields() -> None:
     sheet = EncumbranceSheetC.model_validate({"lrEntryGroups": [], "note": "n"})
     assert sheet.model_extra == {"note": "n"}
-    assert not sheet.has_encumbrances()
+    assert not sheet.has_entries()
 
 
 def test_group_derives_beneficiary_and_right_type_from_entries() -> None:
@@ -138,7 +138,7 @@ def test_strip_html() -> None:
 
 def test_entry_fields_are_parsed_from_description() -> None:
     entry = LREntry.model_validate(USUFRUCT_ENTRY)
-    assert entry.action_type == "upis"
+    assert entry.action_type == "uknjižba"
     assert entry.diary_number == "Z-2444/79"
     assert entry.entry_date == date(1979, 7, 20)
     assert entry.basis_document == "rješenja o nasljeđivanju"
@@ -173,7 +173,7 @@ ENTRY_2016 = (
         (
             ENTRY_1949,
             {
-                "action_type": "upis",
+                "action_type": "uknjižba",
                 "diary_number": "Z-487/49",
                 "entry_date": date(1949, 5, 23),
                 "basis_document": "presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku",
@@ -182,7 +182,7 @@ ENTRY_2016 = (
         (
             ENTRY_1979,
             {
-                "action_type": "upis",
+                "action_type": "uknjižba",
                 "diary_number": "Z-2444/79",
                 "entry_date": date(1979, 7, 20),
                 "basis_document": (
@@ -203,7 +203,7 @@ ENTRY_2016 = (
         (
             "UKNJIŽBA, PRAVO VLASNIŠTVA",
             {
-                "action_type": "upis",
+                "action_type": "uknjižba",
                 "diary_number": None,
                 "entry_date": None,
                 "basis_document": None,
@@ -212,7 +212,7 @@ ENTRY_2016 = (
         (
             "Briše se zabilježba ovrhe upisana pod Z-12/2020",
             {
-                "action_type": "brisanje",
+                "action_type": "zabilježba",
                 "diary_number": "Z-12/2020",
                 "entry_date": None,
                 "basis_document": None,
@@ -239,7 +239,37 @@ ENTRY_2016 = (
     ],
 )
 def test_parse_lr_entry(text: str, expected: dict) -> None:
-    assert parse_lr_entry(text) == expected
+    parsed = parse_lr_entry(text)
+    assert {key: parsed[key] for key in expected} == expected
+    # The two provenance parts default to "absent" on every text above.
+    assert parsed["priority_diary_number"] is None
+    assert parsed["transferred_from_unit"] is False
+    assert parsed["deletes_prior_entry"] is text.startswith("Briše")
+
+
+def test_parse_lr_entry_deletion_kinds() -> None:
+    """A deletion is an effect, not a kind: the kind named wins, brisanje is the fallback."""
+    named = parse_lr_entry("Briše se zabilježba ovrhe upisana pod Z-12/2020")
+    assert (named["action_type"], named["deletes_prior_entry"]) == ("zabilježba", True)
+    bare = parse_lr_entry("Briše se založno pravo")
+    assert (bare["action_type"], bare["deletes_prior_entry"]) == ("brisanje", True)
+    generic = parse_lr_entry("upisuje se pravo služnosti")
+    assert (generic["action_type"], generic["deletes_prior_entry"]) == ("upis", False)
+
+
+def test_parse_lr_entry_priority_and_transfer() -> None:
+    """The sheet B owner-entry grammar: receipt line, priority line, action, transfer note."""
+    text = (
+        "Zaprimljeno 14.05.2026.g. pod brojem Z-15677/2026<br><br>"
+        "<b>Prvenstveni red upisa: Z-8920/2012</b><br><br>"
+        "UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI"
+    )
+    parsed = parse_lr_entry(text)
+    assert parsed["diary_number"] == "Z-15677/2026"  # the receipt number, not the priority one
+    assert parsed["entry_date"] == date(2026, 5, 14)
+    assert parsed["action_type"] == "uknjižba"
+    assert parsed["priority_diary_number"] == "Z-8920/2012"
+    assert parsed["transferred_from_unit"] is True
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,3070 @@
+{
+  "lrUnitId": 6644000,
+  "lrUnitNumber": "13998",
+  "mainBookId": 30783,
+  "mainBookName": "SPLIT",
+  "cadastreMunicipalityId": 2518,
+  "institutionId": 269,
+  "institutionName": "Zemljišnoknjižni odjel Split",
+  "status": "0",
+  "statusName": "Aktivan",
+  "verificated": true,
+  "condominiums": false,
+  "lrUnitTypeId": 3,
+  "lrUnitTypeName": "ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA",
+  "lastDiaryNumber": "Z-36704/2026",
+  "activePlumbs": [
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-22484/2026",
+      "plumbMark": "(E-80)"
+    },
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-22488/2026",
+      "plumbMark": "(E-80)"
+    },
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-29093/2026",
+      "plumbMark": "(E-28)"
+    },
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-32548/2026",
+      "plumbMark": "(E-80)"
+    }
+  ],
+  "ownershipSheetB": {
+    "lrUnitShares": [
+      {
+        "description": "16. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-16)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 43484805,
+            "name": "Vlasnik 329",
+            "address": "Adresa 125",
+            "taxNumber": "00000000892",
+            "lrEntry": {
+              "description": "Zaprimljeno 29.09.2021.g. pod brojem Z-37784/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINA 20.09.2021, s imena N.N., na ime:",
+              "orderNumber": "16.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618214,
+        "condominiumNumber": "E-16",
+        "condominiums": [
+          "STAN na PR (prizemlju), označen br. 1, površine 61,27 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "16"
+      },
+      {
+        "description": "17. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-17)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 48541035,
+            "name": "Vlasnik 330",
+            "address": "Adresa 126",
+            "taxNumber": "00000000905",
+            "lrEntry": {
+              "description": "Zaprimljeno 31.01.2024.g. pod brojem Z-4436/2024<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSLOVNI BROJ O-1840/23, UPP/OS-81/23 07.11.2023, s imena N.N., pod Rbr. 17. (17.2), na ime:",
+              "orderNumber": "17.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618215,
+        "condominiumNumber": "E-17",
+        "condominiums": [
+          "STAN na PR (prizemlju), označen br. 2, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "17"
+      },
+      {
+        "description": "18. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-18)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225323,
+            "name": "Vlasnik 331",
+            "address": "Adresa 127",
+            "taxNumber": "00000000913",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "18.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618216,
+        "condominiumNumber": "E-18",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 3, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "18"
+      },
+      {
+        "description": "19. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-19)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225324,
+            "name": "Vlasnik 332",
+            "address": "Adresa 127",
+            "taxNumber": "00000000921",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., Ugovor o kupoprodaji stana na kojem postoji stanarsko pravo br.87/95 od 27.04.1995., na ime:",
+              "orderNumber": "19.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618217,
+        "condominiumNumber": "E-19",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 4, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "19"
+      },
+      {
+        "description": "20. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-20)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225325,
+            "name": "Vlasnik 333",
+            "address": "Adresa 128",
+            "taxNumber": "00000000930",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "20.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618218,
+        "condominiumNumber": "E-20",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 5, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "20"
+      },
+      {
+        "description": "21. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-21)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225326,
+            "name": "Vlasnik 334",
+            "address": "Adresa 129",
+            "taxNumber": "00000000948",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013.,tabularna izjava Grada Splita od 21. 02.2020., rješenje o nasljeđivanju O-1077/75 od 7. 03. 1989., na ime:",
+              "orderNumber": "21.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618219,
+        "condominiumNumber": "E-21",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 6, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "21"
+      },
+      {
+        "description": "22. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-22)",
+        "lrUnitShareId": 32618220,
+        "condominiumNumber": "E-22",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 7, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagavaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "22.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225328,
+                "name": "Vlasnik 335",
+                "address": "Adresa 130",
+                "taxNumber": "00000000956",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "22.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619507,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "22.7. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 44824166,
+                "name": "Vlasnik 335",
+                "address": "Adresa 130",
+                "taxNumber": "00000000956",
+                "lrEntry": {
+                  "description": "Zaprimljeno 24.05.2022.g. pod brojem Z-22252/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU 17.05.2022, ANEKS UGOVORA O DAROVANJU 24.05.2022, s imena N.N., na ime:",
+                  "orderNumber": "22.7.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 34670862,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "7"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "22"
+      },
+      {
+        "description": "23. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-23)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225329,
+            "name": "Vlasnik 336",
+            "address": "Adresa 127",
+            "taxNumber": "00000000964",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "23.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618221,
+        "condominiumNumber": "E-23",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 8, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "23"
+      },
+      {
+        "description": "24. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-24)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225330,
+            "name": "Vlasnik 337",
+            "address": "Adresa 127",
+            "taxNumber": "00000000972",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "24.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618222,
+        "condominiumNumber": "E-24",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 9, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "24"
+      },
+      {
+        "description": "25. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-25)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41677518,
+            "name": "Vlasnik 338",
+            "address": "Adresa 131",
+            "taxNumber": "00000000989",
+            "lrEntry": {
+              "description": "Zaprimljeno 10.12.2020.g. pod brojem Z-39481/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU DONESENO PO JAVNOM BILJEŽNIKU N.N., KAO POVJERENIKU OPĆINSKOG SUDA U SPLITU POD BR. O-2441/20, UPP/OS-73/20 13.11.2020, sa imena N.N., pod st. 25.2, na ime:",
+              "orderNumber": "25.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618223,
+        "condominiumNumber": "E-25",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 10, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "25"
+      },
+      {
+        "description": "26. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-26)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225332,
+            "name": "Vlasnik 339",
+            "address": "Adresa 132",
+            "taxNumber": "00000000997",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "26.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618224,
+        "condominiumNumber": "E-26",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 11, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "26"
+      },
+      {
+        "description": "27. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-27)",
+        "lrUnitShareId": 32618225,
+        "condominiumNumber": "E-27",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 12, površine 61,25 m2 koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "27.3. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41245966,
+                "name": "Vlasnik 340",
+                "address": "Adresa 133",
+                "taxNumber": "00000001004",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međusuvlasnički ugovor od 20.10. 2015., na ime:",
+                  "orderNumber": "27.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32633841,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "27.4. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 52244749,
+                "name": "Vlasnik 341",
+                "address": "Adresa 133",
+                "taxNumber": "00000001012",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međusuvlasnički ugovor od 20.10. 2015., na ime:",
+                  "orderNumber": "27.4.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32633842,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "4"
+          },
+          {
+            "description": "27.5. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 50000205,
+                "name": "Vlasnik 342",
+                "address": "Adresa 128",
+                "taxNumber": "00000001029",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međusuvlasnički ugovor od 20.10. 2015., na ime:",
+                  "orderNumber": "27.5.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32633843,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "5"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "27"
+      },
+      {
+        "description": "28. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-28)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 64766105,
+            "name": "Vlasnik 343",
+            "address": "Adresa 128",
+            "taxNumber": "00000001037",
+            "lrEntry": {
+              "description": "Zaprimljeno 25.06.2025.g. pod brojem Z-27845/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 18.06.2025, POTVRDA 18.06.2025, s imena N.N., na ime N.N., za cijelo.",
+              "orderNumber": "28.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618226,
+        "condominiumNumber": "E-28",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 13, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "28"
+      },
+      {
+        "description": "29. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-29)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225335,
+            "name": "Vlasnik 344",
+            "address": "Adresa 134",
+            "taxNumber": "00000001045",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "29.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618247,
+        "condominiumNumber": "E-29",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 14, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "29"
+      },
+      {
+        "description": "30. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-30)",
+        "lrUnitShareId": 32618248,
+        "condominiumNumber": "E-30",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 15, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagavaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "30.2. Suvlasnički dio etaže: 2/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225336,
+                "name": "Vlasnik 345",
+                "address": "Adresa 135",
+                "taxNumber": "00000001053",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "30.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619508,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "30.3. Suvlasnički dio etaže: 1/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 53135108,
+                "name": "Vlasnik 346",
+                "address": "Adresa 136",
+                "taxNumber": "00000001061",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "30.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619509,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "30.5. Suvlasnički dio etaže: 1/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 53426106,
+                "name": "Vlasnik 347",
+                "address": "Adresa 136",
+                "taxNumber": "00000001070",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "30.5.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619511,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "5"
+          },
+          {
+            "description": "30.7. Suvlasnički dio etaže: 2/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 45427917,
+                "name": "Vlasnik 348",
+                "address": "Adresa 127",
+                "taxNumber": "00000001088",
+                "lrEntry": {
+                  "description": "Zaprimljeno 14.10.2022.g. pod brojem Z-42906/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSLOVNI BROJ O-1802/22, UPP/OS-103/22-11 30.09.2022, s imena N.N., pod Rbr. 30.4.1, na ime:",
+                  "orderNumber": "30.7.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 34990788,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "7"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "30"
+      },
+      {
+        "description": "31. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-31)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 53909980,
+            "name": "Vlasnik 349",
+            "address": "Adresa 137",
+            "taxNumber": "00000001096",
+            "lrEntry": {
+              "description": "Zaprimljeno 27.01.2021.g. pod brojem Z-2819/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU NEKRETNINA SA SPORAZUMOM O OSNIVANJU PRAVA DOŽIVOTNOG PLODOUŽIVANJA I STANOVANJA 11.01.2021, s imena N.N. na ime:",
+              "orderNumber": "31.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618249,
+        "condominiumNumber": "E-31",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 16, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "31"
+      },
+      {
+        "description": "32. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-32)",
+        "lrUnitShareId": 32618250,
+        "condominiumNumber": "E-32",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 17, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "32.2. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225341,
+                "name": "Vlasnik 350",
+                "address": "Adresa 127",
+                "taxNumber": "00000001107",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "32.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619512,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "32.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225342,
+                "name": "Vlasnik 351",
+                "address": "Adresa 127",
+                "taxNumber": "00000001115",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "32.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619513,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "32"
+      },
+      {
+        "description": "33. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-33)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 47517517,
+            "name": "Vlasnik 352",
+            "address": "Adresa 127",
+            "taxNumber": "00000001123",
+            "lrEntry": {
+              "description": "Zaprimljeno 14.09.2023.g. pod brojem Z-36909/2023<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 31.05.2023, POTVRDA 14.09.2023, s imena N.N. pod st. 33.2), na ime:",
+              "orderNumber": "33.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618251,
+        "condominiumNumber": "E-33",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 18, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "33"
+      },
+      {
+        "description": "34. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-34)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 45181378,
+            "name": "Vlasnik 353",
+            "address": "Adresa 138",
+            "taxNumber": "00000001131",
+            "lrEntry": {
+              "description": "Zaprimljeno 11.02.2022.g. pod brojem Z-5446/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU 11.02.2022, s imena N.N., na ime:",
+              "orderNumber": "34.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618252,
+        "condominiumNumber": "E-34",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 19, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "34"
+      },
+      {
+        "description": "35. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-35)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 53475898,
+            "name": "Vlasnik 354",
+            "address": "Adresa 128",
+            "taxNumber": "00000001140",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "35.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618253,
+        "condominiumNumber": "E-35",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 20, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagavaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "35"
+      },
+      {
+        "description": "36. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-36)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225346,
+            "name": "Vlasnik 355",
+            "address": "Adresa 139",
+            "taxNumber": "00000001158",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "36.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618254,
+        "condominiumNumber": "E-36",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 21, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "36"
+      },
+      {
+        "description": "37. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-37)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 61425253,
+            "name": "Vlasnik 356",
+            "address": "Adresa 138",
+            "taxNumber": "00000001166",
+            "lrEntry": {
+              "description": "Zaprimljeno 02.07.2025.g. pod brojem Z-29030/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU POSLOVNI BROJ O-1927/2025, UPP/OS-O-7/2025-9 17.06.2025, s imena N.N. pod st. 37.2, na ime:",
+              "orderNumber": "37.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618255,
+        "condominiumNumber": "E-37",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 22, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "37"
+      },
+      {
+        "description": "38. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-38)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225348,
+            "name": "Vlasnik 357",
+            "address": "Adresa 140",
+            "taxNumber": "00000001174",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "38.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618256,
+        "condominiumNumber": "E-38",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 23, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "38"
+      },
+      {
+        "description": "39. Suvlasnički dio: 61/4651 ETAŽNO VLASNIŠTVO (E-39)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 43516385,
+            "name": "Vlasnik 358",
+            "address": "Adresa 141",
+            "taxNumber": "00000001182",
+            "lrEntry": {
+              "description": "Zaprimljeno 10.11.2021.g. pod brojem Z-44541/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU BROJ O-3775/21 19.10.2021, s imena N.N., na ime:",
+              "orderNumber": "39.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618257,
+        "condominiumNumber": "E-39",
+        "condominiums": [
+          "STAN na VI (šestom) katu, označen br. 24, površine 61,25 m2, koji se sastoji od dvije sobe, kuhinje, blagovaonice, kupaonice, hodnika i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "39"
+      },
+      {
+        "description": "40. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-40)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 45878994,
+            "name": "Vlasnik 359",
+            "address": "Adresa 127",
+            "taxNumber": "00000001199",
+            "lrEntry": {
+              "description": "Zaprimljeno 04.01.2023.g. pod brojem Z-355/2023<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSLOVNI BROJ O-3894/22, UPP/OS-110/22 02.12.2022, s imena N.N., pod Rbr. 40.2, na ime:",
+              "orderNumber": "40.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618258,
+        "condominiumNumber": "E-40",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 25, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "40"
+      },
+      {
+        "description": "41. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-41)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225351,
+            "name": "Vlasnik 360",
+            "address": "Adresa 127",
+            "taxNumber": "00000001203",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "41.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618259,
+        "condominiumNumber": "E-41",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 26, površine 59,08 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 29."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "41"
+      },
+      {
+        "description": "42. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-42)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225352,
+            "name": "Vlasnik 361",
+            "address": "Adresa 142",
+            "taxNumber": "00000001211",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., presuda Općinskog suda u Splitu P1-4940/09 od 20.02.2013. na ime:",
+              "orderNumber": "42.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618260,
+        "condominiumNumber": "E-42",
+        "condominiums": [
+          "STAN na PD (podrumu), označen br. 1A, površine 59,04 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "42"
+      },
+      {
+        "description": "43. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-43)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225353,
+            "name": "Vlasnik 362",
+            "address": "Adresa 143",
+            "taxNumber": "00000001220",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "43.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618261,
+        "condominiumNumber": "E-43",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 1, površine 21,90 m2, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "43"
+      },
+      {
+        "description": "44. Suvlasnički dio: 18/4651 ETAŽNO VLASNIŠTVO (E-44)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 48213211,
+            "name": "Vlasnik 363",
+            "address": "Adresa 144",
+            "taxNumber": "00000001238",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "44.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618262,
+        "condominiumNumber": "E-44",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 2, površine 17,59 m2, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "44"
+      },
+      {
+        "description": "45. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-45)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225355,
+            "name": "Vlasnik 299",
+            "taxNumber": "00000000833",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "45.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618263,
+        "condominiumNumber": "E-45",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 3, površine 21,78 m2, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "45"
+      },
+      {
+        "description": "46. Suvlasnički dio: 16/4651 ETAŽNO VLASNIŠTVO (E-46)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60904981,
+            "name": "Vlasnik 364",
+            "address": "Adresa 145",
+            "taxNumber": "00000001246",
+            "lrEntry": {
+              "description": "Zaprimljeno 28.08.2025.g. pod brojem Z-36865/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI OV-2987/2025 27.08.2025, s imena N.N. pod st. 46.(64.4), na ime:",
+              "orderNumber": "46.5"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618264,
+        "condominiumNumber": "E-46",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 4, površine 16,13 m2, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "46"
+      },
+      {
+        "description": "47. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-47)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225357,
+            "name": "Vlasnik 365",
+            "address": "Adresa 146",
+            "taxNumber": "00000001254",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "47.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618265,
+        "condominiumNumber": "E-47",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 5, površine 21,72 m2, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "47"
+      },
+      {
+        "description": "48. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-48)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225358,
+            "name": "Vlasnik 366",
+            "address": "Adresa 142",
+            "taxNumber": "00000001262",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "48.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618266,
+        "condominiumNumber": "E-48",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 1, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "48"
+      },
+      {
+        "description": "49. Suvlasnički dio: 58/4651 ETAŽNO VLASNIŠTVO (E-49)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 54987506,
+            "name": "Vlasnik 367",
+            "address": "Adresa 147",
+            "taxNumber": "00000001279",
+            "lrEntry": {
+              "description": "Zaprimljeno 26.05.2023.g. pod brojem Z-24716/2023<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 25.05.2023, TABULARNA ISPRAVA – POTVRDA O PRIMITKU CIJELOG KUPOPRODAJNOG IZNOSA 25.05.2023, s imena N.N. pod st. 49.4) i 49.7), N.N. pod st. 49.6), N.N. pod st. 49.8) i N.N. pod st. 49.9), na ime:",
+              "orderNumber": "49.10"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618267,
+        "condominiumNumber": "E-49",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 2, površine 58,39 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "49"
+      },
+      {
+        "description": "50. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-50)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225362,
+            "name": "Vlasnik 368",
+            "address": "Adresa 142",
+            "taxNumber": "00000001287",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "50.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618268,
+        "condominiumNumber": "E-50",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 3, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "50"
+      },
+      {
+        "description": "51. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-51)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 44591878,
+            "name": "Vlasnik 369",
+            "address": "Adresa 148",
+            "taxNumber": "00000001295",
+            "lrEntry": {
+              "description": "Zaprimljeno 03.03.2021.g. pod brojem Z-8253/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 03.03.2021, POTVRDA O PODMIRENJU KUPOPRODAJNE CIJENE I TABULARNA 03.03.2021, s imena N.N., na ime N.N., za cijelo.",
+              "orderNumber": "51.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618269,
+        "condominiumNumber": "E-51",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 4, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "51"
+      },
+      {
+        "description": "52. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-52)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225364,
+            "name": "Vlasnik 370",
+            "address": "Adresa 142",
+            "taxNumber": "00000001300",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "52.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618270,
+        "condominiumNumber": "E-52",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 5, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "52"
+      },
+      {
+        "description": "53. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-53)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225365,
+            "name": "Vlasnik 371",
+            "address": "Adresa 149",
+            "taxNumber": "00000001318",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "53.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618271,
+        "condominiumNumber": "E-53",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 6, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "53"
+      },
+      {
+        "description": "54. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-54)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225366,
+            "name": "Vlasnik 372",
+            "address": "Adresa 142",
+            "taxNumber": "00000001326",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "54.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618272,
+        "condominiumNumber": "E-54",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 7, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "54"
+      },
+      {
+        "description": "55. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-55)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 44897899,
+            "name": "Vlasnik 373",
+            "address": "Adresa 142",
+            "taxNumber": "00000001334",
+            "lrEntry": {
+              "description": "Zaprimljeno 24.06.2022.g. pod brojem Z-26732/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU UPP-OS-89/2022 01.06.2022, s imena N.N., na ime:",
+              "orderNumber": "55.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618273,
+        "condominiumNumber": "E-55",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 8, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "55"
+      },
+      {
+        "description": "56. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-56)",
+        "lrUnitShareId": 32618274,
+        "condominiumNumber": "E-56",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 9, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, degažmana i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "56.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41823814,
+                "name": "Vlasnik 374",
+                "address": "Adresa 150",
+                "taxNumber": "00000001342",
+                "lrEntry": {
+                  "description": "Zaprimljeno 18.01.2021.g. pod brojem Z-1470/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI 18.12.2020, POTVRDA O NAMIRENJU I TABULARNA IZJAVA 05.01.2021, s imena N.N., na ime:",
+                  "orderNumber": "56.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32997405,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "56.4. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41823815,
+                "name": "Vlasnik 375",
+                "address": "Adresa 151",
+                "taxNumber": "00000001359",
+                "lrEntry": {
+                  "description": "Zaprimljeno 18.01.2021.g. pod brojem Z-1470/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI 18.12.2020, POTVRDA O NAMIRENJU I TABULARNA IZJAVA 05.01.2021, s imena N.N., na ime:",
+                  "orderNumber": "56.4.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32997406,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "4"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "56"
+      },
+      {
+        "description": "57. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-57)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225369,
+            "name": "Vlasnik 376",
+            "address": "Adresa 142",
+            "taxNumber": "00000001367",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "57.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618275,
+        "condominiumNumber": "E-57",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 10, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, hodnika, kupaonice, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "57"
+      },
+      {
+        "description": "58. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-58)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225370,
+            "name": "Vlasnik 377",
+            "address": "Adresa 31",
+            "taxNumber": "00000001375",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "58.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618276,
+        "condominiumNumber": "E-58",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 11, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "58"
+      },
+      {
+        "description": "59. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-59)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41240820,
+            "name": "Vlasnik 116",
+            "address": "Adresa 142",
+            "taxNumber": "00000000036",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "59.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618277,
+        "condominiumNumber": "E-59",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 12, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "59"
+      },
+      {
+        "description": "60. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-60)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 53759525,
+            "name": "Vlasnik 378",
+            "address": "Adresa 152",
+            "taxNumber": "00000001383",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "60.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618278,
+        "condominiumNumber": "E-60",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 13, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "60"
+      },
+      {
+        "description": "61. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-61)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225373,
+            "name": "Vlasnik 379",
+            "address": "Adresa 153",
+            "taxNumber": "00000001391",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., Ugovor o kupoprodaji stana N.N. d.d. Split sa N.N. i N.N. od 28.08.1992., Tabularna izjava Gradonačelnika grada Splita, klasa:943-02/17-01/22, urbroj:2181/01-12-03/08-17-2 od 27.01.2017., Rješenja o nasljeđivanju O-1428/93 od 29.10.2001.,Ovjerene punomoći od strane javnog bilježnika N.N. iz Šibenika i to: Ov-16105/06 od 18.12.2006., Ov-16104/06 od 18.12.2006., Ov-16106/06 od 18.12.2006., Ov-16109/06 od 18.12.2006., Ov-16107/06 od 18.12.2006., Ov-16108/06 od 18.12.2006., Ugovor o doživotnom uzdržavanju ovjeren pod posl br IR-117/02 01.03.2002., Smrtni list iza N.N. klasa:223-06/03-10/128, urbroj:2181-06/08-01-03-1 od 27.05.2003., Kupoprodajnog ugovora od 17.01.2007., na ime:",
+              "orderNumber": "61.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618279,
+        "condominiumNumber": "E-61",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 14, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "61"
+      },
+      {
+        "description": "62. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-62)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225374,
+            "name": "Vlasnik 380",
+            "address": "Adresa 142",
+            "taxNumber": "00000001406",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "62.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618280,
+        "condominiumNumber": "E-62",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 15, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "62"
+      },
+      {
+        "description": "63. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-63)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 42735131,
+            "name": "Vlasnik 381",
+            "address": "Adresa 142",
+            "taxNumber": "00000001414",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., UGOVOR O KUPOPRODAJI NEKRETNINE 27.07.2020, POTVRDA O KONAČNOM NAMIRENJU 27.07.2020., na ime:",
+              "orderNumber": "63.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618281,
+        "condominiumNumber": "E-63",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 16, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "63"
+      },
+      {
+        "description": "64. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-64)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 44805979,
+            "name": "Vlasnik 382",
+            "address": "Adresa 142",
+            "taxNumber": "00000001422",
+            "lrEntry": {
+              "description": "Zaprimljeno 07.06.2022.g. pod brojem Z-24372/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU BROJ O-466/22 23.05.2022, s imena N.N., na ime:",
+              "orderNumber": "64.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618282,
+        "condominiumNumber": "E-64",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 17, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "64"
+      },
+      {
+        "description": "65. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-65)",
+        "lrUnitShareId": 32618283,
+        "condominiumNumber": "E-65",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 18, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "65.2. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225377,
+                "name": "Vlasnik 383",
+                "address": "Adresa 142",
+                "taxNumber": "00000001439",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "65.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619517,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "65.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225378,
+                "name": "Vlasnik 384",
+                "address": "Adresa 142",
+                "taxNumber": "00000001447",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "65.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619518,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "65"
+      },
+      {
+        "description": "66. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-66)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225379,
+            "name": "Vlasnik 385",
+            "address": "Adresa 142",
+            "taxNumber": "00000001455",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "66.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618284,
+        "condominiumNumber": "E-66",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 19, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "66"
+      },
+      {
+        "description": "67. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-67)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225380,
+            "name": "Vlasnik 386",
+            "address": "Adresa 154",
+            "taxNumber": "00000001463",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "67.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618285,
+        "condominiumNumber": "E-67",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 20, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "67"
+      },
+      {
+        "description": "68. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-68)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 42190754,
+            "name": "Vlasnik 387",
+            "address": "Adresa 155",
+            "taxNumber": "00000001471",
+            "lrEntry": {
+              "description": "Zaprimljeno 19.02.2021.g. pod brojem Z-6333/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, DAROVNI UGOVOR 17.02.2021, s imena N.N., pod Rbr. 68./68.2, na ime:",
+              "orderNumber": "68.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618286,
+        "condominiumNumber": "E-68",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 21, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "68"
+      },
+      {
+        "description": "69. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-69)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 52563406,
+            "name": "Vlasnik 388",
+            "address": "Adresa 156",
+            "taxNumber": "00000001480",
+            "lrEntry": {
+              "description": "Zaprimljeno 22.08.2024.g. pod brojem Z-34022/2024<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU NEKRETNINE 22.08.2024, s imena N.N., pod Rbr. 69. (69.4), na ime:",
+              "orderNumber": "69.5"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618287,
+        "condominiumNumber": "E-69",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 22, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "69"
+      },
+      {
+        "description": "70. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-70)",
+        "lrUnitShareId": 32618288,
+        "condominiumNumber": "E-70",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 23, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "70.2. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225383,
+                "name": "Vlasnik 389",
+                "address": "Adresa 142",
+                "taxNumber": "00000001498",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "70.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619519,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "70.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225384,
+                "name": "Vlasnik 390",
+                "address": "Adresa 157",
+                "taxNumber": "00000001502",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "70.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619520,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "70"
+      },
+      {
+        "description": "71. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-71)",
+        "lrUnitShareId": 32618289,
+        "condominiumNumber": "E-71",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 24, površine 59,03 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 31."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "71.4. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 66359656,
+                "name": "Vlasnik 391",
+                "address": "Adresa 31",
+                "taxNumber": "00000001519",
+                "lrEntry": {
+                  "description": "Zaprimljeno 19.02.2026.g. pod brojem Z-7498/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 04.02.2026, TABULARNA IZJAVA 04.02.2026, s imena N.N., na ime:",
+                  "orderNumber": "71.4.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 50896126,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "4"
+          },
+          {
+            "description": "71.5. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 66359657,
+                "name": "Vlasnik 392",
+                "address": "Adresa 31",
+                "taxNumber": "00000001527",
+                "lrEntry": {
+                  "description": "Zaprimljeno 19.02.2026.g. pod brojem Z-7498/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 04.02.2026, TABULARNA IZJAVA 04.02.2026, s imena N.N., na ime:",
+                  "orderNumber": "71.5.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 50896127,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "5"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "71"
+      },
+      {
+        "description": "72. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-72)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 50307972,
+            "name": "Vlasnik 393",
+            "address": "Adresa 158",
+            "taxNumber": "00000001535",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "72.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618290,
+        "condominiumNumber": "E-72",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 1, površine 21,84 m2, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "72"
+      },
+      {
+        "description": "73. Suvlasnički dio: 18/4651 ETAŽNO VLASNIŠTVO (E-73)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 42290760,
+            "name": "Vlasnik 394",
+            "address": "Adresa 159",
+            "taxNumber": "00000001543",
+            "lrEntry": {
+              "description": "Zaprimljeno 15.03.2021.g. pod brojem Z-10199/2021<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINA 12.03.2021, s imena N.N., na ime:",
+              "orderNumber": "73.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618291,
+        "condominiumNumber": "E-73",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 2, površine 17,55 m2, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "73"
+      },
+      {
+        "description": "74. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-74)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 46505591,
+            "name": "Vlasnik 395",
+            "address": "Adresa 160",
+            "taxNumber": "00000001551",
+            "lrEntry": {
+              "description": "Zaprimljeno 30.07.2020.g. pod brojem Z-23164/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE 24.07.2020, s imena N.N., na ime N.N., za cijelo.",
+              "orderNumber": "74.3"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618292,
+        "condominiumNumber": "E-74",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 3, površine 21,71 m2, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "74"
+      },
+      {
+        "description": "75. Suvlasnički dio: 16/4651 ETAŽNO VLASNIŠTVO (E-75)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225389,
+            "name": "Vlasnik 396",
+            "address": "Adresa 161",
+            "taxNumber": "00000001560",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "75.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618293,
+        "condominiumNumber": "E-75",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 4, površine 16,02 m2, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "75"
+      },
+      {
+        "description": "76. Suvlasnički dio: 22/4651 ETAŽNO VLASNIŠTVO (E-76)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 46505590,
+            "name": "Vlasnik 395",
+            "address": "Adresa 160",
+            "taxNumber": "00000001551",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "76.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618294,
+        "condominiumNumber": "E-76",
+        "condominiums": [
+          "GARAŽNI BOKS na PR (prizemlju), označen br. 5, površine 21,78 m2, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>ZABILJEŽBA, SPOR, Pred. 18. rujna 2018. Z-34078/18\nNa temelju Tužbe zaprimljene kod Općinskog suda u Splitu dana 12. rujna 2018. godine pod poslovnim brojem POB-472/18, zabilježuje se spor između tužitelja N.N. iz Čiova, Okrug Gornji, Put Sv. N.N. 26A, OIB: 00000001578 i tuženika N.N. iz Splita, Vukovarska 108, OIB: 00000001551, glede prava vlasništva garažnog boksa br. 8, u površini od 21,78 m2.",
+            "lrEntryId": 58240066,
+            "orderNumber": "76.3"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "76"
+      },
+      {
+        "description": "77. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-77)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 54328125,
+            "name": "Vlasnik 397",
+            "address": "Adresa 162",
+            "taxNumber": "00000001586",
+            "lrEntry": {
+              "description": "Zaprimljeno 03.02.2025.g. pod brojem Z-4545/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI NEKRETNINE BROJ OV-637-25 03.02.2025, s imena N.N., na ime:",
+              "orderNumber": "77.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618295,
+        "condominiumNumber": "E-77",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 1, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "77"
+      },
+      {
+        "description": "78. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-78)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66232231,
+            "name": "Vlasnik 398",
+            "address": "Adresa 163",
+            "taxNumber": "00000001594",
+            "lrEntry": {
+              "description": "Zaprimljeno 16.03.2026.g. pod brojem Z-11601/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-231/26 UPP/OS-O-11/2026 02.03.2026, s imena N.N., na ime:",
+              "orderNumber": "78.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618296,
+        "condominiumNumber": "E-78",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 2, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "78"
+      },
+      {
+        "description": "79. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-79)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 56825406,
+            "name": "Vlasnik 399",
+            "address": "Adresa 164",
+            "taxNumber": "00000001609",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "79.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618297,
+        "condominiumNumber": "E-79",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 3, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "79"
+      },
+      {
+        "description": "80. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-80)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225394,
+            "name": "Vlasnik 400",
+            "address": "Adresa 165",
+            "taxNumber": "00000001617",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "80.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618298,
+        "condominiumNumber": "E-80",
+        "condominiums": [
+          "STAN na I. (prvom) katu, označen br. 4, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>ZABILJEŽBA, Pred. 5. siječnja 2011. ZS-13/11 Zabilježuje se da je prijenos prava vlasništva s imena N.N. na ime N.N. banke d.d. izvršen radi osiguranja novčane tražbine u iznosu od 40.000,00 EUR (četrdesettisuća eura) u kunskoj protuvrijednosti sa ostalim troškovima i nuzgredicama.",
+            "lrEntryId": 58239601,
+            "orderNumber": "80.3"
+          },
+          {
+            "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>Označuje se vidljivim zabilježba zabrane opterećenja upisana u listu C pod st.28.1.",
+            "lrEntryId": 58239602,
+            "orderNumber": "80.4"
+          },
+          {
+            "description": "Zaprimljeno 29.05.2025.g. pod brojem Z-23772/2025<br><br>ZABILJEŽBA, POKRETANJE POSTUPKA, PRIGOVOR/ŽALBA NA ODLUKU JAVNOG BILJEŽNIKA, ZAPRIMLJENA PRED OPĆINSKIM SUDOM U SPLITU, POD POSLOVNIM BR. OVR-1218/2025, 30.04.2025, OBAVIJEST O PRIMITKU, POSLOVNI BR. OVR-1218/2025 06.05.2025, koji se vodi pod poslovnim br. OVR-1218/2025, u pravnoj stvari predlagatelja osiguranja N.N. BANKA d.d., OIB: 00000001617, Tolstojeva 6, Split i N.N. iz Splita, Alojzija Stepinca 33, OIB: 00000001625, kao protivnika osiguranja.",
+            "lrEntryId": 103272860,
+            "orderNumber": "80.6"
+          },
+          {
+            "description": "Zaprimljeno 06.06.2025.g. pod brojem Z-25040/2025<br><br>ZABILJEŽBA, SPOR, TUŽBA ZAPRIMLJENA KOD OVOG SUDA POD POSLOVNIM BROJEM P-2270/2025 06.06.2025, OBAVIJEST O PRIMITKU ELEKTRONIČKOG PODNESKA 06.06.2025, u pravnoj stvari tužitelja N.N. iz Metkovića, Put Narone 54, OIB: 00000001633 protiv tužene N.N. banke d.d. iz Splita, Tolstojeva 6, OIB: 00000001617, pokrenutog pred ovim sudom pod poslovnim brojem P-2270/2025 radi utvrđenja prava vlasništva, a u pogledu stana na I. (prvom) katu, označen br. 4, površine 58,92 m2.",
+            "lrEntryId": 103348482,
+            "orderNumber": "80.7"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "80"
+      },
+      {
+        "description": "81. Suvlasnički dio: 58/4651 ETAŽNO VLASNIŠTVO (E-81)",
+        "lrUnitShareId": 32618299,
+        "condominiumNumber": "E-81",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 5, površine 58,39 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "81.3. Suvlasnički dio etaže: 3/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 47954318,
+                "name": "Vlasnik 401",
+                "address": "Adresa 166",
+                "taxNumber": "00000001641",
+                "lrEntry": {
+                  "description": "Zaprimljeno 04.11.2022.g. pod brojem Z-46203/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU BROJ O-3463/17 15.09.2022, s imena N.N., na ime:",
+                  "orderNumber": "81.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 35170706,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "81.4. Suvlasnički dio etaže: 1/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 45729698,
+                "name": "Vlasnik 402",
+                "address": "Adresa 167",
+                "taxNumber": "00000001650",
+                "lrEntry": {
+                  "description": "Zaprimljeno 04.11.2022.g. pod brojem Z-46203/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU BROJ O-3463/17 15.09.2022, s imena N.N., na ime:",
+                  "orderNumber": "81.4.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 35170707,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "4"
+          },
+          {
+            "description": "81.5. Suvlasnički dio etaže: 1/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 45729699,
+                "name": "Vlasnik 403",
+                "address": "Adresa 167",
+                "taxNumber": "00000001668",
+                "lrEntry": {
+                  "description": "Zaprimljeno 04.11.2022.g. pod brojem Z-46203/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU BROJ O-3463/17 15.09.2022, s imena N.N., na ime:",
+                  "orderNumber": "81.5.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 35170708,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "5"
+          },
+          {
+            "description": "81.6. Suvlasnički dio etaže: 1/6",
+            "lrOwners": [
+              {
+                "lrOwnerId": 45729700,
+                "name": "Vlasnik 404",
+                "address": "Adresa 167",
+                "taxNumber": "00000001676",
+                "lrEntry": {
+                  "description": "Zaprimljeno 04.11.2022.g. pod brojem Z-46203/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU BROJ O-3463/17 15.09.2022, s imena N.N., na ime:",
+                  "orderNumber": "81.6.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 35170709,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "6"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "81"
+      },
+      {
+        "description": "82. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-82)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 45122032,
+            "name": "Vlasnik 405",
+            "address": "Adresa 166",
+            "taxNumber": "00000001684",
+            "lrEntry": {
+              "description": "Zaprimljeno 24.08.2022.g. pod brojem Z-34867/2022<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OVOGA SUDA BR. O-2829/22 UPP/OS-89/2022 28.07.2022, s imena N.N., pod st. 82.2., na ime:",
+              "orderNumber": "82.4"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618300,
+        "condominiumNumber": "E-82",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 6, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "82"
+      },
+      {
+        "description": "83. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-83)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225397,
+            "name": "Vlasnik 406",
+            "address": "Adresa 163",
+            "taxNumber": "00000001692",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "83.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618301,
+        "condominiumNumber": "E-83",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 7, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "83"
+      },
+      {
+        "description": "84. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-84)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225398,
+            "name": "Vlasnik 407",
+            "address": "Adresa 163",
+            "taxNumber": "00000001705",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "84.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618302,
+        "condominiumNumber": "E-84",
+        "condominiums": [
+          "STAN na II. (drugom) katu, označen br. 8, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "84"
+      },
+      {
+        "description": "85. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-85)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225399,
+            "name": "Vlasnik 408",
+            "address": "Adresa 168",
+            "taxNumber": "00000001713",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "85.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618303,
+        "condominiumNumber": "E-85",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 9, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "85"
+      },
+      {
+        "description": "86. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-86)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225400,
+            "name": "Vlasnik 409",
+            "address": "Adresa 163",
+            "taxNumber": "00000001721",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "86.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618304,
+        "condominiumNumber": "E-86",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 10, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "86"
+      },
+      {
+        "description": "87. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-87)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225401,
+            "name": "Vlasnik 410",
+            "address": "Adresa 163",
+            "taxNumber": "00000001730",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "87.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618305,
+        "condominiumNumber": "E-87",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 11, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "87"
+      },
+      {
+        "description": "88. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-88)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225402,
+            "name": "Vlasnik 411",
+            "address": "Adresa 169",
+            "taxNumber": "00000001748",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "88.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618306,
+        "condominiumNumber": "E-88",
+        "condominiums": [
+          "STAN na III. (trećem) katu, označen br. 12, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "88"
+      },
+      {
+        "description": "89. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-89)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225403,
+            "name": "Vlasnik 412",
+            "address": "Adresa 170",
+            "taxNumber": "00000001756",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "89.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618307,
+        "condominiumNumber": "E-89",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 13, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "89"
+      },
+      {
+        "description": "90. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-90)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225404,
+            "name": "Vlasnik 413",
+            "address": "Adresa 171",
+            "taxNumber": "00000001764",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "90.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618308,
+        "condominiumNumber": "E-90",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 14, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "90"
+      },
+      {
+        "description": "91. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-91)",
+        "lrUnitShareId": 32618309,
+        "condominiumNumber": "E-91",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 15, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "91.2. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225405,
+                "name": "Vlasnik 414",
+                "address": "Adresa 172",
+                "taxNumber": "00000001772",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "91.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619521,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "91.3. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 42735132,
+                "name": "Vlasnik 415",
+                "address": "Adresa 173",
+                "taxNumber": "00000001789",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "91.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619522,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          },
+          {
+            "description": "91.4. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225407,
+                "name": "Vlasnik 416",
+                "address": "Adresa 163",
+                "taxNumber": "00000001797",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "91.4.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619523,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "4"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "91"
+      },
+      {
+        "description": "92. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-92)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 66256479,
+            "name": "Vlasnik 417",
+            "address": "Adresa 174",
+            "taxNumber": "00000001801",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "92.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618310,
+        "condominiumNumber": "E-92",
+        "condominiums": [
+          "STAN na IV. (četvrtom) katu, označen br. 16, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "92"
+      },
+      {
+        "description": "93. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-93)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225409,
+            "name": "Vlasnik 418",
+            "address": "Adresa 163",
+            "taxNumber": "00000001810",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "93.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618311,
+        "condominiumNumber": "E-93",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 17, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "93"
+      },
+      {
+        "description": "94. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-94)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225410,
+            "name": "Vlasnik 419",
+            "address": "Adresa 175",
+            "taxNumber": "00000001828",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013.,kupoprodajni ugovor od 27.01.1998.,  na ime:",
+              "orderNumber": "94.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618312,
+        "condominiumNumber": "E-94",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 18, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "94"
+      },
+      {
+        "description": "95. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-95)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225411,
+            "name": "Vlasnik 420",
+            "address": "Adresa 176",
+            "taxNumber": "00000001836",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., ugovor o kupoprodaji stana od 28.12.1992., tabularna izjava Grada Splita od 24. lipnja 2020., rješenje o nasljeđivanju br. O-1946/94 od 19. prosinca 1994., na ime:",
+              "orderNumber": "95.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618313,
+        "condominiumNumber": "E-95",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 19, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "95"
+      },
+      {
+        "description": "96. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-96)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225412,
+            "name": "Vlasnik 421",
+            "address": "Adresa 163",
+            "taxNumber": "00000001844",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., kupoprodajni ugovor br.03-1111/1477 od 7.06.1968., izjava Grada Splita od 18. 07. 2012., kupoprodajni ugovor od 14. rujna 1979., na ime:",
+              "orderNumber": "96.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618314,
+        "condominiumNumber": "E-96",
+        "condominiums": [
+          "STAN na V. (petom) katu, označen br. 20, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "96"
+      },
+      {
+        "description": "97. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-97)",
+        "lrUnitShareId": 32618315,
+        "condominiumNumber": "E-97",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 21, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "97.2. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225413,
+                "name": "Vlasnik 422",
+                "address": "Adresa 163",
+                "taxNumber": "00000001852",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "97.2.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619524,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "2"
+          },
+          {
+            "description": "97.3. Suvlasnički dio etaže: 1/2",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41225414,
+                "name": "Vlasnik 423",
+                "address": "Adresa 177",
+                "taxNumber": "00000001869",
+                "lrEntry": {
+                  "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+                  "orderNumber": "97.3.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 32619525,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "3"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "97"
+      },
+      {
+        "description": "98. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-98)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225415,
+            "name": "Vlasnik 424",
+            "address": "Adresa 163",
+            "taxNumber": "00000001877",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "98.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618316,
+        "condominiumNumber": "E-98",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 22, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "98"
+      },
+      {
+        "description": "99. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-99)",
+        "lrOwners": [
+          {
+            "lrOwnerId": 41225416,
+            "name": "Vlasnik 425",
+            "address": "Adresa 163",
+            "taxNumber": "00000001885",
+            "lrEntry": {
+              "description": "Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 29 od 20.10.2015., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 31 od 24.10.2014., Međuvlasnički ugovor za anagrafsku oznaku Stepinčeva 33 od 22.10.2013., na ime:",
+              "orderNumber": "99.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 32618317,
+        "condominiumNumber": "E-99",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 23, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "99"
+      },
+      {
+        "description": "100. Suvlasnički dio: 59/4651 ETAŽNO VLASNIŠTVO (E-100)",
+        "lrUnitShareId": 32618318,
+        "condominiumNumber": "E-100",
+        "condominiums": [
+          "STAN na VI. (šestom) katu, označen br. 24, površine 58,92 m2, koji se sastoji od dvije sobe, kuhinje, izbe, kupaonice, hodnika, predsoblja i lođe, s pripadajućom drvarnicom, Alojzija Stepinca 33."
+        ],
+        "subSharesAndEntries": [
+          {
+            "description": "100.6. Suvlasnički dio etaže: 2/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 66333432,
+                "name": "Vlasnik 426",
+                "address": "Adresa 178",
+                "taxNumber": "00000001893",
+                "lrEntry": {
+                  "description": "Zaprimljeno 24.03.2026.g. pod brojem Z-13063/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-1739/14, UPP/OS-37/14 07.07.2014, RJEŠENJE O NASLJEĐIVANJU O-5119/19, UPP/OS-4/20 28.02.2020, s imena N.N. pod st. 100.(100.2) i isprava naslova upisa pod posl. br. Z-11487/20 pod st. 100.(100.3) i pod st. 100.(100.4), (sjedinjenje suvlasničkih dijelova), na ime:",
+                  "orderNumber": "100.6.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 51011297,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "6"
+          },
+          {
+            "description": "100.7. Suvlasnički dio etaže: 1/3",
+            "lrOwners": [
+              {
+                "lrOwnerId": 66333433,
+                "name": "Vlasnik 427",
+                "address": "Adresa 179",
+                "taxNumber": "00000001908",
+                "lrEntry": {
+                  "description": "Zaprimljeno 24.03.2026.g. pod brojem Z-13063/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU O-1739/14, UPP/OS-37/14 07.07.2014, RJEŠENJE O NASLJEĐIVANJU O-5119/19, UPP/OS-4/20 28.02.2020, s imena N.N. pod st. 100.(100.2) i isprava naslova upisa pod posl. br. Z-11487/20 pod st. 100.(100.3) i pod st. 100.(100.4), (sjedinjenje suvlasničkih dijelova), na ime:",
+                  "orderNumber": "100.7.1"
+                }
+              }
+            ],
+            "lrUnitShareId": 51011298,
+            "subSharesAndEntries": [],
+            "status": 0,
+            "orderNumber": "7"
+          }
+        ],
+        "status": 0,
+        "orderNumber": "100"
+      }
+    ],
+    "lrEntries": [
+      {
+        "description": "Zaprimljeno 19.12.2019.g. pod brojem Z-43049/2019<br><br>ZABILJEŽBA, ODBIJENI PRIJEDLOG ZA UKNJIŽBU, predlagateljice N.N., kojim traži uknjižbu prava vlasništva garažnog boksa, br.8, treći po redu od sjevera prema jugu, površine 21,71 m2, položen u prizemlju stambene zgrade E-708, anagrafske oznake Stepinčeva 33.",
+        "lrEntryId": 56606630,
+        "orderNumber": "2.1"
+      }
+    ]
+  },
+  "possessionSheetA1": {
+    "lrParcels": [
+      {
+        "parcelId": 17792291,
+        "parcelNumber": "9970/19",
+        "address": "ZGRADA",
+        "area": "895",
+        "statusInLrUnit": 0,
+        "parcelParts": []
+      }
+    ]
+  },
+  "possessionSheetA2": {
+    "lrEntries": [
+      {
+        "description": "<span class='lr-entry-black' >ZABILJEŽBA<br><br>Predano: 10. listopada 2011. Z-10632/11\n\nZabilježuje se da je za zgradu sagrađenu na čest. zem. 9970/19 priloženo Rješenje za upotrebu izdano od Skupštine Općine Split, Odjela za upravno-pravne poslove, Referade za lokacije i odobrenja za građenje broj: 359/UP-I-9-69 od 31. siječnja 1969. godine.</span>",
+        "lrEntryId": 33971953,
+        "orderNumber": "1.1"
+      }
+    ]
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": [
+      {
+        "description": "9. Na suvlasnički dio: 88 (59/4651)",
+        "shareOrderNumber": "88",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br><b>Prvenstveni red upisa: Z-41777/2019</b><br><br>UKNJIŽBA, ZALOŽNO PRAVO, SPORAZUM BR. 9916790257-211 O ZASNIVANJU ZALOŽNOG PRAVA NA NEKRETNINI 03.12.2019, u iznosu od stotridesetčetiritisuće eura, u kunskoj protuvrijednosti, s ugovorenim kamatama i ostalim sporednim potraživanjima sukladno Sporazumu, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 44367489,
+                "name": "Vlasnik 428",
+                "address": "Adresa 180",
+                "taxNumber": "00000001916"
+              }
+            ],
+            "lrEntryId": 58220094,
+            "amount": "134.000,00 EUR",
+            "orderNumber": "9.1"
+          }
+        ]
+      },
+      {
+        "description": "12. Na suvlasnički dio: 23 (61/4651)",
+        "shareOrderNumber": "23",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Pred. 23. lipnja 1995. ZS-2719/1995 Na teret stana, a na temelju Ugovora o kupoprodaji stana na kojem postoji stanarsko pravo od 22. ožujka 1995. godine, upisuje se pravo zaloga u iznosu od četrdesetosamtisuća tristočetrdesetdvijekune i devedesetsedamlipa, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41226802,
+                "name": "Vlasnik 429"
+              }
+            ],
+            "lrEntryId": 58225173,
+            "amount": "48.342,97 KN",
+            "orderNumber": "12.1"
+          }
+        ]
+      },
+      {
+        "description": "13. Na suvlasnički dio: 26 (61/4651)",
+        "shareOrderNumber": "26",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, OSOBNA SLUŽNOST – PRAVO STANOVANJA, Zaprimljeno 14.02.2020.g. pod brojem Z-5979/2020\nUGOVOR O DOSMRTNOM UZDRŽAVANJU 20.01.2020, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41226803,
+                "name": "Vlasnik 430",
+                "address": "Adresa 127",
+                "taxNumber": "00000001924"
+              }
+            ],
+            "lrEntryId": 58225174,
+            "orderNumber": "13.1"
+          }
+        ]
+      },
+      {
+        "description": "14. Na suvlasnički dio: 27 (61/4651)",
+        "shareOrderNumber": "27",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno 08. lipnja 1995. broj ZS-2313/1995 Na teret stana, a na temelju Ugovora o kupoprodaji stana na kojem postoji stanarsko pravo od dana 13. ožujka 1995. godine br. ugovora: 888/95, upisuje se pravo zaloga u iznosu od četrdesetosamtisućatristočetrdesetdvije kune i devedesetsedam lipa, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41226804,
+                "name": "Vlasnik 429"
+              }
+            ],
+            "lrEntryId": 58225175,
+            "amount": "48.342,97 KN",
+            "orderNumber": "14.1"
+          }
+        ]
+      },
+      {
+        "description": "15. Na suvlasnički dio: 32 (59/4651)",
+        "shareOrderNumber": "32",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Pred. 25. kolovoza 1994. ZS-3450/1994 Na teret stana, a na temelju Ugovora o prodaji stana na kojem postoji stanarsko pravo broj 511-01-84-22035/1-94 \"U Zagrebu, 1. srpnja 1994. godine\", upisuje se pravo zaloga u iznosu od pedesetsedamtisućašestočetrdesetsedamkuna i šezdesetjedna lipa, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41226805,
+                "name": "Vlasnik 299"
+              }
+            ],
+            "lrEntryId": 58225176,
+            "amount": "57.647,61 KN",
+            "orderNumber": "15.1"
+          }
+        ]
+      },
+      {
+        "description": "19. Na suvlasnički dio: 53 (59/4651)",
+        "shareOrderNumber": "53",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Primljeno 14. listopada 2003. Broj ZS-1240/2003 Na teret stana, a na temelju Ugovora o kupoprodaji stana na kojem postoji stanarsko pravo broj: 1140/95 od 15. svibnja 1995. godine, upisuje se pravo zaloga u iznosu od četrdesetpettisućasedamstoosamdesetsedam kuna i šesnaest lipa, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41227217,
+                "name": "Vlasnik 431",
+                "address": "Adresa 181"
+              }
+            ],
+            "lrEntryId": 58225848,
+            "amount": "45.787,16 KN",
+            "orderNumber": "19.1"
+          }
+        ]
+      },
+      {
+        "description": "21. Na suvlasnički dio: 59 (59/4651)",
+        "shareOrderNumber": "59",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Pred. 17. siječnja 2007. ZS-93/2007 Na teret stana, a na temelju Ugovora o kupoprodaji stana \"U Splitu, 4. svibnja 1995. god.\", uknjižuje se pravo zaloga u iznosu od pedesetšesttisuća devetstotridesetkuna i devedesetšestlipa, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41227219,
+                "name": "Vlasnik 432"
+              }
+            ],
+            "lrEntryId": 58225850,
+            "amount": "56.930,96 KN",
+            "orderNumber": "21.1"
+          }
+        ]
+      },
+      {
+        "description": "22. Na suvlasnički dio: 63 (59/4651)",
+        "shareOrderNumber": "63",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno 27.07.2020.   Z-22696/20\nSPORAZUM BR.9916866148-246 O ZASNIVANJU ZALOŽNOG PRAVA (HIPOTEKE) NA NEKRETNINI 20.07.2020, u iznosu od devetstotisućasedamstokuna, uvećano za ugovorene naknade, troškove i kamate u skladu sa Sporazumom, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 44367488,
+                "name": "Vlasnik 428",
+                "address": "Adresa 180",
+                "taxNumber": "00000001916"
+              }
+            ],
+            "lrEntryId": 58225871,
+            "amount": "900.700,00 KN",
+            "orderNumber": "22.1"
+          }
+        ]
+      },
+      {
+        "description": "23. Na suvlasnički dio: 65 (59/4651)",
+        "shareOrderNumber": "65",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno 17. ožujka 1994. broj ZS-1039/1994 Na teret stana, a na temelju Ugovora o kupoprodaji stana od 03. ožujka 1993. godine, upisuje se pravo zaloga u iznosu od 10.092.021 HRD uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41227221,
+                "name": "Vlasnik 429"
+              }
+            ],
+            "lrEntryId": 58225872,
+            "amount": "10.092.021,00 HRD",
+            "orderNumber": "23.1"
+          }
+        ]
+      },
+      {
+        "description": "24. Na suvlasnički dio: 65 (59/4651)",
+        "shareOrderNumber": "65",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, OSOBNA SLUŽNOST – PRAVO STANOVANJA, Zapremljeno 20.05.2005. ZS-1243/05. Na teret stana, a na temelju ugovora o darovanju \"U Splitu, dana 11.11.1998. godine\" upisuje se pravo doživotnog stanovanja, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41227222,
+                "name": "Vlasnik 433",
+                "address": "Adresa 142",
+                "taxNumber": "00000001932"
+              },
+              {
+                "lrOwnerId": 41227223,
+                "name": "Vlasnik 434",
+                "address": "Adresa 142"
+              }
+            ],
+            "lrEntryId": 58225873,
+            "orderNumber": "24.1"
+          }
+        ]
+      },
+      {
+        "description": "25. Na suvlasnički dio: 68 (59/4651)",
+        "shareOrderNumber": "68",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Primljeno 21. ožujka 2002. Broj ZS-399/2002 Na teret stana, a na temelju Ugovora o kupoprodaji stana na kojem postoji stanarsko pravo br. 2203/95 \"Split, 23. svibnja 1995. godine\", upisuje se pravo zaloga u iznosu od četrdesettritisućesedamstodvadesetosam kuna i 16/100, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41236888,
+                "name": "Vlasnik 362"
+              }
+            ],
+            "lrEntryId": 58239389,
+            "amount": "43.728,16 KN",
+            "orderNumber": "25.1"
+          }
+        ]
+      },
+      {
+        "description": "26. Na suvlasnički dio: 68 (59/4651)",
+        "shareOrderNumber": "68",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Primljeno 09. siječnja 2003. Broj ZS-26/2003 Na teret stana, a na temelju Ugovora o namjenskom kreditu br.115/02 od 3. siječnja 2003. godine i Punomoći \"U Kaštel Starom, 26. srpnja 2002. godine\", upisuje se pravo zaloga u iznosu od četrdesetčetiritisuće EUR-a, u kunskoj protuvrijednosti, uz kamate i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41236909,
+                "name": "Vlasnik 435"
+              }
+            ],
+            "lrEntryId": 58239390,
+            "amount": "44.000,00 EUR",
+            "orderNumber": "26.1"
+          }
+        ]
+      },
+      {
+        "description": "27. Na suvlasnički dio: 78 (59/4651)",
+        "shareOrderNumber": "78",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno 08.05.2001. broj ZS-591/01 Na teret stana, a na temelju ugovora o kupoprodaji stana na kojem postoji stanarsko pravo od dana 20.10.1993.g. broj ugovora:482/93, upisuje se pravo zaloga u iznosu od pedesetosammilijunaosamstoosamnaesttisućapetstočetrdesetšest HRD uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237014,
+                "name": "Vlasnik 429"
+              }
+            ],
+            "lrEntryId": 58239603,
+            "amount": "58.818.546,00 HRD",
+            "orderNumber": "27.1"
+          }
+        ]
+      },
+      {
+        "description": "28. Na suvlasnički dio: 80 (59/4651)",
+        "shareOrderNumber": "80",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>ZABILJEŽBA, ZABRANA OPTEREĆENJA NEKRETNINE PRENIJETE RADI OSIGURANJA, Pred. 5. siječnja 2011. ZS-13/11\nNa temelju sporazuma o osiguranju novčane tražbine prijenosom vlasništva nekretnine od 3. siječnja 2011. godine, zabilježuje se zabrana opterećenja stana.</span>",
+            "lrEntryId": 58239604,
+            "orderNumber": "28.1"
+          }
+        ]
+      },
+      {
+        "description": "31. Na suvlasnički dio: 86 (59/4651)",
+        "shareOrderNumber": "86",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno  24. 10.2018.   Z-39091/18 SPORAZUM O OSIGURANJU ZASNIVANJEM ZALOŽNOG PRAVA NA NEKRETNINAMA 25.09.2018, u iznosu od četrdesetčetiritisućestodevedeseteura u kunskoj protuvrijednosti s ugovorenim kamatama, te pripadajućim naknadama i drugim troškovima:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237017,
+                "name": "Vlasnik 436",
+                "address": "Adresa 182",
+                "taxNumber": "00000001949"
+              }
+            ],
+            "lrEntryId": 58239607,
+            "amount": "44.190,00 EUR",
+            "orderNumber": "31.1"
+          }
+        ]
+      },
+      {
+        "description": "32. Na suvlasnički dio: 86 (59/4651)",
+        "shareOrderNumber": "86",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Zaprimljeno 24.10.2018.g. pod brojem Z-39091/2018\nSPORAZUM O OSIGURANJU ZASNIVANJEM ZALOŽNOG PRAVA NA NEKRETNINAMA 25.09.2018, u iznosu od četrdesettritisuće kuna, s ugovorenim kamatama, te pripadajućim naknadama i drugim troškovima, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237018,
+                "name": "Vlasnik 436",
+                "address": "Adresa 182",
+                "taxNumber": "00000001949"
+              }
+            ],
+            "lrEntryId": 58239608,
+            "amount": "43.000,00 KN",
+            "orderNumber": "32.1"
+          }
+        ]
+      },
+      {
+        "description": "33. Na suvlasnički dio: 91 (59/4651)",
+        "shareOrderNumber": "91",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Pred. 18. svibnja 1995. Z-1846/95 Na teret stana, a temeljem ugovora o kupoprodaji stana od 25. travnja 1995. godine i potvrde Fonda u stambeno komunalnom gospodarstvu Split od 17.05.1995. godine, upisuje se pravo zaloga u iznosu od pedesettritisućešezdesetšest kuna, uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237019,
+                "name": "Vlasnik 437"
+              }
+            ],
+            "lrEntryId": 58239609,
+            "amount": "53.066,00 KN",
+            "orderNumber": "33.1"
+          }
+        ]
+      },
+      {
+        "description": "34. Na suvlasnički dio: 40 (59/4651)",
+        "shareOrderNumber": "40",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, OSOBNA SLUŽNOST - PRAVO PLODOUŽIVANJA, UGOVOR O DAROVANJU 22.01.1996., u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237189,
+                "name": "Vlasnik 438"
+              }
+            ],
+            "lrEntryId": 58239875,
+            "orderNumber": "34.1"
+          }
+        ]
+      },
+      {
+        "description": "36. Na suvlasnički dio: 42 (59/4651)",
+        "shareOrderNumber": "42",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Presuda Općinskog suda u Splitu P1-4940/09 od 20.02.2013., u iznosu od dvadesettritisućesedamstočetrnaesteura i desetcenti s pripadajućim kamatama, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41237444,
+                "name": "Vlasnik 362",
+                "taxNumber": "00000001220"
+              }
+            ],
+            "lrEntryId": 58240344,
+            "amount": "23.714,10 EUR",
+            "orderNumber": "36.1"
+          }
+        ]
+      },
+      {
+        "description": "37. Na suvlasnički dio: 19 (61/4651)",
+        "shareOrderNumber": "19",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, Ugovor o kupoprodaji stana na kojem postoji stanarsko pravo br.87/95 od 27.04.1995., u iznosu od pedesettisućapestočetrnaestkunaisedamdesetjednalipa uz nuzgredice i revalorizaciju, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41238499,
+                "name": "Vlasnik 439"
+              }
+            ],
+            "lrEntryId": 58242339,
+            "amount": "50.514,71 KN",
+            "orderNumber": "37.1"
+          }
+        ]
+      },
+      {
+        "description": "38. Na suvlasnički dio: 40 (59/4651)",
+        "shareOrderNumber": "40",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.11.2013.g. pod brojem Z-11255/2013<br><br>UKNJIŽBA, ZALOŽNO PRAVO, UGOVOR O KUPOPRODAJI STANA NA KOJEM POSTOJI STANARSKO PRAVO OD 03.04.1995., u iznosu od pedesettisućašestotrikuneiosamdesetšestlipa uz revalorizaciju i nuzgredice, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41240223,
+                "name": "Vlasnik 362"
+              }
+            ],
+            "lrEntryId": 58245410,
+            "amount": "50.603,86 KN",
+            "orderNumber": "38.1"
+          }
+        ]
+      },
+      {
+        "description": "41. Na suvlasnički dio: 56 (59/4651)",
+        "shareOrderNumber": "56",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.01.2021.g. pod brojem Z-282/2021<br><br>UKNJIŽBA, ZALOŽNO PRAVO, UGOVOR O STAMBENO POTROŠAČKOM KREDITU SA SPORAZUMOM O OSIGURANJU NOVČANE TRAŽBINE UPISOM HIPOTEKE NA NEKRETNINAMA 11.12.2020., u iznosu od 460.000,00 KN (četiristošezdesettisuća kuna) s ugovorenim naknadama, troškovima i kamatom te ostalim nuzgredicama prema uvjetima iz Ugovora, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 41726218,
+                "name": "Vlasnik 440",
+                "address": "Adresa 183",
+                "taxNumber": "00000001957"
+              }
+            ],
+            "lrEntryId": 59041140,
+            "amount": "460.000,00 KN",
+            "orderNumber": "41.1"
+          }
+        ]
+      },
+      {
+        "description": "42. Na suvlasnički dio: 31 (61/4651)",
+        "shareOrderNumber": "31",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 27.01.2021.g. pod brojem Z-2819/2021<br><br>UKNJIŽBA, OSOBNA SLUŽNOST - PRAVO PLODOUŽIVANJA, UGOVOR O DAROVANJU NEKRETNINA SA SPORAZUMOM O OSNIVANJU PRAVA DOŽIVOTNOG PLODOUŽIVANJA I STANOVANJA 11.01.2021, i pravo stanovanja u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 42956952,
+                "name": "Vlasnik 441",
+                "address": "Adresa 127",
+                "taxNumber": "00000001965"
+              },
+              {
+                "lrOwnerId": 59192790,
+                "name": "Vlasnik 442",
+                "address": "Adresa 137",
+                "taxNumber": "00000001973"
+              }
+            ],
+            "lrEntryId": 60992244,
+            "orderNumber": "42.1"
+          }
+        ]
+      },
+      {
+        "description": "43. Na suvlasnički dio: 40 (59/4651)",
+        "shareOrderNumber": "40",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 04.01.2023.g. pod brojem Z-355/2023<br><br>UKNJIŽBA, OSOBNA SLUŽNOST – PRAVO STANOVANJA, RJEŠENJE O NASLJEĐIVANJU POSLOVNI BROJ O-3894/22, UPP/OS-110/22 02.12.2022, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 66146465,
+                "name": "Vlasnik 443",
+                "address": "Adresa 184",
+                "taxNumber": "00000001981"
+              }
+            ],
+            "lrEntryId": 65509230,
+            "orderNumber": "43.1"
+          }
+        ]
+      },
+      {
+        "description": "44. Na suvlasnički dio: 33 (59/4651)",
+        "shareOrderNumber": "33",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 20.06.2023.g. pod brojem Z-27794/2023<br><br>UKNJIŽBA, ZALOŽNO PRAVO, SPORAZUM O ZASNIVANJU ZALOŽNOG PRAVA NA NEKRETNINAMA I PRAVU NA NEPOSREDNU OVRHU 01.06.2023, u iznosu od stotridesetdevettisuća EUR, uz ugovorene kamate, naknade i ostale troškove, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 46931442,
+                "name": "Vlasnik 444",
+                "address": "Adresa 185",
+                "taxNumber": "00000001990"
+              }
+            ],
+            "lrEntryId": 67221678,
+            "amount": "139.000,00 EUR",
+            "orderNumber": "44.1"
+          }
+        ]
+      },
+      {
+        "description": "46. Na suvlasnički dio: 97 (59/4651)",
+        "shareOrderNumber": "97",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 07.11.2024.g. pod brojem Z-45875/2024<br><br>UKNJIŽBA, ZALOŽNO PRAVO, RJEŠENJE OPĆINSKOG SUDA U SPLITU OVR-1260/24 07.11.2024, u iznosu od 1.446,91 EUR sa zakonskim zateznim kamatama kako je specificirano pod točkom I. izreke Rješenja te iznos od 26,54 EUR na ime troškova ovrhe, kao i radi troškova ovog postupka osiguranja, na teret 1/2 dijela vlasništva N.N., u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 53568889,
+                "name": "Vlasnik 445"
+              }
+            ],
+            "lrEntryId": 78486749,
+            "amount": "1.446,91 EUR",
+            "orderNumber": "46.1"
+          },
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 07.11.2024.g. pod brojem Z-45875/2024<br><br>ZABILJEŽBA, OVRŠIVOST TRAŽBINE</span>",
+            "lrEntryId": 78486750,
+            "orderNumber": "46.2"
+          }
+        ]
+      },
+      {
+        "description": "47. Na suvlasnički dio: 35 (61/4651)",
+        "shareOrderNumber": "35",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 07.05.2025.g. pod brojem Z-19869/2025<br><br>UKNJIŽBA, ZALOŽNO PRAVO, UGOVOR O KREDITU 29.04.2025, u iznosu od stošezdesetdevettisućasedamstočetrdesetjedan eur, s ugovorenim kamatama i ostalim sporednim potraživanjima, sukladno ugovoru, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 56277903,
+                "name": "Vlasnik 436",
+                "address": "Adresa 182",
+                "taxNumber": "00000001949"
+              }
+            ],
+            "lrEntryId": 83603715,
+            "amount": "169.741,00 EUR",
+            "orderNumber": "47.1"
+          }
+        ]
+      },
+      {
+        "description": "48. Na suvlasnički dio: 28 (59/4651)",
+        "shareOrderNumber": "28",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 18.06.2025.g. pod brojem Z-27078/2025<br><br>UKNJIŽBA, ZALOŽNO PRAVO, UGOVOR O STAMBENOM POTROŠAČKOM KREDITU, BROJ: 250613013474 13.06.2025, u iznosu od dvjestošezdesettisuća eura uvećano za kamate, naknade, troškove te ostale sporedne tražbine, sve sukladno Ugovoru, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 57497306,
+                "name": "Vlasnik 440",
+                "address": "Adresa 186",
+                "taxNumber": "00000001957"
+              }
+            ],
+            "lrEntryId": 86270337,
+            "amount": "260.000,00 EUR",
+            "orderNumber": "48.1"
+          }
+        ]
+      },
+      {
+        "description": "49. Na suvlasnički dio: 97 (59/4651)",
+        "shareOrderNumber": "97",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 29.10.2025.g. pod brojem Z-47245/2025<br><br>UKNJIŽBA, ZALOŽNO PRAVO, RJEŠENJE OPĆINSKOG SUDA U SPLITU BROJ OVR-1443/25 29.10.2025, u iznosu  od 643,70 EUR, s pripadajućom zakonskom zateznom kamatom koja na iznos glavnice od 643,70 EUR teče od 12. travnja 2025. pa do isplate, po stopi koja se određuje za svako polugodište, uvećanjem kamatne stope koju je Europska središnja banka primijenila na svoje posljednje glavne operacije refinanciranja ili granična kamatna stopa proizašla iz natječajnih postupaka za varijabilnu stopu za posljednje glavne operacije refinanciranja Europske središnje banke, pri čemu se za prvo polugodište primjenjuje referentna stopa koja je na snazi na dan 1. siječnja, a za drugo polugodište referentna stopa koja je na snazi na dan 1. srpnja te godine, te radi osiguranja iznosa od 30,00 eura na ime troška ovršnog postupka, kao i radi osiguranja troškova predlagatelja osiguranja u ovom postupku osiguranja u iznosu od 100,00 eura i koji mu je dužan naknaditi protivnik osiguranja u roku od 8 dana, sa zakonskim zateznim kamatama na taj iznos koje teku od dana donošenja ovog rješenja i to od 29. listopada 2025.g. do isplate, po stopi koja se određuje za svako polugodište, uvećanjem kamatne stope koju je Europska središnja banka primijenila na svoje posljednje glavne operacije refinanciranja ili granična kamatna stopa proizašla iz natječajnih postupaka za varijabilnu stopu za posljednje glavne operacije refinanciranja Europske središnje banke, pri čemu se za prvo polugodište primjenjuje referentna stopa koja je na snazi na dan 1. siječnja, a za drugo polugodište referentna stopa koja je na snazi na dan 1. srpnja te godine, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 63926964,
+                "name": "Vlasnik 446"
+              }
+            ],
+            "lrEntryId": 98981211,
+            "amount": "643,70 EUR",
+            "orderNumber": "49.1"
+          },
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 29.10.2025.g. pod brojem Z-47245/2025<br><br>ZABILJEŽBA, OVRŠIVOST TRAŽBINE, pod st. 49.1.</span>",
+            "lrEntryId": 98981242,
+            "orderNumber": "49.2"
+          }
+        ]
+      },
+      {
+        "description": "50. Na suvlasnički dio: 71 (59/4651)",
+        "shareOrderNumber": "71",
+        "lrEntries": [
+          {
+            "description": "<span class='lr-entry-black' >Zaprimljeno 11.02.2026.g. pod brojem Z-5983/2026<br><br>UKNJIŽBA, ZALOŽNO PRAVO, UGOVOR O STAMBENOM POTROŠAČKOM KREDITU BROJ: 9029660314 05.02.2026, u iznosu do stošezdesetosamtisuća eura, s ugovorenim naknadama i troškovima i kamatom u visini od 2,98% (slovima: dvacijelihdevedesetosamposto) fiksno godišnje i drugim troškovima prema ugovoru, u korist:</span>",
+            "lrOwners": [
+              {
+                "lrOwnerId": 65921459,
+                "name": "Vlasnik 444",
+                "address": "Adresa 185",
+                "taxNumber": "00000001990"
+              }
+            ],
+            "lrEntryId": 102246929,
+            "amount": "168.000,00 EUR",
+            "orderNumber": "50.1"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -190,7 +190,7 @@ This document specifies the implementation of Pydantic V2 business entities for 
 
 **Computed Properties:**
 - `area_numeric: int` - Area as integer
-- `total_owners: int` - Count of all owners across sheets
+- `total_possessors: int` - Count of all possessors across sheets
 - `land_use_summary: dict[str, int]` - Land types → areas mapping
 
 **Validators:**
@@ -327,7 +327,7 @@ with CadastralAPIClient() as client:
     # Access data via computed properties
     print(f"Parcel: {parcel.parcel_number}")
     print(f"Area: {parcel.area_numeric} m²")
-    print(f"Owners: {parcel.total_owners}")
+    print(f"Possessors: {parcel.total_possessors}")
 
     # Land use breakdown
     for land_type, area in parcel.land_use_summary.items():

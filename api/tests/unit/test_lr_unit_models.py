@@ -341,7 +341,7 @@ def main():
 
         print("Test 4: Encumbrance Sheet C Validation")
         print("-" * 70)
-        has_encumbrances = lr_unit.has_encumbrances()
+        has_encumbrances = lr_unit.has_sheet_c_entries()
         print("✓ Encumbrance sheet parsed")
         print(f"  Has encumbrances: {has_encumbrances}")
 
@@ -359,7 +359,7 @@ def main():
         print(f"  Total parcels: {summary['total_parcels']}")
         print(f"  Total area: {summary['total_area_m2']} m²")
         print(f"  Number of owners: {summary['num_owners']}")
-        print(f"  Has encumbrances: {summary['has_encumbrances']}")
+        print(f"  Has encumbrances: {summary['has_sheet_c_entries']}")
         print()
 
         print("Test 6: Total Area Calculation")

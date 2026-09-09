@@ -3,13 +3,13 @@
 ⚠️ DEMO/EDUCATIONAL PROJECT ONLY ⚠️
 
 This is a mock server for testing and demonstration purposes.
-It returns static data from JSON files to mimic the behavior of
-the Croatian cadastral API without accessing real government systems.
-
-DO NOT use this to connect to production systems.
+It returns static data from JSON files (redacted captures of the public API)
+to mimic the behavior of the Croatian cadastral API without accessing real
+government systems. See docs/legal.md before using the client with any other server.
 """
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Optional
 
@@ -42,6 +42,29 @@ _municipalities: list[dict[str, Any]] = []
 _parcels: dict[str, list[dict[str, Any]]] = {}  # municipality_code -> parcels
 _lr_units: dict[str, dict[str, Any]] = {}  # "mainBookId-lrUnitNumber" -> lr_unit_data
 _file_status: dict[str, dict[str, Any]] = {}  # "institutionId-code-order-year" -> file status
+_main_books: list[dict[str, Any]] = []  # six-key search records (E5)
+_books_of_dc: list[dict[str, Any]] = []  # six-key search records (E6)
+# municipality_code -> {possessionSheetId: possessionSheetNumber}, derived from the parcels
+_possession_sheets: dict[str, dict[int, str]] = {}
+
+
+def _six_key_record(
+    key1: Any,
+    value1: Any,
+    key2: Any = None,
+    value2: Any = None,
+    value3: Any = None,
+    display_value1: Any = None,
+) -> dict[str, Any]:
+    """The record shape every ``/search-*`` endpoint returns."""
+    return {
+        "key1": str(key1),
+        "value1": value1,
+        "key2": key2,
+        "value2": value2,
+        "value3": value3,
+        "displayValue1": display_value1,
+    }
 
 
 def load_json(filepath: Path) -> Any:
@@ -54,6 +77,7 @@ def load_json(filepath: Path) -> Any:
 async def load_data():
     """Load all static data into memory on startup."""
     global _offices, _municipalities, _parcels, _lr_units, _file_status
+    global _main_books, _books_of_dc, _possession_sheets
 
     # Load offices
     offices_file = DATA_DIR / "offices.json"
@@ -75,6 +99,12 @@ async def load_data():
             parcels_data = load_json(parcel_file)
             _parcels[municipality_code] = parcels_data
             print(f"✓ Loaded {len(parcels_data)} parcels for municipality {municipality_code}")
+            # Possession sheets are searchable by number (E4); derive them from the parcels.
+            sheets: dict[int, str] = {}
+            for parcel in parcels_data:
+                for sheet in parcel.get("possessionSheets") or []:
+                    sheets[sheet["possessionSheetId"]] = str(sheet["possessionSheetNumber"])
+            _possession_sheets[municipality_code] = sheets
 
     # Load land registry units
     lr_units_dir = DATA_DIR / "lr-units"
@@ -95,6 +125,16 @@ async def load_data():
             _file_status[key] = load_json(fs_file)
             print(f"✓ Loaded file status {key}")
 
+    # Land-registry main books and books of deposited contracts (E5, E6)
+    main_books_file = DATA_DIR / "main-books.json"
+    if main_books_file.exists():
+        _main_books = load_json(main_books_file)
+        print(f"✓ Loaded {len(_main_books)} main books")
+    books_of_dc_file = DATA_DIR / "books-of-dc.json"
+    if books_of_dc_file.exists():
+        _books_of_dc = load_json(books_of_dc_file)
+        print(f"✓ Loaded {len(_books_of_dc)} books of deposited contracts")
+
     print(
         f"\n🚀 Mock server ready with {len(_parcels)} municipalities, "
         f"{len(_lr_units)} LR units, {len(_file_status)} file statuses"
@@ -112,6 +152,9 @@ async def root():
             "offices": "/search-cad-parcels/offices",
             "municipalities": "/search-cad-parcels/municipalities",
             "parcel_search": "/search-cad-parcels/parcel-numbers",
+            "possession_sheet_search": "/search-cad-parcels/possession-sheet-numbers",
+            "main_books": "/search-lr-parcels/main-books",
+            "books_of_dc": "/search-lr-parcels/books-of-dc",
             "parcel_info": "/cad/parcel-info",
             "lr_unit": "/lr/lr-unit",
             "file_status": "/lr/file-status",
@@ -123,6 +166,8 @@ async def root():
             "parcel_sets": len(_parcels),
             "lr_units": len(_lr_units),
             "file_statuses": len(_file_status),
+            "main_books": len(_main_books),
+            "books_of_dc": len(_books_of_dc),
         },
     }
 
@@ -192,7 +237,15 @@ async def find_parcel_numbers(
     """
     Find parcel numbers in a municipality.
 
-    Supports partial matching (e.g., "114" will match "114", "1140/1", "1141", etc.)
+    Replicates the observed behaviour of the public endpoint (section 4.2 of
+    specs/api-coverage-specification.md):
+
+    - prefix match on the parcel number: "114" matches "114", "1140/1", ...;
+      "35/1" also matches the building parcel "*35/1" (the asterisk is ignored
+      when a plain number is searched);
+    - a leading asterisk is a wildcard: "*35/1" matches "*35/1" and "135/1";
+    - "35/1 ZGR" is the building parcel "*35/1" exactly; "35/1.ZGR" and
+      "35/1ZGR" match nothing, as on the real server.
 
     Args:
         search: Parcel number (supports partial matching)
@@ -201,30 +254,104 @@ async def find_parcel_numbers(
     Returns:
         List of matching parcels with parcel IDs.
     """
-    # Get parcels for this municipality
     parcels = _parcels.get(municipality_reg_num, [])
+    return [
+        _six_key_record(parcel["parcelId"], parcel.get("parcelNumber", ""))
+        for parcel in parcels
+        if _parcel_number_matches(str(parcel.get("parcelNumber", "")), search)
+    ]
 
-    # Perform partial search on parcel numbers
-    search_normalized = search.strip()
-    matches = []
 
-    for parcel in parcels:
-        parcel_number = parcel.get("parcelNumber", "")
+_ZGR_SEARCH_RE = re.compile(r"^(?P<num>\S+)\s+ZGR$", re.IGNORECASE)
 
-        # Partial match: search term appears at start of parcel number
-        if parcel_number.startswith(search_normalized):
-            matches.append(
-                {
-                    "key1": str(parcel["parcelId"]),
-                    "value1": parcel_number,
-                    "key2": None,
-                    "value2": None,
-                    "value3": None,
-                    "displayValue1": None,
-                }
-            )
 
-    return matches
+def _parcel_number_matches(parcel_number: str, search: str) -> bool:
+    term = search.strip()
+    if not term:
+        return False
+    zgr = _ZGR_SEARCH_RE.match(term)
+    if zgr:
+        return parcel_number == f"*{zgr.group('num')}"
+    bare = parcel_number.lstrip("*")
+    if term.startswith("*"):
+        return bool(term[1:]) and term[1:] in bare  # the asterisk is a wildcard
+    return bare.startswith(term)
+
+
+@app.get("/search-cad-parcels/possession-sheet-numbers")
+async def find_possession_sheet_numbers(
+    search: str = Query(..., description="Possession sheet number to search"),
+    municipality_reg_num: str = Query(
+        ..., alias="municipalityRegNum", description="Municipality registration number"
+    ),
+):
+    """
+    Find possession sheets (posjedovni listovi) of a municipality by number.
+
+    ``key1`` is the ``possessionSheetId`` the parcel-info ``possessionSheets[]``
+    carry, ``value1`` the sheet number; the other keys are null, as on the
+    public endpoint. The sheets are derived from the loaded parcels.
+    """
+    sheets = _possession_sheets.get(municipality_reg_num, {})
+    term = search.strip()
+    return [
+        _six_key_record(sheet_id, number)
+        for sheet_id, number in sorted(sheets.items(), key=lambda kv: (len(kv[1]), kv[1]))
+        if number.startswith(term)
+    ]
+
+
+def _filter_books(
+    books: list[dict[str, Any]],
+    search: Optional[str],
+    office_id: Optional[str],
+    institution_name: Optional[str],
+) -> list[dict[str, Any]]:
+    results = books
+    if search:
+        term = search.strip().lower()
+        results = [b for b in results if term in str(b.get("value1", "")).lower()]
+    if office_id:
+        results = [b for b in results if str(b.get("key2")) == office_id.strip()]
+    if institution_name:
+        term = institution_name.strip().lower()
+        results = [b for b in results if term in str(b.get("value2", "")).lower()]
+    return results
+
+
+@app.get("/search-lr-parcels/main-books")
+async def find_main_books(
+    search: Optional[str] = Query(None, description="Main book name to search"),
+    office_id: Optional[str] = Query(None, alias="officeId", description="Land-registry office id"),
+    institution_name: Optional[str] = Query(
+        None, alias="institutionName", description="Institution name filter"
+    ),
+):
+    """
+    Find land-registry main books (glavne knjige).
+
+    ``key1`` is the main book id the ``/lr/lr-unit`` endpoint takes, ``value1``
+    the book name, ``key2`` the land-registry office id, ``value2`` the court
+    name, ``displayValue1`` "NAME, COURT".
+    """
+    return _filter_books(_main_books, search, office_id, institution_name)
+
+
+@app.get("/search-lr-parcels/books-of-dc")
+async def find_books_of_dc(
+    search: Optional[str] = Query(None, description="Book name to search"),
+    office_id: Optional[str] = Query(None, alias="officeId", description="Land-registry office id"),
+    institution_name: Optional[str] = Query(
+        None, alias="institutionName", description="Institution name filter"
+    ),
+):
+    """
+    Find books of deposited contracts (knjige položenih ugovora, KPU).
+
+    Same record shape as the main books; ``value2`` is the office name
+    ("Zemljišnoknjižni odjel Zadar").
+    """
+    return _filter_books(_books_of_dc, search, office_id, institution_name)
 
 
 @app.get("/cad/parcel-info")

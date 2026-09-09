@@ -1,83 +1,101 @@
 {
-  "lrUnitId": 13140449,
+  "lrUnitId": 12337536,
   "lrUnitNumber": "449",
   "mainBookId": 21277,
-  "mainBookName": "TESTMUNICIPALITY",
+  "mainBookName": "SAVAR",
   "cadastreMunicipalityId": 2387,
   "institutionId": 284,
-  "institutionName": "Test Land Registry Office",
+  "institutionName": "Zemljišnoknjižni odjel Zadar",
   "status": "0",
   "statusName": "Aktivan",
-  "verificated": false,
+  "verificated": true,
   "condominiums": false,
   "lrUnitTypeId": 1,
   "lrUnitTypeName": "VLASNIČKI",
-  "lastDiaryNumber": "Z-15677/2026",
+  "lastDiaryNumber": "Z-18444/2026",
   "activePlumbs": [
-    { "cadPlumb": false, "fileNumber": "Z-12564/2026" },
-    { "cadPlumb": false, "fileNumber": "Z-18444/2026" }
+    {
+      "cadPlumb": false,
+      "fileNumber": "Z-12564/2026"
+    }
   ],
   "ownershipSheetB": {
     "lrUnitShares": [
       {
-        "lrUnitShareId": 46600127,
         "description": "127. Suvlasnički dio: 1/4",
-        "orderNumber": "127",
-        "status": 0,
-        "subSharesAndEntries": [],
         "lrOwners": [
           {
-            "lrOwnerId": 70000127,
-            "name": "Test Owner One",
-            "address": "Test Street 1, Test City",
-            "taxNumber": "00000000001"
+            "lrOwnerId": 66778199,
+            "name": "Vlasnik 114",
+            "address": "Adresa 75",
+            "taxNumber": "00000000010",
+            "lrEntry": {
+              "description": "Zaprimljeno 14.05.2026.g. pod brojem Z-15677/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O DAROVANJU OVJEREN KOD JAVNE BILJEŽNICE N.N. U ZADRU POD BROJEM OV-4019/2026 14.05.2026",
+              "orderNumber": "127.2"
+            }
           }
-        ]
+        ],
+        "lrUnitShareId": 51128496,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "127"
       },
       {
-        "lrUnitShareId": 46600130,
-        "description": "130. Suvlasnički dio: 1/12",
-        "orderNumber": "130",
-        "status": 0,
-        "subSharesAndEntries": [],
+        "description": "128. Suvlasnički dio: 1/4",
         "lrOwners": [
           {
-            "lrOwnerId": 70000130,
-            "name": "Test Nephew A",
-            "address": "Test Street 17, Test City",
-            "taxNumber": "00000000130"
+            "lrOwnerId": 66513445,
+            "name": "Vlasnik 115",
+            "address": "Adresa 41",
+            "taxNumber": "00000000028",
+            "lrEntry": {
+              "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+              "orderNumber": "128.1"
+            }
           }
-        ]
+        ],
+        "lrUnitShareId": 51128497,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "128"
       },
       {
-        "lrUnitShareId": 46600131,
-        "description": "131. Suvlasnički dio: 1/12",
-        "orderNumber": "131",
-        "status": 0,
-        "subSharesAndEntries": [],
+        "description": "129. Suvlasnički dio: 1/4",
         "lrOwners": [
           {
-            "lrOwnerId": 70000131,
-            "name": "Test Nephew B",
-            "address": "Test Street 110, Test City",
-            "taxNumber": "00000000131"
+            "lrOwnerId": 66513446,
+            "name": "Vlasnik 116",
+            "address": "Adresa 31",
+            "taxNumber": "00000000036",
+            "lrEntry": {
+              "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, Temeljem rješenja Općinskog suda u Zadru pod posl.brojem Rz-597/2025 i čl. 210 ZZK-a (NN 63/19, 128/22).",
+              "orderNumber": "129.1"
+            }
           }
-        ]
+        ],
+        "lrUnitShareId": 51128498,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "129"
       },
       {
-        "lrUnitShareId": 46600132,
-        "description": "132. Suvlasnički dio: 1/12",
-        "orderNumber": "132",
-        "status": 0,
-        "subSharesAndEntries": [],
+        "description": "133. Suvlasnički dio: 1/4",
         "lrOwners": [
           {
-            "lrOwnerId": 70000132,
-            "name": "Test Nephew C",
-            "address": "Test Street 110, Test City",
-            "taxNumber": "00000000132"
+            "lrOwnerId": 67197092,
+            "name": "Vlasnik 116",
+            "address": "Adresa 76",
+            "taxNumber": "00000000036",
+            "lrEntry": {
+              "description": "Zaprimljeno 09.06.2026.g. pod brojem Z-18444/2026<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, UGOVOR O KUPOPRODAJI OVJEREN PRED VELEPOSLANSTVOM RH U MADRIDU, POD POSL. BROJEM: KLASA: 037-02/26-01/3, URBROJ: 521-ESP-01-26-2 10.11.2025, UGOVOR O KUPOPRODAJI OVJEREN PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA, POD POSL. BROJEM: OV-5632/2025 10.11.2025, UGOVOR O KUPOPRODAJI OVJEREN PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA POD POSL. BROJEM: OV-5631/2025 10.11.2025, TABULARNA IZJAVA OVJERENA PRED VELEPOSLANSTVOM RH U MADRIDU, POD POSL. BROJEM: KLASA: 037-02/26-01/45, URBROJ: 521-ESP-01-26-1 14.05.2026, TABULARNA IZJAVA OVJERENA PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA, POD POSL. BROJEM: OV-2214/2026 24.04.2026, TABULARNA IZJAVA OVJERENA PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA, POD POSL. BROJEM: OV-2215/2026 24.04.2026",
+              "orderNumber": "133.1"
+            }
           }
-        ]
+        ],
+        "lrUnitShareId": 51636649,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "133"
       }
     ],
     "lrEntries": []
@@ -90,10 +108,44 @@
         "address": "OVČJA",
         "area": "3291",
         "statusInLrUnit": 0,
-        "parcelParts": []
+        "parcelParts": [
+          {
+            "name": "MASLINIK",
+            "area": "3095",
+            "building": false
+          },
+          {
+            "parcelPartId": 14470654,
+            "name": "STAMBENA ZGRADA, Savar, Savar 103",
+            "type": "Zgrada",
+            "area": "158",
+            "buildingRight": 0,
+            "building": true
+          },
+          {
+            "parcelPartId": 14470655,
+            "name": "POMOĆNA ZGRADA",
+            "type": "Zgrada",
+            "area": "16",
+            "buildingRight": 0,
+            "building": true
+          },
+          {
+            "parcelPartId": 14470656,
+            "name": "POMOĆNA ZGRADA",
+            "type": "Zgrada",
+            "area": "22",
+            "buildingRight": 0,
+            "building": true
+          }
+        ]
       }
     ]
   },
-  "possessionSheetA2": { "lrEntries": [] },
-  "encumbranceSheetC": { "lrEntryGroups": [] }
+  "possessionSheetA2": {
+    "lrEntries": []
+  },
+  "encumbranceSheetC": {
+    "lrEntryGroups": []
+  }
 }

@@ -32,7 +32,7 @@ def test_share_fraction_none_when_unparseable() -> None:
 
 
 def test_real_lr_unit_shares_have_structured_fractions() -> None:
-    raw = json.loads((FIXTURES / "lr_unit_449_21277.json").read_text(encoding="utf-8"))
+    raw = json.loads((FIXTURES / "lr_unit_lrparcels.json").read_text(encoding="utf-8"))
     payload = raw[0] if isinstance(raw, list) else raw
     unit = LandRegistryUnitDetailed.model_validate(payload)
     shares = unit.ownership_sheet_b.lr_unit_shares

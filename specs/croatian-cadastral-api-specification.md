@@ -414,8 +414,8 @@ GET /oss/public/search-lr-parcels/main-books?search=ZAPREŠIĆ&officeId=&institu
 - OSIJEK: `247`
 - SISAK: `265`
 
-### 5. Land Registry Books of Deposit Companies (DC) Search
-**Purpose:** Search for land registry books of deposit companies (Knjige zemlje u vlasništvu društva s ograničenom odgovornošću - "books-of-dc")
+### 5. Land Registry Books of Deposited Contracts (DC) Search
+**Purpose:** Search for books of deposited contracts (knjiga položenih ugovora, KPU - "books-of-dc"): the land registry books for flats and business premises sold before their building had a land registry unit
 
 **Endpoint:** `GET /search-lr-parcels/books-of-dc`
 
@@ -478,15 +478,15 @@ GET /oss/public/search-lr-parcels/books-of-dc?search=BELI+MANASTIR&officeId=&ins
 - `displayValue1` (string): Full display name "{value1}, {value2}"
 
 **Important Notes:**
-- Returns land registry books specifically for deposit companies (društva s ograničenom odgovornošću)
-- Different from main books (`/main-books`) - these are specialized books for corporate/company ownership
+- Returns books of deposited contracts (knjige položenih ugovora), not company registers
+- Different from main books (`/main-books`) - these books hold special parts of buildings (flats, business premises) registered before the building's land registry unit existed
 - The `key2` field represents the land registry court/office ID
 - Empty search parameters return complete list (very large response - thousands of entries)
 - The `value2` field uses full names like "Zemljišnoknjižni odjel Beli Manastir" (Land Registry Department)
 - Multiple books can exist under the same land registry office
 
 **Relationship to Other Endpoints:**
-- Related to `/search-lr-parcels/main-books` but for corporate/company ownership records
+- Related to `/search-lr-parcels/main-books`; whether a book id can be passed to `/lr/lr-unit` as `mainBookId` is unverified (OQ5 in the coverage specification)
 - The office IDs (`key2`) match those from main books endpoint
 - Part of the land registry (zemljišne knjige) system, not the cadastral (katastar) system
 
@@ -664,8 +664,27 @@ A still-pending file omits the resolution/execution fields:
 **Example Request:**
 
 ```http
-GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=12345&municipalityRegNum=334979
+GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=363&municipalityRegNum=334979
 ```
+
+**Actual Response:**
+
+```json
+[
+  {
+    "key1": "11731543",
+    "value1": "363",
+    "key2": null,
+    "value2": null,
+    "value3": null,
+    "displayValue1": null
+  }
+]
+```
+
+`key1` is the `possessionSheetId` that parcel-info `possessionSheets[]` carry,
+`value1` the sheet number (prefix match). No endpoint returns a possession sheet
+by id; the sheet's possessors are read through one of its parcels.
 
 ### 8. Land Registry Unit Detailed Information
 
@@ -694,9 +713,19 @@ GET /oss/public/lr/lr-unit?lrUnitNumber=13998&mainBookId=30783
 **Response Structure:**
 The response contains detailed information organized into three "sheets":
 
-- **Sheet A (possessionSheetA1)**: List of all parcels in the unit
-- **Sheet B (ownershipSheetB)**: Ownership information with shares
+- **Sheet A (possessionSheetA1)**: List of all parcels in the unit, under
+  `lrParcels` (lean land-register records; `address` is the culture or toponym
+  of the old land register) or `cadParcels` (full cadastre records), never both
+- **Sheet A2 (possessionSheetA2)**: Entries about the parcels (building
+  registration notes, cultural-heritage notes, use permits)
+- **Sheet B (ownershipSheetB)**: Ownership information with shares; sheet-level
+  entries under `lrEntries`
 - **Sheet C (encumbranceSheetC)**: Encumbrances (mortgages, liens, easements)
+
+The authoritative field inventory of this endpoint (every key, its type,
+nullability and how often it occurs) is section 5 of
+[api-coverage-specification.md](api-coverage-specification.md); the lists below
+keep the narrative.
 
 **Example Response (Condominium Unit):**
 ```json
@@ -746,8 +775,8 @@ Each share in `ownershipSheetB.lrUnitShares` represents an ownership portion:
 
 - `lrUnitShareId` (integer): Unique share identifier
 - `description` (string): Full share description with fraction
-- `lrOwners` (array): Direct owners of this share (see Party object below)
-- `subSharesAndEntries` (array): Nested co-ownership entries (for shared apartments)
+- `lrOwners` (array, null or absent): Direct owners of this share (see Party object below); null or absent when the share is owned through sub-shares
+- `subSharesAndEntries` (array): Two kinds of element, told apart by `lrUnitShareId`: sub-shares (nested co-owners of a divided share, same shape as a share) and share entries (ZABILJEŽBA on that share: lifetime-maintenance contracts, disputes, rejected proposals; same shape as an entry, with `lrEntryId`)
 - `status` (integer): Status code (0 = active)
 - `orderNumber` (string): Order number in the ownership sheet
 
@@ -810,7 +839,7 @@ For condominiums with shared apartments (e.g., married couples), ownership is ne
 - `name` (string): Owner's full name
 - `address` (string, optional): Owner's address
 - `taxNumber` (string, optional): OIB (Croatian tax identification number)
-- `lrEntry` (object, optional): Registration entry details
+- `lrEntry` (object or null): The registration entry that put the owner on the share. Present on most sheet B owners (1390 of 1683 in the capture), null on older shares, absent on sheet C beneficiaries. Its `description` follows the grammar `Zaprimljeno <date> pod brojem Z-<n>/<year>`, an optional bold `Prvenstveni red upisa: Z-...` line, the action (`UKNJIŽBA, PRAVO VLASNIŠTVA, <basis document>`) and an optional `IZ ZK ULOŠKA PRENESENI VLASNICI` note
 
 #### Encumbrance Sheet C - lrEntryGroups
 
@@ -846,10 +875,18 @@ holds the entries (upisi) that make it up. Verified against live responses:
 - `lrEntryId` (integer), `orderNumber` (string, e.g. `"2.1"`)
 - `description` (string, HTML): Diary reference, legal basis and the right
   registered; when the right is in someone's favour the text ends with
-  `"u korist:"` and the persons follow in `lrOwners`
+  `"u korist:"` and the persons follow in `lrOwners`. Sheet A2 and sheet C
+  entries open with `<span class='lr-entry-black' >` (usually never closed)
 - `lrOwners` (array, optional): Beneficiaries of the entry, same shape as the
   Party object above (`lrOwnerId`, `name`, `address`, `taxNumber`). A share of
   the right may be part of the name (`"... ZA 2/6"`)
+- `amount` (string, optional): Secured amount of a mortgage or lien in the
+  Croatian number format with the currency (`"134.000,00 EUR"`, `"43.000,00 KN"`,
+  `"10.092.021,00 HRD"`)
+
+**Pending entries (`activePlumbs[]`):** `fileNumber` (string, `"Z-12564/2026"`),
+`cadPlumb` (boolean) and, on condominiums, `plumbMark` (string, `"(E-80)"`, the
+unit the plomba concerns).
 
 #### Detecting Condominiums
 

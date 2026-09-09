@@ -40,7 +40,15 @@ Every returned person record carries a `register` field
 - **A portfolio / many parcels** -> `batch_fetch_parcels` (same k.o. is most
   efficient), then `batch_lr_units` with the returned `lr_unit` references for
   registered owners.
-- **By unit number directly** -> `get_lr_unit(unit_number, main_book_id)`.
+- **By unit number directly** -> `get_lr_unit(unit_number, main_book_id)`, or
+  `get_lr_unit(unit_number, main_book_name="SAVAR")` when only the main book
+  (glavna knjiga) name is known; `find_main_book` lists the books.
+- **Building parcels** ("35/1 ZGR", "zgr. 35/1", "*35/1") -> any spelling works;
+  they have no land-registry unit of their own (the building is registered on
+  its land parcel), so `get_lr_unit_from_parcel` reports
+  `parcel_not_in_land_registry` for them.
+- **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
+  `find_book_of_dc`.
 - **Map / boundaries** -> `get_parcel_geometry`.
 
 ## Response shaping
@@ -60,3 +68,6 @@ LR-unit tools take `detail` = `summary` | `ownership` (default) | `full`:
   rather than inventing an owner.
 - Names come with a `name_normalized` companion; the raw `name` preserves
   source quirks (use it for fidelity, the normalized form for matching/display).
+- Each owner row carries `entry` (the registration entry: order number, receipt
+  date, diary number, action type); `share_entries` are notes registered on
+  single shares. Cite them when asked how or when someone became owner.

@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 [English](../../../en/cli/commands/get-parcel.md) | **Hrvatski**
 
-> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
+> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
 > Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
@@ -58,8 +58,8 @@ knjiga dokaz vlasništva. Ova stranica prikazuje katastar. Stranica
 
    NAČIN UPORABE
    =============
-     Vrsta        Površina (m²)    Postotak    Zgrade
-     MASLINJAK            1,200      100.0%    Ne
+     Vrsta        Površina (m²)    Postotak    Zgrade    Zadnja promjena
+     MASLINJAK            1,200      100.0%    Ne        -
 
 
    POSJEDOVNI LIST (katastar) (2 posjednika)
@@ -107,6 +107,15 @@ kad god želite vidjeti osobe.
 `--detalji` sužava zaslon na jedan dio: `basic` samo za identifikaciju, `owners`
 za posjedovni list, `landuse` za podjelu po namjeni, `geometry` za koordinate
 granice, `full` za sve.
+
+Čestica zgrade na dokumentima se piše kao `35/1 ZGR`, `35/1.ZGR` ili `zgr.
+35/1`. Upišite je u bilo kojem od tih oblika; alat je prikazuje kao `zgr. 35/1`
+i označuje kao česticu zgrade. Čestice zgrade nemaju vlastiti zemljišnoknjižni
+uložak, jer je zgrada upisana na svojoj zemljišnoj čestici.
+
+```bash
+uz čestica 35/1.ZGR -ko SAVAR --detalji basic
+```
 
 ```bash
 uz čestica 103/2 -ko SAVAR --detalji landuse

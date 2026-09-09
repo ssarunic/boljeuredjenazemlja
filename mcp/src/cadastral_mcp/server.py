@@ -35,11 +35,14 @@ def create_mcp_server() -> FastMCP:
 
     # Initialize cadastral API client (shared across all requests)
     # Note: In production, consider using dependency injection or lifespan context
+    # Unknown server fields are kept in ``source_fields`` and never reported
+    # here: the MCP transport has no place for warnings (stdout is JSON-RPC).
     client = CadastralAPIClient(
         base_url=config.api_base_url,
         timeout=config.api_timeout,
         rate_limit=config.api_rate_limit,
         cache_dir=str(config.cache_dir),
+        unknown_fields="ignore",
     )
 
     # Initialize handlers
@@ -218,10 +221,11 @@ def create_mcp_server() -> FastMCP:
     @mcp.tool()
     async def get_lr_unit(
         unit_number: str,
-        main_book_id: int,
+        main_book_id: int | None = None,
         detail: str = "ownership",
         owners_limit: int | None = None,
         include_plombe_detail: bool = False,
+        main_book_name: str | None = None,
     ) -> dict[str, Any]:
         """
         Get land registry unit (zemljišnoknjižni uložak) information.
@@ -231,9 +235,17 @@ def create_mcp_server() -> FastMCP:
         - Sheet B (Vlasnički list): Ownership (vlasnici) with shares
         - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
 
+        Each owner row carries ``entry``, the registration entry (upis) that put
+        the owner on the share: order number, receipt date, diary number (Z-broj),
+        action type. ``share_entries`` lists the annotations (zabilježbe) on
+        individual shares.
+
         Args:
             unit_number: LR unit number (e.g., "769")
-            main_book_id: Main book ID (e.g., 21277)
+            main_book_id: Main book ID (e.g., 21277). Omit it and give
+                ``main_book_name`` (e.g., "SAVAR", the glavna knjiga name) to
+                resolve the id through the main-book search.
+            main_book_name: Main book name, used when ``main_book_id`` is not given.
             detail: "summary" | "ownership" | "full". Default "ownership" returns
                 B-list owners with structured shares + summary (no geometry/C-sheet),
                 which fits in context; "full" returns every sheet.
@@ -248,9 +260,12 @@ def create_mcp_server() -> FastMCP:
             Dictionary shaped per ``detail``; owners carry a structured ``share``
             ({num, den, decimal}) and a ``register`` tag.
         """
-        logger.info(f"Tool invoked: get_lr_unit({unit_number}, {main_book_id}, detail={detail})")
+        logger.info(
+            f"Tool invoked: get_lr_unit({unit_number}, {main_book_id or main_book_name}, "
+            f"detail={detail})"
+        )
         return await tools_handler.get_lr_unit(
-            unit_number, main_book_id, detail, owners_limit, include_plombe_detail
+            unit_number, main_book_id, detail, owners_limit, include_plombe_detail, main_book_name
         )
 
     @mcp.tool()
@@ -329,6 +344,80 @@ def create_mcp_server() -> FastMCP:
         logger.info(f"Tool invoked: batch_lr_units({len(lr_units)} units, detail={detail})")
         return await tools_handler.batch_lr_units(lr_units, detail, owners_limit)
 
+    @mcp.tool()
+    async def find_main_book(
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Find land-registry main books (glavna knjiga, glavne knjige zemljišne
+        knjige) by name, land-registry office or institution.
+
+        Use this to get the ``main_book_id`` that get_lr_unit needs when only
+        the cadastral municipality (katastarska općina) name is known: searching
+        "SAVAR" returns main book 21277 of the Zadar court (institution 284).
+
+        Args:
+            search: Book name to search (e.g., "SAVAR"); empty lists every book
+            office_id: Land-registry office (zemljišnoknjižni odjel) id, e.g. "284"
+            institution_name: Institution name filter
+
+        Returns:
+            Dictionary with ``main_books`` (main_book_id, main_book_name,
+            institution_id, court_name) and ``count``
+        """
+        logger.info(f"Tool invoked: find_main_book({search}, office={office_id})")
+        return await tools_handler.find_main_book(search, office_id, institution_name)
+
+    @mcp.tool()
+    async def find_book_of_dc(
+        search: str | None = None,
+        office_id: str | None = None,
+        institution_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Find books of deposited contracts (knjiga položenih ugovora, KPU) of the
+        land registry (zemljišne knjige), by name, office or institution.
+
+        A KPU book holds flats sold before their building had a land-registry
+        unit. Whether its id can be used as a main book id for get_lr_unit is
+        not verified; the tool returns the search records only.
+
+        Args:
+            search: Book name to search (e.g., "ZADAR")
+            office_id: Land-registry office id
+            institution_name: Institution name filter
+
+        Returns:
+            Dictionary with ``books_of_dc`` (book_id, book_name, office_id,
+            office_name) and ``count``
+        """
+        logger.info(f"Tool invoked: find_book_of_dc({search}, office={office_id})")
+        return await tools_handler.find_book_of_dc(search, office_id, institution_name)
+
+    @mcp.tool()
+    async def find_possession_sheet(sheet_number: str, municipality: str) -> dict[str, Any]:
+        """
+        Find cadastre possession sheets (posjedovni list, posjedovni listovi) by
+        sheet number in a cadastral municipality (katastar, katastarska općina).
+
+        The records carry the possession sheet id that parcel possession sheets
+        reference and the sheet number. The cadastre has no endpoint that
+        returns a sheet by id; to see a sheet's possessors (posjednici) look up
+        one of its parcels with find_parcel / batch_fetch_parcels.
+
+        Args:
+            sheet_number: Possession sheet number (prefix match, e.g. "363")
+            municipality: Municipality name (e.g., "SAVAR") or registration code
+
+        Returns:
+            Dictionary with ``possession_sheets`` (possession_sheet_id,
+            sheet_number), ``municipality_code`` and ``count``
+        """
+        logger.info(f"Tool invoked: find_possession_sheet({sheet_number}, {municipality})")
+        return await tools_handler.find_possession_sheet(sheet_number, municipality)
+
     # ========================================================================
     # PROMPTS - User-selected templates
     # ========================================================================
@@ -393,7 +482,8 @@ def create_mcp_server() -> FastMCP:
     logger.info(
         "Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
         "get_parcel_geometry, list_cadastral_offices, get_lr_unit, "
-        "get_lr_unit_from_parcel, batch_lr_units"
+        "get_lr_unit_from_parcel, batch_lr_units, find_main_book, find_book_of_dc, "
+        "find_possession_sheet"
     )
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")

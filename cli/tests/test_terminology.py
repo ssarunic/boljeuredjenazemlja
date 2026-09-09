@@ -103,3 +103,28 @@ def test_rejected_term_does_not_come_back(rule: Rule) -> None:
         f"'{rule.pattern.pattern}' is a rejected term; write '{rule.fix}' instead "
         f"(see specs/terminology.md):\n" + "\n".join(hits)
     )
+
+
+# ---------------------------------------------------------------------------
+# The cadastre models never call a possessor an owner
+# ---------------------------------------------------------------------------
+
+# "ownership" alone is allowed: it is the server's key for the possessor's share.
+CADASTRE_OWNER_RE = re.compile(r"(?i)\bowners?\b|\bownership (record|information|data)\b")
+
+
+def test_cadastre_models_do_not_speak_of_owners() -> None:
+    """Field descriptions and docstring summaries of the cadastre models say possessor."""
+    from cadastral_api.models.entities import ParcelInfo, PossessionSheet, Possessor
+
+    offenders = []
+    for model in (Possessor, PossessionSheet, ParcelInfo):
+        summary = (model.__doc__ or "").strip().split("\n\n")[0]
+        texts = [(f"{model.__name__} docstring", summary)] + [
+            (f"{model.__name__}.{name}", field.description or "")
+            for name, field in model.model_fields.items()
+        ]
+        offenders += [
+            f"{where}: {text!r}" for where, text in texts if CADASTRE_OWNER_RE.search(text)
+        ]
+    assert not offenders, "cadastre models describing owners: " + "; ".join(offenders)

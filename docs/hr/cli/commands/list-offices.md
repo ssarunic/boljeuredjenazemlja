@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 [English](../../../en/cli/commands/list-offices.md) | **Hrvatski**
 
-> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
+> **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
 > Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
@@ -34,41 +34,53 @@ Ništa. Ova naredba ne traži unos.
 
    <!-- BEGIN GENERATED: output uz uredi -->
    ```text
-   15 katastarskih ureda u Hrvatskoj:
+   21 katastarskih ureda u Hrvatskoj:
 
-   +------+------------------------------------------+
-   |   ID | Naziv                                    |
-   +======+==========================================+
-   |   35 | PODRUČNI URED ZA KATASTAR KRAPINA        |
-   +------+------------------------------------------+
-   |   57 | PODRUČNI URED ZA KATASTAR ZAGREB         |
-   +------+------------------------------------------+
-   |   72 | PODRUČNI URED ZA KATASTAR RIJEKA         |
-   +------+------------------------------------------+
-   |   89 | PODRUČNI URED ZA KATASTAR SPLIT          |
-   +------+------------------------------------------+
-   |  104 | PODRUČNI URED ZA KATASTAR DUBROVNIK      |
-   +------+------------------------------------------+
-   |  114 | PODRUČNI URED ZA KATASTAR ZADAR          |
-   +------+------------------------------------------+
-   |  130 | PODRUČNI URED ZA KATASTAR ŠIBENIK        |
-   +------+------------------------------------------+
-   |  145 | PODRUČNI URED ZA KATASTAR PULA           |
-   +------+------------------------------------------+
-   |  156 | PODRUČNI URED ZA KATASTAR OSIJEK         |
-   +------+------------------------------------------+
-   |  171 | PODRUČNI URED ZA KATASTAR VARAŽDIN       |
-   +------+------------------------------------------+
-   |  183 | PODRUČNI URED ZA KATASTAR SLAVONSKI BROD |
-   +------+------------------------------------------+
-   |  198 | PODRUČNI URED ZA KATASTAR SISAK          |
-   +------+------------------------------------------+
-   |  209 | PODRUČNI URED ZA KATASTAR KARLOVAC       |
-   +------+------------------------------------------+
-   |  224 | PODRUČNI URED ZA KATASTAR GOSPIĆ         |
-   +------+------------------------------------------+
-   |  235 | PODRUČNI URED ZA KATASTAR BJELOVAR       |
-   +------+------------------------------------------+
+   +------+------------------------------------------------------------+
+   |   ID | Naziv                                                      |
+   +======+============================================================+
+   |   35 | PODRUČNI URED ZA KATASTAR KRAPINA                          |
+   +------+------------------------------------------------------------+
+   |  130 | PODRUČNI URED ZA KATASTAR ŠIBENIK                          |
+   +------+------------------------------------------------------------+
+   |  700 | GRADSKI URED ZA KATASTAR I GEODETSKE POSLOVE GRADA ZAGREBA |
+   +------+------------------------------------------------------------+
+   |  163 | PODRUČNI URED ZA KATASTAR PULA-POLA                        |
+   +------+------------------------------------------------------------+
+   |  122 | PODRUČNI URED ZA KATASTAR OSIJEK                           |
+   +------+------------------------------------------------------------+
+   |  141 | PODRUČNI URED ZA KATASTAR SPLIT                            |
+   +------+------------------------------------------------------------+
+   |  135 | PODRUČNI URED ZA KATASTAR VUKOVAR                          |
+   +------+------------------------------------------------------------+
+   |  114 | PODRUČNI URED ZA KATASTAR ZADAR                            |
+   +------+------------------------------------------------------------+
+   |  110 | PODRUČNI URED ZA KATASTAR SLAVONSKI BROD                   |
+   +------+------------------------------------------------------------+
+   |  106 | PODRUČNI URED ZA KATASTAR POŽEGA                           |
+   +------+------------------------------------------------------------+
+   |   91 | PODRUČNI URED ZA KATASTAR GOSPIĆ                           |
+   +------+------------------------------------------------------------+
+   |   67 | PODRUČNI URED ZA KATASTAR KOPRIVNICA                       |
+   +------+------------------------------------------------------------+
+   |   53 | PODRUČNI URED ZA KATASTAR KARLOVAC                         |
+   +------+------------------------------------------------------------+
+   |  171 | PODRUČNI URED ZA KATASTAR ČAKOVEC                          |
+   +------+------------------------------------------------------------+
+   |  100 | PODRUČNI URED ZA KATASTAR VIROVITICA                       |
+   +------+------------------------------------------------------------+
+   |   79 | PODRUČNI URED ZA KATASTAR RIJEKA                           |
+   +------+------------------------------------------------------------+
+   |   72 | PODRUČNI URED ZA KATASTAR BJELOVAR                         |
+   +------+------------------------------------------------------------+
+   |   24 | PODRUČNI URED ZA KATASTAR ZAGREB                           |
+   +------+------------------------------------------------------------+
+   |   61 | PODRUČNI URED ZA KATASTAR VARAŽDIN                         |
+   +------+------------------------------------------------------------+
+   |  165 | PODRUČNI URED ZA KATASTAR DUBROVNIK                        |
+   +------+------------------------------------------------------------+
+   |   43 | PODRUČNI URED ZA KATASTAR SISAK                            |
+   +------+------------------------------------------------------------+
    ```
    <!-- END GENERATED: output -->
 

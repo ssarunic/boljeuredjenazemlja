@@ -4,6 +4,8 @@ import csv
 import json
 from pathlib import Path
 
+from cadastral_api.utils import normalize_parcel_number
+
 from cadastral_cli.output_keys import canonical_key, canonical_keys
 
 
@@ -38,7 +40,8 @@ class ParcelInput:
             msg = "Municipality required when using parcel_number"
             raise ValueError(msg)
 
-        self.parcel_number = parcel_number
+        # Building parcels in any spelling ("35/1.ZGR", "zgr. 35/1") -> "*35/1"
+        self.parcel_number = normalize_parcel_number(parcel_number) if parcel_number else None
         self.parcel_id = parcel_id
         self.municipality = municipality
 

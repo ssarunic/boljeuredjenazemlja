@@ -1,5 +1,8 @@
 """Discovery commands for CLI - list offices, municipalities, etc."""
 
+from collections.abc import Callable, Sequence
+from typing import Any
+
 import click
 from cadastral_api import CadastralAPIClient, __version__
 from cadastral_api.exceptions import CadastralAPIError
@@ -174,6 +177,174 @@ def list_municipalities(
         raise SystemExit(1) from e
 
 
+_LIST_MAIN_BOOKS_HELP = command_help(_("""List land registry main books (glavne knjige).
+
+The main book ID is what get-lr-unit needs with --main-book; searching the
+cadastral municipality name finds the book that holds its units.
+
+Examples:
+  cadastral list-main-books --search SAVAR
+  cadastral list-main-books --office 284
+  cadastral list-main-books --search SAVAR --format json"""))
+
+
+@click.command("list-main-books", help=_LIST_MAIN_BOOKS_HELP)
+@click.option("--search", "-s", help=_("Search by main book name"))
+@click.option("--office", "-o", help=_("Filter by land registry office ID (e.g., 284)"))
+@click.option("--institution", help=_("Filter by institution name"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
+@click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
+@click.option("--count-only", is_flag=True, help=_("Show count only"))
+@click.pass_context
+def list_main_books(
+    ctx: click.Context,
+    search: str | None,
+    office: str | None,
+    institution: str | None,
+    output_format: str,
+    output: str | None,
+    count_only: bool,
+) -> None:
+    """List land registry main books."""
+    _list_books(
+        fetch=lambda client: client.find_main_book(
+            search=search, office_id=office, institution_name=institution
+        ),
+        status=_("Fetching main books..."),
+        empty=_("No main books found"),
+        count=lambda n: _("Found {count} main book(s)").format(count=n),
+        heading=lambda n: _("\n{count} main book(s):\n").format(count=n),
+        table_row=lambda book: {
+            _("Main Book ID"): book.main_book_id,
+            _("Name"): book.main_book_name,
+            _("Court"): book.court_name or _("N/A"),
+            _("Office ID"): book.institution_id or _("N/A"),
+        },
+        export_row=lambda book: {
+            "main_book_id": book.main_book_id,
+            "main_book_name": book.main_book_name,
+            "court_name": book.court_name,
+            "institution_id": book.institution_id,
+            "display_name": book.display_value1,
+        },
+        output_format=output_format,
+        output=output,
+        count_only=count_only,
+    )
+
+
+_LIST_BOOKS_OF_DC_HELP = command_help(
+    _("""List books of deposited contracts (knjige položenih ugovora, KPU).
+
+A book of deposited contracts holds flats that were sold before their building
+had a land registry unit. The list gives the book ID and the land registry
+office that keeps it.
+
+Examples:
+  cadastral list-books-of-dc --search ZADAR
+  cadastral list-books-of-dc --office 284 --format json""")
+)
+
+
+@click.command("list-books-of-dc", help=_LIST_BOOKS_OF_DC_HELP)
+@click.option("--search", "-s", help=_("Search by book name"))
+@click.option("--office", "-o", help=_("Filter by land registry office ID (e.g., 284)"))
+@click.option("--institution", help=_("Filter by institution name"))
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
+@click.option("--output", "-out", type=click.Path(), help=_("Save output to file"))
+@click.option("--count-only", is_flag=True, help=_("Show count only"))
+@click.pass_context
+def list_books_of_dc(
+    ctx: click.Context,
+    search: str | None,
+    office: str | None,
+    institution: str | None,
+    output_format: str,
+    output: str | None,
+    count_only: bool,
+) -> None:
+    """List books of deposited contracts."""
+    _list_books(
+        fetch=lambda client: client.find_book_of_dc(
+            search=search, office_id=office, institution_name=institution
+        ),
+        status=_("Fetching books of deposited contracts..."),
+        empty=_("No books of deposited contracts found"),
+        count=lambda n: _("Found {count} book(s)").format(count=n),
+        heading=lambda n: _("\n{count} book(s) of deposited contracts:\n").format(count=n),
+        table_row=lambda book: {
+            _("Book ID"): book.book_id,
+            _("Name"): book.book_name,
+            _("Land registry office"): book.office_name or _("N/A"),
+            _("Office ID"): book.office_id or _("N/A"),
+        },
+        export_row=lambda book: {
+            "book_id": book.book_id,
+            "book_name": book.book_name,
+            "office_name": book.office_name,
+            "office_id": book.office_id,
+            "display_name": book.display_value1,
+        },
+        output_format=output_format,
+        output=output,
+        count_only=count_only,
+    )
+
+
+def _list_books(
+    *,
+    fetch: Callable[[CadastralAPIClient], Sequence[Any]],
+    status: str,
+    empty: str,
+    count: Callable[[int], str],
+    heading: Callable[[int], str],
+    table_row: Callable[[Any], dict[str, Any]],
+    export_row: Callable[[Any], dict[str, Any]],
+    output_format: str,
+    output: str | None,
+    count_only: bool,
+) -> None:
+    """Fetch a list of land registry books and print it (shared by the two list commands)."""
+    try:
+        with CadastralAPIClient() as client:
+            with console.status(status):
+                books = fetch(client)
+
+            if not books:
+                console.print(empty, style="yellow")
+                return
+
+            if count_only:
+                console.print(count(len(books)), style="green")
+                return
+
+            if output_format == "table":
+                console.print(heading(len(books)), style="green")
+                print_output([table_row(book) for book in books], output_format="table")
+            else:
+                print_output(
+                    [export_row(book) for book in books], output_format=output_format, file=output
+                )
+
+    except CadastralAPIError as e:
+        print_error(_("API error: {error}").format(error=describe_error(e)))
+        raise SystemExit(1) from e
+
+
 _INFO_HELP = command_help(_("""Display system information and cache status.
 
 Example:
@@ -242,6 +413,9 @@ def info(ctx: click.Context) -> None:
             ))
             console.print(_("Timeout: {timeout} seconds").format(
                 timeout=client.timeout
+            ))
+            console.print(_("Unknown server fields: {policy}").format(
+                policy=client.unknown_fields
             ))
             console.print()
 

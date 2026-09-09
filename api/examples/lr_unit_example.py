@@ -57,7 +57,7 @@ def main():
         summary_table.add_row("Total Parcels", str(summary["total_parcels"]))
         summary_table.add_row("Total Area", f"{summary['total_area_m2']} m²")
         summary_table.add_row("Number of Owners", str(summary["num_owners"]))
-        summary_table.add_row("Has Encumbrances", "Yes" if summary["has_encumbrances"] else "No")
+        summary_table.add_row("Sheet C entries", "Yes" if summary["has_sheet_c_entries"] else "No")
 
         console.print(summary_table)
         console.print()
@@ -112,7 +112,7 @@ def main():
         # Example 4: Show encumbrances (Sheet C)
         console.print("\n[bold]Example 4: Encumbrances (Sheet C)[/bold]\n")
 
-        if lr_unit.has_encumbrances():
+        if lr_unit.has_sheet_c_entries():
             enc_table = Table(title="ENCUMBRANCES SHEET (LIST C)", box=None)
             enc_table.add_column("Description", style="yellow")
             enc_table.add_column("Details")

@@ -1,0 +1,51 @@
+{
+  "parcelId": 6566217,
+  "parcelNumber": "1139/4",
+  "cadMunicipalityId": 2387,
+  "cadMunicipalityRegNum": "334979",
+  "cadMunicipalityName": "SAVAR",
+  "institutionId": 114,
+  "address": "RIPIŠĆE",
+  "area": "1848665",
+  "buildingRemark": 0,
+  "detailSheetNumber": "12",
+  "hasBuildingRight": false,
+  "parcelParts": [
+    {
+      "parcelPartId": 74358799,
+      "name": "PAŠNJAK",
+      "area": "1848665",
+      "possessionSheetId": 14824010,
+      "possessionSheetNumber": "788",
+      "building": false
+    }
+  ],
+  "possessionSheets": [
+    {
+      "possessionSheetId": 14824010,
+      "possessionSheetNumber": "788",
+      "cadMunicipalityId": 2387,
+      "possessors": [
+        {
+          "name": "Posjednik 1",
+          "address": "Adresa 1"
+        }
+      ]
+    }
+  ],
+  "lrUnit": {
+    "lrUnitId": 13122572,
+    "lrUnitNumber": "788",
+    "mainBookId": 21277,
+    "status": "0",
+    "verificated": false,
+    "condominiums": false
+  },
+  "isAdditionalDataSet": false,
+  "legalRegime": false,
+  "graphic": true,
+  "alphaNumeric": true,
+  "status": 0,
+  "resourceCode": 0,
+  "isHarmonized": true
+}

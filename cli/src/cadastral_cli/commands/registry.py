@@ -7,6 +7,7 @@ from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
+from cadastral_api.utils import display_parcel_number
 from rich.console import Console
 
 from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
@@ -26,6 +27,9 @@ Examples:
   # Get by unit number and main book ID
   cadastral get-lr-unit --unit-number 769 --main-book 21277
 
+  # Get by unit number and main book name (resolved through the main-book search)
+  cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR
+
   # Get from parcel (automatic lookup)
   cadastral get-lr-unit --from-parcel 279/6 -m SAVAR
 
@@ -38,12 +42,16 @@ Examples:
   # Export to JSON
   cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
 
-⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"""))
+⚠️  Demo project: before using any server other than the included mock, verify
+your rights to use it; use at your own risk"""))
 
 
 @click.command("get-lr-unit", help=_GET_LR_UNIT_HELP)
 @click.option("--unit-number", "-u", help=_("Land registry unit number (e.g., '769')"))
 @click.option("--main-book", "-b", type=int, help=_("Main book ID (e.g., 21277)"))
+@click.option(
+    "--main-book-name", "-n", help=_("Main book name (e.g., SAVAR), used instead of the ID")
+)
 @click.option("--from-parcel", "-p", help=_("Get LR unit from parcel number"))
 @click.option(
     "--municipality", "-m", help=_("Municipality name or code (required with --from-parcel)")
@@ -72,6 +80,7 @@ def get_lr_unit(
     ctx: click.Context,
     unit_number: str | None,
     main_book: int | None,
+    main_book_name: str | None,
     from_parcel: str | None,
     municipality: str | None,
     show_owners: bool,
@@ -88,11 +97,14 @@ def get_lr_unit(
         if not municipality:
             print_error(_("--municipality is required when using --from-parcel"))
             raise SystemExit(1)
-        if unit_number or main_book:
+        if unit_number or main_book or main_book_name:
             print_error(_("Cannot use --unit-number or --main-book with --from-parcel"))
             raise SystemExit(1)
-    elif not (unit_number and main_book):
-        print_error(_("Either --from-parcel or both --unit-number and --main-book are required"))
+    elif not (unit_number and (main_book or main_book_name)):
+        print_error(
+            _("Either --from-parcel or --unit-number with --main-book or --main-book-name "
+              "are required")
+        )
         raise SystemExit(1)
 
     try:
@@ -108,7 +120,9 @@ def get_lr_unit(
                 with console.status(_("Fetching land registry unit {unit}...").format(
                     unit=unit_number
                 )):
-                    lr_unit = client.get_lr_unit_detailed(unit_number, main_book)
+                    lr_unit = client.get_lr_unit_detailed(
+                        unit_number, main_book, main_book_name=main_book_name
+                    )
 
             # Resolve plomba detail on request (one extra request per plomba).
             plombe_details = None
@@ -150,10 +164,44 @@ def get_lr_unit(
                     )
 
     except CadastralAPIError as e:
+        reason = e.details.get("reason")
         if e.error_type == ErrorType.LR_UNIT_NOT_FOUND:
-            print_error(_("Land registry unit not found"))
+            if reason == "parcel_not_in_land_registry" and e.details.get("is_building_parcel"):
+                print_error(
+                    _("Building parcel {parcel} has no land registry unit of its own; "
+                      "the building is registered on its land parcel").format(
+                        parcel=display_parcel_number(e.details.get("parcel_number", from_parcel))
+                    )
+                )
+            elif reason == "main_book_ambiguous":
+                print_error(
+                    _("Main book name '{name}' matches several books: {candidates}. "
+                      "Use --main-book with the ID").format(
+                        name=main_book_name, candidates=e.details.get("candidates", "")
+                    )
+                )
+            elif reason == "main_book_not_found":
+                print_error(_("Main book '{name}' not found").format(name=main_book_name))
+            elif reason == "lr_unit_ambiguous":
+                print_error(
+                    _("Parcel {parcel} is linked to several land registry units: {candidates}. "
+                      "Use --unit-number and --main-book to choose one").format(
+                        parcel=e.details.get("parcel_number", from_parcel),
+                        candidates=e.details.get("candidates", ""),
+                    )
+                )
+            else:
+                print_error(_("Land registry unit not found"))
         elif e.error_type == ErrorType.PARCEL_NOT_FOUND:
-            print_error(_("Parcel not found"))
+            if reason == "only_building_parcel_exists":
+                print_error(
+                    _("There is no land parcel {parcel}, only the building parcel zgr. {parcel}. "
+                      "Write it as '{parcel} ZGR'").format(
+                        parcel=e.details.get("parcel_number", from_parcel)
+                    )
+                )
+            else:
+                print_error(_("Parcel not found"))
         else:
             print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
@@ -177,6 +225,9 @@ def _format_structured_data(
         "last_diary_number": lr_unit.last_diary_number,
         "active_plumbs": [p.model_dump(by_alias=False) for p in lr_unit.active_plumbs],
         "cadastre_harmonized": lr_unit.cadastre_harmonized,
+        # Which key the server used for sheet A1: lrParcels (land-register
+        # records, address = culture/toponym) or cadParcels (cadastre records).
+        "source_key": lr_unit.sheet_a1_source_key,
     }
 
     # Plomba detail (only when --plombe-detail was requested and resolved).
@@ -190,9 +241,12 @@ def _format_structured_data(
     summary = lr_unit.summary()
     data["summary"] = summary
 
-    # Add owners if requested
+    # Add owners if requested. Each row carries ``entry``, the registration
+    # entry that put the owner on the share; ``share_entries`` are the
+    # annotations (zabilježbe) registered on individual shares.
     if show_owners or show_all:
         data["owners"] = lr_unit.ownership_sheet_b.owner_rows()
+        data["share_entries"] = lr_unit.ownership_sheet_b.share_entry_rows()
 
     # Add parcels if requested
     if show_parcels or show_all:
@@ -200,8 +254,19 @@ def _format_structured_data(
         for parcel in lr_unit.get_all_parcels():
             parcels.append({
                 "parcel_number": parcel.parcel_number,
+                "parcel_id": parcel.parcel_id,
                 "area": parcel.area_numeric,
                 "address": parcel.address,
+                "parcel_parts": [
+                    {
+                        "type": part.name,
+                        "area": part.area_numeric,
+                        "has_building": part.building,
+                        "part_type": part.part_type,
+                        "building_right": part.building_right,
+                    }
+                    for part in parcel.parcel_parts
+                ],
             })
         data["parcels"] = parcels
 
@@ -219,6 +284,15 @@ def _format_structured_data(
                     "entry_date": entry.entry_date.isoformat() if entry.entry_date else None,
                     "basis_document": entry.basis_document,
                     "basis_date": entry.basis_date.isoformat() if entry.basis_date else None,
+                    "priority_diary_number": entry.priority_diary_number,
+                    "description_text": entry.description_text,
+                    "style_class": entry.style_class,
+                    # Secured amount of a mortgage or lien, as sent and parsed
+                    "amount": entry.amount,
+                    "amount_value": (
+                        float(entry.amount_value) if entry.amount_value is not None else None
+                    ),
+                    "amount_currency": entry.amount_currency,
                     "beneficiaries": [
                         {
                             "name": p.name,

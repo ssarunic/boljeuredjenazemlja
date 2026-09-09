@@ -50,6 +50,11 @@ JSON_COMMANDS = [
     "get-geometry 103/2 -m SAVAR",
     "list-offices",
     "list-municipalities --office 114",
+    "list-main-books --search SAVAR",
+    "list-books-of-dc --search ZADAR",
+    "search-possession-sheet 363 -m SAVAR",
+    "get-lr-unit --unit-number 13998 --main-book 30783 --all",
+    "get-parcel 35/1.ZGR -m SAVAR --detail full",
 ]
 CSV_COMMANDS = [
     "search 103/2 -m SAVAR",

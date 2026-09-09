@@ -86,8 +86,10 @@ STRINGS = {
         "lang_name": "English",
         "disclaimer": (
             "**Practice data only.** This tool is a demonstration. It works with the "
-            "practice server that comes with it and must not be connected to the official "
-            "Croatian cadastre or land registry. Nothing shown on this page is real property data."
+            "practice server that comes with it. Before connecting it to any other server, "
+            "including the official Croatian cadastre and land registry, verify that you have "
+            "the rights to use that server and its data; you do so at your own risk. Nothing "
+            "shown on this page is real property data."
         ),
         "generated": (
             "Generated from `cadastral {version}` by `scripts/build_docs.py`. Text "
@@ -122,9 +124,10 @@ STRINGS = {
         "lang_name": "Hrvatski",
         "disclaimer": (
             "**Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim "
-            "poslužiteljem koji dolazi uz njega i ne smije se spajati na službeni katastar ni "
-            "zemljišne knjige Republike Hrvatske. Ništa na ovoj stranici nisu stvarni podaci "
-            "o nekretninama."
+            "poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, "
+            "uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite "
+            "imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu "
+            "odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama."
         ),
         "generated": (
             "Izrađeno iz `cadastral {version}` skriptom `scripts/build_docs.py`. Tekst "

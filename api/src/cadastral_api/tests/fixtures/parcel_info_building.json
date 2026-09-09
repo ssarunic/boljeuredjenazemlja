@@ -1,0 +1,49 @@
+{
+  "parcelId": 6564691,
+  "parcelNumber": "*35/1",
+  "cadMunicipalityId": 2387,
+  "cadMunicipalityRegNum": "334979",
+  "cadMunicipalityName": "SAVAR",
+  "institutionId": 114,
+  "address": "SELO",
+  "area": "126",
+  "buildingRemark": 1,
+  "detailSheetNumber": "4",
+  "hasBuildingRight": false,
+  "parcelParts": [
+    {
+      "parcelPartId": 1838319,
+      "name": "KUĆA, SELO",
+      "type": "Zgrada",
+      "area": "126",
+      "possessionSheetId": 2688455,
+      "possessionSheetNumber": "132",
+      "buildingRight": 0,
+      "building": true
+    }
+  ],
+  "possessionSheets": [
+    {
+      "possessionSheetId": 2688455,
+      "possessionSheetNumber": "132",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 113",
+          "ownership": "1/1",
+          "address": "Adresa 74"
+        }
+      ]
+    }
+  ],
+  "parcelLinks": [],
+  "isAdditionalDataSet": false,
+  "legalRegime": false,
+  "graphic": true,
+  "alphaNumeric": true,
+  "status": 0,
+  "resourceCode": 2,
+  "isHarmonized": false
+}

@@ -4,11 +4,10 @@ Model Context Protocol (MCP) server for querying Croatian cadastral and land reg
 
 ## ⚠️ Important Notice
 
-**This MCP server is for educational and demonstration purposes only.**
+**This MCP server is an educational demonstration.**
 
 - ✅ **Default Configuration**: Connects to `http://localhost:8000` (mock test server)
-- ❌ **Production Systems**: DO NOT configure to use Croatian government APIs
-- ⚠️ **Terms of Service**: Using this with production systems violates Croatian government ToS and involves sensitive personal data
+- ⚠️ **Other servers**: Before configuring any other server, including the Croatian government APIs, verify that you have the rights to use it and its data (terms of service, data protection). You do so at your own risk; see `docs/legal.md`
 
 ## 📖 For Claude Desktop Users
 
@@ -61,6 +60,9 @@ The AI decides when to invoke these based on user queries:
 **Lookup Operations:**
 - **`resolve_municipality`** - Convert municipality names to codes
 - **`list_cadastral_offices`** - List available cadastral offices
+- **`find_main_book`** - Find land registry main books (glavne knjige) by name, office or institution; gives the `main_book_id` for `get_lr_unit`
+- **`find_book_of_dc`** - Find books of deposited contracts (knjige položenih ugovora, KPU)
+- **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number
 
 #### When to Use Batch Operations
 
@@ -156,7 +158,7 @@ MCP_HTTP_HOST=127.0.0.1
 MCP_HTTP_PORT=8080
 ```
 
-**⚠️ Never configure production API URLs in this file.**
+**⚠️ Configure another API URL only after verifying your rights to use that server (see `docs/legal.md`); use at your own risk.**
 
 ## Usage
 

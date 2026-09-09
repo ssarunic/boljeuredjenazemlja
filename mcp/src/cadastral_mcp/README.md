@@ -35,7 +35,7 @@ See [docs/MCP_SERVER.md](../../docs/MCP_SERVER.md) for complete documentation in
 
 ## ⚠️ Important
 
-This MCP server is for **educational/demonstration purposes only**. It connects to `http://localhost:8000` (mock server) by default. Do NOT configure it to use Croatian government production systems.
+This MCP server is an **educational demonstration**. It connects to `http://localhost:8000` (mock server) by default. Before configuring any other server, including the Croatian government systems, verify that you have the rights to use it and its data; you do so at your own risk (see `docs/legal.md`).
 
 ## Architecture
 

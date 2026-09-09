@@ -5,7 +5,7 @@
   "cadMunicipalityRegNum": "334979",
   "cadMunicipalityName": "SAVAR",
   "institutionId": 114,
-  "address": "REDACTED",
+  "address": "OVČJA",
   "area": "1618",
   "buildingRemark": 0,
   "detailSheetNumber": "7",
@@ -13,7 +13,7 @@
   "parcelParts": [
     {
       "parcelPartId": 64022942,
-      "name": "REDACTED",
+      "name": "VINOGRAD",
       "area": "809",
       "possessionSheetId": 11731543,
       "possessionSheetNumber": "363",
@@ -23,7 +23,7 @@
     },
     {
       "parcelPartId": 64022943,
-      "name": "REDACTED",
+      "name": "VINOGRAD",
       "area": "809",
       "possessionSheetId": 11731543,
       "possessionSheetNumber": "363",
@@ -42,566 +42,566 @@
       "possessionSheetTypeId": 1,
       "possessors": [
         {
-          "name": "REDACTED",
+          "name": "Posjednik 2",
           "ownership": "1/128"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 3",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 4",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 5",
           "ownership": "9/600",
-          "address": "REDACTED"
+          "address": "Adresa 2"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 6",
           "ownership": "1/128"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 7",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 3"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 8",
           "ownership": "5/3584",
-          "address": "REDACTED"
+          "address": "Adresa 4"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 9",
           "ownership": "9/6400",
-          "address": "REDACTED"
+          "address": "Adresa 5"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 10",
           "ownership": "1/192",
-          "address": "REDACTED"
+          "address": "Adresa 6"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 11",
           "ownership": "1/1152",
-          "address": "REDACTED"
+          "address": "Adresa 7"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 12",
           "ownership": "1/48",
-          "address": "REDACTED"
+          "address": "Adresa 8"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 13",
           "ownership": "1/144",
-          "address": "REDACTED"
+          "address": "Adresa 9"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 14",
           "ownership": "15/7680",
-          "address": "REDACTED"
+          "address": "Adresa 10"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 15",
           "ownership": "32/7680",
-          "address": "REDACTED"
+          "address": "Adresa 11"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 16",
           "ownership": "160/7680",
-          "address": "REDACTED"
+          "address": "Adresa 12"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 17",
           "ownership": "1/112"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 18",
           "ownership": "1/112"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 19",
           "ownership": "240/7680",
-          "address": "REDACTED"
+          "address": "Adresa 13"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 20",
           "ownership": "60/7680",
-          "address": "REDACTED"
+          "address": "Adresa 14"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 21",
           "ownership": "15/1792",
-          "address": "REDACTED"
+          "address": "Adresa 15"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 22",
           "ownership": "2/80",
-          "address": "REDACTED"
+          "address": "Adresa 13"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 23",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 24",
           "ownership": "1/128"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 25",
           "ownership": "15/3584",
-          "address": "REDACTED"
+          "address": "Adresa 16"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 26",
           "ownership": "1/288",
-          "address": "REDACTED"
+          "address": "Adresa 17"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 27",
           "ownership": "1/1152",
-          "address": "REDACTED"
+          "address": "Adresa 18"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 28",
           "ownership": "1/144",
-          "address": "REDACTED"
+          "address": "Adresa 19"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 29",
           "ownership": "32/7680",
-          "address": "REDACTED"
+          "address": "Adresa 20"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 30",
           "ownership": "1/80"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 31",
           "ownership": "7/360"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 32",
           "ownership": "3/1920",
-          "address": "REDACTED"
+          "address": "Adresa 21"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 33",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 22"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 34",
           "ownership": "27/6400",
-          "address": "REDACTED"
+          "address": "Adresa 23"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 35",
           "ownership": "1/256",
-          "address": "REDACTED"
+          "address": "Adresa 24"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 36",
           "ownership": "1/240"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 37",
           "ownership": "2/240",
-          "address": "REDACTED"
+          "address": "Adresa 13"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 38",
           "ownership": "1/240",
-          "address": "REDACTED"
+          "address": "Adresa 13"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 39",
           "ownership": "1/48",
-          "address": "REDACTED"
+          "address": "Adresa 25"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 40",
           "ownership": "80/7680",
-          "address": "REDACTED"
+          "address": "Adresa 26"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 41",
           "ownership": "1/192",
-          "address": "REDACTED"
+          "address": "Adresa 27"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 42",
           "ownership": "1/224",
-          "address": "REDACTED"
+          "address": "Adresa 28"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 43",
           "ownership": "1/144",
-          "address": "REDACTED"
+          "address": "Adresa 29"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 44",
           "ownership": "1/1152",
-          "address": "REDACTED"
+          "address": "Adresa 18"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 45",
           "ownership": "1/144",
-          "address": "REDACTED"
+          "address": "Adresa 30"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 46",
           "ownership": "60/7680",
-          "address": "REDACTED"
+          "address": "Adresa 31"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 47",
           "ownership": "15/7680",
-          "address": "REDACTED"
+          "address": "Adresa 32"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 48",
           "ownership": "1/480",
-          "address": "REDACTED"
+          "address": "Adresa 33"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 49",
           "ownership": "1/112"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 50",
           "ownership": "1/320",
-          "address": "REDACTED"
+          "address": "Adresa 34"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 35",
           "ownership": "60/7680",
-          "address": "REDACTED"
+          "address": "Adresa 24"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 51",
           "ownership": "120/7680",
-          "address": "REDACTED"
+          "address": "Adresa 35"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 52",
           "ownership": "1/576",
-          "address": "REDACTED"
+          "address": "Adresa 36"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 53",
           "ownership": "1/128"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 54",
           "ownership": "3/120"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 55",
           "ownership": "1/960"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 56",
           "ownership": "7/1728",
-          "address": "REDACTED"
+          "address": "Adresa 37"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 57",
           "ownership": "1/36",
-          "address": "REDACTED"
+          "address": "Adresa 38"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 58",
           "ownership": "15/7680",
-          "address": "REDACTED"
+          "address": "Adresa 10"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 59",
           "ownership": "1/320",
-          "address": "REDACTED"
+          "address": "Adresa 39"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 60",
           "ownership": "1/320",
-          "address": "REDACTED"
+          "address": "Adresa 40"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 61",
           "ownership": "60/7680",
-          "address": "REDACTED"
+          "address": "Adresa 41"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 51",
           "ownership": "1/192",
-          "address": "REDACTED"
+          "address": "Adresa 42"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 62",
           "ownership": "9/1600"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 63",
           "ownership": "3/1600"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 64",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 65",
           "ownership": "1/48"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 66",
           "ownership": "1/48"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 67",
           "ownership": "240/7680",
-          "address": "REDACTED"
+          "address": "Adresa 43"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 68",
           "ownership": "80/7680",
-          "address": "REDACTED"
+          "address": "Adresa 44"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 69",
           "ownership": "15/3584",
-          "address": "REDACTED"
+          "address": "Adresa 45"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 70",
           "ownership": "15/3584",
-          "address": "REDACTED"
+          "address": "Adresa 46"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 71",
           "ownership": "5/3584",
-          "address": "REDACTED"
+          "address": "Adresa 47"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 72",
           "ownership": "7/1728",
-          "address": "REDACTED"
+          "address": "Adresa 48"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 73",
           "ownership": "9/6400",
-          "address": "REDACTED"
+          "address": "Adresa 49"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 74",
           "ownership": "1/1152",
-          "address": "REDACTED"
+          "address": "Adresa 50"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 75",
           "ownership": "15/7680",
-          "address": "REDACTED"
+          "address": "Adresa 32"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 76",
           "ownership": "1/80"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 77",
           "ownership": "15/896"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 78",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 51"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 79",
           "ownership": "27/6400",
-          "address": "REDACTED"
+          "address": "Adresa 52"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 80",
           "ownership": "1/240"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 81",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 53"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 82",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 54"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 83",
           "ownership": "7/1728",
-          "address": "REDACTED"
+          "address": "Adresa 55"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 84",
           "ownership": "7/768",
-          "address": "REDACTED"
+          "address": "Adresa 56"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 85",
           "ownership": "1/192",
-          "address": "REDACTED"
+          "address": "Adresa 27"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 86",
           "ownership": "7/1080",
-          "address": "REDACTED"
+          "address": "Adresa 57"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 87",
           "ownership": "7/1080",
-          "address": "REDACTED"
+          "address": "Adresa 58"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 88",
           "ownership": "1/576",
-          "address": "REDACTED"
+          "address": "Adresa 59"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 89",
           "ownership": "9/1600"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 22",
           "ownership": "1/120",
-          "address": "REDACTED"
+          "address": "Adresa 13"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 90",
           "ownership": "9/120"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 91",
           "ownership": "9/600",
-          "address": "REDACTED"
+          "address": "Adresa 60"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 92",
           "ownership": "9/720"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 93",
           "ownership": "2/48"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 42",
           "ownership": "1/256",
-          "address": "REDACTED"
+          "address": "Adresa 28"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 94",
           "ownership": "1/224",
-          "address": "REDACTED"
+          "address": "Adresa 61"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 95",
           "ownership": "7/1728",
-          "address": "REDACTED"
+          "address": "Adresa 62"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 96",
           "ownership": "32/7680"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 60",
           "ownership": "1/80",
-          "address": "REDACTED"
+          "address": "Adresa 40"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 97",
           "ownership": "3/1920",
-          "address": "REDACTED"
+          "address": "Adresa 63"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 98",
           "ownership": "3/200",
-          "address": "REDACTED"
+          "address": "Adresa 64"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 99",
           "ownership": "15/1792",
-          "address": "REDACTED"
+          "address": "Adresa 65"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 100",
           "ownership": "27/6400",
-          "address": "REDACTED"
+          "address": "Adresa 66"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 101",
           "ownership": "7/2160"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 102",
           "ownership": "1/480"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 103",
           "ownership": "1/240"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 104",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 105",
           "ownership": "1/96"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 106",
           "ownership": "80/7680",
-          "address": "REDACTED"
+          "address": "Adresa 26"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 33",
           "ownership": "1/576",
-          "address": "REDACTED"
+          "address": "Adresa 67"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 94",
           "ownership": "1/256",
-          "address": "REDACTED"
+          "address": "Adresa 61"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 107",
           "ownership": "9/6400",
-          "address": "REDACTED"
+          "address": "Adresa 68"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 108",
           "ownership": "32/7680",
-          "address": "REDACTED"
+          "address": "Adresa 69"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 109",
           "ownership": "32/7680",
-          "address": "REDACTED"
+          "address": "Adresa 11"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 110",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 70"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 52",
           "ownership": "40/7680",
-          "address": "REDACTED"
+          "address": "Adresa 71"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 111",
           "ownership": "5/3584",
-          "address": "REDACTED"
+          "address": "Adresa 72"
         },
         {
-          "name": "REDACTED",
+          "name": "Posjednik 112",
           "ownership": "7/1080",
-          "address": "REDACTED"
+          "address": "Adresa 73"
         }
       ]
     }
@@ -610,7 +610,7 @@
     {
       "parcelId": 36370854,
       "parcelNumber": "1122/1",
-      "address": "REDACTED",
+      "address": "OVČJA",
       "area": "3291",
       "lrUnit": {
         "lrUnitId": 12337536,

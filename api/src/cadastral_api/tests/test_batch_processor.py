@@ -30,7 +30,7 @@ def mock_parcel_info():
     parcel.municipality_name = "SAVAR"
     parcel.area_numeric = 5000
     parcel.has_building_right = True
-    parcel.total_owners = 2
+    parcel.total_possessors = 2
     parcel.possession_sheets = []
     parcel.land_use_summary = {}
     parcel.address = "Test Address"
@@ -58,7 +58,7 @@ class TestBatchResult:
         assert data["parcel_id"] == "12345678"
         assert data["area_m2"] == 5000
         assert data["building_permitted"] is True
-        assert data["total_owners"] == 2
+        assert data["total_possessors"] == 2
 
     def test_error_result_to_dict(self):
         """Test converting error result to dict."""

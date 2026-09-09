@@ -1,13 +1,5 @@
 [
   {
-    "key1": "2387",
-    "value1": "334979 SAVAR",
-    "key2": "334979",
-    "value2": "114",
-    "value3": "116",
-    "displayValue1": "334979 SAVAR, ZADAR, PUK ZADAR"
-  },
-  {
     "key1": "2155",
     "value1": "334731 LUKA",
     "key2": "334731",
@@ -107,7 +99,7 @@
     "key1": "4012",
     "value1": "227722 TROGIR",
     "key2": "227722",
-    "value2": "89",
+    "value2": "141",
     "value3": "91",
     "displayValue1": "227722 TROGIR, SPLIT, PUK SPLIT"
   },
@@ -115,7 +107,7 @@
     "key1": "4156",
     "value1": "334631 SEGET",
     "key2": "334631",
-    "value2": "89",
+    "value2": "141",
     "value3": "91",
     "displayValue1": "334631 SEGET, SPLIT, PUK SPLIT"
   },
@@ -123,7 +115,7 @@
     "key1": "4289",
     "value1": "337561 KAŠTELA",
     "key2": "337561",
-    "value2": "89",
+    "value2": "141",
     "value3": "91",
     "displayValue1": "337561 KAŠTELA, SPLIT, PUK SPLIT"
   },
@@ -131,7 +123,7 @@
     "key1": "4423",
     "value1": "445891 SOLIN",
     "key2": "445891",
-    "value2": "89",
+    "value2": "141",
     "value3": "91",
     "displayValue1": "445891 SOLIN, SPLIT, PUK SPLIT"
   },
@@ -139,7 +131,7 @@
     "key1": "4567",
     "value1": "229301 KLIS",
     "key2": "229301",
-    "value2": "89",
+    "value2": "141",
     "value3": "91",
     "displayValue1": "229301 KLIS, SPLIT, PUK SPLIT"
   },
@@ -147,7 +139,7 @@
     "key1": "5012",
     "value1": "332968 OMIŠ",
     "key2": "332968",
-    "value2": "89",
+    "value2": "141",
     "value3": "92",
     "displayValue1": "332968 OMIŠ, SPLIT, PUK SPLIT"
   },
@@ -155,7 +147,7 @@
     "key1": "5145",
     "value1": "228176 DUGI RAT",
     "key2": "228176",
-    "value2": "89",
+    "value2": "141",
     "value3": "92",
     "displayValue1": "228176 DUGI RAT, SPLIT, PUK SPLIT"
   },
@@ -163,7 +155,7 @@
     "key1": "5289",
     "value1": "332275 MAKARSKA",
     "key2": "332275",
-    "value2": "89",
+    "value2": "141",
     "value3": "93",
     "displayValue1": "332275 MAKARSKA, SPLIT, PUK SPLIT"
   },
@@ -171,7 +163,7 @@
     "key1": "5423",
     "value1": "223115 BRELA",
     "key2": "223115",
-    "value2": "89",
+    "value2": "141",
     "value3": "93",
     "displayValue1": "223115 BRELA, SPLIT, PUK SPLIT"
   },
@@ -179,7 +171,7 @@
     "key1": "5567",
     "value1": "226734 BAŠKA VODA",
     "key2": "226734",
-    "value2": "89",
+    "value2": "141",
     "value3": "93",
     "displayValue1": "226734 BAŠKA VODA, SPLIT, PUK SPLIT"
   },
@@ -187,7 +179,7 @@
     "key1": "6012",
     "value1": "332577 KORČULA",
     "key2": "332577",
-    "value2": "104",
+    "value2": "165",
     "value3": "106",
     "displayValue1": "332577 KORČULA, DUBROVNIK, PUK DUBROVNIK"
   },
@@ -195,7 +187,7 @@
     "key1": "6145",
     "value1": "331368 LASTOVO",
     "key2": "331368",
-    "value2": "104",
+    "value2": "165",
     "value3": "106",
     "displayValue1": "331368 LASTOVO, DUBROVNIK, PUK DUBROVNIK"
   },
@@ -203,7 +195,7 @@
     "key1": "6289",
     "value1": "331856 MLJET",
     "key2": "331856",
-    "value2": "104",
+    "value2": "165",
     "value3": "107",
     "displayValue1": "331856 MLJET, DUBROVNIK, PUK DUBROVNIK"
   },
@@ -211,7 +203,7 @@
     "key1": "6423",
     "value1": "332844 KONAVLE",
     "key2": "332844",
-    "value2": "104",
+    "value2": "165",
     "value3": "107",
     "displayValue1": "332844 KONAVLE, DUBROVNIK, PUK DUBROVNIK"
   },
@@ -219,7 +211,7 @@
     "key1": "6567",
     "value1": "337453 DUBROVNIK",
     "key2": "337453",
-    "value2": "104",
+    "value2": "165",
     "value3": "107",
     "displayValue1": "337453 DUBROVNIK, DUBROVNIK, PUK DUBROVNIK"
   },
@@ -227,7 +219,7 @@
     "key1": "7012",
     "value1": "225335 ROVINJ",
     "key2": "225335",
-    "value2": "145",
+    "value2": "163",
     "value3": "147",
     "displayValue1": "225335 ROVINJ, PULA, PUK PULA"
   },
@@ -235,8 +227,16 @@
     "key1": "7145",
     "value1": "332224 POREČ",
     "key2": "332224",
-    "value2": "145",
+    "value2": "163",
     "value3": "147",
     "displayValue1": "332224 POREČ, PULA, PUK PULA"
+  },
+  {
+    "key1": "2387",
+    "value1": "334979 SAVAR",
+    "key2": "334979",
+    "value2": "114",
+    "value3": "116",
+    "displayValue1": "334979 SAVAR, ZADAR, PUK ZADAR"
   }
 ]

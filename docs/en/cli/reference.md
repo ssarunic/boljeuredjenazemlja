@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 **English** | [Hrvatski](../../hr/cli/reference.md)
 
-> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it and must not be connected to the official Croatian cadastre or land registry. Nothing shown on this page is real property data.
+> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
 > Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
@@ -39,6 +39,12 @@ Every command, with a link to its page. The command is what you type; the link i
 - `cadastral cache list`: [See which municipalities are stored on your computer](commands/cache-list.md). List cached municipalities.
 - `cadastral cache info`: [See how much boundary data is stored](commands/cache-info.md). Show detailed cache information.
 - `cadastral cache clear`: [Remove stored boundary data](commands/cache-clear.md). Clear cached GIS data.
+
+## Other
+
+- `cadastral list-books-of-dc`: [List the books of deposited contracts](commands/list-books-of-dc.md). List books of deposited contracts (knjige položenih ugovora, KPU).
+- `cadastral list-main-books`: [Find the main book of a cadastral municipality](commands/list-main-books.md). List land registry main books (glavne knjige).
+- `cadastral search-possession-sheet`: [Find a possession sheet by its number](commands/search-possession-sheet.md). Find a possession sheet (posjedovni list) by number.
 <!-- END GENERATED: reference -->
 
 ## Other pages

@@ -6,9 +6,10 @@ its encumbrances and pending entries, and export parcel boundaries for GIS tools
 
 > **Demonstration project with practice data.** This repository shows how a modern
 > cadastral API could work. It ships with a mock server, and every example here runs
-> against it. It must not be connected to the official Croatian cadastre or land
-> registry: that would breach their terms of service and touch sensitive personal
-> data. Full terms in [docs/legal.md](docs/legal.md).
+> against it. Before pointing it at any other server, including the official Croatian
+> cadastre and land registry, verify that you have the rights to use that server and
+> its data (terms of service, data protection). You do so at your own risk. Full terms
+> in [docs/legal.md](docs/legal.md).
 
 Requires Python 3.12 or newer.
 

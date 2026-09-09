@@ -2,10 +2,10 @@
   "lrUnitId": 13122553,
   "lrUnitNumber": "769",
   "mainBookId": 21277,
-  "mainBookName": "TESTMUNICIPALITY",
+  "mainBookName": "SAVAR",
   "cadastreMunicipalityId": 2387,
   "institutionId": 284,
-  "institutionName": "Test Land Registry Office",
+  "institutionName": "Zemljišnoknjižni odjel Zadar",
   "status": "0",
   "statusName": "Aktivan",
   "verificated": true,
@@ -21,7 +21,7 @@
         "lrOwners": [
           {
             "lrOwnerId": 60930291,
-            "name": "Test Owner A",
+            "name": "Vlasnik 117",
             "lrEntry": {
               "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
               "orderNumber": "1.1"
@@ -34,35 +34,18 @@
         "orderNumber": "1"
       },
       {
-        "description": "2. Suvlasnički dio: 1/8",
-        "lrOwners": [
-          {
-            "lrOwnerId": 60930293,
-            "name": "Test Owner B",
-            "lrEntry": {
-              "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
-              "orderNumber": "2.1"
-            }
-          }
-        ],
-        "lrUnitShareId": 46503705,
-        "subSharesAndEntries": [],
-        "status": 0,
-        "orderNumber": "2"
-      },
-      {
         "description": "3. Suvlasnički dio: 1/8",
         "lrOwners": [
           {
-            "lrOwnerId": 60930290,
-            "name": "Test Owner C",
+            "lrOwnerId": 60930293,
+            "name": "Vlasnik 119",
             "lrEntry": {
               "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
               "orderNumber": "3.1"
             }
           }
         ],
-        "lrUnitShareId": 46503706,
+        "lrUnitShareId": 46503705,
         "subSharesAndEntries": [],
         "status": 0,
         "orderNumber": "3"
@@ -71,17 +54,15 @@
         "description": "4. Suvlasnički dio: 1/8",
         "lrOwners": [
           {
-            "lrOwnerId": 60930288,
-            "name": "Test Owner D",
-            "address": "Test Street 123, Test City",
-            "taxNumber": "12345678901",
+            "lrOwnerId": 60930290,
+            "name": "Vlasnik 326",
             "lrEntry": {
-              "description": "Zaprimljeno 14.02.2020.g. pod brojem Z-3937/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU",
+              "description": "Zaprimljeno 05.04.2012.g. pod brojem Z-3983/2012<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA<br><br>IZ ZK ULOŠKA PRENESENI VLASNICI",
               "orderNumber": "4.1"
             }
           }
         ],
-        "lrUnitShareId": 46503707,
+        "lrUnitShareId": 46503706,
         "subSharesAndEntries": [],
         "status": 0,
         "orderNumber": "4"
@@ -90,32 +71,95 @@
         "description": "5. Suvlasnički dio: 1/8",
         "lrOwners": [
           {
-            "lrOwnerId": 60930294,
-            "name": "Test Owner E",
-            "address": "Test Avenue 456, Test City",
-            "taxNumber": "98765432109",
+            "lrOwnerId": 60930288,
+            "name": "Vlasnik 116",
+            "address": "Adresa 31",
+            "taxNumber": "00000000036",
             "lrEntry": {
-              "description": "Zaprimljeno 21.03.2018.g. pod brojem Z-6789/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU",
-              "orderNumber": "5.1"
+              "description": "Zaprimljeno 14.02.2020.g. pod brojem Z-3937/2020<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU POSL.BR. O-4004/19 UPP/OS-109/19-12 20.01.2020",
+              "orderNumber": "5.2"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503707,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "5"
+      },
+      {
+        "description": "6. Suvlasnički dio: 1/24",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930294,
+            "name": "Vlasnik 135",
+            "address": "Adresa 10",
+            "taxNumber": "00000000850",
+            "lrEntry": {
+              "description": "Zaprimljeno 21.03.2018.g. pod brojem Z-6789/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA POSLOVNI BROJ O-2050/17 UPP/OS-53/17 20.11.2017",
+              "orderNumber": "6.1"
             }
           }
         ],
         "lrUnitShareId": 46503708,
         "subSharesAndEntries": [],
         "status": 0,
-        "orderNumber": "5"
+        "orderNumber": "6"
+      },
+      {
+        "description": "7. Suvlasnički dio: 1/24",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930292,
+            "name": "Vlasnik 327",
+            "address": "Adresa 10",
+            "taxNumber": "00000000868",
+            "lrEntry": {
+              "description": "Zaprimljeno 21.03.2018.g. pod brojem Z-6789/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA POSLOVNI BROJ O-2050/17 UPP/OS-53/17 20.11.2017",
+              "orderNumber": "7.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503709,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "7"
+      },
+      {
+        "description": "8. Suvlasnički dio: 1/24",
+        "lrOwners": [
+          {
+            "lrOwnerId": 60930289,
+            "name": "Vlasnik 328",
+            "address": "Adresa 32",
+            "taxNumber": "00000000876",
+            "lrEntry": {
+              "description": "Zaprimljeno 21.03.2018.g. pod brojem Z-6789/2018<br><br>UKNJIŽBA, PRAVO VLASNIŠTVA, RJEŠENJE O NASLJEĐIVANJU OPĆINSKOG SUDA U SPLITU PO JAVNOM BILJEŽNIKU N.N. IZ SPLITA POSLOVNI BROJ O-2050/17 UPP/OS-53/17 20.11.2017",
+              "orderNumber": "8.1"
+            }
+          }
+        ],
+        "lrUnitShareId": 46503710,
+        "subSharesAndEntries": [],
+        "status": 0,
+        "orderNumber": "8"
       }
     ],
     "lrEntries": []
   },
   "possessionSheetA1": {
-    "lrParcels": [
+    "cadParcels": [
       {
         "parcelId": 6564837,
         "parcelNumber": "118/4",
-        "address": "TEST FIELD",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "POLJE",
         "area": "409",
-        "statusInLrUnit": 0,
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
         "parcelParts": [
           {
             "parcelPartId": 74358714,
@@ -125,14 +169,37 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ]
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
       },
       {
         "parcelId": 6564918,
         "parcelNumber": "192/3",
-        "address": "TEST AREA",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "BANIŠINA",
         "area": "322",
-        "statusInLrUnit": 0,
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
         "parcelParts": [
           {
             "parcelPartId": 74358715,
@@ -142,14 +209,197 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ]
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6564927,
+        "parcelNumber": "198/3",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "BANIŠINA",
+        "area": "255",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358716,
+            "name": "ORANICA",
+            "area": "255",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6564936,
+        "parcelNumber": "202/1",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "BANIŠINA",
+        "area": "312",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358717,
+            "name": "MASLINJAK",
+            "area": "312",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6564961,
+        "parcelNumber": "221/6",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "BANIŠINA",
+        "area": "501",
+        "buildingRemark": 0,
+        "detailSheetNumber": "4",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358718,
+            "name": "MASLINJAK",
+            "area": "501",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
+      },
+      {
+        "parcelId": 6565015,
+        "parcelNumber": "267/6",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "BANIŠINA",
+        "area": "680",
+        "buildingRemark": 0,
+        "detailSheetNumber": "1",
+        "hasBuildingRight": false,
+        "parcelParts": [
+          {
+            "parcelPartId": 74358719,
+            "name": "MASLINJAK",
+            "area": "680",
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "building": false
+          }
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
       },
       {
         "parcelId": 6565030,
         "parcelNumber": "279/6",
-        "address": "TEST LOCATION",
+        "cadMunicipalityId": 2387,
+        "cadMunicipalityRegNum": "334979",
+        "cadMunicipalityName": "SAVAR",
+        "institutionId": 114,
+        "address": "VOLUNJAK",
         "area": "1890",
-        "statusInLrUnit": 0,
+        "buildingRemark": 0,
+        "detailSheetNumber": "1",
+        "hasBuildingRight": false,
         "parcelParts": [
           {
             "parcelPartId": 74358720,
@@ -167,7 +417,24 @@
             "possessionSheetNumber": "769",
             "building": false
           }
-        ]
+        ],
+        "possessionSheets": [
+          {
+            "possessionSheetId": 14823991,
+            "possessionSheetNumber": "769",
+            "cadMunicipalityId": 2387,
+            "cadMunicipalityRegNum": "334979",
+            "cadMunicipalityName": "SAVAR",
+            "possessors": []
+          }
+        ],
+        "isAdditionalDataSet": false,
+        "legalRegime": false,
+        "graphic": true,
+        "alphaNumeric": true,
+        "status": 0,
+        "resourceCode": 0,
+        "isHarmonized": false
       }
     ]
   },
@@ -181,7 +448,7 @@
         "shareOrderNumber": "1",
         "lrEntries": [
           {
-            "description": "Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016<br><br>ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI",
+            "description": "<span class='lr-entry-black' >Zaprimljeno 05.05.2016.g. pod brojem Z-9139/2016<br><br>ZABILJEŽBA, TRAŽBINA SOCIJALNE POMOĆI, RJEŠENJE CENTRA ZA SOCIJALNU SKRB ZADAR KLASA: UP/I-551-04/16-02/29, URBROJ: 2198-12-22-16-2 25.04.2016, počevši od 15. travnja 2016. godine pa nadalje, utvrđeno rješenjem Centra za socijalnu skrb Zadar KLASA: UP/I-551-04/16-02/29, URBROJ: 2198-12-22-16-2 od 25. travnja 2016. godine i prijedloga RH po zz od 04. svibnja 2016. godine, na nekretninamam, uknjiženog prava vlasništva na ime N.N. rođ. N.N., OIB: 00000000884, N.N., za korist REPUBLIKE HRVATSKE, Centar za socijalnu skrb Zadar.</span>",
             "lrEntryId": 93358400,
             "orderNumber": "1.1"
           }

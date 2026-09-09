@@ -84,7 +84,7 @@ def search(
 
             # Format basic output
             data = {
-                _("Parcel Number"): parcel.parcel_number,
+                _("Parcel Number"): parcel.parcel_number_display,
                 _("Municipality"): f"{parcel.municipality_name} ({parcel.municipality_reg_num})",
                 _("Address"): parcel.address or _("N/A"),
                 _("Area"): f"{parcel.area_numeric:,} m²" if parcel.area_numeric else _("N/A"),
@@ -96,10 +96,10 @@ def search(
                 _("Building Permitted"): _("Yes") if parcel.has_building_right else _("No"),
                 # Cadastre records possessors (posjednici), not legal owners.
                 _("Possessors"): (
-                    ngettext("{count} possessor", "{count} possessors", parcel.total_owners).format(
-                        count=parcel.total_owners
-                    )
-                    if parcel.total_owners
+                    ngettext(
+                        "{count} possessor", "{count} possessors", parcel.total_possessors
+                    ).format(count=parcel.total_possessors)
+                    if parcel.total_possessors
                     else _("Unknown")
                 ),
             }
@@ -115,13 +115,15 @@ def search(
                 # For JSON/CSV, use more detailed structure
                 export_data = {
                     "parcel_number": parcel.parcel_number,
+                    "parcel_number_display": parcel.parcel_number_display,
+                    "is_building_parcel": parcel.is_building_parcel,
                     "municipality_code": parcel.municipality_reg_num,
                     "municipality_name": parcel.municipality_name,
                     "address": parcel.address,
                     "area_m2": parcel.area_numeric,
                     "land_use": list(parcel.land_use_summary.keys()),
                     "building_permitted": parcel.has_building_right,
-                    "total_owners": parcel.total_owners,
+                    "total_possessors": parcel.total_possessors,
                     "parcel_id": parcel.parcel_id,
                 }
                 print_output(export_data, output_format=output_format, file=output)
@@ -130,12 +132,18 @@ def search(
         if e.error_type == ErrorType.PARCEL_NOT_FOUND:
             parcel_num = e.details.get("parcel_number", parcel_number)
             muni_code = e.details.get("municipality_reg_num", municipality)
-            print_error(
-                _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
-                    parcel_number=parcel_num,
-                    municipality=muni_code,
+            if e.details.get("reason") == "only_building_parcel_exists":
+                print_error(
+                    _("There is no land parcel {parcel}, only the building parcel zgr. {parcel}. "
+                      "Write it as '{parcel} ZGR'").format(parcel=parcel_num)
                 )
-            )
+            else:
+                print_error(
+                    _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
+                        parcel_number=parcel_num,
+                        municipality=muni_code,
+                    )
+                )
         elif e.error_type == ErrorType.MUNICIPALITY_NOT_FOUND:
             search = e.details.get("search_term", municipality)
             print_error(_("Municipality '{municipality}' not found").format(municipality=search))
@@ -251,6 +259,92 @@ def search_municipality(
             print_error(_("No municipalities found for '{search}'").format(search=search))
         else:
             print_error(_("API error: {error}").format(error=describe_error(e)))
+        raise SystemExit(1) from e
+
+
+_SEARCH_POSSESSION_SHEET_HELP = command_help(
+    _("""Find a possession sheet (posjedovni list) by number.
+
+Shows the sheet numbers that start with the number you give and the internal
+ID of each sheet. The cadastre has no lookup of a sheet by ID: to see the
+possessors, look up one of the sheet's parcels with get-parcel.
+
+Examples:
+  cadastral search-possession-sheet 363 -m SAVAR
+  cadastral search-possession-sheet 36 -m 334979 --format json""")
+)
+
+
+@click.command("search-possession-sheet", help=_SEARCH_POSSESSION_SHEET_HELP)
+@click.argument("sheet_number")
+@click.option(
+    "--municipality",
+    "-m",
+    required=True,
+    help=_("Municipality name or code (e.g., SAVAR or 334979)"),
+)
+@click.option(
+    "--format",
+    "-f",
+    "output_format",
+    type=click.Choice(["table", "json", "csv"]),
+    default="table",
+    help=_("Output format"),
+)
+@click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
+@click.pass_context
+def search_possession_sheet(
+    ctx: click.Context,
+    sheet_number: str,
+    municipality: str,
+    output_format: str,
+    output: str | None,
+) -> None:
+    """Find a possession sheet by number."""
+    try:
+        with CadastralAPIClient() as client:
+            municipality_code = _resolve_municipality(client, municipality)
+            with console.status(_("Searching for possession sheet {sheet}...").format(
+                sheet=sheet_number
+            )):
+                sheets = client.find_possession_sheet(sheet_number, municipality_code)
+
+            if not sheets:
+                print_error(
+                    _("Possession sheet '{sheet}' not found in municipality {municipality}").format(
+                        sheet=sheet_number, municipality=municipality
+                    )
+                )
+                raise SystemExit(1)
+
+            if output_format == "table":
+                data = [
+                    {
+                        _("Sheet Number"): sheet.sheet_number,
+                        _("Sheet ID"): sheet.possession_sheet_id,
+                    }
+                    for sheet in sheets
+                ]
+                print_output(data, output_format="table")
+                console.print(
+                    f"\n💡 {_('To see the possessors, look up one of the sheet parcels')}: "
+                    f"cadastral get-parcel <{_('PARCEL_NUMBER')}> -m {municipality_code} "
+                    f"--show-owners",
+                    style="dim",
+                )
+            else:
+                export_data = [
+                    {
+                        "possession_sheet_id": sheet.possession_sheet_id,
+                        "sheet_number": sheet.sheet_number,
+                        "municipality_code": municipality_code,
+                    }
+                    for sheet in sheets
+                ]
+                print_output(export_data, output_format=output_format, file=output)
+
+    except CadastralAPIError as e:
+        print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
 
 

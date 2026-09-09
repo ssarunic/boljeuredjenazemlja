@@ -44,9 +44,9 @@ Environment Variables:
   MCP_HTTP_HOST             HTTP server host (default: 127.0.0.1)
   MCP_HTTP_PORT             HTTP server port (default: 8080)
 
-⚠️  IMPORTANT: This server is for educational/demonstration purposes only.
-    It connects to the localhost mock server by default. Do NOT configure
-    it to use Croatian government production systems.
+⚠️  This server is an educational demonstration. It connects to the localhost
+    mock server by default. Before configuring any other server, verify that
+    you have the rights to use it and its data; use at your own risk.
         """,
     )
 

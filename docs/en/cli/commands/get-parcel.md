@@ -1,7 +1,7 @@
 <!-- BEGIN GENERATED: banner -->
 **English** | [Hrvatski](../../../hr/cli/commands/get-parcel.md)
 
-> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it and must not be connected to the official Croatian cadastre or land registry. Nothing shown on this page is real property data.
+> **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
 > Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
@@ -55,8 +55,8 @@ land registry.
 
    LAND USE
    ========
-     Type         Area (m²)    Percentage    Buildings
-     MASLINJAK        1,200        100.0%    No
+     Type         Area (m²)    Percentage    Buildings    Last change
+     MASLINJAK        1,200        100.0%    No           -
 
 
    POSSESSION SHEET (cadastre / posjedovni list) (2 possessors)
@@ -106,6 +106,16 @@ shorter. Add it whenever you want to see the people.
 `--detail` narrows the screen to one part: `basic` for the identification only,
 `owners` for the possession sheet, `landuse` for the land use split, `geometry`
 for the boundary coordinates, `full` for everything.
+
+A building parcel (čestica zgrade) is written on documents as `35/1 ZGR`,
+`35/1.ZGR` or `zgr. 35/1`. Type it in any of these forms; the tool shows it as
+`zgr. 35/1` and marks it as a building parcel. Building parcels have no land
+registry unit of their own, because the building is registered on its land
+parcel.
+
+```bash
+cadastral get-parcel 35/1.ZGR -m SAVAR --detail basic
+```
 
 ```bash
 cadastral get-parcel 103/2 -m SAVAR --detail landuse

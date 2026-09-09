@@ -26,7 +26,7 @@ _tools = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_tools)
 CadastralTools = _tools.CadastralTools
 
-FIXTURE = REPO / "api" / "src" / "cadastral_api" / "tests" / "fixtures" / "parcel_info_1122_1.json"
+FIXTURE = REPO / "api" / "src" / "cadastral_api" / "tests" / "fixtures" / "parcel_info_linked.json"
 
 
 class _FakeClient:

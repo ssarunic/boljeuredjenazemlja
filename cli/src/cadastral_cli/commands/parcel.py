@@ -163,7 +163,7 @@ def print_parcel_details(
     _print_landuse_info(parcel)
 
     # Ownership
-    if show_owners or parcel.total_owners > 0:
+    if show_owners or parcel.total_possessors > 0:
         console.print()
         _print_ownership_info(parcel)
 
@@ -190,7 +190,10 @@ def _print_basic_info(parcel) -> None:
     table.add_column(_("Field"), style="bold")
     table.add_column(_("Value"))
 
-    table.add_row(_("Parcel Number"), parcel.parcel_number)
+    table.add_row(_("Parcel Number"), parcel.parcel_number_display)
+    if parcel.is_building_parcel:
+        # The API spells building parcels with a leading asterisk ("*35/1").
+        table.add_row(_("Building parcel"), f"{_('Yes')} ({parcel.parcel_number})")
     table.add_row(_("Parcel ID"), str(parcel.parcel_id))
     table.add_row(_("Municipality"), f"{parcel.municipality_name} ({parcel.municipality_reg_num})")
     table.add_row(_("Address"), parcel.address or _("N/A"))
@@ -234,20 +237,30 @@ def _print_landuse_info(parcel) -> None:
     table.add_column(_("Area (m²)"), justify="right")
     table.add_column(_("Percentage"), justify="right")
     table.add_column(_("Buildings"))
+    table.add_column(_("Last change"), style="dim")
 
     total_area = parcel.area_numeric or sum(parcel.land_use_summary.values())
 
     for land_type, area in parcel.land_use_summary.items():
         percentage = (area / total_area * 100) if total_area > 0 else 0
+        parts = [part for part in parcel.parcel_parts if part.name == land_type]
         # Find if this land type has buildings
-        has_building = any(
-            part.building for part in parcel.parcel_parts if part.name == land_type
+        has_building = any(part.building for part in parts)
+        # The administrative file of the last change, or the change-log number
+        last_change = next(
+            (
+                part.last_change_log_file_num or part.last_change_log_number
+                for part in parts
+                if part.last_change_log_file_num or part.last_change_log_number
+            ),
+            "-",
         )
         table.add_row(
             land_type,
             f"{area:,}",
             f"{percentage:.1f}%",
-            _("Yes") if has_building else _("No")
+            _("Yes") if has_building else _("No"),
+            last_change,
         )
 
     console.print(table)
@@ -261,8 +274,8 @@ def _print_ownership_info(parcel) -> None:
     registry B-list - use ``cadastral get-lr-unit`` for those.
     """
     possessors_text = ngettext(
-        "{count} possessor", "{count} possessors", parcel.total_owners
-    ).format(count=parcel.total_owners)
+        "{count} possessor", "{count} possessors", parcel.total_possessors
+    ).format(count=parcel.total_possessors)
     header = f"{_('POSSESSION SHEET (cadastre / posjedovni list)')} ({possessors_text})"
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
@@ -325,9 +338,16 @@ def _print_registry_info(parcel) -> None:
 
     lr = parcel.resolved_lr_unit()
     if lr is None:
-        console.print(
-            _("This parcel is not in the land registry (cadastre only)"), style="dim"
-        )
+        if parcel.is_building_parcel:
+            console.print(
+                _("Building parcels have no land registry unit of their own; the building "
+                  "is registered on its land parcel."),
+                style="dim",
+            )
+        else:
+            console.print(
+                _("This parcel is not in the land registry (cadastre only)"), style="dim"
+            )
         return
 
     if parcel.lr_unit_from_links:
@@ -407,6 +427,8 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
     """Format parcel data for JSON/CSV export."""
     data = {
         "parcel_number": parcel.parcel_number,
+        "parcel_number_display": parcel.parcel_number_display,
+        "is_building_parcel": parcel.is_building_parcel,
         "parcel_id": parcel.parcel_id,
         "municipality_code": parcel.municipality_reg_num,
         "municipality_name": parcel.municipality_name,
@@ -423,12 +445,16 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
                 "type": part.name,
                 "area": part.area_numeric,
                 "has_building": part.building,
+                "part_type": part.part_type,
+                "building_right": part.building_right,
+                "last_change_log_number": part.last_change_log_number,
+                "last_change_log_file_num": part.last_change_log_file_num,
             }
             for part in parcel.parcel_parts
         ]
 
     if detail in ["full", "owners"] or show_owners:
-        data["total_owners"] = parcel.total_owners
+        data["total_possessors"] = parcel.total_possessors
         data["ownership"] = [
             {
                 "sheet_number": sheet.possession_sheet_number,
@@ -457,11 +483,16 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
         ]
 
     if detail == "full":
+        # The unit may be reachable only through parcel links (no direct lrUnit).
+        lr = parcel.resolved_lr_unit()
         data["land_registry"] = {
-            "unit_number": parcel.lr_unit.lr_unit_number if parcel.lr_unit else None,
-            "main_book": parcel.lr_unit.main_book_name if parcel.lr_unit else None,
-            "institution": parcel.lr_unit.institution_name if parcel.lr_unit else None,
-            "active": parcel.lr_unit.active if parcel.lr_unit else None,
+            "unit_number": lr.lr_unit_number if lr else None,
+            "main_book": lr.main_book_name if lr else None,
+            "main_book_id": lr.main_book_id if lr else None,
+            "institution": lr.institution_name if lr else None,
+            "active": lr.active if lr else None,
+            "lr_reference_shape": parcel.lr_reference_shape,
+            "reference_shape": lr.reference_shape if lr else None,
         }
 
     if geometry and detail == "geometry":

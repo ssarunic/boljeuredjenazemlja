@@ -15,7 +15,7 @@
       "municipality_name": "SAVAR",
       "area_m2": 1200,
       "building_permitted": false,
-      "total_owners": 2,
+      "total_possessors": 2,
       "lr_unit_number": "657",
       "main_book_id": 21277
     },
@@ -28,7 +28,7 @@
       "municipality_name": "SAVAR",
       "area_m2": 981,
       "building_permitted": false,
-      "total_owners": 2,
+      "total_possessors": 2,
       "lr_unit_number": "138",
       "main_book_id": 21277
     },
@@ -41,7 +41,7 @@
       "municipality_name": "SAVAR",
       "area_m2": 2077,
       "building_permitted": false,
-      "total_owners": 18,
+      "total_possessors": 18,
       "lr_unit_number": "645",
       "main_book_id": 21277
     }
