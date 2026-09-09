@@ -5,6 +5,7 @@ from typing import Any
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,12 @@ class CadastralTools:
             municipality: Municipality name or registration code
 
         Returns:
-            Dictionary with parcel search results including parcel_id
+            Dictionary with parcel search results including parcel_id and,
+            when the municipality's GIS data is available, ``map_url`` (the
+            interactive map centred on the parcel). The GIS data is downloaded
+            on the first request for a municipality and cached afterwards; if
+            it cannot be fetched or the parcel is not in it, ``map_url`` is
+            simply omitted and the search still succeeds.
 
         Example:
             >>> await search_parcel("103/2", "SAVAR")
@@ -45,8 +51,9 @@ class CadastralTools:
                 "parcel_id": "...",
                 "parcel_number": "103/2",
                 "municipality": "SAVAR",
-                "address": "...",
-                "area": "..."
+                "municipality_code": "334979",
+                "map_url": "https://oss.uredjenazemlja.hr/map?center=...",
+                "success": True
             }
         """
         try:
@@ -65,13 +72,17 @@ class CadastralTools:
 
             # Return first match
             result = results[0]
-            return {
+            response: dict[str, Any] = {
                 "parcel_id": result.parcel_id,
                 "parcel_number": result.parcel_number,
                 "municipality": municipality,
                 "municipality_code": muni_code,
                 "success": True,
             }
+            map_url = self._map_url_for(result.parcel_number, muni_code)
+            if map_url:
+                response["map_url"] = map_url
+            return response
 
         except CadastralAPIError as e:
             logger.error(f"Search failed for {parcel_number} in {municipality}: {e}", exc_info=True)
@@ -146,7 +157,9 @@ class CadastralTools:
 
         Returns:
             Dictionary with results array, summary statistics, and the resolved
-            ``source``.
+            ``source``. Each successful entry also carries ``map_url`` (the
+            interactive map centred on the parcel) when the municipality's GIS
+            data is available; it is omitted otherwise.
         """
         if source not in self.VALID_SOURCES:
             raise ValueError(
@@ -191,12 +204,19 @@ class CadastralTools:
                     if source == "land_registry":
                         result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
 
-                    results.append({
+                    entry: dict[str, Any] = {
                         "status": "success",
                         "register": source,
                         "cadastre_lr_harmonized": parcel.is_harmonized,
                         "data": result_data,
-                    })
+                    }
+                    # Best-effort map link from the cached municipality GIS data
+                    map_url = self._map_url_for(
+                        parcel.parcel_number, parcel.cad_municipality_reg_num
+                    )
+                    if map_url:
+                        entry["map_url"] = map_url
+                    results.append(entry)
                     successful += 1
 
                 except Exception as e:
@@ -255,7 +275,11 @@ class CadastralTools:
             raise ValueError(f"Could not resolve municipality '{name_or_code}'.") from e
 
     async def get_parcel_geometry(
-        self, parcel_number: str, municipality: str, format: str = "geojson"
+        self,
+        parcel_number: str,
+        municipality: str,
+        format: str = "geojson",
+        zoom: int = DEFAULT_MAP_ZOOM,
     ) -> dict[str, Any] | str:
         """
         Get parcel boundary geometry.
@@ -266,9 +290,12 @@ class CadastralTools:
             parcel_number: Cadastral parcel number (e.g., "103/2")
             municipality: Municipality name or registration code
             format: Output format - "geojson", "wkt", or "dict"
+            zoom: Zoom level of the ``map_url`` link (geojson and dict output)
 
         Returns:
-            Geometry data in requested format
+            Geometry data in requested format. "geojson" and "dict" include a
+            ``map_url`` pointing the interactive map at the parcel; "wkt" is
+            the bare polygon.
 
         Example:
             >>> await get_parcel_geometry("103/2", "SAVAR", format="geojson")
@@ -286,16 +313,25 @@ class CadastralTools:
             # Resolve municipality
             muni_code = await self._resolve_municipality(municipality)
 
-            # Fetch geometry using SDK
+            # Fetch geometry using SDK (None when the parcel is not in the GML)
             geometry = self.client.get_parcel_geometry(parcel_number, muni_code)
+            if geometry is None:
+                raise ValueError(
+                    f"Parcel '{parcel_number}' has no geometry in the GIS data for "
+                    f"municipality '{municipality}' ({muni_code}). Check the parcel "
+                    f"number; if the cached GIS data may be stale, clear it for this "
+                    f"municipality and try again."
+                )
 
             # Return in requested format
             if format.lower() == "geojson":
-                return geometry.to_geojson()
+                return geometry.to_geojson(zoom=zoom)
             elif format.lower() == "wkt":
                 return geometry.to_wkt()
             else:  # dict
-                return geometry.model_dump(mode="json")
+                data = geometry.model_dump(mode="json")
+                data["map_url"] = geometry.map_url(zoom)
+                return data
 
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch geometry for {parcel_number}: {e}", exc_info=True)
@@ -672,6 +708,21 @@ class CadastralTools:
         except Exception as e:
             logger.error(f"Batch LR unit operation failed: {e}", exc_info=True)
             raise ValueError(f"Batch LR unit operation failed: {e}") from e
+
+    def _map_url_for(self, parcel_number: str, muni_code: str) -> str | None:
+        """
+        Best-effort interactive map link for a parcel.
+
+        Uses the cached municipality GIS data (downloaded on first use). Any
+        failure (download, parse, parcel not in the GML) is logged and yields
+        None so that the calling tool still returns its main result.
+        """
+        try:
+            geometry = self.client.get_parcel_geometry(parcel_number, muni_code)
+        except Exception as e:  # noqa: BLE001 - the link is optional
+            logger.warning(f"No map link for {parcel_number} in {muni_code}: {e}")
+            return None
+        return geometry.map_url() if geometry is not None else None
 
     async def _resolve_municipality(self, name_or_code: str) -> str:
         """

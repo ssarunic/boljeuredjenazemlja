@@ -86,26 +86,14 @@ def get_geometry(
                     console.print(output_data)
 
             elif output_format == "geojson":
-                geojson = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [geometry.to_geojson_coords()]
-                    },
-                    "properties": {
-                        "parcel_number": geometry.broj_cestice,
-                        "municipality": geometry.maticni_broj_ko,
-                        "area_m2": geometry.povrsina_graficka,
-                        "srs": geometry.srs_name,
-                    }
-                }
-                output_data = json.dumps(geojson, indent=2, ensure_ascii=False)
+                # GeoJSON is a standard format: keys are never localized
+                output_data = json.dumps(geometry.to_geojson(), indent=2, ensure_ascii=False)
                 if output:
                     with open(output, "w", encoding="utf-8") as f:
                         f.write(output_data)
                     print_success(_("GeoJSON saved to: {output}").format(output=output))
                 else:
-                    console.print(output_data)
+                    print(output_data)
 
             elif output_format == "csv":
                 csv_output = ",".join(key_display(k) for k in ("x", "y", "vertex")) + "\n"
@@ -117,7 +105,7 @@ def get_geometry(
                         f.write(csv_output)
                     print_success(_("CSV saved to: {output}").format(output=output))
                 else:
-                    console.print(csv_output)
+                    print(csv_output)
 
             elif output_format == "json":
                 json_data = {
@@ -132,7 +120,8 @@ def get_geometry(
                         "max_x": geometry.bounds[2],
                         "max_y": geometry.bounds[3],
                     },
-                    "coordinates": [[c.x, c.y] for c in geometry.coordinates]
+                    "coordinates": [[c.x, c.y] for c in geometry.coordinates],
+                    "map_url": geometry.map_url(),
                 }
                 output_data = json.dumps(localize_keys(json_data), indent=2, ensure_ascii=False)
                 if output:
@@ -140,7 +129,7 @@ def get_geometry(
                         f.write(output_data)
                     print_success(_("JSON saved to: {output}").format(output=output))
                 else:
-                    console.print(output_data)
+                    print(output_data)
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=describe_error(e)))
@@ -257,7 +246,7 @@ def _print_geometry_stats(geometry) -> None:
 
     table = Table(show_header=False, box=None, padding=(0, 2))
     table.add_column(_("Field"), style="bold")
-    table.add_column(_("Value"))
+    table.add_column(_("Value"), no_wrap=False, overflow="fold")
 
     table.add_row(_("Parcel"), geometry.broj_cestice)
     table.add_row(_("Coordinate System"), geometry.srs_name)
@@ -273,5 +262,7 @@ def _print_geometry_stats(geometry) -> None:
     table.add_row(_("  Max Y"), f"{max_y:,.2f} m")
     table.add_row(_("  Width"), f"{max_x - min_x:,.2f} m")
     table.add_row(_("  Height"), f"{max_y - min_y:,.2f} m")
+    table.add_row("", "")
+    table.add_row(_("Map URL"), geometry.map_url())
 
     console.print(table)

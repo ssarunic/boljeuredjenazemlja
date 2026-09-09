@@ -111,7 +111,10 @@ shares in `unit.ownership_sheet_b.lr_unit_shares`.
 
 Geometry comes from INSPIRE GML files published per municipality. The client
 downloads the file once, caches it under `CADASTRAL_CACHE_DIR`, and parses the
-parcel out of it.
+parcel out of it. Next to each ZIP the cache keeps a `source.txt` marker with
+the base URL it was downloaded from; a client configured for a different server
+downloads the municipality again instead of reusing that copy. The method returns
+`None` when the parcel is not in the file.
 
 ```python
 with CadastralAPIClient() as client:
@@ -120,7 +123,9 @@ with CadastralAPIClient() as client:
         print(geometry.povrsina_graficka, "m² (graphical area)")
         print(geometry.center, geometry.bounds)
         print(geometry.to_wkt())
-        coords = geometry.to_geojson_coords()
+        feature = geometry.to_geojson()      # GeoJSON Feature, properties carry map_url
+        print(geometry.map_url())            # interactive map centred on the parcel
+        print(geometry.map_url(zoom=20))     # closer, for very small parcels
 
     # Download URL for the whole municipality, for QGIS and similar tools
     url = client.get_municipality_gis_download_url("334979")

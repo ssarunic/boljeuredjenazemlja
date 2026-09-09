@@ -1,5 +1,6 @@
 """GIS data cache manager for municipality ZIP files."""
 
+import shutil
 import zipfile
 from pathlib import Path
 
@@ -15,6 +16,12 @@ class GISCache:
     """
 
     DEFAULT_BASE_URL = "http://localhost:8000"
+
+    #: Marker written next to each ZIP with the base URL it was downloaded from.
+    #: A ZIP whose marker does not match the configured base URL is never
+    #: served; it is downloaded again, so data from one server (for example
+    #: the mock server's synthetic geometry) cannot leak into another setup.
+    SOURCE_FILENAME = "source.txt"
 
     def __init__(
         self, cache_dir: Path | str | None = None, base_url: str | None = None
@@ -75,24 +82,68 @@ class GISCache:
         muni_dir = self.get_municipality_dir(municipality_reg_num)
         return muni_dir / filename
 
-    def is_cached(self, municipality_reg_num: str) -> bool:
+    def get_source_path(self, municipality_reg_num: str) -> Path:
         """
-        Check if municipality data is already cached.
+        Get path to the marker file recording where the ZIP was downloaded from.
 
         Args:
             municipality_reg_num: Municipality registration number
 
         Returns:
-            True if ZIP file exists in cache
+            Path to the ``source.txt`` marker
+        """
+        return self.get_municipality_dir(municipality_reg_num) / self.SOURCE_FILENAME
+
+    def get_source(self, municipality_reg_num: str) -> str | None:
+        """
+        Get the base URL the cached ZIP was downloaded from.
+
+        Args:
+            municipality_reg_num: Municipality registration number
+
+        Returns:
+            Base URL, or None if the marker is missing (cache written by an
+            older version, or seeded by hand)
+        """
+        source_path = self.get_source_path(municipality_reg_num)
+        if not source_path.exists():
+            return None
+        return source_path.read_text(encoding="utf-8").strip() or None
+
+    def is_cached(self, municipality_reg_num: str) -> bool:
+        """
+        Check if municipality data is cached for the configured server.
+
+        Args:
+            municipality_reg_num: Municipality registration number
+
+        Returns:
+            True if the ZIP file exists and was downloaded from this cache's
+            base URL. A ZIP from another server, or one without a source
+            marker, does not count as cached.
         """
         zip_path = self.get_zip_path(municipality_reg_num)
-        return zip_path.exists()
+        return zip_path.exists() and self.get_source(municipality_reg_num) == self.base_url
+
+    def _purge_municipality_dir(self, municipality_reg_num: str) -> None:
+        """Remove every cached file for a municipality (ZIP, GML, marker)."""
+        muni_dir = self.get_municipality_dir(municipality_reg_num)
+        for item in muni_dir.iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
 
     def download_municipality(
         self, municipality_reg_num: str, force: bool = False
     ) -> Path:
         """
         Download municipality GIS data ZIP file.
+
+        A ZIP that is already cached from this cache's base URL is returned
+        as is. A ZIP from another server, or one without a source marker, is
+        downloaded again and everything previously cached for the
+        municipality (including extracted GML files) is discarded.
 
         Args:
             municipality_reg_num: Municipality registration number
@@ -102,11 +153,11 @@ class GISCache:
             Path to downloaded ZIP file
 
         Raises:
-            httpx.HTTPError: Download failed
+            httpx.HTTPError: Download failed (the previous cache is left as it was)
         """
         zip_path = self.get_zip_path(municipality_reg_num)
 
-        if zip_path.exists() and not force:
+        if self.is_cached(municipality_reg_num) and not force:
             return zip_path
 
         # Download from the ATOM feed of the configured API (mock server by default)
@@ -115,8 +166,15 @@ class GISCache:
         with httpx.Client(timeout=60.0, follow_redirects=True) as client:
             response = client.get(url)
             response.raise_for_status()
+            content = response.content
 
-            zip_path.write_bytes(response.content)
+        # Only after a successful download: drop whatever was cached before so
+        # that no stale ZIP or extracted GML from another server is served.
+        self._purge_municipality_dir(municipality_reg_num)
+        zip_path.write_bytes(content)
+        self.get_source_path(municipality_reg_num).write_text(
+            self.base_url + "\n", encoding="utf-8"
+        )
 
         return zip_path
 
@@ -178,7 +236,6 @@ class GISCache:
         Args:
             municipality_reg_num: Municipality registration number
         """
-        import shutil
 
         muni_dir = self.get_municipality_dir(municipality_reg_num)
         if muni_dir.exists():
@@ -186,7 +243,6 @@ class GISCache:
 
     def clear_all(self) -> None:
         """Clear entire cache directory."""
-        import shutil
 
         if self.cache_dir.exists():
             shutil.rmtree(self.cache_dir)

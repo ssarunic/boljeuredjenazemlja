@@ -17,6 +17,7 @@ from .models import (
     Plumb,
     PossessionSheet,
     Possessor,
+    build_map_url,
 )
 
 __version__ = "0.1.0"
@@ -37,6 +38,7 @@ __all__ = [
     "LandRegistryUnit",
     "MunicipalitySearchResult",
     "ParcelGeometry",
+    "build_map_url",
     "ParcelInfo",
     "ParcelLink",
     "ParcelPart",

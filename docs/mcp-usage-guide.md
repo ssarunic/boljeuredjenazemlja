@@ -20,6 +20,10 @@ Find parcel 103/2 in SAVAR
 - `parcel_number`: The parcel number (e.g., "103/2")
 - `municipality`: Municipality name (e.g., "SAVAR")
 - `municipality_code`: Municipality registration number (e.g., "334979")
+- `map_url`: Interactive map centred on the parcel, when the municipality's
+  GIS data is available (the first search in a municipality downloads it; later
+  searches use the cache). Omitted if the data cannot be fetched or the parcel
+  is not in it.
 
 ---
 
@@ -64,6 +68,9 @@ Choose explicitly:
 
 Every person record is tagged with a `register` field (`"cadastre"` |
 `"land_registry"`) so the two can never be confused.
+
+**Map link:** Each successful result carries `map_url` (interactive map centred
+on the parcel) when the municipality's GIS data is available; see `find_parcel`.
 
 **LR unit references:** Each successful result includes:
 - `lr_unit.lr_unit_number` - Land registry unit number
@@ -132,9 +139,14 @@ Get the geometry for parcel 103/2 in SAVAR as GeoJSON
 ```
 
 **Supported formats:**
-- `"geojson"` - GeoJSON format (default)
-- `"wkt"` - Well-Known Text format
-- `"dict"` - Plain dictionary with coordinates
+- `"geojson"` - GeoJSON Feature (default); `properties.map_url` links to the interactive map
+- `"wkt"` - Well-Known Text format (polygon only, no link)
+- `"dict"` - Plain dictionary with coordinates and `map_url`
+
+**Map link:** `map_url` opens the interactive map centred on the parcel, in the
+form `https://oss.uredjenazemlja.hr/map?center=<x>,<y>&zoom=19&layers=...`
+(EPSG:3765 centre of the parcel's bounding box). Pass `zoom` to change the
+level; 19 fits one ordinary parcel, 20 suits very small ones.
 
 **Note:** First time use downloads GML data for the municipality (~1-10 MB).
 
@@ -369,6 +381,11 @@ else:
 - Verify the parcel number format (e.g., "103/2" not "103-2")
 - Ensure the parcel exists in that municipality
 - Try searching with municipality code instead of name
+
+### "has no geometry in the GIS data"
+- The parcel number is not in the municipality's GML file; check the number
+- If the cached GIS data may be stale, clear it with
+  `cadastral cache clear -m <municipality code>` and try again
 
 ### "Could not retrieve land registry unit"
 - Verify the parcel/unit number and municipality

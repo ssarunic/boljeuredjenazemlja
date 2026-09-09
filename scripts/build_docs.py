@@ -546,7 +546,12 @@ class OutputCapture:
             target_dir.mkdir(parents=True, exist_ok=True)
             target = target_dir / f"ko-{code}.zip"
             shutil.copyfile(zip_path, target)
+            # GISCache.SOURCE_FILENAME: without a matching marker the CLI would
+            # treat the seeded ZIP as foreign and download it again.
+            source = target_dir / "source.txt"
+            source.write_text(self.base_url + "\n", encoding="utf-8")
             os.utime(target, (FIXTURE_MTIME, FIXTURE_MTIME))
+            os.utime(source, (FIXTURE_MTIME, FIXTURE_MTIME))
             os.utime(target_dir, (FIXTURE_MTIME, FIXTURE_MTIME))
         for rel, data in examples.items():
             (self.cwd / Path(rel).name).write_bytes(data)

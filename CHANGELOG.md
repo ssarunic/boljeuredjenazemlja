@@ -12,6 +12,16 @@ number and one tag.
 
 ### Added
 
+- Map link for parcel geometry. `ParcelGeometry.map_url(zoom=19)` and
+  `build_map_url()` in the SDK build the interactive-map URL centred on the
+  parcel (EPSG:3765 centre, zoom, standard layer set); `ParcelGeometry.to_geojson()`
+  returns a GeoJSON Feature whose properties include it. The MCP tool
+  `get_parcel_geometry` returns `map_url` in `dict` and `geojson` output and
+  accepts a `zoom` argument; `find_parcel` and each successful
+  `batch_fetch_parcels` entry return `map_url` too when the municipality's GIS
+  data is available (best effort, omitted otherwise). The CLI `get-geometry` command prints the link with
+  `--show-stats` and includes `map_url` in `json` and `geojson` output;
+  `get-parcel` uses the same builder.
 - `specs/gateway-service.md`: specification for a hosted gateway exposing the SDK
   as a REST API and as a remote MCP server (single container, SQLite, no external
   services).
@@ -31,6 +41,23 @@ number and one tag.
   names, the wrong rate-limit default, and the unimplemented HTTP transport claim
   were removed.
 - `api/`, `cli/`, and `mcp/` READMEs trimmed to short pointers into `docs/`.
+
+### Fixed
+
+- CLI: `get-geometry` `json`, `geojson` and `csv` output is no longer soft-wrapped
+  at the terminal width, which broke lines longer than the window (such as the
+  map link) when the output was piped.
+- MCP server: `get_parcel_geometry` with `format="geojson"` failed on every
+  parcel because the geometry model had no `to_geojson()` method.
+- MCP server: `get_parcel_geometry` reports a clear error when the parcel is
+  not in the municipality's GIS data instead of failing with
+  `'NoneType' object has no attribute 'to_geojson'` (or `model_dump`).
+- SDK: the GIS cache records which server each municipality ZIP came from
+  (`source.txt` next to the ZIP) and downloads the municipality again when the
+  configured API base URL differs or the marker is missing. Synthetic geometry
+  downloaded from the mock server can no longer be served to a client configured
+  for another server; caches written by earlier versions are refreshed on first
+  use.
 
 ## [0.1.0] - 2026-09-08
 

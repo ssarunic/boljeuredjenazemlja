@@ -96,6 +96,10 @@ def create_mcp_server() -> FastMCP:
         parcel number within a cadastral municipality (katastarska općina, k.o.).
         Aggregates the 3-step API workflow: resolve municipality, find parcel, return info.
 
+        Also returns ``map_url``, a link to the interactive map (karta) centred
+        on the parcel, when the municipality's GIS data is available (downloaded
+        once, then cached).
+
         Args:
             parcel_number: Cadastral parcel number (e.g., "103/2")
             municipality: Municipality name (e.g., "SAVAR") or registration code
@@ -136,6 +140,10 @@ def create_mcp_server() -> FastMCP:
         Every person record carries a ``register`` field ("cadastre" |
         "land_registry") so the two can never be confused.
 
+        Each successful entry also carries ``map_url``, the interactive map
+        (karta) centred on the parcel, when the municipality's GIS data is
+        available (downloaded once, then cached).
+
         Args:
             parcels: List of parcel specifications with parcel_number + municipality OR parcel_id
             source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
@@ -166,10 +174,11 @@ def create_mcp_server() -> FastMCP:
 
     @mcp.tool()
     async def get_parcel_geometry(
-        parcel_number: str, municipality: str, format: str = "geojson"
+        parcel_number: str, municipality: str, format: str = "geojson", zoom: int = 19
     ) -> dict[str, Any] | str:
         """
-        Get a parcel's boundary geometry (granice čestice) as GeoJSON/WKT.
+        Get a parcel's boundary geometry (granice čestice) as GeoJSON/WKT, with
+        a link to the interactive map (karta) centred on the parcel.
 
         For mapping cadastral parcels (katastarska čestica) - coordinates,
         outline, area. Downloads and caches GML data if needed, then extracts geometry.
@@ -178,12 +187,18 @@ def create_mcp_server() -> FastMCP:
             parcel_number: Cadastral parcel number (e.g., "103/2")
             municipality: Municipality name or registration code
             format: Output format - "geojson" (default), "wkt", or "dict"
+            zoom: Zoom level for the map link (default 19 fits one parcel; 20 for
+                very small parcels)
 
         Returns:
-            Geometry data in requested format
+            Geometry data in requested format. "geojson" (in properties) and
+            "dict" carry ``map_url``; "wkt" is the bare polygon.
         """
-        logger.info(f"Tool invoked: get_parcel_geometry({parcel_number}, {municipality}, {format})")
-        return await tools_handler.get_parcel_geometry(parcel_number, municipality, format)
+        logger.info(
+            f"Tool invoked: get_parcel_geometry({parcel_number}, {municipality}, "
+            f"{format}, zoom={zoom})"
+        )
+        return await tools_handler.get_parcel_geometry(parcel_number, municipality, format, zoom)
 
     @mcp.tool()
     async def list_cadastral_offices(filter_name: str | None = None) -> dict[str, Any]:

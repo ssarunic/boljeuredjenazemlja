@@ -37,6 +37,7 @@ KEYS: dict[str, str] = {
     # Parcels (cadastre)
     "parcel_number": pgettext("key", "parcel_number"),
     "parcel_id": pgettext("key", "parcel_id"),
+    "map_url": pgettext("key", "map_url"),
     "parcel": pgettext("key", "parcel"),
     "parcels": pgettext("key", "parcels"),
     "municipality": pgettext("key", "municipality"),

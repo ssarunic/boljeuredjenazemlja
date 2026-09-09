@@ -1,6 +1,35 @@
 """Pydantic models for GIS spatial data from ATOM feed downloads."""
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
+
+#: Interactive map viewer. Centred links use EPSG:3765 coordinates.
+MAP_BASE_URL = "https://oss.uredjenazemlja.hr/map"
+#: Layers shown in map links: orthophoto, parcels, municipalities, addresses.
+MAP_LAYERS = "DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_broj"
+#: Zoom level at which a single parcel fills the viewer.
+DEFAULT_MAP_ZOOM = 19
+
+
+def build_map_url(
+    center: tuple[float, float] | None = None, zoom: int = DEFAULT_MAP_ZOOM
+) -> str:
+    """
+    Build an interactive map URL.
+
+    Args:
+        center: (x, y) in EPSG:3765 to centre the map on, or None for the
+            layer set without a position
+        zoom: Map zoom level (19 shows one parcel; 20 for very small parcels)
+
+    Returns:
+        Map URL, coordinates rounded to two decimals (centimetres)
+    """
+    if center is None:
+        return f"{MAP_BASE_URL}?layers={MAP_LAYERS}"
+    x, y = center
+    return f"{MAP_BASE_URL}?center={x:.2f},{y:.2f}&zoom={zoom}&layers={MAP_LAYERS}"
 
 
 class Coordinate(BaseModel):
@@ -95,3 +124,40 @@ class ParcelGeometry(BaseModel):
             These coordinates are in EPSG:3765 - transform if needed.
         """
         return [[c.x, c.y] for c in self.coordinates]
+
+    def map_url(self, zoom: int = DEFAULT_MAP_ZOOM) -> str:
+        """
+        Interactive map URL centred on this parcel.
+
+        Args:
+            zoom: Map zoom level (default 19; use 20 for very small parcels)
+
+        Returns:
+            URL of the map viewer centred on the parcel's bounding-box centre
+        """
+        return build_map_url(self.center, zoom)
+
+    def to_geojson(self, zoom: int = DEFAULT_MAP_ZOOM) -> dict[str, Any]:
+        """
+        Export geometry as a GeoJSON Feature.
+
+        Args:
+            zoom: Zoom level used for the ``map_url`` property
+
+        Returns:
+            GeoJSON Feature (Polygon) with parcel properties and a map link
+
+        Note:
+            Coordinates stay in EPSG:3765; ``properties.srs`` records that.
+        """
+        return {
+            "type": "Feature",
+            "geometry": {"type": "Polygon", "coordinates": [self.to_geojson_coords()]},
+            "properties": {
+                "parcel_number": self.broj_cestice,
+                "municipality": self.maticni_broj_ko,
+                "area_m2": self.povrsina_graficka,
+                "srs": self.srs_name,
+                "map_url": self.map_url(zoom),
+            },
+        }

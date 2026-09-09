@@ -56,22 +56,28 @@ system. A mapping program will know what to do with them.
        Width              40.00 m
        Height             30.00 m
 
+     Map URL              https://oss.uredjenazemlja.hr/map?center=380616.77,4880907.83&zoom=19&layer
+                          s=DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_br
+                          oj
+
    POLYGON((380596.77 4880892.83, 380636.77 4880892.83, 380636.77 4880922.83, 380596.77 4880922.83,
    380596.77 4880892.83))
    ```
    <!-- END GENERATED: output -->
 
 4. **GEOMETRY STATISTICS** summarises the shape: the number of corner points
-   (**Vertices**), the area computed from them (**Area (GIS)**), and the
-   smallest rectangle that contains the parcel (**Bounding Box**). The last
-   block is the boundary itself, written as a polygon in a standard text form.
-   Each pair of numbers is one corner point.
+   (**Vertices**), the area computed from them (**Area (GIS)**), the
+   smallest rectangle that contains the parcel (**Bounding Box**), and a
+   link (**Map URL**) that opens the official interactive map centred on the
+   parcel. The last block is the boundary itself, written as a polygon in a
+   standard text form. Each pair of numbers is one corner point.
 
 ## Choices you can make
 
 `--format` chooses the form of the boundary. `wkt` is the standard text form
 shown above. `geojson` is the form most web maps read. `csv` gives one corner
 point per line for a spreadsheet. `json` gives the same data for other programs.
+The `geojson` and `json` forms also carry the map link (`map_url`).
 
 To hand the boundary to someone, write it to a file with `--output`. A GeoJSON
 file can be dragged onto many online map viewers:

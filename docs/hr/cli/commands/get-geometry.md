@@ -58,22 +58,29 @@ znat će što s njima.
        Širina              40.00 m
        Visina              30.00 m
 
+     URL karte             https://oss.uredjenazemlja.hr/map?center=380616.77,4880907.83&zoom=19&laye
+                           rs=DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_
+                           broj
+
    POLYGON((380596.77 4880892.83, 380636.77 4880892.83, 380636.77 4880922.83, 380596.77 4880922.83,
    380596.77 4880892.83))
    ```
    <!-- END GENERATED: output -->
 
 4. **STATISTIKA GEOMETRIJE** sažima oblik: broj lomnih točaka (**Vrhovi**),
-   površinu izračunatu iz njih (**Površina (GIS)**) i najmanji pravokutnik koji
-   obuhvaća česticu (**Granični okvir**). Zadnji blok je sama granica, zapisana
-   kao poligon u standardnom tekstualnom obliku. Svaki par brojeva jedna je
-   lomna točka.
+   površinu izračunatu iz njih (**Površina (GIS)**), najmanji pravokutnik koji
+   obuhvaća česticu (**Granični okvir**) i poveznicu (**URL karte**) koja otvara
+   službenu interaktivnu kartu centriranu na česticu. Zadnji blok je sama
+   granica, zapisana kao poligon u standardnom tekstualnom obliku. Svaki par
+   brojeva jedna je lomna točka.
 
 ## Što možete odabrati
 
 `--oblik` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan
 gore. `geojson` je oblik koji čita većina web karata. `csv` daje jednu lomnu
-točku po retku za tablicu. `json` daje iste podatke za druge programe.
+točku po retku za tablicu. `json` daje iste podatke za druge programe. Oblici
+`geojson` i `json` sadrže i poveznicu na kartu (`map_url`; u obliku `json` ključ
+je `url_karte`).
 
 Da biste granicu nekome predali, zapišite je u datoteku pomoću `--datoteka`.
 GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:

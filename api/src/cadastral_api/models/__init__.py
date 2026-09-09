@@ -23,7 +23,7 @@ from .entities import (
     SheetAAdditionalInfo,
     SheetAParcelList,
 )
-from .gis_entities import Coordinate, ParcelGeometry
+from .gis_entities import Coordinate, ParcelGeometry, build_map_url
 
 __all__ = [
     "CadastralOffice",
@@ -39,6 +39,7 @@ __all__ = [
     "MunicipalitySearchResult",
     "OwnershipSheetB",
     "ParcelGeometry",
+    "build_map_url",
     "ParcelInfo",
     "ParcelLink",
     "ParcelPart",

@@ -4,6 +4,7 @@ import click
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
+from cadastral_api.models.gis_entities import build_map_url
 from rich.console import Console
 from rich.table import Table
 
@@ -393,20 +394,8 @@ def _print_additional_info(parcel, geometry=None) -> None:
     table.add_column(_("Field"), style="bold")
     table.add_column(_("Value"), no_wrap=False, overflow="fold")
 
-    # Generate map URL with center coordinates if geometry is available
-    if geometry:
-        center_x, center_y = geometry.center
-        map_url = (
-            f"https://oss.uredjenazemlja.hr/map?"
-            f"center={center_x:.2f},{center_y:.2f}&zoom=19&"
-            f"layers=DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_broj"
-        )
-    else:
-        # Fallback to basic map URL without center coordinates
-        map_url = (
-            "https://oss.uredjenazemlja.hr/map?"
-            "layers=DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_broj"
-        )
+    # Map link centred on the parcel when geometry is available, plain viewer otherwise
+    map_url = geometry.map_url() if geometry else build_map_url()
 
     table.add_row(_("Map URL"), map_url)
     table.add_row(_("Detail Sheet"), parcel.detail_sheet_number or _("N/A"))
