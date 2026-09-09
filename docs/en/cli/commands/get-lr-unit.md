@@ -62,9 +62,24 @@ lookup. Starting from the parcel is the easier route.
     1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
     1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -
 
-     ENCUMBRANCES SHEET (LIST C)
-    Description            Details
-    No encumbrances found
+                                       ENCUMBRANCES SHEET (LIST C)
+    Description  Details
+    1.           • 1.1: Stig. 23. svibnja 1949.
+                 Z 487/49
+                 Na temelju presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku, uknjižuje se
+                 pravo ploduživanja do udaje, u korist:
+                   In favour of:
+                     IVIĆ MARIJA, KĆI PETRA, SAVAR
+                   In favour of:
+                     IVIĆ MARIJA, KĆI PETRA, SAVAR
+    2.           • 2.1: Pr. 20. srpnja 1979.
+                 Z 2444/79
+                 Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67,
+                 Općinskog suda u Zadru, uknjižuje se pravo ploduživanja u korist:
+                   In favour of:
+                     IVIĆ JELA UD. PETRA ZA 2/6
+                   In favour of:
+                     IVIĆ JELA UD. PETRA ZA 2/6
    ```
    <!-- END GENERATED: output -->
 
@@ -74,7 +89,9 @@ lookup. Starting from the parcel is the easier route.
    is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the
    vlastovnica, list B, with the share of each owner as a fraction.
    **ENCUMBRANCES SHEET (LIST C)** is the teretovnica, list C. When list C is
-   empty, the tool prints **No encumbrances found**.
+   empty, the tool prints **No encumbrances found**. When an entry is registered
+   in favour of someone (its text ends with "u korist:"), the persons follow
+   under **In favour of**, with their address and OIB when the registry has them.
 
 5. If the unit has pending entries, an extra line **Pending entries (plombe)**
    appears in the first table with the file numbers, and a warning follows. A

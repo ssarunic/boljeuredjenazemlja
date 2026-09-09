@@ -71,9 +71,24 @@ broj_zk_uloska,id_glavne_knjige
     1/2   IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
     1/2   IVIĆ ANA, KĆI PETRA    SAVAR                   -
 
-    TERETOVNICA (LIST C)
-    Opis         Detalji
-    Nema tereta
+                                           TERETOVNICA (LIST C)
+    Opis  Detalji
+    1.    • 1.1: Stig. 23. svibnja 1949.
+          Z 487/49
+          Na temelju presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku, uknjižuje se pravo
+          ploduživanja do udaje, u korist:
+            U korist:
+              IVIĆ MARIJA, KĆI PETRA, SAVAR
+            U korist:
+              IVIĆ MARIJA, KĆI PETRA, SAVAR
+    2.    • 2.1: Pr. 20. srpnja 1979.
+          Z 2444/79
+          Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67, Općinskog
+          suda u Zadru, uknjižuje se pravo ploduživanja u korist:
+            U korist:
+              IVIĆ JELA UD. PETRA ZA 2/6
+            U korist:
+              IVIĆ JELA UD. PETRA ZA 2/6
 
    ---
 

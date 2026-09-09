@@ -82,3 +82,46 @@ def test_none_source_drops_possessors(tools) -> None:
 def test_invalid_source_raises(tools) -> None:
     with pytest.raises(ValueError):
         _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="bogus"))
+
+
+class _FakeClientWithGis(_FakeClient):
+    """Like _FakeClient, but the municipality GIS data is available."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.geometry_calls: list[tuple[str, str]] = []
+
+    def get_parcel_geometry(self, parcel_number: str, municipality_reg_num: str):
+        from cadastral_api.models.gis_entities import ParcelGeometry
+
+        self.geometry_calls.append((parcel_number, municipality_reg_num))
+        return ParcelGeometry(
+            cestica_id="1",
+            broj_cestice=parcel_number,
+            povrsina_graficka=1.0,
+            maticni_broj_ko=municipality_reg_num,
+            coordinates=[{"x": 380596.77, "y": 4880892.83}, {"x": 380636.77, "y": 4880922.83}],
+        )
+
+
+def test_batch_entry_carries_map_url_when_gis_is_available() -> None:
+    client = _FakeClientWithGis()
+    res = _run(CadastralTools(client).batch_fetch_parcels([{"parcel_id": "x"}]))
+
+    entry = res["results"][0]
+    assert entry["status"] == "success"
+    # Resolved from the detailed record, even though the spec gave only parcel_id.
+    assert client.geometry_calls == [("1122/1", "334979")]
+    assert entry["map_url"].startswith(
+        "https://oss.uredjenazemlja.hr/map?center=380616.77,4880907.83&zoom=19&"
+    )
+
+
+def test_batch_entry_omits_map_url_when_gis_is_unavailable(tools) -> None:
+    # _FakeClient has no GIS support at all; the batch must still succeed.
+    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}]))
+
+    entry = res["results"][0]
+    assert entry["status"] == "success"
+    assert "map_url" not in entry
+    assert res["successful"] == 1

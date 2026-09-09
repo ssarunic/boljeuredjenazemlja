@@ -91,7 +91,17 @@ KEYS: dict[str, str] = {
     "encumbrances": pgettext("key", "encumbrances"),
     "has_encumbrances": pgettext("key", "has_encumbrances"),
     "description": pgettext("key", "description"),
+    "share_order_number": pgettext("key", "share_order_number"),
+    "right_type": pgettext("key", "right_type"),
     "entries": pgettext("key", "entries"),
+    "order_number": pgettext("key", "order_number"),
+    "action_type": pgettext("key", "action_type"),
+    "diary_number": pgettext("key", "diary_number"),
+    "entry_date": pgettext("key", "entry_date"),
+    "basis_document": pgettext("key", "basis_document"),
+    "basis_date": pgettext("key", "basis_date"),
+    "beneficiaries": pgettext("key", "beneficiaries"),
+    "source_fields": pgettext("key", "source_fields"),
     "total_parcels": pgettext("key", "total_parcels"),
     "summary": pgettext("key", "summary"),
     # Pending entries (plombe)
@@ -149,7 +159,7 @@ KEY_OVERRIDES: dict[tuple[str, str], str] = {
 }
 
 # Dicts whose keys are data, not field names.
-DATA_KEYED = frozenset({"land_use", "plombe_detail"})
+DATA_KEYED = frozenset({"land_use", "plombe_detail", "source_fields"})
 
 
 def _context(parent: str | None, key: str) -> str:

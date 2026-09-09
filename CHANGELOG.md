@@ -31,6 +31,12 @@ number and one tag.
 
 ### Changed
 
+- CLI: `get-lr-unit --show-encumbrances` prints, under each list C entry, the
+  persons it is registered in favour of (**In favour of** / **U korist**). In
+  `json` output each entry is now an object (`order_number`, `description`,
+  `beneficiaries`, and `source_fields` with the server's nested data verbatim)
+  instead of a plain description string, and each group carries
+  `share_order_number`.
 - CLI: short option flags now have Croatian spellings as well, two letters taken
   from the Croatian long option (`-bu` for `--broj-uloška`, `-gk` for
   `--glavna-knjiga`, `-vl` for `--vlasnici`, `-ob` for `--oblik`, ...). Croatian
@@ -44,6 +50,38 @@ number and one tag.
 
 ### Fixed
 
+- SDK: encumbrance entries (teretovnica, list C) no longer lose their
+  beneficiaries. The server lists the persons an entry is registered in favour
+  of under `lrOwners` (the entry text ends with "u korist:"), which the model
+  silently dropped. `LREntry.owners` now types that list; `LREntry`,
+  `EncumbranceGroup` and `EncumbranceSheetC` keep any other undeclared field
+  (`extra="allow"`, exposed as `LREntry.source_fields`); and
+  `LREntry.get_parties()` / `EncumbranceGroup.get_parties()` return the
+  beneficiaries as `Party` objects. The MCP `detail="full"` output includes
+  them through the model dump. Mock unit 657 now carries a list C with this
+  structure, and the API specification documents it.
+- SDK: `EncumbranceGroup.right_type` and `EncumbranceGroup.beneficiary` were
+  always `null`. They are now derived when the server does not send them:
+  `right_type` is parsed from the entry text (`parse_right_type()` in
+  `cadastral_api.utils`: pravo plodouživanja → `usufruct`, založno pravo →
+  `mortgage`, služnost → `easement`, tražbina → `lien`, zabrana otuđenja →
+  `prohibition`, prvokup → `preemption`, zabilježba → `annotation`, anything
+  else → `other`) and `beneficiary` is the first person in the entries'
+  `lrOwners`. The CLI `get-lr-unit` `json` output carries `right_type` per
+  encumbrance group.
+- SDK: `LREntry.action_type`, `diary_number`, `entry_date` and `basis_document`
+  were always `null`. They are now parsed from the entry text
+  (`parse_lr_entry()` in `cadastral_api.utils`): the action (uknjižba → `upis`,
+  predbilježba, zabilježba, brisanje), the diary number normalised to
+  `Z-487/49`, the receipt date (first date in the text, Croatian month names or
+  numeric), the legal basis (the phrase after "Na temelju") and `basis_date`,
+  the date inside that phrase. The CLI `get-lr-unit` `json` output carries them
+  per entry.
+- SDK: a share written into a beneficiary's name (`"... ZA 2/6"`) is no longer
+  treated as part of the name. `Party.share` exposes it as `{num, den, decimal}`
+  (the shape of a Sheet B `share_fraction`), `name_normalized` drops the suffix
+  and the raw `name` is kept. The CLI `get-lr-unit` `json` beneficiaries carry
+  `name_normalized` and `share`.
 - CLI: `get-geometry` `json`, `geojson` and `csv` output is no longer soft-wrapped
   at the terminal width, which broke lines longer than the window (such as the
   map link) when the output was piped.

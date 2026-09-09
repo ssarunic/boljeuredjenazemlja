@@ -297,11 +297,15 @@ def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
         table.add_row(f"[green]{_('No encumbrances found')}[/green]", "")
     else:
         for group in lr_unit.encumbrance_sheet_c.lr_entry_groups:
-            entries_text = "\n".join(
-                _format_encumbrance_entry(entry.order_number, clean_html(entry.description))
-                for entry in group.lr_entries
-            )
-            table.add_row(group.description, entries_text)
+            lines: list[str] = []
+            for entry in group.lr_entries:
+                lines.append(
+                    _format_encumbrance_entry(entry.order_number, clean_html(entry.description))
+                )
+                lines.extend(_format_parties(entry.get_parties()))
+            if group.beneficiary:
+                lines.extend(_format_parties([group.beneficiary]))
+            table.add_row(group.description, "\n".join(lines))
 
     console.print(table)
 
@@ -311,6 +315,19 @@ def _format_encumbrance_entry(order_number: str, description: str, max_length: i
     if len(description) > max_length:
         return f"• {order_number}: {description[:max_length]}..."
     return f"• {order_number}: {description}"
+
+
+def _format_parties(parties: list) -> list[str]:
+    """Render the persons an entry is registered in favour of, one per line."""
+    if not parties:
+        return []
+    lines = [f"  {_('In favour of')}:"]
+    for party in parties:
+        detail = f"{party.name}, {party.address}" if party.address else party.name
+        if party.tax_number:
+            detail += f" ({_('OIB')}: {party.tax_number})"
+        lines.append(f"    {detail}")
+    return lines
 
 
 def print_lr_unit_full(

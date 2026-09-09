@@ -209,9 +209,37 @@ def _format_structured_data(
     if show_encumbrances or show_all:
         encumbrances = []
         for group in lr_unit.encumbrance_sheet_c.lr_entry_groups:
+            entries = []
+            for entry in group.lr_entries:
+                item: dict[str, Any] = {
+                    "order_number": entry.order_number,
+                    "description": entry.description,
+                    "action_type": entry.action_type.value if entry.action_type else None,
+                    "diary_number": entry.diary_number,
+                    "entry_date": entry.entry_date.isoformat() if entry.entry_date else None,
+                    "basis_document": entry.basis_document,
+                    "basis_date": entry.basis_date.isoformat() if entry.basis_date else None,
+                    "beneficiaries": [
+                        {
+                            "name": p.name,
+                            "name_normalized": p.name_normalized,
+                            "share": p.share,
+                            "address": p.address,
+                            "tax_number": p.tax_number,
+                        }
+                        for p in entry.get_parties()
+                    ],
+                }
+                # Whatever else the server nested under the entry, verbatim
+                # (keys are data, not localized).
+                if entry.source_fields:
+                    item["source_fields"] = entry.source_fields
+                entries.append(item)
             encumbrances.append({
                 "description": group.description,
-                "entries": [entry.description for entry in group.lr_entries],
+                "share_order_number": group.share_order_number,
+                "right_type": group.right_type.value if group.right_type else None,
+                "entries": entries,
             })
         data["encumbrances"] = encumbrances
 

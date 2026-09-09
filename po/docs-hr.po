@@ -136,10 +136,10 @@ msgstr ""
 " za nepronađenu česticu. **ZK uložak** je broj zemljišnoknjižnog uloška "
 "čestice, koji vam treba za sljedeći korak."
 
-#: commands/batch-fetch.md:81 commands/batch-lr-unit.md:144
+#: commands/batch-fetch.md:81 commands/batch-lr-unit.md:159
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
-#: commands/get-geometry.md:70 commands/get-lr-unit.md:84
+#: commands/get-geometry.md:75 commands/get-lr-unit.md:101
 #: commands/get-parcel.md:101 commands/info.md:64
 #: commands/list-municipalities.md:66 commands/list-offices.md:77
 #: commands/search-municipality.md:52 commands/search.md:66
@@ -194,10 +194,10 @@ msgstr ""
 "pokreće na drugom jeziku dobiva nazive tog jezika. Alat datoteke čita natrag "
 "na oba jezika."
 
-#: commands/batch-fetch.md:124 commands/batch-lr-unit.md:174
+#: commands/batch-fetch.md:124 commands/batch-lr-unit.md:189
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:93 commands/get-lr-unit.md:154
+#: commands/get-geometry.md:99 commands/get-lr-unit.md:171
 #: commands/get-parcel.md:134 commands/info.md:72
 #: commands/list-municipalities.md:90 commands/list-offices.md:92
 #: commands/search-municipality.md:75 commands/search.md:97
@@ -226,10 +226,10 @@ msgstr ""
 "u mapi u kojoj je datoteka, ili upišite njezinu punu putanju. Ostale poruke "
 "objašnjene su na [stranici o greškama](../errors.md)."
 
-#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:184
+#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:199
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:112 commands/get-lr-unit.md:170
+#: commands/get-geometry.md:118 commands/get-lr-unit.md:187
 #: commands/get-parcel.md:151 commands/info.md:79
 #: commands/list-municipalities.md:103 commands/list-offices.md:98
 #: commands/search-municipality.md:89 commands/search.md:114
@@ -247,10 +247,10 @@ msgstr ""
 msgid "[search](search.md) checks one parcel."
 msgstr "[pretraži](search.md) provjerava jednu česticu."
 
-#: commands/batch-fetch.md:171 commands/batch-lr-unit.md:190
+#: commands/batch-fetch.md:171 commands/batch-lr-unit.md:205
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:118 commands/get-lr-unit.md:177
+#: commands/get-geometry.md:124 commands/get-lr-unit.md:194
 #: commands/get-parcel.md:158 commands/info.md:85
 #: commands/list-municipalities.md:109 commands/list-offices.md:104
 #: commands/search-municipality.md:96 commands/search.md:121
@@ -314,7 +314,7 @@ msgstr "Otvorite Terminal u mapi u kojoj je vaša datoteka."
 msgid "Type the following line and press Enter:"
 msgstr "Upišite sljedeći redak i pritisnite Enter:"
 
-#: commands/batch-lr-unit.md:137
+#: commands/batch-lr-unit.md:152
 msgid ""
 "The units are printed one after another, separated by a line of dashes. Each "
 "is laid out as on the [get-lr-unit](get-lr-unit.md) page: **LAND REGISTRY "
@@ -327,7 +327,7 @@ msgstr ""
 "**POSJEDOVNICA (LIST A)**, **VLASTOVNICA (LIST B)** i **TERETOVNICA (LIST "
 "C)**. Uložak s plombama ima isti redak **Plombe (u tijeku)** i upozorenje."
 
-#: commands/batch-lr-unit.md:146
+#: commands/batch-lr-unit.md:161
 msgid ""
 "To continue from a batch-fetch result, use `--from-batch-output` with the "
 "JSON file it wrote:"
@@ -335,7 +335,7 @@ msgstr ""
 "Za nastavak iz rezultata naredbe skupno-čestice upotrijebite `--iz-skupnog-"
 "ispisa` s JSON datotekom koju je ona zapisala:"
 
-#: commands/batch-lr-unit.md:153
+#: commands/batch-lr-unit.md:168
 msgid ""
 "For a long list, screen output is hard to read. Keep it as a file instead "
 "with `--format json` and `--output`:"
@@ -343,7 +343,7 @@ msgstr ""
 "Kod dugog popisa ispis na zaslonu teško je čitati. Umjesto toga spremite ga u"
 " datoteku pomoću `--oblik json` i `--datoteka`:"
 
-#: commands/batch-lr-unit.md:160
+#: commands/batch-lr-unit.md:175
 msgid ""
 "When one unit cannot be read, the tool continues with the rest. Add `--stop-"
 "on-error` to stop at the first problem instead."
@@ -351,7 +351,7 @@ msgstr ""
 "Kada se jedan uložak ne može pročitati, alat nastavlja s ostalima. Dodajte "
 "`--stani-kod-greške` da umjesto toga stane kod prvog problema."
 
-#: commands/batch-lr-unit.md:176
+#: commands/batch-lr-unit.md:191
 msgid ""
 "If the tool cannot find the file you named, it stops before reading anything."
 " Check that Terminal is in the folder where the file is, or type the full "
@@ -361,7 +361,7 @@ msgstr ""
 "pročita. Provjerite je li Terminal u mapi u kojoj je datoteka, ili upišite "
 "njezinu punu putanju."
 
-#: commands/batch-lr-unit.md:180
+#: commands/batch-lr-unit.md:195
 msgid ""
 "If one unit in the list does not exist, that unit is reported as failed and "
 "the others are still printed. Check its number and main book ID in your file."
@@ -372,14 +372,14 @@ msgstr ""
 "knjige u svojoj datoteci. Ostale poruke objašnjene su na [stranici o "
 "greškama](../errors.md)."
 
-#: commands/batch-lr-unit.md:186
+#: commands/batch-lr-unit.md:201
 msgid ""
 "[batch-fetch](batch-fetch.md) produces the list of units from a list of "
 "parcels."
 msgstr ""
 "[skupno-čestice](batch-fetch.md) iz popisa čestica izrađuje popis uložaka."
 
-#: commands/batch-lr-unit.md:187
+#: commands/batch-lr-unit.md:202
 msgid "[get-lr-unit](get-lr-unit.md) reads one unit and explains the sheets."
 msgstr "[uložak](get-lr-unit.md) čita jedan uložak i objašnjava listove."
 
@@ -717,32 +717,45 @@ msgstr ""
 "Hrvatsku. To nisu stupnjevi kakve vidite u automobilskoj navigaciji. "
 "Kartografski program znat će što s njima."
 
-#: commands/get-geometry.md:64
+# fuzzy match of: **GEOMETRY STATISTICS** summarises the shape: the number of
+# corner points (**Vertices**), the area computed from them (**Area (GIS)**),
+# and the smallest rectangle that contains the parcel (**Bounding Box**). The
+# last block is the boundary itself, written as a polygon in a standard text
+# form. Each pair of numbers is one corner point.
+#: commands/get-geometry.md:68
 msgid ""
 "**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
-"(**Vertices**), the area computed from them (**Area (GIS)**), and the "
-"smallest rectangle that contains the parcel (**Bounding Box**). The last "
-"block is the boundary itself, written as a polygon in a standard text form. "
-"Each pair of numbers is one corner point."
+"(**Vertices**), the area computed from them (**Area (GIS)**), the smallest "
+"rectangle that contains the parcel (**Bounding Box**), and a link (**Map "
+"URL**) that opens the official interactive map centred on the parcel. The "
+"last block is the boundary itself, written as a polygon in a standard text "
+"form. Each pair of numbers is one corner point."
 msgstr ""
 "**STATISTIKA GEOMETRIJE** sažima oblik: broj lomnih točaka (**Vrhovi**), "
-"površinu izračunatu iz njih (**Površina (GIS)**) i najmanji pravokutnik koji "
-"obuhvaća česticu (**Granični okvir**). Zadnji blok je sama granica, zapisana "
-"kao poligon u standardnom tekstualnom obliku. Svaki par brojeva jedna je "
-"lomna točka."
+"površinu izračunatu iz njih (**Površina (GIS)**), najmanji pravokutnik koji "
+"obuhvaća česticu (**Granični okvir**) i poveznicu (**URL karte**) koja otvara"
+" službenu interaktivnu kartu centriranu na česticu. Zadnji blok je sama "
+"granica, zapisana kao poligon u standardnom tekstualnom obliku. Svaki par "
+"brojeva jedna je lomna točka."
 
-#: commands/get-geometry.md:72
+# fuzzy match of: `--format` chooses the form of the boundary. `wkt` is the
+# standard text form shown above. `geojson` is the form most web maps read.
+# `csv` gives one corner point per line for a spreadsheet. `json` gives the
+# same data for other programs.
+#: commands/get-geometry.md:77
 msgid ""
 "`--format` chooses the form of the boundary. `wkt` is the standard text form "
 "shown above. `geojson` is the form most web maps read. `csv` gives one corner"
 " point per line for a spreadsheet. `json` gives the same data for other "
-"programs."
+"programs. The `geojson` and `json` forms also carry the map link (`map_url`)."
 msgstr ""
 "`--oblik` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan "
 "gore. `geojson` je oblik koji čita većina web karata. `csv` daje jednu lomnu "
-"točku po retku za tablicu. `json` daje iste podatke za druge programe."
+"točku po retku za tablicu. `json` daje iste podatke za druge programe. Oblici"
+" `geojson` i `json` sadrže i poveznicu na kartu (`map_url`; u obliku `json` "
+"ključ je `url_karte`)."
 
-#: commands/get-geometry.md:76
+#: commands/get-geometry.md:82
 msgid ""
 "To hand the boundary to someone, write it to a file with `--output`. A "
 "GeoJSON file can be dragged onto many online map viewers:"
@@ -750,13 +763,13 @@ msgstr ""
 "Da biste granicu nekome predali, zapišite je u datoteku pomoću `--datoteka`. "
 "GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:"
 
-#: commands/get-geometry.md:95
+#: commands/get-geometry.md:101
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr "Ako čestice nema u podacima o granicama općine, vidjet ćete ovo:"
 
-#: commands/get-geometry.md:105
+#: commands/get-geometry.md:111
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
@@ -764,7 +777,7 @@ msgstr ""
 "Podaci o granicama i katastar nisu uvijek usklađeni; prvo provjerite česticu "
 "naredbom [pretraži](search.md)."
 
-#: commands/get-geometry.md:108
+#: commands/get-geometry.md:114
 msgid ""
 "If the boundary data of the municipality cannot be downloaded, ask the person"
 " who installed the tool whether the practice server is running. Other "
@@ -774,14 +787,14 @@ msgstr ""
 "instalirala alat je li probni poslužitelj pokrenut. Ostale poruke objašnjene "
 "su na [stranici o greškama](../errors.md)."
 
-#: commands/get-geometry.md:114
+#: commands/get-geometry.md:120
 msgid ""
 "[download-gis](download-gis.md) downloads the boundary data of a whole "
 "municipality."
 msgstr ""
 "[preuzmi-gis](download-gis.md) preuzima podatke o granicama cijele općine."
 
-#: commands/get-geometry.md:115
+#: commands/get-geometry.md:121
 msgid ""
 "[cache-list](cache-list.md) shows which municipalities are already on your "
 "computer."
@@ -857,14 +870,14 @@ msgstr ""
 "čestice](batch-fetch.md) ili iz ranijeg dohvata. Kretanje od čestice lakši je"
 " put."
 
-# fuzzy match of: The first table, **LAND REGISTRY UNIT**, identifies the
-# unit:
+# fuzzy match of: The first table, **LAND REGISTRY UNIT**, identifies the unit:
 # its number, the main book, the office that keeps it, and **Last Diary
 # Number**, the most recent file number entered in the diary (dnevnik).
-# **PARCEL LIST (SHEET A)** is list A. **OWNERSHIP SHEET (LIST B)** is list B,
-# with the share of each owner as a fraction. **ENCUMBRANCES SHEET (LIST C)**
-# is list C. When list C is empty, the tool prints **No encumbrances found**.
-#: commands/get-lr-unit.md:71
+# **PARCEL LIST (SHEET A)** is the posjedovnica, list A. **OWNERSHIP SHEET
+# (LIST B)** is the vlastovnica, list B, with the share of each owner as a
+# fraction. **ENCUMBRANCES SHEET (LIST C)** is the teretovnica, list C. When
+# list C is empty, the tool prints **No encumbrances found**.
+#: commands/get-lr-unit.md:86
 msgid ""
 "The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
 " main book, the office that keeps it, and **Last Diary Number**, the most "
@@ -872,20 +885,24 @@ msgid ""
 "is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
 " list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
 "(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
-"**No encumbrances found**."
+"**No encumbrances found**. When an entry is registered in favour of someone "
+"(its text ends with \"u korist:\"), the persons follow under **In favour "
+"of**, with their address and OIB when the registry has them."
 msgstr ""
 "Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj, "
 "glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji "
 "poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A. "
 "**VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. "
 "**TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje "
-"**Nema tereta**."
+"**Nema tereta**. Kada je upis uknjižen u nečiju korist (tekst mu završava s "
+"\"u korist:\"), osobe slijede pod **U korist**, s adresom i OIB-om kada ih "
+"zemljišna knjiga ima."
 
 # fuzzy match of: If the unit has pending entries, an extra line **Pending
 # entries (plombe)** appears in the first table with the file numbers, and a
 # warning follows. A plomba means a request has been received and the unit may
 # be about to change. Do not treat the sheets as final until it is resolved.
-#: commands/get-lr-unit.md:79
+#: commands/get-lr-unit.md:96
 msgid ""
 "If the unit has pending entries, an extra line **Pending entries (plombe)** "
 "appears in the first table with the file numbers, and a warning follows. A "
@@ -898,7 +915,7 @@ msgstr ""
 "prijedlog za upis zaprimljen i da se uložak možda uskoro mijenja. Ne "
 "smatrajte listove konačnima dok se on ne riješi."
 
-#: commands/get-lr-unit.md:86
+#: commands/get-lr-unit.md:103
 msgid ""
 "`--all` shows the three sheets. To see only one, use `--show-owners` for list"
 " B, `--show-parcels` for list A, or `--show-encumbrances` for list C. Without"
@@ -912,7 +929,7 @@ msgstr ""
 # detail`. The tool then asks the registry about every plomba, which takes one
 # extra request each, and prints a table with the request type, its status and
 # the date it was received:
-#: commands/get-lr-unit.md:90
+#: commands/get-lr-unit.md:107
 msgid ""
 "To see what each pending entry is about, add `--plombe-detail`. The tool then"
 " asks the registry about every plomba, which takes one extra lookup each, and"
@@ -923,7 +940,7 @@ msgstr ""
 "plombu pita zemljišnu knjigu, što je jedan dodatni upit po plombi, i ispisuje"
 " tablicu s vrstom prijedloga za upis, njegovim statusom i datumom zaprimanja:"
 
-#: commands/get-lr-unit.md:134
+#: commands/get-lr-unit.md:151
 msgid ""
 "To name the unit directly instead of starting from a parcel, use `--unit-"
 "number` and `--main-book` together, as in the example above. To keep the "
@@ -934,17 +951,17 @@ msgstr ""
 "spremite u datoteku, dodajte `--oblik json` i `--datoteka` s nazivom "
 "datoteke."
 
-#: commands/get-lr-unit.md:156
+#: commands/get-lr-unit.md:173
 msgid ""
 "If you give a parcel but forget the municipality, the tool stops and asks for"
 " it:"
 msgstr "Ako zadate česticu, a zaboravite općinu, alat staje i traži je:"
 
-#: commands/get-lr-unit.md:164
+#: commands/get-lr-unit.md:181
 msgid "Add `-m` and the municipality name or number."
 msgstr "Dodajte `-ko` i naziv ili šifru općine."
 
-#: commands/get-lr-unit.md:166
+#: commands/get-lr-unit.md:183
 msgid ""
 "If the unit number does not exist in that main book, the tool reports an "
 "error that ends with `404 Not Found`. Check both numbers against your "
@@ -954,7 +971,7 @@ msgstr ""
 "završava s `404 Not Found`. Provjerite oba broja na svom dokumentu. Ostale "
 "poruke objašnjene su na [stranici o greškama](../errors.md)."
 
-#: commands/get-lr-unit.md:172
+#: commands/get-lr-unit.md:189
 msgid ""
 "[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
 "including the possessors."
@@ -962,11 +979,11 @@ msgstr ""
 "[čestica](get-parcel.md) prikazuje katastarsku stranu iste čestice, "
 "uključujući posjednike."
 
-#: commands/get-lr-unit.md:173
+#: commands/get-lr-unit.md:190
 msgid "[batch-lr-unit](batch-lr-unit.md) reads many units in one go."
 msgstr "[skupno-ulošci](batch-lr-unit.md) čita više uložaka odjednom."
 
-#: commands/get-lr-unit.md:174
+#: commands/get-lr-unit.md:191
 msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
 msgstr "[Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu."
 
@@ -2314,6 +2331,45 @@ msgid ""
 "calls them."
 msgstr ""
 "[Pojmovnik](glossary.md): riječi zemljišne knjige i kako ih alat naziva."
+
+#~ msgid ""
+#~ "The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
+#~ " main book, the office that keeps it, and **Last Diary Number**, the most "
+#~ "recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)** "
+#~ "is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
+#~ " list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
+#~ "(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
+#~ "**No encumbrances found**."
+#~ msgstr ""
+#~ "Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj, "
+#~ "glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji "
+#~ "poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A. "
+#~ "**VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. "
+#~ "**TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje "
+#~ "**Nema tereta**."
+
+#~ msgid ""
+#~ "**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
+#~ "(**Vertices**), the area computed from them (**Area (GIS)**), and the "
+#~ "smallest rectangle that contains the parcel (**Bounding Box**). The last "
+#~ "block is the boundary itself, written as a polygon in a standard text form. "
+#~ "Each pair of numbers is one corner point."
+#~ msgstr ""
+#~ "**STATISTIKA GEOMETRIJE** sažima oblik: broj lomnih točaka (**Vrhovi**), "
+#~ "površinu izračunatu iz njih (**Površina (GIS)**) i najmanji pravokutnik koji "
+#~ "obuhvaća česticu (**Granični okvir**). Zadnji blok je sama granica, zapisana "
+#~ "kao poligon u standardnom tekstualnom obliku. Svaki par brojeva jedna je "
+#~ "lomna točka."
+
+#~ msgid ""
+#~ "`--format` chooses the form of the boundary. `wkt` is the standard text form "
+#~ "shown above. `geojson` is the form most web maps read. `csv` gives one corner"
+#~ " point per line for a spreadsheet. `json` gives the same data for other "
+#~ "programs."
+#~ msgstr ""
+#~ "`--oblik` bira oblik granice. `wkt` je standardni tekstualni oblik prikazan "
+#~ "gore. `geojson` je oblik koji čita većina web karata. `csv` daje jednu lomnu "
+#~ "točku po retku za tablicu. `json` daje iste podatke za druge programe."
 
 #~ msgid ""
 #~ "| Kultura, namjena zemljišta | The land use recorded in the cadastre, such as"

@@ -812,6 +812,45 @@ For condominiums with shared apartments (e.g., married couples), ownership is ne
 - `taxNumber` (string, optional): OIB (Croatian tax identification number)
 - `lrEntry` (object, optional): Registration entry details
 
+#### Encumbrance Sheet C - lrEntryGroups
+
+`encumbranceSheetC.lrEntryGroups` holds one group per encumbrance; each group
+holds the entries (upisi) that make it up. Verified against live responses:
+
+```json
+{
+  "description": "2. ",
+  "lrEntries": [
+    {
+      "lrEntryId": 93357927,
+      "orderNumber": "2.1",
+      "description": "Pr. 20. srpnja 1979.<br>Z 2444/79<br>Na temelju rješenja o nasljeđivanju ... uknjižuje se pravo ploduživanja u korist:",
+      "lrOwners": [
+        {"lrOwnerId": 60930010, "name": "Test Beneficiary ZA 2/6"}
+      ]
+    }
+  ]
+}
+```
+
+**Group fields:**
+
+- `description` (string): Group label; often just the ordinal (`"1. "`) or
+  `"1. Na suvlasnički dio: 1 (4/8)"` when the encumbrance is tied to a share
+- `shareOrderNumber` (string, optional): Order number of the Sheet B share the
+  encumbrance burdens; absent when the encumbrance is on the whole unit
+- `lrEntries` (array): Entries of the group
+
+**Entry fields:**
+
+- `lrEntryId` (integer), `orderNumber` (string, e.g. `"2.1"`)
+- `description` (string, HTML): Diary reference, legal basis and the right
+  registered; when the right is in someone's favour the text ends with
+  `"u korist:"` and the persons follow in `lrOwners`
+- `lrOwners` (array, optional): Beneficiaries of the entry, same shape as the
+  Party object above (`lrOwnerId`, `name`, `address`, `taxNumber`). A share of
+  the right may be part of the name (`"... ZA 2/6"`)
+
 #### Detecting Condominiums
 
 **⚠️ Important:** The `condominiums` boolean field at the unit level is **unreliable** (often `false` for actual condominiums).

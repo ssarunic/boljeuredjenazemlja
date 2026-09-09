@@ -114,10 +114,10 @@ msgid ""
 " need for the next step."
 msgstr ""
 
-#: commands/batch-fetch.md:81 commands/batch-lr-unit.md:144
+#: commands/batch-fetch.md:81 commands/batch-lr-unit.md:159
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
-#: commands/get-geometry.md:70 commands/get-lr-unit.md:84
+#: commands/get-geometry.md:75 commands/get-lr-unit.md:101
 #: commands/get-parcel.md:101 commands/info.md:64
 #: commands/list-municipalities.md:66 commands/list-offices.md:77
 #: commands/search-municipality.md:52 commands/search.md:66
@@ -158,10 +158,10 @@ msgid ""
 "The tool reads files back in either language."
 msgstr ""
 
-#: commands/batch-fetch.md:124 commands/batch-lr-unit.md:174
+#: commands/batch-fetch.md:124 commands/batch-lr-unit.md:189
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:93 commands/get-lr-unit.md:154
+#: commands/get-geometry.md:99 commands/get-lr-unit.md:171
 #: commands/get-parcel.md:134 commands/info.md:72
 #: commands/list-municipalities.md:90 commands/list-offices.md:92
 #: commands/search-municipality.md:75 commands/search.md:97
@@ -185,10 +185,10 @@ msgid ""
 "explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:184
+#: commands/batch-fetch.md:165 commands/batch-lr-unit.md:199
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:112 commands/get-lr-unit.md:170
+#: commands/get-geometry.md:118 commands/get-lr-unit.md:187
 #: commands/get-parcel.md:151 commands/info.md:79
 #: commands/list-municipalities.md:103 commands/list-offices.md:98
 #: commands/search-municipality.md:89 commands/search.md:114
@@ -204,10 +204,10 @@ msgstr ""
 msgid "[search](search.md) checks one parcel."
 msgstr ""
 
-#: commands/batch-fetch.md:171 commands/batch-lr-unit.md:190
+#: commands/batch-fetch.md:171 commands/batch-lr-unit.md:205
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:118 commands/get-lr-unit.md:177
+#: commands/get-geometry.md:124 commands/get-lr-unit.md:194
 #: commands/get-parcel.md:158 commands/info.md:85
 #: commands/list-municipalities.md:109 commands/list-offices.md:104
 #: commands/search-municipality.md:96 commands/search.md:121
@@ -259,7 +259,7 @@ msgstr ""
 msgid "Type the following line and press Enter:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:137
+#: commands/batch-lr-unit.md:152
 msgid ""
 "The units are printed one after another, separated by a line of dashes. Each "
 "is laid out as on the [get-lr-unit](get-lr-unit.md) page: **LAND REGISTRY "
@@ -268,45 +268,45 @@ msgid ""
 " **Pending entries (plombe)** line and warning."
 msgstr ""
 
-#: commands/batch-lr-unit.md:146
+#: commands/batch-lr-unit.md:161
 msgid ""
 "To continue from a batch-fetch result, use `--from-batch-output` with the "
 "JSON file it wrote:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:153
+#: commands/batch-lr-unit.md:168
 msgid ""
 "For a long list, screen output is hard to read. Keep it as a file instead "
 "with `--format json` and `--output`:"
 msgstr ""
 
-#: commands/batch-lr-unit.md:160
+#: commands/batch-lr-unit.md:175
 msgid ""
 "When one unit cannot be read, the tool continues with the rest. Add `--stop-"
 "on-error` to stop at the first problem instead."
 msgstr ""
 
-#: commands/batch-lr-unit.md:176
+#: commands/batch-lr-unit.md:191
 msgid ""
 "If the tool cannot find the file you named, it stops before reading anything."
 " Check that Terminal is in the folder where the file is, or type the full "
 "path to it."
 msgstr ""
 
-#: commands/batch-lr-unit.md:180
+#: commands/batch-lr-unit.md:195
 msgid ""
 "If one unit in the list does not exist, that unit is reported as failed and "
 "the others are still printed. Check its number and main book ID in your file."
 " Other messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/batch-lr-unit.md:186
+#: commands/batch-lr-unit.md:201
 msgid ""
 "[batch-fetch](batch-fetch.md) produces the list of units from a list of "
 "parcels."
 msgstr ""
 
-#: commands/batch-lr-unit.md:187
+#: commands/batch-lr-unit.md:202
 msgid "[get-lr-unit](get-lr-unit.md) reads one unit and explains the sheets."
 msgstr ""
 
@@ -579,55 +579,56 @@ msgid ""
 "system. A mapping program will know what to do with them."
 msgstr ""
 
-#: commands/get-geometry.md:64
+#: commands/get-geometry.md:68
 msgid ""
 "**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
-"(**Vertices**), the area computed from them (**Area (GIS)**), and the "
-"smallest rectangle that contains the parcel (**Bounding Box**). The last "
-"block is the boundary itself, written as a polygon in a standard text form. "
-"Each pair of numbers is one corner point."
+"(**Vertices**), the area computed from them (**Area (GIS)**), the smallest "
+"rectangle that contains the parcel (**Bounding Box**), and a link (**Map "
+"URL**) that opens the official interactive map centred on the parcel. The "
+"last block is the boundary itself, written as a polygon in a standard text "
+"form. Each pair of numbers is one corner point."
 msgstr ""
 
-#: commands/get-geometry.md:72
+#: commands/get-geometry.md:77
 msgid ""
 "`--format` chooses the form of the boundary. `wkt` is the standard text form "
 "shown above. `geojson` is the form most web maps read. `csv` gives one corner"
 " point per line for a spreadsheet. `json` gives the same data for other "
-"programs."
+"programs. The `geojson` and `json` forms also carry the map link (`map_url`)."
 msgstr ""
 
-#: commands/get-geometry.md:76
+#: commands/get-geometry.md:82
 msgid ""
 "To hand the boundary to someone, write it to a file with `--output`. A "
 "GeoJSON file can be dragged onto many online map viewers:"
 msgstr ""
 
-#: commands/get-geometry.md:95
+#: commands/get-geometry.md:101
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr ""
 
-#: commands/get-geometry.md:105
+#: commands/get-geometry.md:111
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
 msgstr ""
 
-#: commands/get-geometry.md:108
+#: commands/get-geometry.md:114
 msgid ""
 "If the boundary data of the municipality cannot be downloaded, ask the person"
 " who installed the tool whether the practice server is running. Other "
 "messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/get-geometry.md:114
+#: commands/get-geometry.md:120
 msgid ""
 "[download-gis](download-gis.md) downloads the boundary data of a whole "
 "municipality."
 msgstr ""
 
-#: commands/get-geometry.md:115
+#: commands/get-geometry.md:121
 msgid ""
 "[cache-list](cache-list.md) shows which municipalities are already on your "
 "computer."
@@ -678,7 +679,7 @@ msgid ""
 "lookup. Starting from the parcel is the easier route."
 msgstr ""
 
-#: commands/get-lr-unit.md:71
+#: commands/get-lr-unit.md:86
 msgid ""
 "The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
 " main book, the office that keeps it, and **Last Diary Number**, the most "
@@ -686,10 +687,12 @@ msgid ""
 "is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
 " list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
 "(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
-"**No encumbrances found**."
+"**No encumbrances found**. When an entry is registered in favour of someone "
+"(its text ends with \"u korist:\"), the persons follow under **In favour "
+"of**, with their address and OIB when the registry has them."
 msgstr ""
 
-#: commands/get-lr-unit.md:79
+#: commands/get-lr-unit.md:96
 msgid ""
 "If the unit has pending entries, an extra line **Pending entries (plombe)** "
 "appears in the first table with the file numbers, and a warning follows. A "
@@ -698,14 +701,14 @@ msgid ""
 "it is resolved."
 msgstr ""
 
-#: commands/get-lr-unit.md:86
+#: commands/get-lr-unit.md:103
 msgid ""
 "`--all` shows the three sheets. To see only one, use `--show-owners` for list"
 " B, `--show-parcels` for list A, or `--show-encumbrances` for list C. Without"
 " any of them the tool prints the first table only."
 msgstr ""
 
-#: commands/get-lr-unit.md:90
+#: commands/get-lr-unit.md:107
 msgid ""
 "To see what each pending entry is about, add `--plombe-detail`. The tool then"
 " asks the registry about every plomba, which takes one extra lookup each, and"
@@ -713,41 +716,41 @@ msgid ""
 " the date it was received:"
 msgstr ""
 
-#: commands/get-lr-unit.md:134
+#: commands/get-lr-unit.md:151
 msgid ""
 "To name the unit directly instead of starting from a parcel, use `--unit-"
 "number` and `--main-book` together, as in the example above. To keep the "
 "result as a file, add `--format json` and `--output` with a file name."
 msgstr ""
 
-#: commands/get-lr-unit.md:156
+#: commands/get-lr-unit.md:173
 msgid ""
 "If you give a parcel but forget the municipality, the tool stops and asks for"
 " it:"
 msgstr ""
 
-#: commands/get-lr-unit.md:164
+#: commands/get-lr-unit.md:181
 msgid "Add `-m` and the municipality name or number."
 msgstr ""
 
-#: commands/get-lr-unit.md:166
+#: commands/get-lr-unit.md:183
 msgid ""
 "If the unit number does not exist in that main book, the tool reports an "
 "error that ends with `404 Not Found`. Check both numbers against your "
 "document. Other messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/get-lr-unit.md:172
+#: commands/get-lr-unit.md:189
 msgid ""
 "[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
 "including the possessors."
 msgstr ""
 
-#: commands/get-lr-unit.md:173
+#: commands/get-lr-unit.md:190
 msgid "[batch-lr-unit](batch-lr-unit.md) reads many units in one go."
 msgstr ""
 
-#: commands/get-lr-unit.md:174
+#: commands/get-lr-unit.md:191
 msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
 msgstr ""
 

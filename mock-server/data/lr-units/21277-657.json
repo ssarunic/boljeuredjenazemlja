@@ -80,6 +80,40 @@
     "lrEntries": []
   },
   "encumbranceSheetC": {
-    "lrEntryGroups": []
+    "lrEntryGroups": [
+      {
+        "description": "1. ",
+        "lrEntries": [
+          {
+            "description": "Stig. 23. svibnja 1949.<br>Z 487/49<br>Na temelju presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku, uknjižuje se pravo ploduživanja do udaje, u korist:",
+            "lrEntryId": 93357926,
+            "orderNumber": "1.1",
+            "lrOwners": [
+              {
+                "lrOwnerId": 60930411,
+                "name": "IVIĆ MARIJA, KĆI PETRA",
+                "address": "SAVAR"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "description": "2. ",
+        "lrEntries": [
+          {
+            "description": "Pr. 20. srpnja 1979.<br>Z 2444/79<br>Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67, Općinskog suda u Zadru, uknjižuje se pravo ploduživanja u korist:",
+            "lrEntryId": 93357927,
+            "orderNumber": "2.1",
+            "lrOwners": [
+              {
+                "lrOwnerId": 60930412,
+                "name": "IVIĆ JELA UD. PETRA ZA 2/6"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

@@ -64,9 +64,24 @@ lakši je put.
     1/2   IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
     1/2   IVIĆ ANA, KĆI PETRA    SAVAR                   -
 
-    TERETOVNICA (LIST C)
-    Opis         Detalji
-    Nema tereta
+                                           TERETOVNICA (LIST C)
+    Opis  Detalji
+    1.    • 1.1: Stig. 23. svibnja 1949.
+          Z 487/49
+          Na temelju presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku, uknjižuje se pravo
+          ploduživanja do udaje, u korist:
+            U korist:
+              IVIĆ MARIJA, KĆI PETRA, SAVAR
+            U korist:
+              IVIĆ MARIJA, KĆI PETRA, SAVAR
+    2.    • 2.1: Pr. 20. srpnja 1979.
+          Z 2444/79
+          Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67, Općinskog
+          suda u Zadru, uknjižuje se pravo ploduživanja u korist:
+            U korist:
+              IVIĆ JELA UD. PETRA ZA 2/6
+            U korist:
+              IVIĆ JELA UD. PETRA ZA 2/6
    ```
    <!-- END GENERATED: output -->
 
@@ -75,7 +90,9 @@ lakši je put.
    poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A.
    **VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom.
    **TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje
-   **Nema tereta**.
+   **Nema tereta**. Kada je upis uknjižen u nečiju korist (tekst mu završava s
+   "u korist:"), osobe slijede pod **U korist**, s adresom i OIB-om kada ih
+   zemljišna knjiga ima.
 
 5. Ako uložak ima plombe, u prvoj tablici pojavljuje se dodatni redak **Plombe
    (u tijeku)** s poslovnim brojevima, a slijedi upozorenje. Plomba znači da je

@@ -67,9 +67,24 @@ lr_unit_number,main_book_id
     1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -
     1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -
 
-     ENCUMBRANCES SHEET (LIST C)
-    Description            Details
-    No encumbrances found
+                                       ENCUMBRANCES SHEET (LIST C)
+    Description  Details
+    1.           • 1.1: Stig. 23. svibnja 1949.
+                 Z 487/49
+                 Na temelju presude 29. siječnja 1940. agr. 1996/31 Sreskog suda u Preku, uknjižuje se
+                 pravo ploduživanja do udaje, u korist:
+                   In favour of:
+                     IVIĆ MARIJA, KĆI PETRA, SAVAR
+                   In favour of:
+                     IVIĆ MARIJA, KĆI PETRA, SAVAR
+    2.           • 2.1: Pr. 20. srpnja 1979.
+                 Z 2444/79
+                 Na temelju rješenja o nasljeđivanju od 27. studenog 1967. pod brojem O 533/67,
+                 Općinskog suda u Zadru, uknjižuje se pravo ploduživanja u korist:
+                   In favour of:
+                     IVIĆ JELA UD. PETRA ZA 2/6
+                   In favour of:
+                     IVIĆ JELA UD. PETRA ZA 2/6
 
    ---
 

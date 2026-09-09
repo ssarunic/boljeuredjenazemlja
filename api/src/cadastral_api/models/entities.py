@@ -20,6 +20,7 @@ educational context using a mock server that closely mimics production behavior.
 from datetime import date, datetime
 from enum import Enum
 from fractions import Fraction
+from typing import Any
 
 from pydantic import (
     AliasChoices,
@@ -31,7 +32,14 @@ from pydantic import (
     model_validator,
 )
 
-from ..utils import normalize_name, parse_fraction
+from ..utils import (
+    first_date,
+    normalize_name,
+    parse_fraction,
+    parse_lr_entry,
+    parse_right_type,
+    split_name_share,
+)
 
 
 class MunicipalitySearchResult(BaseModel):
@@ -561,8 +569,28 @@ class Party(BaseModel):
     @computed_field  # type: ignore[misc]
     @property
     def name_normalized(self) -> str:
-        """Display/matching-normalized form of ``name`` (raw value preserved)."""
-        return normalize_name(self.name)
+        """Display/matching-normalized form of ``name`` (raw value preserved).
+
+        A share suffix in the name (``"... ZA 2/6"``) is not part of the name;
+        it is exposed as ``share`` instead.
+        """
+        return normalize_name(split_name_share(self.name)[0])
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def share(self) -> dict | None:
+        """Share of the right carried in the name, ``{num, den, decimal}`` or None.
+
+        Sheet C beneficiaries: ``"ŠARUNIĆ AUGUSTIN POK. BOŽE ZA 2/6"`` gives
+        ``{"num": 2, "den": 6, "decimal": 0.333...}``, the same shape as a
+        Sheet B share's ``share_fraction``. Sheet B owners carry their share on
+        the ``LRShare`` instead, so this is None for them.
+        """
+        fraction = split_name_share(self.name)[1]
+        if fraction is None:
+            return None
+        num, den = fraction
+        return {"num": num, "den": den, "decimal": num / den}
 
 
 class SheetType(str, Enum):
@@ -595,25 +623,84 @@ class LREntry(BaseModel):
     - "Uknjižba založnog prava"
     """
 
-    model_config = ConfigDict(populate_by_name=True)
+    # ``extra="allow"``: anything else the server nests under an entry is kept
+    # verbatim in ``model_extra`` instead of being dropped (``source_fields``),
+    # and ``get_parties()`` also picks person records out of it.
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
     description: str = Field(description="Full text description of the entry")
     order_number: str = Field(
         alias="orderNumber", description="Entry order number (e.g., '1.1', '3.2')"
     )
 
-    # Optional structured fields (not always present in API)
+    # Persons the entry is registered in favour of (the "u korist:" the
+    # description ends with). Same shape as the owners of a Sheet B share.
+    owners: list[Party] = Field(
+        default_factory=list,
+        alias="lrOwners",
+        description="Beneficiaries of the entry (u korist), e.g. usufructuary, creditor",
+    )
+
     lr_entry_id: int | None = Field(None, alias="lrEntryId", description="Entry ID")
+
+    # Structured fields. The server sends only the text; these are parsed from
+    # it (``parse_lr_entry``) unless supplied explicitly.
     action_type: ActionType | None = Field(
-        None, description="Type of action (parsed from description if possible)"
+        None, description="Type of action (upis, predbilježba, zabilježba, brisanje)"
     )
     diary_number: str | None = Field(
-        None, description="Diary number (e.g., 'Z-3983/2012') - parsed from description"
+        None, description="Diary number, normalised (e.g. 'Z-487/49', 'Z-9139/2016')"
     )
-    entry_date: date | None = Field(None, description="Date of entry (parsed from description)")
+    entry_date: date | None = Field(
+        None, description="Receipt date of the entry (the first date in the text)"
+    )
     basis_document: str | None = Field(
-        None, description="Basis document (parsed from description)"
+        None,
+        description="Legal basis: the phrase after 'Na temelju' (judgment, decision, contract)",
     )
+    basis_date: date | None = Field(
+        None, description="Date of the basis document (first date inside basis_document)"
+    )
+
+    @model_validator(mode="after")
+    def _parse_description(self) -> "LREntry":
+        parsed = parse_lr_entry(self.description)
+        if self.action_type is None and parsed["action_type"]:
+            self.action_type = ActionType(parsed["action_type"])
+        if self.diary_number is None:
+            self.diary_number = parsed["diary_number"]  # type: ignore[assignment]
+        if self.entry_date is None:
+            self.entry_date = parsed["entry_date"]  # type: ignore[assignment]
+        if self.basis_document is None:
+            self.basis_document = parsed["basis_document"]  # type: ignore[assignment]
+        if self.basis_date is None and self.basis_document:
+            self.basis_date = first_date(self.basis_document)
+        return self
+
+    @property
+    def source_fields(self) -> dict[str, Any]:
+        """Fields the server sent that the model does not declare, verbatim."""
+        return dict(self.model_extra or {})
+
+    def get_parties(self) -> list[Party]:
+        """Persons the entry is registered in favour of (the "u korist:").
+
+        ``owners`` (the server's ``lrOwners``) first; then, as a safety net,
+        every undeclared field holding an object (or list of objects) with a
+        ``name`` is treated as a party record too.
+        """
+        return list(self.owners) + _collect_parties(self.model_extra or {})
+
+
+def _collect_parties(fields: dict[str, Any]) -> list[Party]:
+    """Build ``Party`` objects from every name-bearing object in ``fields``."""
+    parties: list[Party] = []
+    for value in fields.values():
+        candidates = value if isinstance(value, list) else [value]
+        for item in candidates:
+            if isinstance(item, dict) and isinstance(item.get("name"), str) and item["name"]:
+                parties.append(Party.model_validate(item))
+    return parties
 
 
 class ShareStatus(str, Enum):
@@ -859,7 +946,7 @@ class EncumbranceGroup(BaseModel):
     will have one group with multiple individual encumbrance entries.
     """
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
     description: str = Field(description="Description of the encumbrance group")
     share_order_number: str | None = Field(
@@ -873,9 +960,47 @@ class EncumbranceGroup(BaseModel):
         description="List of entries for this encumbrance",
     )
 
-    # Parsed from description (optional)
-    right_type: RightType | None = Field(None, description="Type of right/encumbrance")
-    beneficiary: Party | None = Field(None, description="Creditor, neighbor, state, etc.")
+    # Derived from the entries when the server does not send them (it never
+    # does today): the right named in the entry text and the first person the
+    # entry is registered in favour of.
+    right_type: RightType | None = Field(
+        None,
+        description="Type of right/encumbrance, parsed from the entry text when not supplied",
+    )
+    beneficiary: Party | None = Field(
+        None,
+        description="First beneficiary (creditor, usufructuary, ...); all via get_parties()",
+    )
+
+    @model_validator(mode="after")
+    def _derive_from_entries(self) -> "EncumbranceGroup":
+        if self.beneficiary is None:
+            nested = self._nested_parties()
+            if nested:
+                self.beneficiary = nested[0]
+        if self.right_type is None and self.lr_entries:
+            # Entry text names the right; the group label ("1. ", "Na
+            # suvlasnički dio ...") never does, so it is not consulted.
+            parsed = parse_right_type(" ".join(entry.description for entry in self.lr_entries))
+            if parsed is not None:
+                self.right_type = RightType(parsed)
+        return self
+
+    def _nested_parties(self) -> list[Party]:
+        parties = _collect_parties(self.model_extra or {})
+        for entry in self.lr_entries:
+            parties.extend(entry.get_parties())
+        return parties
+
+    def get_parties(self) -> list[Party]:
+        """Everyone this encumbrance is registered in favour of, in entry order.
+
+        ``beneficiary`` is included once (it is normally the first of these).
+        """
+        parties = self._nested_parties()
+        if self.beneficiary is not None and self.beneficiary not in parties:
+            parties.insert(0, self.beneficiary)
+        return parties
 
 
 class EncumbranceSheetC(BaseModel):
@@ -892,7 +1017,7 @@ class EncumbranceSheetC(BaseModel):
     - Prohibitions on transfer (zabrana otuđenja)
     """
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
     lr_entry_groups: list[EncumbranceGroup] = Field(
         default_factory=list,
