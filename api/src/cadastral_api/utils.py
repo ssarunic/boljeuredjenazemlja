@@ -304,6 +304,71 @@ def split_name_share(name: str | None) -> tuple[str, tuple[int, int] | None]:
     return name[: match.start()].rstrip(), (int(match.group(1)), int(match.group(2)))
 
 
+# The person an encumbrance is registered in favour of, when the server sends no
+# ``lrOwners`` for the entry and the name is only in the text: "... za korist
+# REPUBLIKE HRVATSKE, Centar za socijalnu skrb Zadar." The name runs from
+# "u korist" / "za korist" to the first comma or the first lower-case word.
+_BENEFICIARY_RE = re.compile(r"\b(?:u|za)\s+korist\b\s*:?\s*(.+)$", re.IGNORECASE | re.DOTALL)
+# A name token opens with a capital (Croatian letters included).
+_NAME_TOKEN_RE = re.compile(r"^[A-ZČĆŠĐŽ][\w.&'\-]*$", re.UNICODE)
+# A company's legal form, written in lower case after the name: "d.d.", "d.o.o.",
+# "j.d.o.o.", "k.d.". It ends the name and may follow a lower-case word
+# ("Zagrebačke banke d.d."), so a short look-ahead absorbs both.
+_LEGAL_FORMS = frozenset({"dd", "doo", "jdoo", "kd", "obrt"})
+#: Most names run to three or four words; the cap stops a run-on sentence.
+_MAX_BENEFICIARY_WORDS = 8
+#: How far past the capitalised run to look for a trailing legal form.
+_LEGAL_FORM_LOOKAHEAD = 2
+
+
+def parse_beneficiary_name(text: str | None) -> str | None:
+    """The name after "u korist" / "za korist" in an entry's text, if any.
+
+    Sheet C entries name the beneficiary in ``lrOwners``, but not always: when a
+    legal person is named inline the array comes back empty and the name is only
+    in the prose. This reads it back:
+
+        "... za korist REPUBLIKE HRVATSKE, Centar za socijalnu skrb Zadar."
+            -> "REPUBLIKE HRVATSKE"
+        "... uknjižene u korist Letinić Jakov postojanja ugovora ..."
+            -> "Letinić Jakov"
+        "... uknjižuje se pravo ploduživanja u korist:"   (name in lrOwners)
+            -> None
+
+    The name ends at the first comma or the first lower-case word, so the body
+    acting for a party ("Centar za socijalnu skrb Zadar") and the sentence that
+    continues after the name are both left out. HTML is stripped first, so the
+    raw ``description`` can be passed. Returns None when the text names nobody.
+    """
+    plain = strip_html(text)
+    if not plain:
+        return None
+    match = _BENEFICIARY_RE.search(plain)
+    if not match:
+        return None
+    tokens = re.split(r"[,;:]", match.group(1), maxsplit=1)[0].split()
+    words: list[str] = []
+    for index, token in enumerate(tokens):
+        if not _NAME_TOKEN_RE.match(token) or len(words) >= _MAX_BENEFICIARY_WORDS:
+            words.extend(_trailing_legal_form(tokens[index:]))
+            break
+        words.append(token)
+    name = re.sub(r"(?<=\w{2})\.$", "", " ".join(words)).strip()
+    return name or None
+
+
+def _trailing_legal_form(tokens: list[str]) -> list[str]:
+    """The company legal form just past a capitalised run, with what precedes it.
+
+    ``["banke", "d.d.", "iz", "Zagreba"]`` gives ``["banke", "d.d."]``; a run
+    with no legal form nearby gives ``[]``.
+    """
+    for index, token in enumerate(tokens[:_LEGAL_FORM_LOOKAHEAD]):
+        if token.strip(",.").replace(".", "").lower() in _LEGAL_FORMS:
+            return tokens[: index + 1]
+    return []
+
+
 def parse_style_class(description: str | None) -> str | None:
     """The CSS class of the span an entry description opens with, if any.
 

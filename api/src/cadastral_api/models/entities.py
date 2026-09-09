@@ -37,6 +37,7 @@ from ..utils import (
     is_building_parcel_number,
     normalize_name,
     parse_amount,
+    parse_beneficiary_name,
     parse_fraction,
     parse_lr_entry,
     parse_right_type,
@@ -1396,6 +1397,13 @@ class EncumbranceGroup(SourceModel):
         None,
         description="First beneficiary (creditor, usufructuary, ...); all via get_parties()",
     )
+    beneficiary_source: Literal["lr_owners", "description"] | None = Field(
+        None,
+        description=(
+            "Where ``beneficiary`` came from: the server's person records "
+            "('lr_owners') or the entry text ('description')"
+        ),
+    )
 
     @model_validator(mode="after")
     def _derive_from_entries(self) -> "EncumbranceGroup":
@@ -1403,6 +1411,13 @@ class EncumbranceGroup(SourceModel):
             nested = self._nested_parties()
             if nested:
                 self.beneficiary = nested[0]
+                self.beneficiary_source = "lr_owners"
+            else:
+                self.beneficiary = self._beneficiary_from_text()
+                if self.beneficiary is not None:
+                    self.beneficiary_source = "description"
+        elif self.beneficiary_source is None:
+            self.beneficiary_source = "lr_owners"
         if self.right_type is None and self.lr_entries:
             # Entry text names the right; the group label ("1. ", "Na
             # suvlasnički dio ...") never does, so it is not consulted.
@@ -1416,6 +1431,21 @@ class EncumbranceGroup(SourceModel):
         for entry in self.lr_entries:
             parties.extend(entry.get_parties())
         return parties
+
+    def _beneficiary_from_text(self) -> Party | None:
+        """The beneficiary named inline in an entry, when ``lrOwners`` is empty.
+
+        A charge in favour of a legal person is often registered with no person
+        record at all: the name lives only in the entry text ("... za korist
+        REPUBLIKE HRVATSKE, ..."). Without this the group would report no
+        beneficiary. Such a party carries the name alone, and
+        ``beneficiary_source`` says it was read from the text.
+        """
+        for entry in self.lr_entries:
+            name = parse_beneficiary_name(entry.description)
+            if name:
+                return Party.model_validate({"name": name})
+        return None
 
     def get_parties(self) -> list[Party]:
         """Everyone this encumbrance is registered in favour of, in entry order.

@@ -136,6 +136,25 @@ number and one tag.
 
 ### Fixed
 
+- SDK: an encumbrance in favour of a legal person no longer comes back without a
+  beneficiary. The server sends no person record when the name is written into
+  the entry text ("... za korist REPUBLIKE HRVATSKE, Centar za socijalnu skrb
+  Zadar"), so `EncumbranceGroup` now reads the name back out of the text when
+  `lrOwners` is empty; `beneficiary_source` says whether the beneficiary came
+  from the person records (`lr_owners`) or from the text (`description`). CLI
+  `get-lr-unit --all` and `batch-lr-unit` print it under "u korist".
+- MCP: `find_parcel` no longer passes a prefix match off as the parcel that was
+  asked for. Searching "973" in a municipality that has only 973/1 returned
+  973/1 with nothing to say the number differed; the response now carries
+  `requested_parcel_number` and `exact_match`, plus `match_note` and
+  `other_matches` when the match is not exact. `batch_fetch_parcels` carries the
+  same warning per entry.
+- MCP: `owners_limit` now applies to `detail="full"`, not only to
+  `detail="ownership"`. A full dump of a unit with a hundred co-owners ignored
+  the cap and overran the caller's context; owner records are capped in both
+  views, `total_owners` and `owners_truncated` are reported in both, and a full
+  dump still too large to return is refused with the smaller views named.
+
 - SDK: parcels of a land registry unit (`LRUnitParcel`) no longer invent facts
   for keys the lean `lrParcels` shape does not send. `graphic`, `alpha_numeric`,
   `is_harmonized`, `legal_regime`, `status`, `resource_code`, `building_remark`,

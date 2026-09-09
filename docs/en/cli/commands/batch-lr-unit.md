@@ -129,6 +129,8 @@ lr_unit_number,main_book_id
                                     nekretninamam, uknjiženog prava vlasništva na ime N.N. rođ. N.N.,
                                     OIB: 00000000884, N.N., za korist REPUBLIKE HRVATSKE, Centar za
                                     socijalnu skrb Zadar.
+                                      In favour of:
+                                        REPUBLIKE HRVATSKE
 
    ---
 

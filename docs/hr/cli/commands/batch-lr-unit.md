@@ -133,6 +133,8 @@ broj_zk_uloska,id_glavne_knjige
                                     nekretninamam, uknjiženog prava vlasništva na ime N.N. rođ. N.N.,
                                     OIB: 00000000884, N.N., za korist REPUBLIKE HRVATSKE, Centar za
                                     socijalnu skrb Zadar.
+                                      U korist:
+                                        REPUBLIKE HRVATSKE
 
    ---
 
