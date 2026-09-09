@@ -27,13 +27,18 @@ Find parcel 103/2 in SAVAR
 - `requested_parcel_number` and `exact_match`: what was asked for, and whether
   the parcel returned is it.
 
-**Prefix matches:** the search matches on the prefix, so a number that does not
-exist can still return a longer one ("973" in a municipality that has only
-973/1). When that happens `exact_match` is `false` and `match_note` and
-`other_matches` say what was found instead. Treat it as "no such parcel, here is
-what exists", not as a hit. Building parcels are the one case where the number
-legitimately changes shape: "35/1.ZGR", "zgr. 35/1" and "*35/1" all resolve to
-"*35/1" with `exact_match` `true`.
+**Fallback matches:** the search matches on a substring, so a number that does
+not exist can still return a longer one ("973" in a municipality that has 973/1
+and 973/2). When that happens `exact_match` is `false` and `match_note` and
+`other_matches` say what was found instead, including whether the number
+returned begins with the requested one or merely contains it. Treat it as "no
+such parcel, here is what exists", not as a hit. Two things a fallback never
+does: cross between the two numbering series (a building parcel is never
+answered with a land parcel, or the other way round), and answer a number with
+an empty sub-number, since "56/" is normalised to "56" before the search.
+Building parcels are the one case where the number legitimately changes shape:
+"35/1.ZGR", "56/.ZGR", "zgr. 35/1" and "*35/1" all resolve to the asterisk
+spelling with `exact_match` `true`.
 
 ---
 
@@ -205,9 +210,12 @@ Gets land registry unit information directly if you already know the unit number
 `"ownership"` returns B-list owners with structured shares (`share = {num, den,
 decimal}`) plus a summary, and fits in context; `"full"` returns every sheet
 (geometry, A2, C-sheet, raw IDs). Pass `owners_limit` to cap owner records in
-either view (`total_owners` / `owners_truncated` report what was capped). A unit
-with hundreds of co-owners does not fit in one response even capped, so a `"full"`
-dump that would be too large is refused with the smaller views named; use
+either view (`total_owners` / `owners_truncated` report what was capped). In
+`"full"` the cap cuts sheet B off there: the shares past it are dropped whole
+and counted in `shares_omitted`, because a condominium's weight is in the shares
+themselves, not only in their owners. A unit whose other sheets are large does
+not fit in one response even so, and a `"full"` dump that would be too large is
+refused with the sheet at fault named and the smaller views suggested; use
 `"ownership"` there.
 
 **Note:** Usually it's easier to use `get_lr_unit_from_parcel` instead, which

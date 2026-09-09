@@ -110,11 +110,13 @@ def create_mcp_server() -> FastMCP:
         Returns:
             Dictionary with parcel search results including parcel_id.
 
-            The search matches on the prefix, so a number that does not exist
+            The search matches on a substring, so a number that does not exist
             can still come back as a longer one ("973" -> 973/1). Check
             ``exact_match``: when it is False the parcel returned is NOT the one
             asked for, and ``match_note`` plus ``other_matches`` say what was
-            found. Report that to the user instead of treating it as a hit.
+            found, and whether the number returned begins with the requested one
+            or merely contains it. Report that to the user instead of treating
+            it as a hit.
         """
         logger.info(f"Tool invoked: find_parcel({parcel_number}, {municipality})")
         return await tools_handler.search_parcel(parcel_number, municipality)
@@ -256,9 +258,11 @@ def create_mcp_server() -> FastMCP:
                 B-list owners with structured shares + summary (no geometry/C-sheet),
                 which fits in context; "full" returns every sheet.
             owners_limit: Cap owner records ("ownership" and "full" alike);
-                total_owners and owners_truncated report the full count. A full
-                dump too large to return is refused with the smaller options
-                named, so pass this whenever a unit may have many co-owners.
+                total_owners and owners_truncated report the full count. In
+                "full" it cuts sheet B off at that many owner records, dropping
+                the shares past it whole (``shares_omitted``). A full dump too
+                large to return is refused with the smaller options named, so
+                pass this whenever a unit may have many co-owners.
             include_plombe_detail: Resolve what each pending plomba (zaprimljena
                 neriješena prijava) actually is - the request type, processing
                 status, and dates. Adds a ``plombe_detail`` map (file_number ->
@@ -297,7 +301,8 @@ def create_mcp_server() -> FastMCP:
             parcel_number: Cadastral parcel number (e.g., "279/6")
             municipality: Municipality name or code
             detail: "summary" | "ownership" | "full" (default "ownership").
-            owners_limit: Cap owner records ("ownership" and "full" alike).
+            owners_limit: Cap owner records ("ownership" and "full" alike); in
+                "full" the shares past the cap are dropped whole.
             include_plombe_detail: Resolve what each pending plomba actually is
                 (request type, status, dates). Adds a ``plombe_detail`` map
                 (file_number -> detail). One extra request per plomba; off by

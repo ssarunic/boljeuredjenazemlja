@@ -154,6 +154,27 @@ number and one tag.
   the cap and overran the caller's context; owner records are capped in both
   views, `total_owners` and `owners_truncated` are reported in both, and a full
   dump still too large to return is refused with the smaller views named.
+- SDK: a parcel number with an empty sub-number is no longer sent to the server
+  as written. "56/" and "56/.ZGR" normalised to "56/" and "*56/", numbers that
+  exist in no cadastral municipality, and the server's substring match answered
+  them with 56/1 - a different parcel, in a different land-registry unit. The
+  trailing separator is dropped, so they normalise to "56" and "*56".
+- MCP: `find_parcel` no longer falls back across the two numbering series. A
+  building parcel ("56/.ZGR") that the search cannot find is reported as not
+  found instead of being answered with the land parcel 56/1, and a land parcel
+  that exists only as a building parcel is answered with the ZGR spelling to
+  ask for. `match_note` also distinguishes a number that begins with the
+  requested one from a number that merely contains it (the server matches on a
+  substring, so "*56/" used to return 256/1 and 656/1 as "prefix matches"), and
+  `other_matches` lists only matches of the kind the note describes.
+- MCP: `owners_limit` in `detail="full"` now cuts sheet B off at the cap
+  instead of only emptying its shares. A condominium keeps its weight in the
+  shares themselves - 85 shares with every owner removed still serialise to
+  135,000 characters - so the shares past the cap are dropped whole and counted
+  in `shares_omitted`. The ceiling for a full dump is lowered to 50,000
+  characters, well under a typical client's per-response limit, and the refusal
+  names the sheet at fault (an encumbrance sheet that is the bulk cannot be
+  helped by `owners_limit`).
 
 - SDK: parcels of a land registry unit (`LRUnitParcel`) no longer invent facts
   for keys the lean `lrParcels` shape does not send. `graphic`, `alpha_numeric`,
@@ -206,6 +227,18 @@ number and one tag.
   downloaded from the mock server can no longer be served to a client configured
   for another server; caches written by earlier versions are refreshed on first
   use.
+
+### Security
+
+- Weekly Dependabot version checks for every project in the monorepo and for
+  the GitHub Actions used by the workflows, plus two vulnerability gates: a
+  `pip-audit` run over the installed runtime dependencies (on every push and
+  pull request, and weekly on its own) and a CodeQL scan of the Python sources.
+  Pull requests also get a dependency review that blocks a newly introduced
+  vulnerable package.
+- Mock server: the pinned `fastapi` and `uvicorn` were old enough to pull in a
+  `starlette` with published advisories, and conflicted with the version range
+  the MCP server requires. Both pins are now current.
 
 ## [0.1.0] - 2026-09-08
 

@@ -2,7 +2,12 @@
 
 import pytest
 
-from cadastral_api.utils import normalize_name, parse_beneficiary_name, parse_fraction
+from cadastral_api.utils import (
+    normalize_name,
+    normalize_parcel_number,
+    parse_beneficiary_name,
+    parse_fraction,
+)
 
 
 @pytest.mark.parametrize(
@@ -68,3 +73,31 @@ def test_normalize_name(raw, expected) -> None:
 )
 def test_parse_beneficiary_name(text, expected) -> None:
     assert parse_beneficiary_name(text) == expected
+
+
+@pytest.mark.parametrize(
+    "written,expected",
+    [
+        # Building parcels, every spelling.
+        ("35/1.ZGR", "*35/1"),
+        ("35/1 ZGR", "*35/1"),
+        ("zgr. 35/1", "*35/1"),
+        ("* 35/1", "*35/1"),
+        # A trailing separator leaves an empty sub-number: "*56/" exists in no
+        # cadastral municipality, and the server's substring match would answer
+        # it with 56/1, a different parcel.
+        ("56/.ZGR", "*56"),
+        ("56/ ZGR", "*56"),
+        ("56.ZGR", "*56"),
+        ("56/", "56"),
+        ("56.", "56"),
+        # Land parcels are otherwise untouched.
+        ("103/2", "103/2"),
+        ("  103/2  ", "103/2"),
+        ("45", "45"),
+        ("", ""),
+        (None, ""),
+    ],
+)
+def test_normalize_parcel_number(written, expected) -> None:
+    assert normalize_parcel_number(written) == expected

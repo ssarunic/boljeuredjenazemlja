@@ -78,3 +78,49 @@ def test_building_parcel_spellings_resolve_exactly(spelling: str) -> None:
     assert result["requested_parcel_number"] == "*35/1"
     assert result["exact_match"] is True
     assert result["is_building_parcel"] is True
+
+
+def test_building_parcel_never_falls_back_to_a_land_parcel() -> None:
+    # "56/.ZGR" is the building parcel *56; the search returns land parcels
+    # only. Answering with 56/1 (another parcel, another LR unit) would be a
+    # silent wrong answer, so the search fails instead.
+    with pytest.raises(ValueError) as excinfo:
+        _search("parcel_search_building_miss.json", "56/.ZGR")
+    message = str(excinfo.value)
+    assert "building parcel" in message
+    assert "56/1" in message
+
+
+def test_empty_sub_number_is_dropped_before_searching() -> None:
+    # "56/" is not a parcel number; without the trailing slash the building
+    # parcel *56 is found exactly.
+    result, client = _search("parcel_search_building_56.json", "56/.ZGR")
+    assert client.searched == "*56"
+    assert result["parcel_number"] == "*56"
+    assert result["exact_match"] is True
+    assert result["is_building_parcel"] is True
+
+
+def test_prefix_match_is_preferred_over_a_mere_substring() -> None:
+    # The server matches on a substring: "973" also returns 1973, which is
+    # first in the response. The parcels that begin with 973 come first.
+    result, _ = _search("parcel_search_substring.json", "973")
+    assert result["exact_match"] is False
+    assert result["parcel_number"] == "973/2"
+    assert result["other_matches"] == ["973/1"]  # 1973 only contains "973"
+    assert "begins with" in result["match_note"]
+
+
+def test_substring_match_says_it_is_not_a_prefix() -> None:
+    # Nothing begins with "73"; the note must not claim a prefix match.
+    result, _ = _search("parcel_search_substring.json", "73")
+    assert result["exact_match"] is False
+    assert result["parcel_number"] == "1973"
+    assert "merely contains" in result["match_note"]
+    assert result["other_matches"] == ["973/2", "973/1"]
+
+
+def test_land_parcel_that_exists_only_as_a_building_parcel_names_the_zgr_spelling() -> None:
+    with pytest.raises(ValueError) as excinfo:
+        _search("parcel_search_bare_building.json", "35/1")
+    assert "35/1 ZGR" in str(excinfo.value)

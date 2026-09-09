@@ -7,7 +7,7 @@ from typing import Any
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
-from cadastral_api.utils import normalize_parcel_number
+from cadastral_api.utils import is_building_parcel_number, normalize_parcel_number
 
 logger = logging.getLogger(__name__)
 
@@ -47,11 +47,14 @@ class CadastralTools:
             it cannot be fetched or the parcel is not in it, ``map_url`` is
             simply omitted and the search still succeeds.
 
-            The server matches on the prefix, so a number that does not exist
+            The server matches on a substring, so a number that does not exist
             can still return a longer one ("973" -> 973/1). ``exact_match``
             says whether the returned ``parcel_number`` is the requested
             ``requested_parcel_number``; when it is not, ``match_note`` and
-            ``other_matches`` describe what was found instead.
+            ``other_matches`` describe what was found instead, and say whether
+            the fallback begins with the requested number or merely contains
+            it. A building parcel never falls back to a land parcel, or the
+            other way round.
 
         Example:
             >>> await search_parcel("103/2", "SAVAR")
@@ -72,7 +75,7 @@ class CadastralTools:
             # Step 1: Resolve municipality if needed
             muni_code = await self._resolve_municipality(municipality)
 
-            # Step 2: Find parcel. The server matches on the prefix, so prefer
+            # Step 2: Find parcel. The server matches on a substring, so prefer
             # the exact number (in the API spelling: "35/1.ZGR" -> "*35/1").
             wanted = normalize_parcel_number(parcel_number)
             results = self.client.find_parcel(wanted, muni_code)
@@ -82,8 +85,8 @@ class CadastralTools:
                     f"No parcels found matching '{parcel_number}' in {municipality}"
                 )
 
-            result = next((r for r in results if r.parcel_number == wanted), results[0])
-            exact_match = result.parcel_number == wanted
+            result, kind, siblings = self._pick_parcel_match(results, wanted, municipality)
+            exact_match = kind == "exact"
             response: dict[str, Any] = {
                 "parcel_id": result.parcel_id,
                 "parcel_number": result.parcel_number,
@@ -95,16 +98,12 @@ class CadastralTools:
                 "success": True,
             }
             if not exact_match:
-                # The server matches on the prefix, so "973" can come back as
+                # The server matches on a substring, so "973" can come back as
                 # 973/1 only. Say so instead of passing a different parcel off
                 # as the one that was asked for.
-                response["match_note"] = (
-                    f"No parcel numbered '{wanted}' exists in this cadastral "
-                    f"municipality. '{result.parcel_number}' is the first prefix match; "
-                    f"confirm it is the parcel you meant."
-                )
+                response["match_note"] = self._match_note(wanted, result.parcel_number, kind)
                 response["other_matches"] = [
-                    r.parcel_number for r in results if r.parcel_number != result.parcel_number
+                    r.parcel_number for r in siblings
                 ][: self.MAX_OTHER_MATCHES]
             map_url = self._map_url_for(result.parcel_number, muni_code)
             if map_url:
@@ -121,8 +120,73 @@ class CadastralTools:
     #: Valid register sources for parcel-level ownership data.
     VALID_SOURCES = ("cadastre", "land_registry", "none")
 
-    #: How many further prefix matches to name when the match is not exact.
+    #: How many further matches to name when the match is not exact.
     MAX_OTHER_MATCHES = 10
+
+    @staticmethod
+    def _match_note(wanted: str, found: str, kind: str) -> str:
+        """Explain, in the response, why a different parcel came back."""
+        if kind == "prefix":
+            how = f"'{found}' is the first parcel number that begins with it"
+        else:
+            how = (
+                f"'{found}' merely contains it: no parcel number in this cadastral "
+                f"municipality begins with '{wanted}'"
+            )
+        return (
+            f"No parcel numbered '{wanted}' exists in this cadastral municipality. "
+            f"{how}; confirm it is the parcel you meant."
+        )
+
+    @classmethod
+    def _pick_parcel_match(
+        cls, results: list[Any], wanted: str, municipality: str
+    ) -> tuple[Any, str, list[Any]]:
+        """Choose which search result answers ``wanted``, and say how it matched.
+
+        The server matches on a substring, so "*56/" (before it was normalised)
+        returned 56/1, 56/2, 256/1, 656/1 ... Two rules keep a fallback from
+        answering with a parcel that cannot be the one meant:
+
+        - a building parcel ("*56") never falls back to a land parcel, nor the
+          other way round: the two are separate numbering series;
+        - a prefix match is preferred over a mere substring match, and the
+          response says which of the two happened.
+
+        Returns (result, kind, other candidates of the same kind), where kind is
+        "exact", "prefix" or "contains".
+        """
+        wants_building = is_building_parcel_number(wanted)
+        candidates = [
+            r for r in results
+            if is_building_parcel_number(r.parcel_number) == wants_building
+        ]
+        if not candidates:
+            numbers = [r.parcel_number for r in results]
+            if not wants_building and f"*{wanted}" in numbers:
+                # The everyday confusion: the number belongs to the building
+                # parcel alone. Name the spelling that asks for it.
+                raise ValueError(
+                    f"There is no land parcel {wanted} in {municipality}, only the "
+                    f"building parcel zgr. {wanted}. Ask for it as '{wanted} ZGR'."
+                )
+            asked, other = (
+                ("building parcel", "land") if wants_building else ("land parcel", "building")
+            )
+            found = ", ".join(numbers[: cls.MAX_OTHER_MATCHES])
+            raise ValueError(
+                f"No {asked} matching '{wanted}' in {municipality}; the search returned "
+                f"only {other} parcels ({found}), which are a separate numbering series."
+            )
+
+        exact = next((r for r in candidates if r.parcel_number == wanted), None)
+        if exact is not None:
+            return exact, "exact", []
+
+        prefixed = [r for r in candidates if r.parcel_number.startswith(wanted)]
+        pool = prefixed or candidates
+        kind = "prefix" if prefixed else "contains"
+        return pool[0], kind, pool[1:]
 
     @staticmethod
     def _lr_unit_hint(parcel: Any) -> dict[str, Any]:
@@ -190,7 +254,7 @@ class CadastralTools:
             ``source``. Each successful entry also carries ``map_url`` (the
             interactive map centred on the parcel) when the municipality's GIS
             data is available; it is omitted otherwise. An entry resolved from a
-            prefix match rather than the exact number carries ``exact_match``
+            fallback match rather than the exact number carries ``exact_match``
             False with ``requested_parcel_number`` and ``match_note``.
         """
         if source not in self.VALID_SOURCES:
@@ -243,7 +307,7 @@ class CadastralTools:
                         "cadastre_lr_harmonized": parcel.is_harmonized,
                         "data": result_data,
                     }
-                    # A prefix match is not the parcel that was asked for; carry
+                    # A fallback match is not the parcel that was asked for; carry
                     # the warning out of search_parcel rather than losing it here.
                     if search_result is not None and not search_result["exact_match"]:
                         entry["exact_match"] = False
@@ -442,35 +506,83 @@ class CadastralTools:
     #: Characters of JSON a full dump may reach before it is refused. A large
     #: condominium runs to hundreds of shares, each with its own registration
     #: entry, and overruns an agent's context long before it is read; refusing
-    #: with a way forward beats returning something unusable.
-    MAX_FULL_RESPONSE_CHARS = 120_000
+    #: with a way forward beats returning something unusable. The ceiling is
+    #: well under a typical MCP client's per-response limit, since a response
+    #: the client truncates is worse than one it never asked for.
+    MAX_FULL_RESPONSE_CHARS = 50_000
 
     @staticmethod
-    def _cap_dumped_owners(dump: dict[str, Any], limit: int | None) -> tuple[int, bool]:
-        """Cap the owner records inside a full dump; return (total, truncated).
+    def _sub_shares(share: dict[str, Any]) -> list[dict[str, Any]]:
+        """The nested share dicts of a share (an apartment's co-owners)."""
+        nested = share.get("sub_shares_and_entries") or []
+        return [item for item in nested if isinstance(item, dict) and "owners" in item]
+
+    @classmethod
+    def _count_owner_records(cls, shares: list[dict[str, Any]]) -> int:
+        """Owner records held by these shares and their sub-shares."""
+        total = 0
+        for share in shares:
+            total += len(share.get("owners") or [])
+            total += cls._count_owner_records(cls._sub_shares(share))
+        return total
+
+    @classmethod
+    def _cap_dumped_owners(
+        cls, dump: dict[str, Any], limit: int | None
+    ) -> tuple[int, bool, int]:
+        """Cap sheet B inside a full dump; return (total, truncated, shares_omitted).
 
         Walks the shares of sheet B in document order (recursing into the
-        sub-shares that hold an apartment's co-owners) and drops the owners past
-        ``limit``. Unlike the "ownership" view, which lists active shares only,
-        this counts every share in the dump, so ``total`` is the number of owner
-        records the unit actually carries. ``limit`` of None only counts.
+        sub-shares that hold an apartment's co-owners) and keeps them until
+        ``limit`` owner records have been taken; the shares after that are
+        dropped whole. Dropping the owners alone is not enough: a condominium
+        keeps its weight in the shares themselves, each with its own
+        description and registration entry, so a 85-share unit still serialises
+        to 135,000 characters with every owner removed.
+
+        Unlike the "ownership" view, which lists active shares only, ``total``
+        counts every owner record in the dump. ``limit`` of None only counts.
         """
-        remaining = limit
-        total = 0
+        sheet = dump.get("ownership_sheet_b") or {}
+        shares = sheet.get("lr_unit_shares") or []
+        total = cls._count_owner_records(shares)
+        if limit is None:
+            return total, False, 0
 
-        def walk(shares: list[dict[str, Any]]) -> None:
-            nonlocal remaining, total
-            for share in shares:
+        omitted = 0
+
+        def take(shares: list[dict[str, Any]], budget: int) -> tuple[list[dict[str, Any]], int]:
+            nonlocal omitted
+            kept: list[dict[str, Any]] = []
+            for index, share in enumerate(shares):
+                if budget <= 0:
+                    rest = shares[index:]
+                    omitted += len(rest) + sum(
+                        cls._count_shares(cls._sub_shares(item)) for item in rest
+                    )
+                    break
                 owners = share.get("owners") or []
-                total += len(owners)
-                if remaining is not None:
-                    share["owners"] = owners[:remaining]
-                    remaining = max(0, remaining - len(owners))
-                nested = share.get("sub_shares_and_entries") or []
-                walk([item for item in nested if isinstance(item, dict) and "owners" in item])
+                share["owners"] = owners[:budget]
+                budget -= len(share["owners"])
+                nested = cls._sub_shares(share)
+                if nested:
+                    kept_nested, budget = take(nested, budget)
+                    keep = set(id(item) for item in kept_nested)
+                    share["sub_shares_and_entries"] = [
+                        item
+                        for item in share["sub_shares_and_entries"]
+                        if not (isinstance(item, dict) and "owners" in item) or id(item) in keep
+                    ]
+                kept.append(share)
+            return kept, budget
 
-        walk((dump.get("ownership_sheet_b") or {}).get("lr_unit_shares") or [])
-        return total, limit is not None and total > limit
+        sheet["lr_unit_shares"], _ = take(shares, limit)
+        return total, total > limit, omitted
+
+    @classmethod
+    def _count_shares(cls, shares: list[dict[str, Any]]) -> int:
+        """Number of share dicts here and below (for the omitted-share count)."""
+        return sum(1 + cls._count_shares(cls._sub_shares(share)) for share in shares)
 
     @classmethod
     def _shape_lr_unit(
@@ -481,8 +593,10 @@ class CadastralTools:
         - "summary": identity + summary statistics only.
         - "ownership" (default): B-list owners (with structured shares) + summary;
           drops geometry, Sheet A2, the C-sheet, and raw internal IDs.
-        - "full": every sheet (raw model dump) + summary, with the owner records
-          capped at ``owners_limit`` just as the "ownership" view caps its rows.
+        - "full": every sheet (raw model dump) + summary, with sheet B cut off
+          at ``owners_limit`` owner records: the shares past it are dropped
+          whole (counted in ``shares_omitted``), since a condominium's weight
+          is in the shares themselves, not only in their owners.
         """
         if detail not in cls.VALID_DETAIL:
             raise ValueError(
@@ -493,9 +607,14 @@ class CadastralTools:
 
         if detail == "full":
             result = lr_unit.model_dump(mode="json")
-            total, truncated = cls._cap_dumped_owners(result, owners_limit)
+            total, truncated, omitted = cls._cap_dumped_owners(result, owners_limit)
             result["total_owners"] = total
             result["owners_truncated"] = truncated
+            if omitted:
+                # The shares past the owner budget were dropped whole, not
+                # merely emptied; say how many so the count is not read as the
+                # unit's full sheet B.
+                result["shares_omitted"] = omitted
             result["summary"] = summary
             if is_condo:
                 result["is_condominium"] = True
@@ -551,17 +670,33 @@ class CadastralTools:
         size = len(json.dumps(result, ensure_ascii=False))
         if size <= cls.MAX_FULL_RESPONSE_CHARS:
             return
+        sheet, sheet_size = cls._largest_sheet(result)
         options = [
             'detail="ownership" for the owners without the other sheets',
             'detail="summary" for the totals alone',
         ]
-        if owners_limit is None and total_owners > 0:
+        # owners_limit only helps while sheet B is what makes the dump large;
+        # on a unit whose weight is in the encumbrances it changes nothing.
+        if owners_limit is None and total_owners > 0 and sheet == "ownership_sheet_b":
             options.insert(0, "owners_limit (e.g. owners_limit=10) to cap the owner records")
         raise ValueError(
             f"A full dump of land-registry unit {lr_unit.lr_unit_number} is "
-            f"{size:,} characters ({total_owners} owner records), too large to return "
-            f"in one response. Use {', or '.join(options)}."
+            f"{size:,} characters ({total_owners} owner records; the largest part is "
+            f"{sheet} at {sheet_size:,} characters), too large to return in one "
+            f"response. Use {', or '.join(options)}."
         )
+
+    @staticmethod
+    def _largest_sheet(result: dict[str, Any]) -> tuple[str, int]:
+        """The sheet that makes a full dump large, and its size in characters."""
+        sizes = {
+            key: len(json.dumps(value, ensure_ascii=False))
+            for key, value in result.items()
+            if key.startswith(("ownership_sheet", "encumbrance_sheet", "possessory_sheet"))
+        }
+        if not sizes:
+            return "the unit", 0
+        return max(sizes.items(), key=lambda item: item[1])
 
     def _plombe_detail(self, lr_unit: Any) -> dict[str, Any]:
         """Resolve pending-plomba detail for a unit, shaped for JSON output.

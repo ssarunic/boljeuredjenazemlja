@@ -44,12 +44,26 @@ _STAR_RE = re.compile(r"^\*\s*(?P<num>\S+)\s*$")
 BUILDING_PARCEL_PREFIX = "*"
 
 
+def _strip_empty_subnumber(number: str) -> str:
+    """Drop a trailing separator that leaves an empty sub-number ("56/" -> "56").
+
+    A parcel number is ``main/sub``; a dangling slash or dot is a typo (or what
+    is left of ``"56/.ZGR"`` once the suffix is removed) and would otherwise be
+    sent to the server as a number that cannot exist, where the prefix match
+    quietly answers with a different parcel.
+    """
+    return number.rstrip("/. \t")
+
+
 def normalize_parcel_number(text: str | None) -> str:
     """Map every user spelling of a parcel number to the API spelling.
 
     Building parcels: ``"35/1.ZGR"``, ``"35/1 ZGR"``, ``"35/1 zgr"``,
-    ``"zgr. 35/1"`` and ``"* 35/1"`` all become ``"*35/1"``. Other numbers are
-    returned stripped of surrounding whitespace and otherwise untouched.
+    ``"zgr. 35/1"`` and ``"* 35/1"`` all become ``"*35/1"``. A trailing
+    separator that leaves an empty sub-number is dropped, so ``"56/"`` and
+    ``"56/.ZGR"`` become ``"56"`` and ``"*56"`` rather than ``"56/"`` and
+    ``"*56/"``, numbers that exist in no cadastral municipality. Other numbers
+    are returned stripped of surrounding whitespace and otherwise untouched.
     """
     if text is None:
         return ""
@@ -58,8 +72,8 @@ def normalize_parcel_number(text: str | None) -> str:
         return value
     match = _STAR_RE.match(value) or _ZGR_PREFIX_RE.match(value) or _ZGR_SUFFIX_RE.match(value)
     if match:
-        return BUILDING_PARCEL_PREFIX + match.group("num").strip()
-    return value
+        return BUILDING_PARCEL_PREFIX + _strip_empty_subnumber(match.group("num").strip())
+    return _strip_empty_subnumber(value)
 
 
 def is_building_parcel_number(parcel_number: str | None) -> bool:

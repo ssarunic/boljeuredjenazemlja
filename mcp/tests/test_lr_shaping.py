@@ -108,9 +108,38 @@ def test_owners_limit_applies_to_full_not_only_ownership(unit) -> None:
     assert _dumped_owners(shaped) == 2
     assert shaped["total_owners"] == 4
     assert shaped["owners_truncated"] is True
-    # The other sheets are still there; only the owner records were capped.
+    # The other sheets are still there; only sheet B was cut off.
     assert "encumbrance_sheet_c" in shaped
     assert "possessory_sheet_a1" in shaped
+
+
+def test_owners_limit_drops_the_shares_past_the_cap_not_only_their_owners(condominium) -> None:
+    # Emptying the owners is not enough: each share carries its own description
+    # and registration entry, so this unit's 85 emptied shares still serialise
+    # to 135,000 characters. Sheet B is cut off at the cap instead.
+    dump = condominium.model_dump(mode="json")
+    before = len(dump["ownership_sheet_b"]["lr_unit_shares"])
+    total, truncated, omitted = CadastralTools._cap_dumped_owners(dump, 5)
+    shares = dump["ownership_sheet_b"]["lr_unit_shares"]
+    assert len(shares) == 5 < before
+    assert _dumped_owners(dump) == 5
+    assert (total, truncated) == (103, True)
+    assert omitted == CadastralTools._count_shares(
+        # every share dropped, sub-shares included
+        condominium.model_dump(mode="json")["ownership_sheet_b"]["lr_unit_shares"]
+    ) - CadastralTools._count_shares(shares)
+
+
+def test_a_capped_full_dump_is_still_refused_when_another_sheet_is_the_bulk(condominium) -> None:
+    # This unit's encumbrances alone overrun the ceiling, so owners_limit
+    # cannot rescue the full dump; the refusal names the sheet at fault and
+    # does not suggest owners_limit again.
+    with pytest.raises(ValueError) as excinfo:
+        CadastralTools._shape_lr_unit(condominium, "full", 5)
+    message = str(excinfo.value)
+    assert "encumbrance_sheet_c" in message
+    assert "owners_limit" not in message
+    assert 'detail="ownership"' in message
 
 
 def test_full_dump_too_large_to_return_is_refused_with_the_smaller_options(condominium) -> None:
