@@ -66,14 +66,14 @@ Potpuno objašnjenje: [uložak](commands/get-lr-unit.md).
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   uz skupno-čestice "103/2,45,396/1" -ko SAVAR
+   uz čestica "103/2,45,396/1" -ko SAVAR --detalji registry
    ```
 
 3. Svaki redak tablice **REZULTATI** jedna je čestica. Stupac **ZK uložak** je
    zemljišnoknjižni uložak svake od njih.
 
-Potpuno objašnjenje: [skupno-čestice](commands/batch-fetch.md), a
-[skupno-ulošci](commands/batch-lr-unit.md) za čitanje svih tih uložaka odjednom.
+Potpuno objašnjenje: [čestica](commands/get-parcel.md), a
+[uložak](commands/get-lr-unit.md) uz `--ulaz` za uvid u sve te uloške odjednom.
 
 ## Zadatak 4: spremite rezultat u datoteku ili za kolegu
 

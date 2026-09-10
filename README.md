@@ -65,7 +65,7 @@ encumbrances?"
 | Pending entries (plombe), resolved to what each one is about | `--plombe-detail` | [get-lr-unit](docs/en/cli/commands/get-lr-unit.md) |
 | Condominiums (etažno vlasništvo), unit by unit | `cadastral get-lr-unit --show-owners` | [glossary](docs/en/cli/glossary.md) |
 | Is the cadastre in step with the land registry? | shown on every parcel and unit | [get-parcel](docs/en/cli/commands/get-parcel.md) |
-| Many parcels, then many units, in one pipeline | `cadastral batch-fetch`, `batch-lr-unit` | [batch-fetch](docs/en/cli/commands/batch-fetch.md), [batch-lr-unit](docs/en/cli/commands/batch-lr-unit.md) |
+| Many parcels, then many units, in one pipeline | `cadastral get-parcel --detail registry`, `get-lr-unit --input` | [get-parcel](docs/en/cli/commands/get-parcel.md), [get-lr-unit](docs/en/cli/commands/get-lr-unit.md) |
 | Parcel boundaries as WKT or GeoJSON, offline GIS download | `cadastral get-geometry`, `download-gis` | [get-geometry](docs/en/cli/commands/get-geometry.md) |
 | Table, JSON, or CSV output, in Croatian or English | `--format`, `--lang` | [complete reference](docs/en/cli/reference.md) |
 

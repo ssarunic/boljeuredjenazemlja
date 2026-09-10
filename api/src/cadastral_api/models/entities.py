@@ -94,6 +94,11 @@ class KeyValueSearchResult(SourceModel):
             raise ValueError(f"{type(self).__name__}: server record has no {field}")
         return str(value)
 
+    def _int_or_none(self, field: str) -> int | None:
+        """A numeric id the server sends as a string, as an int (None stays None)."""
+        value = getattr(self, field)
+        return None if value is None else int(value)
+
 
 class MunicipalitySearchResult(KeyValueSearchResult):
     """
@@ -115,9 +120,9 @@ class MunicipalitySearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def municipality_id(self) -> str:
+    def municipality_id(self) -> int:
         """Municipality internal ID (cadMunicipalityId)."""
-        return self.key1
+        return int(self.key1)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -133,15 +138,15 @@ class MunicipalitySearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def institution_id(self) -> str | None:
+    def institution_id(self) -> int | None:
         """Cadastral office ID (matches the officeId parameter)."""
-        return self.value2
+        return self._int_or_none("value2")
 
     @computed_field  # type: ignore[misc]
     @property
-    def department_id(self) -> str | None:
+    def department_id(self) -> int | None:
         """Department ID (matches the departmentId parameter)."""
-        return self.value3
+        return self._int_or_none("value3")
 
     @computed_field  # type: ignore[misc]
     @property
@@ -166,7 +171,7 @@ class CadastralOffice(SourceModel):
     Lists all cadastral offices in Croatia.
     """
 
-    id: str = Field(description="Cadastral office ID (matches institutionId in other responses)")
+    id: int = Field(description="Cadastral office ID (matches institutionId in other responses)")
     name: str = Field(description="Full name of cadastral office")
 
 
@@ -181,9 +186,9 @@ class ParcelSearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def parcel_id(self) -> str:
-        """Unique parcel identifier."""
-        return self.key1
+    def parcel_id(self) -> int:
+        """Unique parcel identifier (the ``parcelId`` of the parcel-info endpoint)."""
+        return int(self.key1)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -208,9 +213,9 @@ class PossessionSheetSearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def possession_sheet_id(self) -> str:
+    def possession_sheet_id(self) -> int:
         """Possession sheet id (matches ``possessionSheets[].possessionSheetId``)."""
-        return self.key1
+        return int(self.key1)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -242,9 +247,9 @@ class MainBookSearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def institution_id(self) -> str | None:
+    def institution_id(self) -> int | None:
         """Land-registry office id (``institutionId`` of the unit)."""
-        return self.key2
+        return self._int_or_none("key2")
 
     @computed_field  # type: ignore[misc]
     @property
@@ -278,9 +283,9 @@ class BookOfDCSearchResult(KeyValueSearchResult):
 
     @computed_field  # type: ignore[misc]
     @property
-    def office_id(self) -> str | None:
+    def office_id(self) -> int | None:
         """Land-registry office id."""
-        return self.key2
+        return self._int_or_none("key2")
 
     @computed_field  # type: ignore[misc]
     @property

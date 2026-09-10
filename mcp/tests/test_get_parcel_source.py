@@ -1,4 +1,4 @@
-"""Tests for batch_fetch_parcels register selection (Phase 1).
+"""Tests for get_parcel register selection and per-parcel results.
 
 The MCP package __init__ imports the MCP SDK (MCPServer), which need not be
 installed to exercise the pure handler logic. tools.py only depends on
@@ -52,7 +52,7 @@ def tools() -> "CadastralTools":
 
 
 def test_cadastre_source_includes_tagged_possessors(tools) -> None:
-    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="cadastre"))
+    res = _run(tools.get_parcel([{"parcel_id": "6564741"}], source="cadastre"))
     assert res["source"] == "cadastre"
     result = res["results"][0]
     assert result["register"] == "cadastre"
@@ -61,7 +61,7 @@ def test_cadastre_source_includes_tagged_possessors(tools) -> None:
 
 
 def test_land_registry_source_omits_possessors_and_hints(tools) -> None:
-    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="land_registry"))
+    res = _run(tools.get_parcel([{"parcel_id": "6564741"}], source="land_registry"))
     assert res["source"] == "land_registry"
     data = res["results"][0]["data"]
     assert "possession_sheets" not in data
@@ -73,7 +73,7 @@ def test_land_registry_source_omits_possessors_and_hints(tools) -> None:
 
 
 def test_none_source_drops_possessors(tools) -> None:
-    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="none"))
+    res = _run(tools.get_parcel([{"parcel_id": "6564741"}], source="none"))
     data = res["results"][0]["data"]
     assert "possession_sheets" not in data
     assert "land_registry_hint" not in data
@@ -81,7 +81,7 @@ def test_none_source_drops_possessors(tools) -> None:
 
 def test_invalid_source_raises(tools) -> None:
     with pytest.raises(ValueError):
-        _run(tools.batch_fetch_parcels([{"parcel_id": "x"}], source="bogus"))
+        _run(tools.get_parcel([{"parcel_id": "6564741"}], source="bogus"))
 
 
 class _FakeClientWithGis(_FakeClient):
@@ -104,9 +104,9 @@ class _FakeClientWithGis(_FakeClient):
         )
 
 
-def test_batch_entry_carries_map_url_when_gis_is_available() -> None:
+def test_entry_carries_map_url_when_gis_is_available() -> None:
     client = _FakeClientWithGis()
-    res = _run(CadastralTools(client).batch_fetch_parcels([{"parcel_id": "x"}]))
+    res = _run(CadastralTools(client).get_parcel([{"parcel_id": "6564741"}]))
 
     entry = res["results"][0]
     assert entry["status"] == "success"
@@ -117,11 +117,41 @@ def test_batch_entry_carries_map_url_when_gis_is_available() -> None:
     )
 
 
-def test_batch_entry_omits_map_url_when_gis_is_unavailable(tools) -> None:
-    # _FakeClient has no GIS support at all; the batch must still succeed.
-    res = _run(tools.batch_fetch_parcels([{"parcel_id": "x"}]))
+def test_entry_omits_map_url_when_gis_is_unavailable(tools) -> None:
+    # _FakeClient has no GIS support at all; the lookup must still succeed.
+    res = _run(tools.get_parcel([{"parcel_id": "6564741"}]))
 
     entry = res["results"][0]
     assert entry["status"] == "success"
     assert "map_url" not in entry
     assert res["successful"] == 1
+
+
+def test_each_reference_gets_its_own_entry_and_bad_refs_are_reported(tools) -> None:
+    res = _run(
+        tools.get_parcel(
+            [{"parcel_id": "6564741"}, {"parcel_number": "103/2"}, {"parcel_id": 6564742}],
+            source="none",
+        )
+    )
+    assert [r["status"] for r in res["results"]] == ["success", "error", "success"]
+    assert res["total"] == 3 and res["successful"] == 2 and res["failed"] == 1
+    assert "municipality" in res["results"][1]["error"]
+    assert res["results"][0]["ref"] == {"parcel_id": 6564741}
+
+
+def test_empty_reference_list_is_refused(tools) -> None:
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([], source="cadastre"))
+
+
+def test_own_output_parcel_id_is_accepted_as_input(tools) -> None:
+    first = _run(tools.get_parcel([{"parcel_id": "6564741"}], source="none"))
+    parcel_id = first["results"][0]["data"]["parcel_id"]  # an integer, as the model types it
+    assert isinstance(parcel_id, int)
+    again = _run(tools.get_parcel([{"parcel_id": parcel_id}], source="none"))
+    assert again["results"][0]["status"] == "success"
+    assert again["results"][0]["ref"] == {"parcel_id": parcel_id}
+    # A numeric string is accepted and normalised to the integer id.
+    as_text = _run(tools.get_parcel([{"parcel_id": str(parcel_id)}], source="none"))
+    assert as_text["results"][0]["ref"] == {"parcel_id": parcel_id}

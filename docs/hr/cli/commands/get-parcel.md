@@ -21,6 +21,8 @@ uloška u kojem su pravni vlasnici.
   knjiga vodi kao vlasnika.
 - Trebate broj zemljišnoknjižnog uloška čestice da biste pročitali njegove
   vlasnike i terete.
+- Imate popis čestica, iz ugovora ili iz tablice, i želite isti zapis za svaku
+  od njih.
 
 ## Prije nego počnete
 
@@ -105,8 +107,8 @@ Bez `--posjednici` posjedovni list se izostavlja i zaslon je kraći. Dodajte ga
 kad god želite vidjeti osobe.
 
 `--detalji` sužava zaslon na jedan dio: `basic` samo za identifikaciju, `owners`
-za posjedovni list, `landuse` za podjelu po namjeni, `geometry` za koordinate
-granice, `full` za sve.
+za posjedovni list, `landuse` za podjelu po načinu uporabe, `geometry` za
+koordinate granice, `registry` za zemljišnoknjižni uložak, `full` za sve.
 
 Čestica zgrade na dokumentima se piše kao `35/1 ZGR`, `35/1.ZGR` ili `zgr.
 35/1`. Upišite je u bilo kojem od tih oblika; alat je prikazuje kao `zgr. 35/1`
@@ -129,16 +131,88 @@ proslijediti kolegi.
 uz čestica 103/2 -ko SAVAR --posjednici --oblik json --datoteka parcel-103-2.json
 ```
 
+Za pretragu više čestica odjednom upišite njihove brojeve odvojene zarezima,
+unutar navodnika. Dodajte `--detalji registry` da dobijete jedan redak po
+čestici s njezinom površinom, ID-om čestice i zemljišnoknjižnim uloškom kojem
+pripada:
+
+```bash
+uz čestica "103/2,45,396/1" -ko SAVAR --detalji registry
+```
+
+<!-- BEGIN GENERATED: output uz čestica "103/2,45,396/1" -ko SAVAR --detalji registry -->
+```text
+📊 Pronađene 3 čestice za obradu
+
+
+REZULTATI
+=========
+                                               Površina                               Glavna
+  #    Status    Čestica    Općina                 (m²)    ID čestice    ZK uložak    knjiga
+  1      ✓       103/2      SAVAR                 1,200    6564817       657          21277
+                            (334979)
+  2      ✓       45         SAVAR                   981    6564715       138          21277
+                            (334979)
+  3      ✓       396/1      SAVAR                 2,077    6565198       645          21277
+                            (334979)
+
+✓ Uspješno obrađene sve 3 čestice
+```
+<!-- END GENERATED: output -->
+
+Svaki redak tablice **REZULTATI** jedna je čestica. **Status** pokazuje kvačicu
+za pronađenu i križić za nepronađenu česticu. **ZK uložak** i **Glavna knjiga**
+označavaju zemljišnoknjižni uložak čestice, a to je ono što naredbi
+[uložak](get-lr-unit.md) treba u sljedećem koraku. Bez `--detalji registry`
+ispisuje se potpuni zapis svake čestice, jedan za drugim.
+
+Za dulji popis pripremite datoteku. Najjednostavnija je CSV datoteka, koju
+možete spremiti iz bilo kojeg programa za tablice. Ima dva stupca,
+`broj_cestice` i `opcina`, i izgleda ovako:
+
+<!-- BEGIN GENERATED: file parcels.csv -->
+```text
+broj_cestice,opcina
+103/2,SAVAR
+45,
+396/1,
+```
+<!-- END GENERATED: file -->
+
+Prazno polje općine znači „isto kao u retku iznad”. Prihvaća se i JSON datoteka
+istog sadržaja. Primjeri datoteka: [parcels.csv](../examples/parcels.csv),
+[parcels.json](../examples/parcels.json). Otvorite Terminal u mapi u kojoj je
+datoteka i navedite je uz `--ulaz`:
+
+```bash
+uz čestica --ulaz parcels.csv --detalji registry
+```
+
+Za nastavak prema zemljišnoj knjizi spremite rezultat kao JSON datoteku pomoću
+`--oblik json` i `--datoteka`. Stranica [uložak](get-lr-unit.md) tu datoteku
+može izravno pročitati:
+
+```bash
+uz čestica "103/2,279/6,1122/1" -ko SAVAR --detalji registry --oblik json --datoteka parcels-found.json
+uz uložak --ulaz parcels-found.json --sve
+```
+
+Nazivi polja u JSON ili CSV datoteci slijede jezik alata, pa kolega koji ga
+pokreće na drugom jeziku dobiva nazive tog jezika. Alat datoteke čita natrag na
+oba jezika.
+
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
-| `BROJ_ČESTICE` | Vrijednost koju upisujete odmah iza naziva naredbe, bez naziva ispred nje | Obavezno |
-| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine | Obavezno |
-| `--detalji` | Razina detalja (`basic`, `full`, `owners`, `landuse`, `geometry`) | Koristi se `full` |
+| `ČESTICE` | Neobavezno. Vrijednost koju upisujete odmah iza naziva naredbe | Ne koristi se |
+| `--ulaz`, `-ul` `PUTANJA` | Datoteka (CSV ili JSON) s česticama za pretragu, umjesto upisivanja | Ne koristi se |
+| `--općina`, `-ko` `TEKST` | Naziv ili šifra općine (obavezno osim uz --ulaz) | Ne koristi se |
+| `--detalji` | Razina detalja; registry ispisuje svaku česticu s njezinim ZK uloškom (`basic`, `full`, `owners`, `landuse`, `geometry`, `registry`) | Koristi se `full` |
 | `--posjednici` | Uključi vlasničke podatke | Nije uključeno |
 | `--geometrija` | Uključi koordinate granica | Nije uključeno |
-| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `yaml`, `csv`) | Koristi se `tablica` |
+| `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--datoteka`, `-dt` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -158,6 +232,40 @@ Ako čestica nije pronađena, provjerite broj na svom dokumentu, uključujući d
 iza kose crte. Ostale poruke objašnjene su na [stranici o
 greškama](../errors.md).
 
+Čestica koja ne postoji ne prekida popis. Dobiva križić u stupcu **Status** i
+objašnjenje u tablici **GREŠKE** na kraju:
+
+<!-- BEGIN GENERATED: output uz čestica "103/2,999" -ko SAVAR --detalji registry -->
+```text
+📊 Pronađene 2 čestice za obradu
+
+
+REZULTATI
+=========
+                                               Površina                               Glavna
+  #    Status    Čestica    Općina                 (m²)    ID čestice    ZK uložak    knjiga
+  1      ✓       103/2      SAVAR                 1,200    6564817       657          21277
+                            (334979)
+  2      ✗       999        SAVAR               Čestica    -             -            -
+                                                   nije
+                                              pronađena
+
+GREŠKE
+======
+  #    Čestica        Vrsta greške              Poruka greške
+  2    999 (SAVAR)    Čestica nije pronađena    Čestica nije pronađena (parcel_number=999,
+                                                municipality_reg_num=334979)
+
+⚠️  Obrađeno 1/2 čestica (50.0% stopa uspjeha)
+   1 čestica nije uspjela - pogledajte ispis za detalje
+```
+<!-- END GENERATED: output -->
+
+Ispravite broj i ponovno pokrenite naredbu samo za tu česticu. Ako radije želite
+stati kod prvog problema, dodajte `--stani-kod-greške`. Ako alat ne može pronaći
+datoteku koju ste naveli uz `--ulaz`, provjerite je li Terminal u mapi u kojoj
+je datoteka, ili upišite njezinu punu putanju.
+
 ## Povezane stranice
 
 - [uložak](get-lr-unit.md) čita zemljišnoknjižni uložak čiji se broj pojavljuje
@@ -172,9 +280,14 @@ greškama](../errors.md).
 Ovo ispisuje `uz čestica --help`:
 
 ```text
-Uporaba: uz čestica [OPCIJE] BROJ_ČESTICE
+Uporaba: uz čestica [OPCIJE] ČESTICE
 
-  Dohvat potpunih podataka o čestici s podacima o vlasništvu.
+  Dohvat potpunih podataka o čestici s podacima o posjedu.
+
+  Jedna čestica ili popis čestica: više brojeva odvojenih zarezima (ili zadanih
+  kao zasebni argumenti), ili datoteka uz --ulaz. Za popis je rezultat jedan
+  zapis po čestici s njezinim statusom; čestica koja nije pronađena ne
+  zaustavlja ostale.
 
   Primjeri:
     uz čestica 103/2 -ko SAVAR
@@ -182,15 +295,35 @@ Uporaba: uz čestica [OPCIJE] BROJ_ČESTICE
     uz čestica 103/2 -ko 334979 --detalji owners
     uz čestica 103/2 -ko 334979 --oblik json -dt parcel.json
 
+    # Popis: jedan redak po čestici s njezinim ZK uloškom
+    uz čestica "103/2,45,396/1" -ko SAVAR --detalji registry
+
+    # Popis iz datoteke (CSV ili JSON), spremljen kao JSON za uložak --ulaz
+    uz čestica --ulaz parcels.csv --detalji registry --oblik json -dt parcels-found.json
+
+  CSV datoteka (prazno polje općine ponavlja redak iznad):
+    parcel_number,municipality
+    103/2,SAVAR
+    45,
+
+  JSON datoteka:
+    [{"parcel_number": "103/2", "municipality": "SAVAR"}, {"parcel_id": "6564715"}]
+
 Opcije:
-  -ko, --općina TEKST             Naziv ili šifra općine  [obavezno]
-  --detalji [basic|full|owners|landuse|geometry]
-                                  Razina detalja
+  -ul, --ulaz PUTANJA             Datoteka (CSV ili JSON) s česticama za
+                                  pretragu, umjesto upisivanja
+  -ko, --općina TEKST             Naziv ili šifra općine (obavezno osim uz
+                                  --ulaz)
+  --detalji [basic|full|owners|landuse|geometry|registry]
+                                  Razina detalja; registry ispisuje svaku
+                                  česticu s njezinim ZK uloškom
   --posjednici                    Uključi vlasničke podatke
   --geometrija                    Uključi koordinate granica
-  -ob, --oblik [tablica|json|yaml|csv]
+  -ob, --oblik [tablica|json|csv]
                                   Format izlaza
   -dt, --datoteka PUTANJA         Spremi izlaz u datoteku
+  --nastavi-kod-greške / --stani-kod-greške
+                                  Nastavi obradu nakon grešaka (zadano: nastavi)
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

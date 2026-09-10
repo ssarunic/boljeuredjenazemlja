@@ -5,8 +5,8 @@ SDK models and the MCP server expose, and what a script written against the
 English CLI expects. When the CLI runs in another language, ``print_output``
 rewrites the keys through the tables below, so a Croatian user gets
 ``broj_cestice`` and ``opcina`` in the file, and the input parsers accept
-either spelling when such a file is read back (the batch pipeline, CSV input
-files).
+either spelling when such a file is read back (``--input`` files, the
+get-parcel to get-lr-unit pipeline).
 
 Croatian key names are ASCII ``snake_case`` (``povrsina_m2``, not
 ``površina_m2``): they are identifiers for spreadsheets and scripts, and
@@ -146,7 +146,7 @@ KEYS: dict[str, str] = {
     "registration_number": pgettext("key", "registration_number"),
     "resolution_type_name": pgettext("key", "resolution_type_name"),
     "solving_date": pgettext("key", "solving_date"),
-    # Batch processing
+    # List lookups (several parcels or units)
     "results": pgettext("key", "results"),
     "total": pgettext("key", "total"),
     "successful": pgettext("key", "successful"),

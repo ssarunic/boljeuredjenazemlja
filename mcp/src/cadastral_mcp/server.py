@@ -10,7 +10,7 @@ from mcp.server.mcpserver import MCPServer
 from .config import config
 from .prompts import CadastralPrompts
 from .resources import CadastralResources
-from .tools import CadastralTools
+from .tools import CadastralTools, LRUnitRef, ParcelRef
 
 # Configure logging to stderr (CRITICAL: never log to stdout in MCP servers)
 logging.basicConfig(
@@ -123,30 +123,28 @@ def create_mcp_server() -> MCPServer:
         return await tools_handler.search_parcel(parcel_number, municipality)
 
     @mcp.tool()
-    async def batch_fetch_parcels(
-        parcels: list[dict[str, str]],
+    async def get_parcel(
+        parcels: list[ParcelRef],
         source: str = "cadastre",
     ) -> dict[str, Any]:
         """
-        Fetch multiple parcels (čestice) in a single operation.
+        Get the detailed cadastre (katastar) record of one or more parcels
+        (čestice): area, land use, possession sheet, land-registry reference.
 
-        Use this tool when the user requests information about multiple parcels,
-        especially when they are in the same cadastral municipality (katastarska
-        općina, K.O.). More efficient than calling find_parcel repeatedly.
-
-        Ideal for:
-        - Multiple parcel numbers mentioned in one query (e.g., "parcels 103/2, 45, and 396/1")
-        - Comparing parcels in the same area or municipality
-        - Analyzing property portfolios or multiple properties owned by same entity
-        - Land consolidation research involving adjacent or related parcels
+        Pass one reference for a single parcel and several for a list
+        ("parcels 103/2, 45 and 396/1 in SAVAR"); the result has one entry per
+        reference, in order, and a failed parcel does not stop the others.
+        A reference is ``{"parcel_id": ...}`` (from find_parcel) or
+        ``{"parcel_number": ..., "municipality": ...}`` (katastarska općina,
+        K.O., by name or code).
 
         ⚠️ Register matters: cadastre POSSESSORS (posjedovni list) are often NOT
         the registered land-registry OWNERS (vlasnici / vlastovnica / B-list).
         Choose the register explicitly via ``source``:
         - source="cadastre" (default): include possession-sheet possessors.
         - source="land_registry": omit possessors; return the land-registry unit
-          reference + a hint to fetch true owners via get_lr_unit_from_parcel /
-          batch_lr_units (use this for "vlasnik", "prema zemljišnim knjigama").
+          reference + a hint to fetch true owners via get_lr_unit (use this for
+          "vlasnik", "prema zemljišnim knjigama").
         - source="none": parcel metadata only.
 
         Every person record carries a ``register`` field ("cadastre" |
@@ -157,17 +155,18 @@ def create_mcp_server() -> MCPServer:
         available (downloaded once, then cached).
 
         Args:
-            parcels: List of parcel specifications with parcel_number + municipality OR parcel_id
+            parcels: One or more parcel references (parcel_id, or parcel_number + municipality)
             source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
 
         Returns:
-            Dictionary with results array and summary statistics, including the
-            resolved ``source``. Each successful result is tagged with its
-            ``register`` and includes the lr_unit reference, which can be passed
-            to batch_lr_units for detailed ownership shares and encumbrances.
+            Dictionary with ``results`` (status, ref, register, data, map_url
+            per entry), ``total``, ``successful``, ``failed`` and the resolved
+            ``source``. Each successful entry includes the lr_unit reference
+            (``data.lr_unit``), which get_lr_unit accepts for ownership shares
+            and encumbrances.
         """
-        logger.info(f"Tool invoked: batch_fetch_parcels({len(parcels)} parcels, source={source})")
-        return await tools_handler.batch_fetch_parcels(parcels, source=source)
+        logger.info(f"Tool invoked: get_parcel({len(parcels)} parcels, source={source})")
+        return await tools_handler.get_parcel(list(parcels), source=source)
 
     @mcp.tool()
     async def resolve_municipality(name_or_code: str) -> dict[str, Any]:
@@ -229,20 +228,36 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     async def get_lr_unit(
-        unit_number: str,
-        main_book_id: int | None = None,
+        units: list[LRUnitRef],
         detail: str = "ownership",
         owners_limit: int | None = None,
         include_plombe_detail: bool = False,
-        main_book_name: str | None = None,
     ) -> dict[str, Any]:
         """
-        Get land registry unit (zemljišnoknjižni uložak) information.
+        Get one or more land registry units (zemljišnoknjižni uložak, zemljišne
+        knjige, ZK, gruntovnica): registered owners (vlasnici) and their shares.
 
         A land registry unit contains:
-        - Sheet A (Popis čestica): All parcels in the unit
-        - Sheet B (Vlasnički list): Ownership (vlasnici) with shares
-        - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
+        - Sheet A (Posjedovnica): All parcels in the unit
+        - Sheet B (Vlastovnica): Ownership (vlasnici) with shares
+        - Sheet C (Teretovnica): Encumbrances (mortgages, liens, easements)
+
+        Use this for "vlasnik" / "tko je vlasnik" / "prema zemljišnim knjigama"
+        questions: it returns registered owners (vlastovnica / B-list), not
+        cadastre possessors. Each reference names a unit in one of three ways:
+        - ``{"parcel_number": "279/6", "municipality": "SAVAR"}``: the unit the
+          parcel belongs to, resolved through parcel links when the parcel has
+          no direct unit (the entry reports ``lr_unit_derived_from_links``);
+        - ``{"lr_unit_number": "769", "main_book_id": 21277}``: the direct
+          reference (as returned by get_parcel under ``data.lr_unit``);
+        - ``{"lr_unit_number": "769", "main_book_name": "SAVAR"}``: with the
+          main book (glavna knjiga) name instead of its id.
+
+        Pass one reference for a single unit, several for a portfolio. The
+        result has one entry per reference, in order; a unit that several
+        references resolve to is fetched once (the later entries say
+        ``duplicate`` and point at the entry with the data), and a failed
+        reference does not stop the others.
 
         Each owner row carries ``entry``, the registration entry (upis) that put
         the owner on the share: order number, receipt date, diary number (Z-broj),
@@ -250,118 +265,42 @@ def create_mcp_server() -> MCPServer:
         individual shares.
 
         Args:
-            unit_number: LR unit number (e.g., "769")
-            main_book_id: Main book ID (e.g., 21277). Omit it and give
-                ``main_book_name`` (e.g., "SAVAR", the glavna knjiga name) to
-                resolve the id through the main-book search.
-            main_book_name: Main book name, used when ``main_book_id`` is not given.
+            units: One or more unit references (see above).
             detail: "summary" | "ownership" | "full". Default "ownership" returns
                 B-list owners with structured shares + summary (no geometry/C-sheet),
                 which fits in context; "full" returns every sheet.
-            owners_limit: Cap owner records ("ownership" and "full" alike);
-                total_owners and owners_truncated report the full count. In
-                "full" it cuts sheet B off at that many owner records, dropping
+            owners_limit: Cap owner records per unit ("ownership" and "full"
+                alike); total_owners and owners_truncated report the full count.
+                In "full" it cuts sheet B off at that many owner records, dropping
                 the shares past it whole (``shares_omitted``). A full dump too
-                large to return is refused with the smaller options named, so
-                pass this whenever a unit may have many co-owners.
-            include_plombe_detail: Resolve what each pending plomba (zaprimljena
-                neriješena prijava) actually is - the request type, processing
-                status, and dates. Adds a ``plombe_detail`` map (file_number ->
-                detail). Costs one extra request per plomba; off by default.
+                large to return is reported as that unit's error with the smaller
+                options named, so pass this whenever a unit may have many co-owners.
+            include_plombe_detail: Resolve what each pending plomba (zaprimljeni
+                neriješeni prijedlog za upis) actually is - the request type,
+                processing status, and dates. Adds a ``plombe_detail`` map
+                (file_number -> detail) per unit. Costs one extra request per
+                plomba; off by default.
 
         Returns:
-            Dictionary shaped per ``detail``; owners carry a structured ``share``
-            ({num, den, decimal}) and a ``register`` tag.
+            Dictionary with ``results`` (status, ref, lr_unit_number,
+            main_book_id, data | error per entry) and the counts ``total``,
+            ``unique``, ``successful``, ``failed``, ``duplicates`` and
+            ``condominiums_found``. Each reference has exactly one status
+            (success, error or duplicate), so successful + failed + duplicates
+            = total; do not expect successful + failed alone to add up when
+            references share a unit. ``data`` is shaped per ``detail``; owners
+            carry a structured ``share`` ({num, den, decimal}) and a
+            ``register`` tag.
         """
-        logger.info(
-            f"Tool invoked: get_lr_unit({unit_number}, {main_book_id or main_book_name}, "
-            f"detail={detail})"
-        )
+        logger.info(f"Tool invoked: get_lr_unit({len(units)} refs, detail={detail})")
         return await tools_handler.get_lr_unit(
-            unit_number, main_book_id, detail, owners_limit, include_plombe_detail, main_book_name
+            list(units), detail, owners_limit, include_plombe_detail
         )
-
-    @mcp.tool()
-    async def get_lr_unit_from_parcel(
-        parcel_number: str,
-        municipality: str,
-        detail: str = "ownership",
-        owners_limit: int | None = None,
-        include_plombe_detail: bool = False,
-    ) -> dict[str, Any]:
-        """
-        Get the land registry unit (and registered owners) for a parcel.
-
-        Searches the parcel and resolves its LR unit - falling back to parcel
-        links when the parcel has no direct lr_unit - then returns the unit.
-        Reports ``lr_unit_derived_from_links`` so callers know how it resolved.
-        Use this for "vlasnik" / "prema zemljišnim knjigama" questions: it returns
-        registered owners (vlastovnica / B-list), not cadastre possessors.
-
-        Args:
-            parcel_number: Cadastral parcel number (e.g., "279/6")
-            municipality: Municipality name or code
-            detail: "summary" | "ownership" | "full" (default "ownership").
-            owners_limit: Cap owner records ("ownership" and "full" alike); in
-                "full" the shares past the cap are dropped whole.
-            include_plombe_detail: Resolve what each pending plomba actually is
-                (request type, status, dates). Adds a ``plombe_detail`` map
-                (file_number -> detail). One extra request per plomba; off by
-                default.
-
-        Returns:
-            Dictionary shaped per ``detail``; owners carry a structured ``share``
-            and a ``register`` tag.
-        """
-        logger.info(
-            "Tool invoked: get_lr_unit_from_parcel(%s, %s, detail=%s)",
-            parcel_number, municipality, detail,
-        )
-        return await tools_handler.get_lr_unit_from_parcel(
-            parcel_number, municipality, detail, owners_limit, include_plombe_detail
-        )
-
-    @mcp.tool()
-    async def batch_lr_units(
-        lr_units: list[dict[str, Any]],
-        detail: str = "ownership",
-        owners_limit: int | None = None,
-    ) -> dict[str, Any]:
-        """
-        Fetch multiple land registry units in a single operation.
-
-        Use this after batch_fetch_parcels to get detailed LR unit information
-        for multiple parcels. Each parcel result from batch_fetch_parcels includes
-        lr_unit.lr_unit_number and lr_unit.main_book_id which can be passed here.
-
-        This tool automatically deduplicates LR units - if multiple parcels belong
-        to the same LR unit, it will only be fetched once.
-
-        Ideal for:
-        - Getting detailed ownership info after batch parcel fetch
-        - Comparing ownership structures across multiple properties
-        - Analyzing encumbrances (mortgages, liens) for property portfolios
-
-        Args:
-            lr_units: List of LR unit specs with lr_unit_number and main_book_id
-            detail: "summary" | "ownership" | "full" (default "ownership"), applied
-                to every unit.
-            owners_limit: Cap owner records per unit ("ownership" and "full").
-
-        Returns:
-            Dictionary with results array and summary statistics:
-            - results: List with status, data (shaped per detail), lr_unit_number, main_book_id
-            - total: Total input count
-            - unique: Unique LR units (after deduplication)
-            - successful / failed: counts
-        """
-        logger.info(f"Tool invoked: batch_lr_units({len(lr_units)} units, detail={detail})")
-        return await tools_handler.batch_lr_units(lr_units, detail, owners_limit)
 
     @mcp.tool()
     async def find_main_book(
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> dict[str, Any]:
         """
@@ -387,7 +326,7 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     async def find_book_of_dc(
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> dict[str, Any]:
         """
@@ -419,7 +358,7 @@ def create_mcp_server() -> MCPServer:
         The records carry the possession sheet id that parcel possession sheets
         reference and the sheet number. The cadastre has no endpoint that
         returns a sheet by id; to see a sheet's possessors (posjednici) look up
-        one of its parcels with find_parcel / batch_fetch_parcels.
+        one of its parcels with get_parcel.
 
         Args:
             sheet_number: Possession sheet number (prefix match, e.g. "363")
@@ -494,10 +433,9 @@ def create_mcp_server() -> MCPServer:
 
     logger.info("MCP server initialized successfully")
     logger.info(
-        "Available tools: find_parcel, batch_fetch_parcels, resolve_municipality, "
-        "get_parcel_geometry, list_cadastral_offices, get_lr_unit, "
-        "get_lr_unit_from_parcel, batch_lr_units, find_main_book, find_book_of_dc, "
-        "find_possession_sheet"
+        "Available tools: find_parcel, get_parcel, resolve_municipality, "
+        "get_parcel_geometry, list_cadastral_offices, get_lr_unit, find_main_book, "
+        "find_book_of_dc, find_possession_sheet"
     )
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")

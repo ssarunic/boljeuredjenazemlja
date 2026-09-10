@@ -43,8 +43,6 @@ COMMANDS: dict[str, str] = {
     "search-possession-sheet": pgettext("command", "search-possession-sheet"),
     "get-parcel": pgettext("command", "get-parcel"),
     "get-lr-unit": pgettext("command", "get-lr-unit"),
-    "batch-fetch": pgettext("command", "batch-fetch"),
-    "batch-lr-unit": pgettext("command", "batch-lr-unit"),
     "get-geometry": pgettext("command", "get-geometry"),
     "download-gis": pgettext("command", "download-gis"),
     "list-offices": pgettext("command", "list-offices"),
@@ -88,7 +86,6 @@ OPTIONS: dict[str, str] = {
     "--plombe-detail": pgettext("option", "--plombe-detail"),
     "--all": pgettext("option", "--all"),
     "--input": pgettext("option", "--input"),
-    "--from-batch-output": pgettext("option", "--from-batch-output"),
     "--continue-on-error": pgettext("option", "--continue-on-error"),
     "--stop-on-error": pgettext("option", "--stop-on-error"),
     "--show-stats": pgettext("option", "--show-stats"),
@@ -121,7 +118,6 @@ OPTIONS: dict[str, str] = {
 # shows possessors, on the land registry commands it shows owners.
 OPTION_OVERRIDES: dict[tuple[str, str], str] = {
     ("get-parcel", "--show-owners"): pgettext("option get-parcel", "--show-owners"),
-    ("batch-fetch", "--show-owners"): pgettext("option batch-fetch", "--show-owners"),
     ("download-gis", "--output"): pgettext("option download-gis", "--output"),
     # ``-o`` is --output by default; on these commands it is something else.
     ("get-lr-unit", "-o"): pgettext("option get-lr-unit", "-o"),

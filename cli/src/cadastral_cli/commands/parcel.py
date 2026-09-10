@@ -1,14 +1,26 @@
 """Parcel information commands for CLI."""
 
+from typing import Any
+
 import click
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
+from cadastral_api.models.entities import ParcelInfo
 from cadastral_api.models.gis_entities import build_map_url
 from rich.console import Console
 from rich.table import Table
 
-from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
+from cadastral_cli.formatters import (
+    command_help,
+    describe_error,
+    error_type_value_label,
+    print_error,
+    print_output,
+    print_success,
+)
+from cadastral_cli.input_parsers import ParcelInput, parse_cli_list, parse_input_file
+from cadastral_cli.list_processing import ListSummary, parcel_row, process_parcel_list
 
 from .search import _resolve_municipality
 
@@ -17,21 +29,49 @@ console = Console()
 
 _GET_PARCEL_HELP = command_help(_("""Get complete parcel information with ownership details.
 
+One parcel, or a list of parcels: several numbers separated by commas (or
+given as separate arguments), or a file with --input. For a list, the result
+is one record per parcel with its status; a parcel that is not found does not
+stop the others.
+
 Examples:
   cadastral get-parcel 103/2 -m SAVAR
   cadastral get-parcel 103/2 -m 334979 --show-owners
   cadastral get-parcel 103/2 -m 334979 --detail owners
-  cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json"""))
+  cadastral get-parcel 103/2 -m 334979 --format json -o parcel.json
+
+  # A list: one row per parcel with its land registry unit
+  cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry
+
+  # A list from a file (CSV or JSON), saved as JSON for get-lr-unit --input
+  cadastral get-parcel --input parcels.csv --detail registry --format json -o parcels-found.json
+
+CSV file (an empty municipality cell repeats the row above):
+  parcel_number,municipality
+  103/2,SAVAR
+  45,
+
+JSON file:
+  [{"parcel_number": "103/2", "municipality": "SAVAR"}, {"parcel_id": "6564715"}]"""))
 
 
 @click.command("get-parcel", help=_GET_PARCEL_HELP)
-@click.argument("parcel_number")
-@click.option("--municipality", "-m", required=True, help=_("Municipality name or code"))
+@click.argument("parcels", nargs=-1)
+@click.option(
+    "--input",
+    "-i",
+    "input_file",
+    type=click.Path(exists=True),
+    help=_("File (CSV or JSON) with the parcels to look up, instead of typing them"),
+)
+@click.option(
+    "--municipality", "-m", help=_("Municipality name or code (required unless --input)")
+)
 @click.option(
     "--detail",
-    type=click.Choice(["basic", "full", "owners", "landuse", "geometry"]),
+    type=click.Choice(["basic", "full", "owners", "landuse", "geometry", "registry"]),
     default="full",
-    help=_("Detail level"),
+    help=_("Detail level; registry lists each parcel with its land registry unit"),
 )
 @click.option("--show-owners", is_flag=True, help=_("Include ownership details"))
 @click.option("--show-geometry", is_flag=True, help=_("Include boundary coordinates"))
@@ -39,23 +79,59 @@ Examples:
     "--format",
     "-f",
     "output_format",
-    type=click.Choice(["table", "json", "yaml", "csv"]),
+    type=click.Choice(["table", "json", "csv"]),
     default="table",
     help=_("Output format"),
 )
 @click.option("--output", "-o", type=click.Path(), help=_("Save output to file"))
+@click.option(
+    "--continue-on-error/--stop-on-error",
+    default=True,
+    help=_("Continue processing after errors (default: continue)"),
+)
 @click.pass_context
 def get_parcel(
     ctx: click.Context,
-    parcel_number: str,
-    municipality: str,
+    parcels: tuple[str, ...],
+    input_file: str | None,
+    municipality: str | None,
     detail: str,
     show_owners: bool,
     show_geometry: bool,
     output_format: str,
-    output: str | None
+    output: str | None,
+    continue_on_error: bool,
 ) -> None:
     """Get complete parcel information with ownership details."""
+    if not parcels and not input_file:
+        print_error(_("Give at least one parcel number, or a file with --input"))
+        raise SystemExit(1)
+    if parcels and input_file:
+        print_error(_("Cannot use both parcel numbers and --input"))
+        raise SystemExit(1)
+    if not input_file and not municipality:
+        print_error(_("--municipality is required when parcels are given by number"))
+        raise SystemExit(1)
+
+    # A single number is one lookup; several numbers or a file are a list.
+    is_list = bool(input_file) or len(parcels) != 1 or "," in parcels[0]
+    if is_list:
+        _get_parcel_list(
+            ctx,
+            parcels,
+            input_file,
+            municipality,
+            detail,
+            show_owners,
+            show_geometry,
+            output_format,
+            output,
+            continue_on_error,
+        )
+        return
+
+    parcel_number = parcels[0]
+    assert municipality is not None
     try:
         with CadastralAPIClient() as client:
             # Resolve municipality
@@ -91,7 +167,7 @@ def get_parcel(
     except CadastralAPIError as e:
         if e.error_type == ErrorType.PARCEL_NOT_FOUND:
             parcel_num = e.details.get("parcel_number", parcel_number)
-            muni_code = e.details.get("municipality_reg_num", municipality_code)
+            muni_code = e.details.get("municipality_reg_num", municipality)
             print_error(
                 _("Parcel '{parcel_number}' not found in municipality {municipality}").format(
                     parcel_number=parcel_num,
@@ -101,6 +177,269 @@ def get_parcel(
         else:
             print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
+
+
+# ---------------------------------------------------------------------------
+# A list of parcels
+# ---------------------------------------------------------------------------
+
+
+def _get_parcel_list(
+    ctx: click.Context,
+    parcels: tuple[str, ...],
+    input_file: str | None,
+    municipality: str | None,
+    detail: str,
+    show_owners: bool,
+    show_geometry: bool,
+    output_format: str,
+    output: str | None,
+    continue_on_error: bool,
+) -> None:
+    """Look up several parcels and report one record per parcel."""
+    try:
+        try:
+            if input_file:
+                if output_format == "table":
+                    console.print(
+                        _("📄 Reading parcels from: {file}").format(file=input_file), style="dim"
+                    )
+                inputs = parse_input_file(input_file)
+            else:
+                assert municipality is not None
+                inputs = parse_cli_list(parcels, municipality)
+        except ValueError as e:
+            print_error(_("Input parsing error: {error}").format(error=str(e)))
+            raise SystemExit(1) from e
+
+        if output_format == "table":
+            console.print(
+                ngettext(
+                    "📊 Found {count} parcel to process\n",
+                    "📊 Found {count} parcels to process\n",
+                    len(inputs),
+                ).format(count=len(inputs)),
+                style="dim",
+            )
+
+        need_geometry = show_geometry or detail in ["geometry", "full"]
+        with CadastralAPIClient() as client:
+            summary = process_parcel_list(
+                client, inputs, continue_on_error=continue_on_error, show_progress=True
+            )
+            geometries = _list_geometries(client, summary) if need_geometry else {}
+
+        if output_format == "table":
+            if detail == "registry":
+                _print_list_overview(summary, show_owners)
+            else:
+                _print_list_details(summary, geometries, detail, show_owners, show_geometry)
+        elif output_format == "json":
+            rows = []
+            for result in summary.results:
+                row = parcel_row(result)
+                if result.ok and detail != "registry":
+                    row["full_data"] = _format_structured_data(
+                        result.data, geometries.get(id(result)), detail, show_owners
+                    )
+                rows.append(row)
+            print_output(summary.envelope(rows), output_format="json", file=output)
+        else:
+            print_output(_list_csv_rows(summary, show_owners), output_format="csv", file=output)
+
+        _print_list_footer(summary)
+        if summary.failed > 0:
+            raise SystemExit(1)
+
+    except CadastralAPIError as e:
+        print_error(_("API error: {error}").format(error=describe_error(e)))
+        if e.details:
+            console.print(_("   Details: {details}").format(details=e.details), style="dim red")
+        raise SystemExit(1) from e
+    except SystemExit:
+        raise
+    except Exception as e:
+        print_error(_("Unexpected error: {error}").format(error=str(e)))
+        if ctx.obj.get("verbose"):
+            raise
+        raise SystemExit(1) from e
+
+
+def _list_geometries(
+    client: CadastralAPIClient, summary: ListSummary[ParcelInput, ParcelInfo]
+) -> dict[int, Any]:
+    """Best-effort geometry per successful result (for the map link and --show-geometry)."""
+    geometries: dict[int, Any] = {}
+    for result in summary.results:
+        if not result.ok or result.data is None:
+            continue
+        try:
+            geometries[id(result)] = client.get_parcel_geometry(
+                result.data.parcel_number, result.data.municipality_reg_num
+            )
+        except Exception:  # noqa: BLE001 - the plain map link is used instead
+            continue
+    return geometries
+
+
+def _describe_input(item: ParcelInput) -> str:
+    if item.parcel_id:
+        return f"ID: {item.parcel_id}"
+    return f"{item.parcel_number} ({item.municipality})"
+
+
+def _print_list_details(
+    summary: ListSummary[ParcelInput, ParcelInfo],
+    geometries: dict[int, Any],
+    detail: str,
+    show_owners: bool,
+    show_geometry: bool,
+) -> None:
+    """Print every parcel as ``get-parcel`` prints one, with a header per parcel."""
+    for index, result in enumerate(summary.results, 1):
+        if not result.ok or result.data is None:
+            console.print(
+                f"\n[bold red]━━━ {_('Parcel')} {index}/{summary.total}: "
+                f"✗ {_('ERROR')} ━━━[/bold red]"
+            )
+            console.print(f"{_('Parcel')}: {_describe_input(result.input)}")
+            console.print(f"{_('Error')}: {error_type_value_label(result.error_type)}")
+            console.print(f"{_('Message')}: {result.error_message or _('No error message')}")
+            continue
+        console.print(
+            f"\n[bold green]━━━ {_('Parcel')} {index}/{summary.total} ━━━[/bold green]"
+        )
+        _print_table_output(
+            result.data, geometries.get(id(result)), detail, show_owners, show_geometry
+        )
+
+
+def _print_list_overview(summary: ListSummary[ParcelInput, ParcelInfo], show_owners: bool) -> None:
+    """One row per parcel: area, parcel ID and land registry unit (``--detail registry``)."""
+    header = _("RESULTS")
+    console.print(f"\n{header}", style="bold cyan")
+    console.print("=" * len(header), style="bold cyan")
+    table = Table(show_header=True, box=None, padding=(0, 2))
+    table.add_column("#", justify="right", style="dim")
+    table.add_column(_("Status"), justify="center")
+    table.add_column(_("Parcel"), style="bold")
+    table.add_column(_("Municipality"))
+    table.add_column(_("Area (m²)"), justify="right")
+    table.add_column(_("Parcel ID"))
+    table.add_column(_("LR Unit"))
+    table.add_column(_("Main Book"))
+    if show_owners:
+        # Cadastre possession sheets list possessors, not legal owners.
+        table.add_column(_("Possessors"), justify="right")
+
+    for index, result in enumerate(summary.results, 1):
+        parcel = result.data
+        if result.ok and parcel is not None:
+            lr_unit = parcel.resolved_lr_unit()
+            row = [
+                str(index),
+                "[green]✓[/green]",
+                parcel.parcel_number_display,
+                f"{parcel.municipality_name} ({parcel.municipality_reg_num})",
+                f"{parcel.area_numeric:,}" if parcel.area_numeric else _("N/A"),
+                str(parcel.parcel_id),
+                lr_unit.lr_unit_number if lr_unit else "-",
+                str(lr_unit.main_book_id) if lr_unit and lr_unit.main_book_id else "-",
+            ]
+            if show_owners:
+                row.append(str(parcel.total_possessors))
+        else:
+            shown = (
+                f"ID: {result.input.parcel_id}"
+                if result.input.parcel_id
+                else result.input.parcel_number or ""
+            )
+            row = [
+                str(index),
+                "[red]✗[/red]",
+                shown,
+                result.input.municipality or _("N/A"),
+                f"[red]{error_type_value_label(result.error_type)}[/red]",
+                "-",
+                "-",
+                "-",
+            ]
+            if show_owners:
+                row.append("-")
+        table.add_row(*row)
+    console.print(table)
+    _print_list_errors(summary)
+
+
+def _print_list_errors(summary: ListSummary[ParcelInput, ParcelInfo]) -> None:
+    if summary.failed == 0:
+        return
+    header = _("ERRORS")
+    console.print(f"\n{header}", style="bold red")
+    console.print("=" * len(header), style="bold red")
+    table = Table(show_header=True, box=None, padding=(0, 2))
+    table.add_column("#", justify="right", style="dim")
+    table.add_column(_("Parcel"), style="bold")
+    table.add_column(_("Error Type"))
+    table.add_column(_("Error Message"))
+    for index, result in enumerate(summary.results, 1):
+        if result.status == "error":
+            table.add_row(
+                str(index),
+                _describe_input(result.input),
+                error_type_value_label(result.error_type),
+                result.error_message or _("No error message"),
+            )
+    console.print(table)
+
+
+def _print_list_footer(summary: ListSummary[ParcelInput, ParcelInfo]) -> None:
+    console.print()
+    if summary.failed == 0:
+        print_success(
+            ngettext(
+                "Successfully processed {total} parcel",
+                "Successfully processed all {total} parcels",
+                summary.total,
+            ).format(total=summary.total)
+        )
+        return
+    console.print(
+        _("⚠️  Processed {successful}/{total} parcels ({rate}% success rate)").format(
+            successful=summary.successful, total=summary.total, rate=f"{summary.success_rate:.1f}"
+        ),
+        style="yellow",
+    )
+    console.print(
+        ngettext(
+            "   {count} parcel failed - see output for details",
+            "   {count} parcels failed - see output for details",
+            summary.failed,
+        ).format(count=summary.failed),
+        style="yellow",
+    )
+
+
+def _list_csv_rows(
+    summary: ListSummary[ParcelInput, ParcelInfo], show_owners: bool
+) -> list[dict[str, Any]]:
+    """Flat rows for CSV: the summary record, plus the possessors when asked."""
+    rows = []
+    for result in summary.results:
+        row = parcel_row(result)
+        if show_owners and result.ok and result.data is not None:
+            row["possessors"] = "; ".join(
+                f"{p.name} ({p.ownership or _('N/A')})"
+                for sheet in result.data.possession_sheets
+                for p in sheet.possessors
+            )
+        rows.append(row)
+    return rows
+
+
+# ---------------------------------------------------------------------------
+# One parcel
+# ---------------------------------------------------------------------------
 
 
 def _print_table_output(
@@ -114,12 +453,13 @@ def _print_table_output(
         _print_ownership_info(parcel)
     elif detail == "landuse":
         _print_landuse_info(parcel)
+    elif detail == "registry":
+        _print_registry_info(parcel)
     elif detail == "geometry":
         _print_basic_info(parcel)
         if geometry:
             _print_geometry_info(geometry)
     else:  # full
-        # Use unified function for consistent output
         print_parcel_details(
             parcel=parcel,
             geometry=geometry,
@@ -133,28 +473,15 @@ def print_parcel_details(
     geometry=None,
     show_owners: bool = False,
     show_geometry: bool = False,
-    parcel_index: int | None = None,
-    total_parcels: int | None = None
 ) -> None:
-    """
-    Print detailed parcel information in a consistent format.
-
-    Used by both get-parcel and batch-fetch commands to ensure consistent output.
+    """Print the complete record of one parcel (the ``--detail full`` layout).
 
     Args:
         parcel: ParcelInfo object with parcel data
         geometry: Optional ParcelGeometry object for map URLs and geometry display
         show_owners: Whether to show ownership information
         show_geometry: Whether to show geometry details
-        parcel_index: Optional index for batch mode (1-based)
-        total_parcels: Optional total count for batch mode
     """
-    # Optional batch mode header
-    if parcel_index is not None and total_parcels is not None:
-        console.print(
-            f"\n[bold green]━━━ {_('Parcel')} {parcel_index}/{total_parcels} ━━━[/bold green]"
-        )
-
     # Basic info
     _print_basic_info(parcel)
     console.print()
@@ -482,7 +809,7 @@ def _format_structured_data(parcel, geometry, detail: str, show_owners: bool) ->
             for sheet in parcel.possession_sheets
         ]
 
-    if detail == "full":
+    if detail in ["full", "registry"]:
         # The unit may be reachable only through parcel links (no direct lrUnit).
         lr = parcel.resolved_lr_unit()
         data["land_registry"] = {

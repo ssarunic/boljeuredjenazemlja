@@ -45,8 +45,9 @@ JSON_COMMANDS = [
     "search-municipality SAVAR",
     "get-parcel 103/2 -m SAVAR --show-owners --detail full",
     "get-lr-unit -u 449 -b 21277 --all --plombe-detail",
-    "batch-fetch 103/2,45,999 -m SAVAR --detail full --show-owners",
-    "batch-lr-unit --input lr_units.csv --show-owners",
+    "get-parcel 103/2,45,999 -m SAVAR --detail full --show-owners",
+    "get-parcel 103/2,45 -m SAVAR --detail registry",
+    "get-lr-unit --input lr_units.csv --show-owners",
     "get-geometry 103/2 -m SAVAR",
     "list-offices",
     "list-municipalities --office 114",
@@ -58,6 +59,8 @@ JSON_COMMANDS = [
 ]
 CSV_COMMANDS = [
     "search 103/2 -m SAVAR",
+    "get-parcel 103/2,45,999 -m SAVAR --show-owners",
+    "get-lr-unit --input lr_units.csv --show-owners",
     "get-geometry 103/2 -m SAVAR",
     "list-offices",
 ]
@@ -105,8 +108,12 @@ def test_keys_round_trip() -> None:
 
 
 def test_input_parsers_accept_croatian_names(tmp_path: Path) -> None:
-    from cadastral_cli.commands.batch_lr_unit import _parse_lr_unit_csv, _parse_lr_unit_json
-    from cadastral_cli.input_parsers import parse_csv_file, parse_json_file
+    from cadastral_cli.input_parsers import (
+        parse_csv_file,
+        parse_json_file,
+        parse_lr_unit_csv,
+        parse_lr_unit_json,
+    )
 
     csv_file = tmp_path / "cestice.csv"
     csv_file.write_text("broj_cestice,opcina\n103/2,SAVAR\n45,\n", encoding="utf-8")
@@ -124,12 +131,12 @@ def test_input_parsers_accept_croatian_names(tmp_path: Path) -> None:
 
     lr_csv = tmp_path / "ulosci.csv"
     lr_csv.write_text("broj_zk_uloska,id_glavne_knjige\n657,21277\n", encoding="utf-8")
-    assert _parse_lr_unit_csv(lr_csv)[0].main_book_id == 21277
+    assert parse_lr_unit_csv(lr_csv)[0].main_book_id == 21277
     lr_json = tmp_path / "ulosci.json"
     lr_json.write_text(
         json.dumps([{"broj_zk_uloska": "657", "id_glavne_knjige": 21277}]), encoding="utf-8"
     )
-    assert _parse_lr_unit_json(lr_json)[0].lr_unit_number == "657"
+    assert parse_lr_unit_json(lr_json)[0].lr_unit_number == "657"
 
 
 # ---------------------------------------------------------------------------
@@ -207,12 +214,15 @@ def test_croatian_csv_header_is_localized(mock_server, cmdline: str, tmp_path: P
     assert not left, f"English column names in Croatian CSV of '{cmdline}': {left}"
 
 
-def test_batch_pipeline_round_trips_in_croatian(mock_server, tmp_path: Path) -> None:
-    written = _run(mock_server, "hr", "batch-fetch 103/2,45 -m SAVAR", "json", tmp_path)
+def test_list_pipeline_round_trips_in_croatian(mock_server, tmp_path: Path) -> None:
+    """A Croatian get-parcel list result is accepted by get-lr-unit --input."""
+    written = _run(
+        mock_server, "hr", "get-parcel 103/2,45 -m SAVAR --detail registry", "json", tmp_path
+    )
     starts = [i for i in (written.find("{"), written.find("[")) if i != -1]
     document, _ = json.JSONDecoder().raw_decode(written[min(starts) :])
     assert "rezultati" in document
     out = tmp_path / "pronadjene.json"
     out.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
-    text = _run(mock_server, "hr", f"batch-lr-unit --from-batch-output {out}", "json", tmp_path)
+    text = _run(mock_server, "hr", f"get-lr-unit --input {out}", "json", tmp_path)
     assert "broj_zk_uloska" in text and '"657"' in text

@@ -31,35 +31,43 @@ Every returned person record carries a `register` field
 
 ## Tool playbook
 
-- **Owner of specific parcel(s), "prema ZK"** -> `get_lr_unit_from_parcel`
-  (parcel_number + municipality). It resolves the land-registry unit even when
-  the parcel has no direct unit (via parcel links) and returns B-list owners.
-  Check `lr_unit_derived_from_links` to see how it resolved.
-- **Cadastre possessors of a parcel** -> `batch_fetch_parcels` with
-  `source="cadastre"` (or `find_parcel` for one parcel + basic info).
-- **A portfolio / many parcels** -> `batch_fetch_parcels` (same k.o. is most
-  efficient), then `batch_lr_units` with the returned `lr_unit` references for
-  registered owners.
-- **By unit number directly** -> `get_lr_unit(unit_number, main_book_id)`, or
-  `get_lr_unit(unit_number, main_book_name="SAVAR")` when only the main book
-  (glavna knjiga) name is known; `find_main_book` lists the books.
+Two tools do the work; both take a **list of references** (one for a single
+item, several for a portfolio) and return one entry per reference, in order.
+
+- **Owner of specific parcel(s), "prema ZK"** -> `get_lr_unit` with
+  `{"parcel_number": ..., "municipality": ...}` references. It resolves the
+  land-registry unit even when the parcel has no direct unit (via parcel links;
+  check `lr_unit_derived_from_links`) and returns B-list owners.
+- **Cadastre possessors / area / land use of parcel(s)** -> `get_parcel` with
+  `source="cadastre"` (`find_parcel` for a bare existence check + parcel_id).
+- **A portfolio** -> one `get_parcel` call with all references
+  (`source="land_registry"` if owners are wanted), then one `get_lr_unit` call
+  with the parcel references or the returned `data.lr_unit` references. Units
+  shared by several parcels are fetched once (`status: "duplicate"`,
+  `same_unit_as`).
+- **By unit number directly** -> `get_lr_unit` with
+  `{"lr_unit_number": "769", "main_book_id": 21277}`, or with
+  `"main_book_name": "SAVAR"` when only the main book (glavna knjiga) name is
+  known; `find_main_book` lists the books.
 - **Building parcels** ("35/1 ZGR", "zgr. 35/1", "*35/1") -> any spelling works;
   they have no land-registry unit of their own (the building is registered on
-  its land parcel), so `get_lr_unit_from_parcel` reports
-  `parcel_not_in_land_registry` for them.
+  its land parcel), so their `get_lr_unit` entry is an error saying so.
 - **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
   `find_book_of_dc`.
 - **Map / boundaries** -> `get_parcel_geometry`.
 
 ## Response shaping
 
-LR-unit tools take `detail` = `summary` | `ownership` (default) | `full`:
+`get_lr_unit` takes `detail` = `summary` | `ownership` (default) | `full`:
 
 - Default `ownership` returns B-list owners + structured shares
   (`share = {num, den, decimal}`) + a summary - it already fits in context.
 - For large units, pass `owners_limit` and summarise; `total_owners` /
   `owners_truncated` report what was capped. Reach for `full` only when geometry
-  or the C-sheet (encumbrances) is actually needed.
+  or the C-sheet (encumbrances) is actually needed; a `full` dump too large to
+  return comes back as that unit's `error` with the smaller options named.
+- Every entry has a `status` (`success`, `error`, `duplicate`); read the
+  `error` of a failed reference instead of retrying blindly.
 
 ## Notes
 

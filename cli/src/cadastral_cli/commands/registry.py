@@ -5,12 +5,22 @@ from typing import Any
 import click
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
-from cadastral_api.i18n import _
+from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.utils import display_parcel_number
 from rich.console import Console
+from rich.table import Table
 
-from cadastral_cli.formatters import command_help, describe_error, print_error, print_output
+from cadastral_cli.formatters import (
+    command_help,
+    describe_error,
+    error_type_value_label,
+    print_error,
+    print_output,
+    print_success,
+)
+from cadastral_cli.input_parsers import LRUnitInput, parse_lr_unit_file
+from cadastral_cli.list_processing import ListSummary, lr_unit_row, process_lr_unit_list
 from cadastral_cli.lr_unit_output import print_lr_unit_full
 
 from .search import _resolve_municipality
@@ -22,6 +32,10 @@ _GET_LR_UNIT_HELP = command_help(_("""Get detailed land registry unit informatio
 
 Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),
 including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).
+
+One unit, named by number and main book or found from a parcel; or a list of
+units from a file with --input: a CSV or JSON with lr_unit_number and
+main_book_id, or the JSON that get-parcel writes for a list of parcels.
 
 Examples:
   # Get by unit number and main book ID
@@ -40,7 +54,14 @@ Examples:
   cadastral get-lr-unit -p 279/6 -m SAVAR --all
 
   # Export to JSON
-  cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
+  cadastral get-lr-unit -u 769 -b 21277 --format json --output lr-unit.json
+
+  # Several units from a file, all sheets of each
+  cadastral get-lr-unit --input lr_units.csv --all
+
+  # The units of a list of parcels (pipeline)
+  cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry --format json -o parcels.json
+  cadastral get-lr-unit --input parcels.json --show-owners
 
 ⚠️  Demo project: before using any server other than the included mock, verify
 your rights to use it; use at your own risk"""))
@@ -67,6 +88,13 @@ your rights to use it; use at your own risk"""))
 )
 @click.option("--all", "-a", "show_all", is_flag=True, help=_("Show all sheets"))
 @click.option(
+    "--input",
+    "-i",
+    "input_file",
+    type=click.Path(exists=True),
+    help=_("File (CSV or JSON) with the units to read, or a get-parcel list result"),
+)
+@click.option(
     "--format",
     "-f",
     "output_format",
@@ -75,6 +103,11 @@ your rights to use it; use at your own risk"""))
     help=_("Output format"),
 )
 @click.option("--output", type=click.Path(), help=_("Save output to file"))
+@click.option(
+    "--continue-on-error/--stop-on-error",
+    default=True,
+    help=_("Continue processing after errors (default: continue)"),
+)
 @click.pass_context
 def get_lr_unit(
     ctx: click.Context,
@@ -88,11 +121,32 @@ def get_lr_unit(
     show_encumbrances: bool,
     plombe_detail: bool,
     show_all: bool,
+    input_file: str | None,
     output_format: str,
     output: str | None,
+    continue_on_error: bool,
 ) -> None:
     """Get detailed land registry unit information."""
     # Validate arguments
+    if input_file:
+        if unit_number or main_book or main_book_name or from_parcel:
+            print_error(
+                _("Cannot combine --input with --unit-number, --main-book or --from-parcel")
+            )
+            raise SystemExit(1)
+        _get_lr_unit_list(
+            ctx,
+            input_file,
+            show_owners,
+            show_parcels,
+            show_encumbrances,
+            plombe_detail,
+            show_all,
+            output_format,
+            output,
+            continue_on_error,
+        )
+        return
     if from_parcel:
         if not municipality:
             print_error(_("--municipality is required when using --from-parcel"))
@@ -205,6 +259,178 @@ def get_lr_unit(
         else:
             print_error(_("API error: {error}").format(error=describe_error(e)))
         raise SystemExit(1) from e
+
+
+# ---------------------------------------------------------------------------
+# A list of units
+# ---------------------------------------------------------------------------
+
+
+def _get_lr_unit_list(
+    ctx: click.Context,
+    input_file: str,
+    show_owners: bool,
+    show_parcels: bool,
+    show_encumbrances: bool,
+    plombe_detail: bool,
+    show_all: bool,
+    output_format: str,
+    output: str | None,
+    continue_on_error: bool,
+) -> None:
+    """Read several units from a file and report one record per unit."""
+    try:
+        try:
+            if output_format == "table":
+                console.print(
+                    _("📄 Reading LR units from: {file}").format(file=input_file), style="dim"
+                )
+            inputs = parse_lr_unit_file(input_file)
+        except (ValueError, FileNotFoundError) as e:
+            print_error(_("Input parsing error: {error}").format(error=str(e)))
+            raise SystemExit(1) from e
+
+        if output_format == "table":
+            console.print(
+                ngettext(
+                    "📊 Found {count} LR unit to process\n",
+                    "📊 Found {count} LR units to process\n",
+                    len(inputs),
+                ).format(count=len(inputs)),
+                style="dim",
+            )
+
+        with_sheets = show_owners or show_parcels or show_encumbrances or show_all
+        plombe: dict[int, dict[str, FileStatus]] = {}
+        with CadastralAPIClient() as client:
+            summary = process_lr_unit_list(
+                client, inputs, continue_on_error=continue_on_error, show_progress=True
+            )
+            if plombe_detail:
+                for result in summary.results:
+                    if result.ok and result.data is not None and result.data.has_pending_plombe():
+                        plombe[id(result)] = client.get_plombe_details(result.data)
+
+        if output_format == "table":
+            printed = 0
+            for result in summary.results:
+                if not result.ok or result.data is None:
+                    continue
+                if printed:
+                    console.print("\n---\n")
+                print_lr_unit_full(
+                    result.data,
+                    show_owners,
+                    show_parcels,
+                    show_encumbrances,
+                    show_all,
+                    plombe.get(id(result)),
+                )
+                printed += 1
+            if summary.failed and printed:
+                console.print("\n---\n")
+            _print_list_errors(summary)
+        elif output_format == "json":
+            rows = []
+            for result in summary.results:
+                row = lr_unit_row(result)
+                if result.ok and result.data is not None and with_sheets:
+                    row["full_data"] = _format_structured_data(
+                        result.data,
+                        show_owners,
+                        show_parcels,
+                        show_encumbrances,
+                        show_all,
+                        plombe.get(id(result)),
+                    )
+                rows.append(row)
+            print_output(summary.envelope(rows), output_format="json", file=output)
+        else:
+            rows = []
+            for result in summary.results:
+                row = lr_unit_row(result)
+                if show_owners and result.ok and result.data is not None:
+                    owners = []
+                    for owner in result.data.ownership_sheet_b.owner_rows():
+                        frac = owner["share"]
+                        share = (
+                            f"{frac['num']}/{frac['den']}" if frac else owner["share_description"]
+                        )
+                        owners.append(f"{owner['name']} ({share})")
+                    row["owners"] = "; ".join(owners)
+                rows.append(row)
+            print_output(rows, output_format="csv", file=output)
+
+        _print_list_footer(summary)
+        if summary.failed > 0:
+            raise SystemExit(1)
+
+    except CadastralAPIError as e:
+        print_error(_("API error: {error}").format(error=describe_error(e)))
+        if e.details:
+            console.print(_("   Details: {details}").format(details=e.details), style="dim red")
+        raise SystemExit(1) from e
+    except SystemExit:
+        raise
+    except Exception as e:
+        print_error(_("Unexpected error: {error}").format(error=str(e)))
+        if ctx.obj.get("verbose"):
+            raise
+        raise SystemExit(1) from e
+
+
+def _print_list_errors(summary: ListSummary[LRUnitInput, LandRegistryUnitDetailed]) -> None:
+    if summary.failed == 0:
+        return
+    header = _("ERRORS")
+    console.print(header, style="bold red")
+    console.print("=" * len(header), style="bold red")
+    table = Table(show_header=True, box=None, padding=(0, 2))
+    table.add_column("#", justify="right", style="dim")
+    table.add_column(_("LR Unit"), style="bold")
+    table.add_column(_("Error Type"))
+    table.add_column(_("Error Message"))
+    for index, result in enumerate(summary.results, 1):
+        if result.status == "error":
+            table.add_row(
+                str(index),
+                f"{result.input.lr_unit_number} ({_('Main Book')} {result.input.main_book_id})",
+                error_type_value_label(result.error_type),
+                result.error_message or _("No error message"),
+            )
+    console.print(table)
+
+
+def _print_list_footer(summary: ListSummary[LRUnitInput, LandRegistryUnitDetailed]) -> None:
+    console.print()
+    if summary.failed == 0:
+        print_success(
+            ngettext(
+                "Successfully processed {total} LR unit",
+                "Successfully processed all {total} LR units",
+                summary.total,
+            ).format(total=summary.total)
+        )
+        return
+    console.print(
+        _("⚠️  Processed {successful}/{total} LR units ({rate}% success rate)").format(
+            successful=summary.successful, total=summary.total, rate=f"{summary.success_rate:.1f}"
+        ),
+        style="yellow",
+    )
+    console.print(
+        ngettext(
+            "   {count} LR unit failed - see output for details",
+            "   {count} LR units failed - see output for details",
+            summary.failed,
+        ).format(count=summary.failed),
+        style="yellow",
+    )
+
+
+# ---------------------------------------------------------------------------
+# One unit
+# ---------------------------------------------------------------------------
 
 
 def _format_structured_data(

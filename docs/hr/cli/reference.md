@@ -12,16 +12,11 @@
 <!-- BEGIN GENERATED: reference -->
 Sve naredbe, s poveznicom na stranicu svake od njih. Naredba je ono što upisujete; poveznica govori čemu služi.
 
-## Pretraga jedne čestice
+## Pretraga čestica i uložaka
 
 - `uz pretraži`: [Brza provjera čestice](commands/search.md). Brzo pretraživanje čestica s osnovnim podacima.
-- `uz čestica`: [Sve što katastar ima o čestici](commands/get-parcel.md). Dohvat potpunih podataka o čestici s podacima o vlasništvu.
+- `uz čestica`: [Sve što katastar ima o čestici](commands/get-parcel.md). Dohvat potpunih podataka o čestici s podacima o posjedu.
 - `uz uložak`: [Uvid u zemljišnoknjižni uložak: vlasnici, čestice, tereti](commands/get-lr-unit.md). Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.
-
-## Pretraga više čestica odjednom
-
-- `uz skupno-čestice`: [Pretraga više čestica odjednom](commands/batch-fetch.md). Dohvat podataka za više čestica odjednom (skupna obrada).
-- `uz skupno-ulošci`: [Uvid u više zemljišnoknjižnih uložaka odjednom](commands/batch-lr-unit.md). Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).
 
 ## Pronalaženje općina i ureda
 

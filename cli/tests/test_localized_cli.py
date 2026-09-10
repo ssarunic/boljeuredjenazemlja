@@ -214,8 +214,13 @@ def test_localized_choice_value_is_canonical_inside() -> None:
         ),
         (
             "hr",
-            'cadastral batch-fetch "103/2,45" -m SAVAR --format json -o out.json',
-            'uz skupno-čestice "103/2,45" -ko SAVAR --oblik json -dt out.json',
+            'cadastral get-parcel "103/2,45" -m SAVAR --detail registry --format json -o out.json',
+            'uz čestica "103/2,45" -ko SAVAR --detalji registry --oblik json -dt out.json',
+        ),
+        (
+            "hr",
+            "cadastral get-lr-unit --input parcels.json --all --stop-on-error",
+            "uz uložak --ulaz parcels.json --sve --stani-kod-greške",
         ),
         ("hr", "cadastral cache clear --all --force", "uz predmemorija obriši --sve --bez-pitanja"),
         ("hr", "cadastral cache clear -a -f", "uz predmemorija obriši -sv -bp"),

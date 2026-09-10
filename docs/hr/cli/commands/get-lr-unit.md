@@ -29,9 +29,9 @@ Uložak možete odrediti na dva načina. Ako krećete od čestice, zadajte broj
 uloška i glavnu knjigu kojoj pripada, zadajte to dvoje.
 
 Glavna knjiga određena je brojem koji alat naziva identifikatorom glavne knjige
-(main book ID). Dobivate ga iz rezultata naredbe
-[skupno-čestice](batch-fetch.md) ili iz ranijeg dohvata. Kretanje od čestice
-lakši je put.
+(main book ID). Dobivate ga iz rezultata popisa čestica naredbe
+[čestica](get-parcel.md) ili iz ranijeg dohvata. Kretanje od čestice lakši je
+put.
 
 ## Korak po korak
 
@@ -164,6 +164,95 @@ udjelu, na primjer ugovor o doživotnom uzdržavanju ili spor.
 Da biste rezultat spremili kao datoteku, dodajte `--format json` i `--output` s
 nazivom datoteke.
 
+Za uvid u više uložaka odjednom stavite ih u datoteku i navedite je uz `--ulaz`.
+Najlakša je JSON datoteka koju naredba [čestica](get-parcel.md) zapisuje za
+popis čestica uz `--detalji registry`: alat uzima uložak svake pronađene čestice
+i svaki uložak čita jednom. Možete pripremiti i CSV datoteku s dva stupca,
+`broj_zk_uloska` i `id_glavne_knjige`, poput primjera
+[lr_units.csv](../examples/lr_units.csv):
+
+<!-- BEGIN GENERATED: file lr_units.csv -->
+```text
+broj_zk_uloska,id_glavne_knjige
+657,21277
+769,21277
+449,21277
+```
+<!-- END GENERATED: file -->
+
+Otvorite Terminal u mapi u kojoj je datoteka i upišite:
+
+```bash
+uz uložak --ulaz parcels-found.json --vlasnici
+```
+
+<!-- BEGIN GENERATED: output uz uložak --ulaz parcels-found.json --vlasnici -->
+```text
+📄 Učitavam ZK uloške iz: parcels-found.json
+📊 Pronađena 3 ZK uloška za obradu
+
+                ZEMLJIŠNOKNJIŽNI ULOŽAK
+ Broj uloška           657
+ Glavna knjiga         SAVAR
+ Institucija           Test Land Registry Office SAVAR
+ Status                Aktivan
+ Tip uloška            VLASNIČKI
+ Zadnji broj dnevnika  Z-12345/2024
+
+                                   VLASTOVNICA (LIST B)
+ Udio  Vlasnik                Adresa                  OIB  Upis
+ 1/2   IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -    1.1 · 2018-06-10 · Z-5678/2018
+ 1/2   IVIĆ ANA, KĆI PETRA    SAVAR                   -    2.1 · 2018-06-10 · Z-5678/2018
+
+---
+
+              ZEMLJIŠNOKNJIŽNI ULOŽAK
+ Broj uloška           769
+ Glavna knjiga         SAVAR
+ Institucija           Zemljišnoknjižni odjel Zadar
+ Status                Aktivan
+ Tip uloška            VLASNIČKI
+ Zadnji broj dnevnika  Z-27986/2025
+
+                           VLASTOVNICA (LIST B)
+ Udio  Vlasnik      Adresa     OIB          Upis
+ 4/8   Vlasnik 117  -          -            1.1 · 2012-04-05 · Z-3983/2012
+ 1/8   Vlasnik 119  -          -            3.1 · 2012-04-05 · Z-3983/2012
+ 1/8   Vlasnik 326  -          -            4.1 · 2012-04-05 · Z-3983/2012
+ 1/8   Vlasnik 116  Adresa 31  00000000036  5.2 · 2020-02-14 · Z-3937/2020
+ 1/24  Vlasnik 135  Adresa 10  00000000850  6.1 · 2018-03-21 · Z-6789/2018
+ 1/24  Vlasnik 327  Adresa 10  00000000868  7.1 · 2018-03-21 · Z-6789/2018
+ 1/24  Vlasnik 328  Adresa 32  00000000876  8.1 · 2018-03-21 · Z-6789/2018
+
+---
+
+              ZEMLJIŠNOKNJIŽNI ULOŽAK
+ Broj uloška           449
+ Glavna knjiga         SAVAR
+ Institucija           Zemljišnoknjižni odjel Zadar
+ Status                Aktivan
+ Tip uloška            VLASNIČKI
+ Zadnji broj dnevnika  Z-18444/2026
+ Plombe (u tijeku)     Z-12564/2026
+⚠️  Ovaj uložak ima plombe (zaprimljeni neriješeni prijedlozi) - moguća je promjena u tijeku.
+
+                             VLASTOVNICA (LIST B)
+ Udio  Vlasnik      Adresa     OIB          Upis
+ 1/4   Vlasnik 114  Adresa 75  00000000010  127.2 · 2026-05-14 · Z-15677/2026
+ 1/4   Vlasnik 115  Adresa 41  00000000028  128.1 · 2025-09-29 · Z-31325/2025
+ 1/4   Vlasnik 116  Adresa 31  00000000036  129.1 · 2025-09-29 · Z-31325/2025
+ 1/4   Vlasnik 116  Adresa 76  00000000036  133.1 · 2026-06-09 · Z-18444/2026
+
+✓ Uspješno obrađena sva 3 ZK uloška
+```
+<!-- END GENERATED: output -->
+
+Ulošci se ispisuju jedan za drugim, odvojeni crticama, svaki složen kao gore.
+Odabir listova vrijedi za svaki uložak. Kad se jedan uložak ne može pročitati,
+alat nastavlja s ostalima i na kraju navodi neuspjele pod **GREŠKE**; dodajte
+`--stani-kod-greške` da bi stao kod prvog problema. Za dugačak popis spremite
+rezultat kao datoteku pomoću `--oblik json` i `--datoteka`.
+
 <!-- BEGIN GENERATED: options -->
 | Upišite | Što radi | Ako izostavite |
 |---|---|---|
@@ -177,8 +266,10 @@ nazivom datoteke.
 | `--tereti`, `-te` | Prikaži terete (list C) | Nije uključeno |
 | `--plombe`, `-pl` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
 | `--sve`, `-sv` | Prikaži sve listove | Nije uključeno |
+| `--ulaz`, `-ul` `PUTANJA` | Datoteka (CSV ili JSON) s ulošcima za čitanje, ili rezultat naredbe čestica za popis čestica | Ne koristi se |
 | `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
 | `--datoteka` `PUTANJA` | Spremi izlaz u datoteku | Ne koristi se |
+| `--nastavi-kod-greške` / `--stani-kod-greške` | Nastavi obradu nakon grešaka (zadano: nastavi) | Koristi se `--nastavi-kod-greške` |
 <!-- END GENERATED: options -->
 
 ## Ako nešto ne uspije
@@ -201,7 +292,8 @@ poruke objašnjene su na [stranici o greškama](../errors.md).
 
 - [čestica](get-parcel.md) prikazuje katastarsku stranu iste čestice,
   uključujući posjednike.
-- [skupno-ulošci](batch-lr-unit.md) čita više uložaka odjednom.
+- [čestica](get-parcel.md) uz `--detalji registry` ispisuje uloške više čestica,
+  spremne za `--ulaz`.
 - [Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu.
 
 <details>
@@ -218,9 +310,16 @@ Uporaba: uz uložak [OPCIJE]
   Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući vlasništvo
   (list B), čestice (list A) i terete (list C).
 
+  Jedan uložak, zadan brojem i glavnom knjigom ili pronađen iz čestice; ili
+  popis uložaka iz datoteke uz --ulaz: CSV ili JSON s lr_unit_number i
+  main_book_id, ili JSON koji naredba čestica zapisuje za popis čestica.
+
   Primjeri:
     # Prema broju uloška i ID-u glavne knjige
     uz uložak --broj-uloška 769 --glavna-knjiga 21277
+
+    # Prema broju uloška i nazivu glavne knjige (pronalazi se pretragom glavnih knjiga)
+    uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR
 
     # Prema čestici (automatsko pronalaženje)
     uz uložak --od-čestice 279/6 -ko SAVAR
@@ -232,7 +331,14 @@ Uporaba: uz uložak [OPCIJE]
     uz uložak -oc 279/6 -ko SAVAR --sve
 
     # Izvoz u JSON
-    uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json
+    uz uložak -bu 769 -gk 21277 --oblik json --datoteka lr-unit.json
+
+    # Više uložaka iz datoteke, svi listovi svakoga
+    uz uložak --ulaz lr_units.csv --sve
+
+    # Ulošci popisa čestica (lanac naredbi)
+    uz čestica "103/2,45,396/1" -ko SAVAR --detalji registry --oblik json -dt parcels.json
+    uz uložak --ulaz parcels.json --vlasnici
 
   ⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim
   priloženog probnog provjerite svoja prava na njegovu uporabu; koristite na
@@ -254,9 +360,13 @@ Opcije:
   -pl, --plombe                   Razriješi detalje plombi - jedan dodatni
                                   zahtjev po plombi
   -sv, --sve                      Prikaži sve listove
+  -ul, --ulaz PUTANJA             Datoteka (CSV ili JSON) s ulošcima za čitanje,
+                                  ili rezultat naredbe čestica za popis čestica
   -ob, --oblik [tablica|json|csv]
                                   Format izlaza
   --datoteka PUTANJA              Spremi izlaz u datoteku
+  --nastavi-kod-greške / --stani-kod-greške
+                                  Nastavi obradu nakon grešaka (zadano: nastavi)
   --help                          Prikaži ovu poruku i izađi.
 ```
 <!-- END GENERATED: synopsis -->

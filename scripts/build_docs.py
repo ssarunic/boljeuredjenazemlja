@@ -163,12 +163,8 @@ STRINGS = {
 # Reference index groups: (group name per language, command slugs in order).
 INDEX_GROUPS: list[tuple[dict[str, str], list[str]]] = [
     (
-        {"en": "Look up one parcel", "hr": "Pretraga jedne čestice"},
+        {"en": "Look up parcels and units", "hr": "Pretraga čestica i uložaka"},
         ["search", "get-parcel", "get-lr-unit"],
-    ),
-    (
-        {"en": "Look up many parcels at once", "hr": "Pretraga više čestica odjednom"},
-        ["batch-fetch", "batch-lr-unit"],
     ),
     (
         {"en": "Find municipalities and offices", "hr": "Pronalaženje općina i ureda"},

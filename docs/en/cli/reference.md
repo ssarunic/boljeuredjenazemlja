@@ -11,16 +11,11 @@
 <!-- BEGIN GENERATED: reference -->
 Every command, with a link to its page. The command is what you type; the link is what it is for.
 
-## Look up one parcel
+## Look up parcels and units
 
 - `cadastral search`: [Check a parcel quickly](commands/search.md). Quick search for parcels with basic information.
 - `cadastral get-parcel`: [See everything the cadastre holds about a parcel](commands/get-parcel.md). Get complete parcel information with ownership details.
 - `cadastral get-lr-unit`: [Read the land registry unit: owners, parcels, encumbrances](commands/get-lr-unit.md). Get detailed land registry unit information.
-
-## Look up many parcels at once
-
-- `cadastral batch-fetch`: [Look up a list of parcels at once](commands/batch-fetch.md). Fetch information for multiple parcels in batch mode.
-- `cadastral batch-lr-unit`: [Read many land registry units at once](commands/batch-lr-unit.md). Fetch information for multiple land registry units in batch mode.
 
 ## Find municipalities and offices
 

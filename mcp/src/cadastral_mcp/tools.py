@@ -8,8 +8,87 @@ from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
 from cadastral_api.utils import is_building_parcel_number, normalize_parcel_number
+from pydantic import BaseModel, ConfigDict, model_validator
 
 logger = logging.getLogger(__name__)
+
+
+#: The six generic keys every ``/search-*`` record carries. The typed models
+#: expose them under meaningful names (``main_book_id``, ``sheet_number`` ...),
+#: so the raw keys are dropped from tool results to avoid two spellings of
+#: one value.
+RAW_SEARCH_KEYS = frozenset({"key1", "value1", "key2", "value2", "value3", "display_value1"})
+
+
+def search_record(model: Any) -> dict[str, Any]:
+    """A search-result model as the agent should see it: named fields only."""
+    record = model.model_dump(mode="json", exclude=RAW_SEARCH_KEYS)
+    if not record.get("source_fields"):
+        record.pop("source_fields", None)
+    return record
+
+
+class ParcelRef(BaseModel):
+    """One parcel to fetch: by ``parcel_id``, or by ``parcel_number`` + ``municipality``."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    # Parcel ids are integers everywhere in the SDK; a numeric string is accepted too.
+    parcel_id: int | None = None
+    parcel_number: str | None = None
+    municipality: str | None = None
+
+    @model_validator(mode="after")
+    def _complete(self) -> "ParcelRef":
+        if self.parcel_id is None and not (self.parcel_number and self.municipality):
+            raise ValueError(
+                "a parcel reference needs parcel_id, or parcel_number and municipality"
+            )
+        return self
+
+
+class LRUnitRef(BaseModel):
+    """One land registry unit to fetch, named in one of three ways.
+
+    - ``lr_unit_number`` + ``main_book_id`` (the direct reference);
+    - ``lr_unit_number`` + ``main_book_name`` (the glavna knjiga name, resolved
+      through the main-book search);
+    - ``parcel_number`` + ``municipality`` (the unit the parcel belongs to,
+      resolved through parcel links when the parcel has no direct unit).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    # Unit numbers are strings ("769", "374/A") but are often typed as numbers.
+    lr_unit_number: str | int | None = None
+    main_book_id: int | None = None
+    main_book_name: str | None = None
+    parcel_number: str | None = None
+    municipality: str | None = None
+
+    @model_validator(mode="after")
+    def _complete(self) -> "LRUnitRef":
+        if self.lr_unit_number is not None:
+            self.lr_unit_number = str(self.lr_unit_number)
+        by_unit = bool(self.lr_unit_number) and (
+            self.main_book_id is not None or bool(self.main_book_name)
+        )
+        by_parcel = bool(self.parcel_number) and bool(self.municipality)
+        if by_unit == by_parcel:
+            raise ValueError(
+                "a unit reference is lr_unit_number with main_book_id or main_book_name, "
+                "or parcel_number with municipality (not both, not neither)"
+            )
+        return self
+
+    @property
+    def by_parcel(self) -> bool:
+        return bool(self.parcel_number)
+
+    def describe(self) -> str:
+        if self.by_parcel:
+            return f"parcel {self.parcel_number} in {self.municipality}"
+        return f"unit {self.lr_unit_number} in main book {self.main_book_id or self.main_book_name}"
 
 
 class CadastralTools:
@@ -194,7 +273,7 @@ class CadastralTools:
 
         The direct ``lr_unit`` may be null while the unit is still reachable via
         parcel links; surface whichever is available so the caller can chain to
-        get_lr_unit_from_parcel / batch_lr_units for the true owners.
+        get_lr_unit for the true owners.
         """
         ref = None
         derived_from_links = False
@@ -215,21 +294,21 @@ class CadastralTools:
         return {
             "message": (
                 "Cadastre possessors omitted. For registered owners "
-                "(vlasnici / vlastovnica B-list), call get_lr_unit_from_parcel "
-                "or batch_lr_units with this reference."
+                "(vlasnici / vlastovnica B-list), call get_lr_unit with this "
+                "reference (or with the parcel_number and municipality)."
             ),
             "lr_unit_ref": ref,
             "in_land_registry": ref is not None,
             "lr_unit_derived_from_links": derived_from_links,
         }
 
-    async def batch_fetch_parcels(
+    async def get_parcel(
         self,
-        parcels: list[dict[str, str]],
+        parcels: list[ParcelRef | dict[str, Any]],
         source: str = "cadastre",
     ) -> dict[str, Any]:
         """
-        Fetch multiple parcels in a single operation.
+        Fetch the detailed cadastre record of one or more parcels.
 
         ⚠️ Cadastre possessors (posjedovni list) and land-registry owners
         (vlasnici / vlastovnica / B-list) are DIFFERENT registers and frequently
@@ -241,109 +320,95 @@ class CadastralTools:
           i.e. cadastre POSSESSORS - NOT necessarily the registered owners.
         - "land_registry": omit possessors and instead return, per parcel, the
           land-registry unit reference plus a hint to fetch the true owners via
-          get_lr_unit_from_parcel / batch_lr_units.
+          get_lr_unit.
         - "none": parcel metadata only.
 
         Args:
-            parcels: List of parcel specs, each with parcel_number + municipality
-                OR a direct parcel_id.
+            parcels: One or more parcel references (``ParcelRef``): parcel_id, or
+                parcel_number + municipality.
             source: One of "cadastre", "land_registry", "none".
 
         Returns:
-            Dictionary with results array, summary statistics, and the resolved
-            ``source``. Each successful entry also carries ``map_url`` (the
-            interactive map centred on the parcel) when the municipality's GIS
-            data is available; it is omitted otherwise. An entry resolved from a
-            fallback match rather than the exact number carries ``exact_match``
-            False with ``requested_parcel_number`` and ``match_note``.
+            Dictionary with ``results`` (one entry per reference, in order),
+            counts, and the resolved ``source``. Each successful entry also
+            carries ``map_url`` (the interactive map centred on the parcel)
+            when the municipality's GIS data is available; it is omitted
+            otherwise. An entry resolved from a fallback match rather than the
+            exact number carries ``exact_match`` False with
+            ``requested_parcel_number`` and ``match_note``.
         """
         if source not in self.VALID_SOURCES:
             raise ValueError(
                 f"Invalid source '{source}'. Expected one of {self.VALID_SOURCES}."
             )
+        if not parcels:
+            raise ValueError("Give at least one parcel reference.")
 
-        try:
-            logger.info(f"Batch fetching {len(parcels)} parcels (source={source})")
+        logger.info(f"Fetching {len(parcels)} parcel(s) (source={source})")
+        results: list[dict[str, Any]] = []
+        for spec in parcels:
+            try:
+                ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
+            except ValueError as e:
+                results.append({"status": "error", "error": str(e), "ref": spec})
+                continue
+            try:
+                results.append(await self._get_one_parcel(ref, source))
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Failed to fetch parcel {ref}: {e}")
+                results.append({
+                    "status": "error",
+                    "error": str(e),
+                    "ref": ref.model_dump(exclude_none=True),
+                })
 
-            results: list[dict[str, Any]] = []
-            successful = 0
-            failed = 0
+        successful = sum(1 for r in results if r["status"] == "success")
+        return {
+            "results": results,
+            "total": len(parcels),
+            "successful": successful,
+            "failed": len(results) - successful,
+            "source": source,
+        }
 
-            for spec in parcels:
-                try:
-                    search_result: dict[str, Any] | None = None
-                    # Check if parcel_id is directly provided
-                    if "parcel_id" in spec:
-                        parcel_id = spec["parcel_id"]
-                    else:
-                        # Search for parcel first
-                        parcel_number = spec.get("parcel_number")
-                        municipality = spec.get("municipality")
+    async def _get_one_parcel(self, ref: ParcelRef, source: str) -> dict[str, Any]:
+        """The ``results`` entry of one parcel reference (raises on failure)."""
+        search_result: dict[str, Any] | None = None
+        if ref.parcel_id is not None:
+            parcel_id = ref.parcel_id
+        else:
+            assert ref.parcel_number is not None and ref.municipality is not None
+            search_result = await self.search_parcel(ref.parcel_number, ref.municipality)
+            parcel_id = search_result["parcel_id"]
 
-                        if not parcel_number or not municipality:
-                            raise ValueError(
-                                "Each parcel must have either parcel_id "
-                                "or both parcel_number and municipality"
-                            )
+        parcel = self.client.get_parcel_info(parcel_id)
+        result_data = parcel.model_dump(mode="json")
 
-                        search_result = await self.search_parcel(parcel_number, municipality)
-                        parcel_id = search_result["parcel_id"]
+        # Possession sheets are CADASTRE data; only include them when
+        # cadastre possessors were explicitly requested.
+        if source != "cadastre":
+            result_data.pop("possession_sheets", None)
+        if source == "land_registry":
+            result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
 
-                    # Fetch detailed info
-                    parcel = self.client.get_parcel_info(parcel_id)
-
-                    result_data = parcel.model_dump(mode="json")
-
-                    # Possession sheets are CADASTRE data; only include them when
-                    # cadastre possessors were explicitly requested.
-                    if source != "cadastre":
-                        result_data.pop("possession_sheets", None)
-                    if source == "land_registry":
-                        result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
-
-                    entry: dict[str, Any] = {
-                        "status": "success",
-                        "register": source,
-                        "cadastre_lr_harmonized": parcel.is_harmonized,
-                        "data": result_data,
-                    }
-                    # A fallback match is not the parcel that was asked for; carry
-                    # the warning out of search_parcel rather than losing it here.
-                    if search_result is not None and not search_result["exact_match"]:
-                        entry["exact_match"] = False
-                        entry["requested_parcel_number"] = search_result[
-                            "requested_parcel_number"
-                        ]
-                        entry["match_note"] = search_result["match_note"]
-                    # Best-effort map link from the cached municipality GIS data
-                    map_url = self._map_url_for(
-                        parcel.parcel_number, parcel.cad_municipality_reg_num
-                    )
-                    if map_url:
-                        entry["map_url"] = map_url
-                    results.append(entry)
-                    successful += 1
-
-                except Exception as e:
-                    logger.error(f"Failed to fetch parcel {spec}: {e}")
-                    results.append({
-                        "status": "error",
-                        "error": str(e),
-                        "spec": spec,
-                    })
-                    failed += 1
-
-            return {
-                "results": results,
-                "total": len(parcels),
-                "successful": successful,
-                "failed": failed,
-                "source": source,
-            }
-
-        except Exception as e:
-            logger.error(f"Batch fetch operation failed: {e}", exc_info=True)
-            raise ValueError(f"Batch fetch operation failed: {e}") from e
+        entry: dict[str, Any] = {
+            "status": "success",
+            "ref": ref.model_dump(exclude_none=True),
+            "register": source,
+            "cadastre_lr_harmonized": parcel.is_harmonized,
+            "data": result_data,
+        }
+        # A fallback match is not the parcel that was asked for; carry the
+        # warning out of search_parcel rather than losing it here.
+        if search_result is not None and not search_result["exact_match"]:
+            entry["exact_match"] = False
+            entry["requested_parcel_number"] = search_result["requested_parcel_number"]
+            entry["match_note"] = search_result["match_note"]
+        # Best-effort map link from the cached municipality GIS data
+        map_url = self._map_url_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
+        if map_url:
+            entry["map_url"] = map_url
+        return entry
 
     async def resolve_municipality(self, name_or_code: str) -> dict[str, Any]:
         """
@@ -713,262 +778,151 @@ class CadastralTools:
 
     async def get_lr_unit(
         self,
-        unit_number: str,
-        main_book_id: int | None = None,
-        detail: str = "ownership",
-        owners_limit: int | None = None,
-        include_plombe_detail: bool = False,
-        main_book_name: str | None = None,
-    ) -> dict[str, Any]:
-        """
-        Get land registry unit (zemljišnoknjižni uložak) information.
-
-        A land registry unit contains:
-        - Sheet A (Popis čestica): All parcels in the unit
-        - Sheet B (Vlasnički list): Ownership (vlasnici) with shares
-        - Sheet C (Teretni list): Encumbrances (mortgages, liens, easements)
-
-        For condominiums (etažno vlasništvo), each share represents an individual
-        apartment/unit (condominium_number, condominium_descriptions).
-
-        Args:
-            unit_number: LR unit number (e.g., "769")
-            main_book_id: Main book ID (e.g., 21277); may be omitted when
-                ``main_book_name`` is given.
-            detail: "summary" | "ownership" | "full" (default "ownership" -
-                B-list owners with structured shares + summary, no geometry/C-sheet).
-            owners_limit: Cap the number of owner records returned, in the
-                "ownership" and "full" views alike; total_owners and
-                owners_truncated report the full count.
-            main_book_name: Main book name (e.g., "SAVAR"), resolved through the
-                main-book search when ``main_book_id`` is not given.
-
-        Returns:
-            Dictionary shaped per ``detail``; owners carry a structured
-            ``share`` ({num, den, decimal}), a ``register`` tag and their
-            registration ``entry``.
-        """
-        if detail not in self.VALID_DETAIL:
-            raise ValueError(
-                f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
-            )
-        if main_book_id is None and not main_book_name:
-            raise ValueError("Either main_book_id or main_book_name is required.")
-
-        try:
-            logger.info(
-                f"Fetching LR unit {unit_number} from main book "
-                f"{main_book_id or main_book_name!r} (detail={detail})"
-            )
-            lr_unit = self.client.get_lr_unit_detailed(
-                unit_number, main_book_id, main_book_name=main_book_name
-            )
-            result = self._shape_lr_unit(lr_unit, detail, owners_limit)
-            if include_plombe_detail and lr_unit.has_pending_plombe():
-                result["plombe_detail"] = self._plombe_detail(lr_unit)
-            return result
-
-        except CadastralAPIError as e:
-            logger.error(f"Failed to fetch LR unit {unit_number}: {e}", exc_info=True)
-            raise ValueError(
-                f"Could not retrieve land registry unit '{unit_number}' "
-                f"from main book {main_book_id or main_book_name}. "
-                f"Please verify the unit number and main book ID or name. ({e})"
-            ) from e
-
-    async def get_lr_unit_from_parcel(
-        self,
-        parcel_number: str,
-        municipality: str,
+        units: list[LRUnitRef | dict[str, Any]],
         detail: str = "ownership",
         owners_limit: int | None = None,
         include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
-        Get the land registry unit (and registered owners) for a parcel.
+        Get one or more land registry units (zemljišnoknjižni uložak).
 
-        Convenience method that searches the parcel, resolves its LR unit
-        reference - falling back to parcel links when the parcel has no direct
-        lr_unit - and fetches the unit. The result reports
-        ``lr_unit_derived_from_links`` so callers know how it was resolved.
+        Each reference (``LRUnitRef``) names a unit directly (lr_unit_number +
+        main_book_id, or + main_book_name) or through a parcel (parcel_number +
+        municipality; the unit is resolved through parcel links when the parcel
+        has no direct unit, and the entry reports ``lr_unit_derived_from_links``).
 
-        Use this for "vlasnik" / "prema zemljišnim knjigama" questions; it
-        returns true land-registry owners (vlastovnica / B-list), not cadastre
-        possessors.
-
-        Args:
-            parcel_number: Cadastral parcel number (e.g., "279/6")
-            municipality: Municipality name or code
-            detail: "summary" | "ownership" | "full" (default "ownership").
-            owners_limit: Cap owner records ("ownership" and "full");
-                total_owners and owners_truncated report the full count.
-
-        Returns:
-            Dictionary shaped per ``detail``; owners carry a structured
-            ``share`` and a ``register`` tag.
-        """
-        if detail not in self.VALID_DETAIL:
-            raise ValueError(
-                f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
-            )
-
-        try:
-            logger.info(
-                f"Fetching LR unit for parcel {parcel_number} in {municipality} (detail={detail})"
-            )
-            muni_code = await self._resolve_municipality(municipality)
-            lr_unit = self.client.get_lr_unit_from_parcel(parcel_number, muni_code)
-            result = self._shape_lr_unit(lr_unit, detail, owners_limit)
-            if include_plombe_detail and lr_unit.has_pending_plombe():
-                result["plombe_detail"] = self._plombe_detail(lr_unit)
-            return result
-
-        except CadastralAPIError as e:
-            logger.error(f"Failed to fetch LR unit from parcel {parcel_number}: {e}", exc_info=True)
-            raise ValueError(
-                f"Could not retrieve land registry unit for parcel '{parcel_number}'. "
-                f"Please verify the parcel number and municipality."
-            ) from e
-
-    async def batch_lr_units(
-        self,
-        lr_units: list[dict[str, Any]],
-        detail: str = "ownership",
-        owners_limit: int | None = None,
-    ) -> dict[str, Any]:
-        """
-        Fetch multiple land registry units in a single operation.
-
-        This is useful for:
-        - Processing LR unit references from batch_fetch_parcels output
-        - Comparing multiple LR units side by side
-        - Analyzing property portfolios with complete ownership info
-        - Batch processing of condominium buildings
-
-        For condominiums (etažno vlasništvo), each result includes:
-        - is_condominium: True if this is a condominium unit
-        - condominium_units_count: Number of individual apartments/units
-        - Each ownership share has condominium_number and condominium_descriptions
+        A unit that several references resolve to is fetched and returned once;
+        the later references get ``status`` "duplicate" and ``same_unit_as``,
+        the index of the entry that carries the data.
 
         Args:
-            lr_units: List of LR unit specifications, each with:
-                - lr_unit_number: LR unit number (e.g., "769")
-                - main_book_id: Main book ID (e.g., 21277)
+            units: One or more unit references.
             detail: "summary" | "ownership" | "full" (default "ownership"),
                 applied to every unit.
-            owners_limit: Cap owner records per unit ("ownership" and "full").
+            owners_limit: Cap owner records per unit ("ownership" and "full");
+                total_owners and owners_truncated report the full count.
+            include_plombe_detail: Resolve what each pending plomba is (request
+                type, status, dates) into a ``plombe_detail`` map per unit; one
+                extra request per plomba.
 
         Returns:
-            Dictionary with results array and summary statistics:
-            - results: List of {status, data/error, lr_unit_number, main_book_id, is_condominium}
-            - total: Total LR units processed
-            - successful: Number of successful fetches
-            - failed: Number of failed fetches
-            - condominiums_found: Number of condominium units found
-
-        Example:
-            >>> await batch_lr_units([
-            ...     {"lr_unit_number": "769", "main_book_id": 21277},
-            ...     {"lr_unit_number": "13998", "main_book_id": 30783}
-            ... ])
-            {
-                "results": [...],
-                "total": 2,
-                "successful": 2,
-                "failed": 0,
-                "condominiums_found": 1
-            }
+            Dictionary with ``results`` (one entry per reference, in order:
+            status, ref, lr_unit_number, main_book_id, data | error), ``total``,
+            ``unique`` (units actually fetched), ``successful``, ``failed``,
+            ``duplicates`` and ``condominiums_found``. Every reference has
+            exactly one of the three statuses, so
+            ``successful + failed + duplicates == total``; ``successful`` counts
+            fetched units, i.e. equals ``unique``.
         """
         if detail not in self.VALID_DETAIL:
             raise ValueError(
                 f"Invalid detail '{detail}'. Expected one of {self.VALID_DETAIL}."
             )
+        if not units:
+            raise ValueError("Give at least one land registry unit reference.")
 
+        logger.info(f"Fetching {len(units)} land registry unit reference(s) (detail={detail})")
+        results: list[dict[str, Any]] = []
+        fetched: dict[tuple[str, int], int] = {}  # (unit number, main book id) -> index
+        by_name: dict[tuple[str, str], int] = {}  # (unit number, MAIN BOOK NAME) -> index
+        condominiums_found = 0
+
+        for spec in units:
+            try:
+                ref = spec if isinstance(spec, LRUnitRef) else LRUnitRef.model_validate(spec)
+            except ValueError as e:
+                results.append({"status": "error", "error": str(e), "ref": spec})
+                continue
+            entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
+
+            # A direct reference that was already fetched needs no request.
+            known = None
+            if not ref.by_parcel:
+                assert ref.lr_unit_number is not None
+                if ref.main_book_id is not None:
+                    known = fetched.get((ref.lr_unit_number, ref.main_book_id))
+                elif ref.main_book_name:
+                    known = by_name.get((ref.lr_unit_number, ref.main_book_name.upper()))
+            if known is not None:
+                entry.update(
+                    status="duplicate",
+                    same_unit_as=known,
+                    lr_unit_number=results[known]["lr_unit_number"],
+                    main_book_id=results[known]["main_book_id"],
+                )
+                results.append(entry)
+                continue
+
+            try:
+                lr_unit = self._fetch_lr_unit(ref)
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Failed to fetch {ref.describe()}: {e}")
+                entry.update(status="error", error=str(e))
+                results.append(entry)
+                continue
+
+            key = (str(lr_unit.lr_unit_number), int(lr_unit.main_book_id))
+            entry["lr_unit_number"], entry["main_book_id"] = key
+            if ref.by_parcel:
+                entry["lr_unit_derived_from_links"] = lr_unit.lr_unit_derived_from_links
+            if key in fetched:
+                entry.update(status="duplicate", same_unit_as=fetched[key])
+                results.append(entry)
+                continue
+
+            try:
+                data = self._shape_lr_unit(lr_unit, detail, owners_limit)
+                if include_plombe_detail and lr_unit.has_pending_plombe():
+                    data["plombe_detail"] = self._plombe_detail(lr_unit)
+            except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
+                entry.update(status="error", error=str(e))
+                results.append(entry)
+                continue
+
+            fetched[key] = len(results)
+            if ref.main_book_name:
+                by_name[(key[0], ref.main_book_name.upper())] = len(results)
+            entry.update(status="success", data=data)
+            if lr_unit.is_condominium():
+                entry["is_condominium"] = True
+                condominiums_found += 1
+            results.append(entry)
+
+        successful = sum(1 for r in results if r["status"] == "success")
+        failed = sum(1 for r in results if r["status"] == "error")
+        duplicates = sum(1 for r in results if r["status"] == "duplicate")
+        # Every reference lands in exactly one of the three; clients can check
+        # successful + failed + duplicates == total.
+        return {
+            "results": results,
+            "total": len(units),
+            "unique": len(fetched),
+            "successful": successful,
+            "failed": failed,
+            "duplicates": duplicates,
+            "condominiums_found": condominiums_found,
+        }
+
+    def _fetch_lr_unit(self, ref: LRUnitRef) -> Any:
+        """Fetch the unit a reference names; errors carry a message for the agent."""
         try:
-            logger.info(f"Batch fetching {len(lr_units)} LR units (detail={detail})")
-
-            results: list[dict[str, Any]] = []
-            successful = 0
-            failed = 0
-            condominiums_found = 0
-
-            # Deduplicate LR units by (unit_number, main_book_id)
-            seen: set[tuple[str, int]] = set()
-            unique_lr_units: list[dict[str, Any]] = []
-
-            for spec in lr_units:
-                lr_unit_number = str(spec.get("lr_unit_number", ""))
-                main_book_id = spec.get("main_book_id")
-
-                if not lr_unit_number or main_book_id is None:
-                    results.append({
-                        "status": "error",
-                        "error": "lr_unit_number and main_book_id are required",
-                        "spec": spec,
-                    })
-                    failed += 1
-                    continue
-
-                key = (lr_unit_number, main_book_id)
-                if key in seen:
-                    continue  # Skip duplicates
-                seen.add(key)
-                unique_lr_units.append(spec)
-
-            for spec in unique_lr_units:
-                try:
-                    lr_unit_number = str(spec["lr_unit_number"])
-                    main_book_id = int(spec["main_book_id"])
-
-                    # Fetch LR unit
-                    lr_unit = self.client.get_lr_unit_detailed(lr_unit_number, main_book_id)
-
-                    # Shape per requested detail level
-                    result_data = self._shape_lr_unit(lr_unit, detail, owners_limit)
-
-                    is_condo = lr_unit.is_condominium()
-                    if is_condo:
-                        condominiums_found += 1
-
-                    result_entry = {
-                        "status": "success",
-                        "lr_unit_number": lr_unit_number,
-                        "main_book_id": main_book_id,
-                        "data": result_data,
-                    }
-                    if is_condo:
-                        result_entry["is_condominium"] = True
-
-                    results.append(result_entry)
-                    successful += 1
-
-                except Exception as e:
-                    logger.error(f"Failed to fetch LR unit {spec}: {e}")
-                    results.append({
-                        "status": "error",
-                        "lr_unit_number": spec.get("lr_unit_number"),
-                        "main_book_id": spec.get("main_book_id"),
-                        "error": str(e),
-                    })
-                    failed += 1
-
-            return {
-                "results": results,
-                "total": len(lr_units),
-                "unique": len(unique_lr_units),
-                "successful": successful,
-                "failed": failed,
-                "condominiums_found": condominiums_found,
-            }
-
-        except Exception as e:
-            logger.error(f"Batch LR unit operation failed: {e}", exc_info=True)
-            raise ValueError(f"Batch LR unit operation failed: {e}") from e
+            if ref.by_parcel:
+                assert ref.parcel_number is not None and ref.municipality is not None
+                muni_code = self._resolve_municipality_sync(ref.municipality)
+                return self.client.get_lr_unit_from_parcel(ref.parcel_number, muni_code)
+            assert ref.lr_unit_number is not None
+            return self.client.get_lr_unit_detailed(
+                ref.lr_unit_number, ref.main_book_id, main_book_name=ref.main_book_name
+            )
+        except CadastralAPIError as e:
+            raise ValueError(
+                f"Could not retrieve the land registry unit for {ref.describe()}: {e}"
+            ) from e
 
     async def find_main_book(
         self,
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> dict[str, Any]:
         """
@@ -985,7 +939,7 @@ class CadastralTools:
             logger.info(f"Finding main books (search={search}, office={office_id})")
             books = self.client.find_main_book(search, office_id, institution_name)
             return {
-                "main_books": [book.model_dump(mode="json") for book in books],
+                "main_books": [search_record(book) for book in books],
                 "count": len(books),
             }
         except CadastralAPIError as e:
@@ -995,7 +949,7 @@ class CadastralTools:
     async def find_book_of_dc(
         self,
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> dict[str, Any]:
         """
@@ -1008,7 +962,7 @@ class CadastralTools:
             logger.info(f"Finding books of deposited contracts (search={search})")
             books = self.client.find_book_of_dc(search, office_id, institution_name)
             return {
-                "books_of_dc": [book.model_dump(mode="json") for book in books],
+                "books_of_dc": [search_record(book) for book in books],
                 "count": len(books),
             }
         except CadastralAPIError as e:
@@ -1028,7 +982,7 @@ class CadastralTools:
             muni_code = await self._resolve_municipality(municipality)
             sheets = self.client.find_possession_sheet(sheet_number, muni_code)
             return {
-                "possession_sheets": [sheet.model_dump(mode="json") for sheet in sheets],
+                "possession_sheets": [search_record(sheet) for sheet in sheets],
                 "municipality_code": muni_code,
                 "count": len(sheets),
             }
@@ -1054,6 +1008,10 @@ class CadastralTools:
         return geometry.map_url() if geometry is not None else None
 
     async def _resolve_municipality(self, name_or_code: str) -> str:
+        """Resolve a municipality name to its registration code (see the sync twin)."""
+        return self._resolve_municipality_sync(name_or_code)
+
+    def _resolve_municipality_sync(self, name_or_code: str) -> str:
         """
         Internal helper to resolve municipality name to code.
 

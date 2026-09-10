@@ -1,8 +1,15 @@
-"""Input parsers for batch operations."""
+"""Parsers for the lists that ``get-parcel`` and ``get-lr-unit`` accept.
+
+A list comes either from the command line (parcel numbers separated by commas
+or given as several arguments) or from a file (``--input``): CSV or JSON,
+with column names and keys in any supported language (see ``output_keys``).
+"""
 
 import csv
 import json
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from cadastral_api.utils import normalize_parcel_number
 
@@ -57,11 +64,14 @@ class ParcelInput:
         return f"ParcelInput(parcel_number={self.parcel_number}, municipality={self.municipality})"
 
 
-def parse_cli_list(parcel_list: str, municipality: str) -> list[ParcelInput]:
-    """Parse comma-separated list from CLI.
+def parse_cli_list(
+    parcel_list: str | tuple[str, ...] | list[str], municipality: str
+) -> list[ParcelInput]:
+    """Parse the parcels typed on the command line.
 
     Args:
-        parcel_list: Comma-separated string (e.g., "103/2,45,396/1")
+        parcel_list: Comma-separated string ("103/2,45,396/1") or the
+            positional arguments as given (each may itself contain commas)
         municipality: Municipality code or name for all parcels
 
     Returns:
@@ -70,12 +80,15 @@ def parse_cli_list(parcel_list: str, municipality: str) -> list[ParcelInput]:
     Raises:
         ValueError: If input format is invalid
     """
+    if not isinstance(parcel_list, str):
+        parcel_list = ",".join(parcel_list)
+
     if not parcel_list or not parcel_list.strip():
         msg = "Parcel list cannot be empty"
         raise ValueError(msg)
 
     if not municipality or not municipality.strip():
-        msg = "Municipality required for CLI list mode"
+        msg = "Municipality required when parcels are given by number"
         raise ValueError(msg)
 
     # Split and clean
@@ -97,7 +110,7 @@ def parse_cli_list(parcel_list: str, municipality: str) -> list[ParcelInput]:
 
     # Check for mixed input (not allowed)
     if has_parcel_ids and has_parcel_numbers:
-        msg = "Cannot mix parcel numbers and parcel IDs in same batch"
+        msg = "Cannot mix parcel numbers and parcel IDs in the same list"
         raise ValueError(msg)
 
     # Parse based on type
@@ -281,7 +294,7 @@ def parse_json_file(file_path: str | Path) -> list[ParcelInput]:
 
         # Check for mixing
         if has_parcel_number and has_parcel_id:
-            msg = f"Item {idx}: Cannot mix parcel numbers and parcel IDs in same batch"
+            msg = f"Item {idx}: Cannot mix parcel numbers and parcel IDs in the same list"
             raise ValueError(msg)
 
         # Validate
@@ -323,3 +336,131 @@ def parse_input_file(file_path: str | Path) -> list[ParcelInput]:
         return parse_json_file(file_path)
     msg = f"Unsupported file format: {suffix} (use .csv or .json)"
     raise ValueError(msg)
+
+
+# ---------------------------------------------------------------------------
+# Land registry units
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class LRUnitInput:
+    """One land registry unit to read: its number and the main book ID."""
+
+    lr_unit_number: str
+    main_book_id: int
+
+
+def _lr_unit_from_record(
+    record: dict[str, Any], where: str, strict: bool
+) -> LRUnitInput | None:
+    """Build an ``LRUnitInput`` from a CSV row or JSON object (canonical keys).
+
+    With ``strict`` False (records of a ``get-parcel`` result), records that
+    failed or carry no unit reference are skipped instead of rejected.
+    """
+    if not strict and record.get("status") not in (None, "success"):
+        return None
+    lr_unit_number = record.get("lr_unit_number")
+    main_book_id = record.get("main_book_id")
+    lr_unit_number = str(lr_unit_number).strip() if lr_unit_number is not None else ""
+    if isinstance(main_book_id, str):
+        main_book_id = main_book_id.strip()
+        if main_book_id.isdigit():
+            main_book_id = int(main_book_id)
+    if not lr_unit_number or main_book_id in (None, ""):
+        if strict:
+            raise ValueError(f"{where}: lr_unit_number and main_book_id are required")
+        return None
+    if not isinstance(main_book_id, int):
+        raise ValueError(f"{where}: main_book_id must be an integer")
+    return LRUnitInput(lr_unit_number=lr_unit_number, main_book_id=main_book_id)
+
+
+def parse_lr_unit_csv(file_path: str | Path) -> list[LRUnitInput]:
+    """Parse a CSV file with ``lr_unit_number`` and ``main_book_id`` columns.
+
+    A CSV written by ``get-parcel --format csv`` for a list of parcels works
+    too: it has the same two columns, and rows without a unit are skipped.
+    """
+    file_path = Path(file_path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+
+    units: list[LRUnitInput] = []
+    with file_path.open(encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames:
+            raise ValueError("CSV file is empty or has no header")
+        fieldnames = [canonical_key(name) for name in reader.fieldnames]
+        if "lr_unit_number" not in fieldnames or "main_book_id" not in fieldnames:
+            raise ValueError("CSV must have 'lr_unit_number' and 'main_book_id' columns")
+        strict = "status" not in fieldnames  # a get-parcel result carries a status column
+        for row_num, row in enumerate(reader, start=2):
+            unit = _lr_unit_from_record(canonical_keys(row), f"Row {row_num}", strict)
+            if unit is not None:
+                units.append(unit)
+
+    if not units:
+        raise ValueError("No land registry units found in CSV file")
+    return _unique(units)
+
+
+def parse_lr_unit_json(file_path: str | Path) -> list[LRUnitInput]:
+    """Parse a JSON file with land registry units.
+
+    Accepted shapes: an array of ``{"lr_unit_number": ..., "main_book_id": ...}``
+    objects, or the document ``get-parcel --format json`` writes for a list
+    of parcels (its ``results`` carry the unit reference of each parcel).
+    """
+    file_path = Path(file_path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+
+    with file_path.open(encoding="utf-8") as f:
+        data = canonical_keys(json.load(f))
+
+    strict = True
+    if isinstance(data, dict) and isinstance(data.get("results"), list):
+        data = data["results"]
+        strict = False
+    if not isinstance(data, list):
+        raise ValueError("JSON must be an array of land registry unit objects")
+    if not data:
+        raise ValueError("JSON array is empty")
+
+    units: list[LRUnitInput] = []
+    for idx, item in enumerate(data):
+        if not isinstance(item, dict):
+            raise ValueError(f"Item {idx}: must be an object with lr_unit_number and main_book_id")
+        if "status" in item:
+            strict = False
+        unit = _lr_unit_from_record(item, f"Item {idx}", strict)
+        if unit is not None:
+            units.append(unit)
+
+    if not units:
+        raise ValueError("No land registry units found in JSON file")
+    return _unique(units)
+
+
+def parse_lr_unit_file(file_path: str | Path) -> list[LRUnitInput]:
+    """Auto-detect the file format (.csv or .json) and parse it."""
+    file_path = Path(file_path)
+    suffix = file_path.suffix.lower()
+    if suffix == ".csv":
+        return parse_lr_unit_csv(file_path)
+    if suffix == ".json":
+        return parse_lr_unit_json(file_path)
+    raise ValueError(f"Unsupported file format: {suffix} (use .csv or .json)")
+
+
+def _unique(units: list[LRUnitInput]) -> list[LRUnitInput]:
+    """Drop repeated units (several parcels of one list often share a unit)."""
+    seen: set[LRUnitInput] = set()
+    out: list[LRUnitInput] = []
+    for unit in units:
+        if unit not in seen:
+            seen.add(unit)
+            out.append(unit)
+    return out

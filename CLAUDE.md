@@ -25,7 +25,7 @@ This project demonstrates modern API architecture patterns that could be applied
 This is a **monorepo** containing multiple related projects demonstrating modern cadastral API architecture patterns:
 
 - **`api/`** - Python SDK with type-safe Pydantic models and GIS integration
-- **`cli/`** - Command-line interface with rich formatting and batch processing
+- **`cli/`** - Command-line interface with rich formatting and list processing
 - **`mcp/`** - Model Context Protocol server for AI agent integration
 - **`mock-server/`** - Mock API server for safe testing and development
 
@@ -40,7 +40,7 @@ This is a **monorepo** containing multiple related projects demonstrating modern
 - **CLI Tool** (`cli/`): Rich terminal interface with table/JSON/CSV/WKT/GeoJSON output formats
 - **MCP Server** (`mcp/`): AI agent integration via Model Context Protocol
 - **GIS Integration**: Parcel geometry parsing and local caching from GML files
-- **Batch Processing**: Process multiple parcels in a single operation (CLI list or file input)
+- **Lists**: `get-parcel` and `get-lr-unit` accept a list of items (comma-separated or from a file) as well as a single one
 - **Internationalization**: Croatian (default) and English support via gettext
 - **Rate Limiting**: Automatic request throttling (0.375s default, configurable)
 - **Error Handling**: Comprehensive error types with user-friendly messages
@@ -219,13 +219,11 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 ### Core Commands
 
 - **`cadastral search`** - Quick parcel search with basic information
-- **`cadastral get-parcel`** - Detailed parcel information with owners
-- **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances (`--main-book-name` resolves the main book by name)
+- **`cadastral get-parcel`** - Detailed parcel information with possessors; one parcel, a comma-separated list, or a file (`--input`). `--detail registry` gives one row per parcel with its LR unit reference
+- **`cadastral get-lr-unit`** - Get land registry unit (zemljišnoknjižni uložak) with ownership, parcels, and encumbrances (`--main-book-name` resolves the main book by name; `--input` reads a list of units from a file or from get-parcel list output)
 - **`cadastral list-main-books`** - Find land registry main books (glavne knjige) and their IDs
 - **`cadastral list-books-of-dc`** - List books of deposited contracts (knjige položenih ugovora, KPU)
 - **`cadastral search-possession-sheet`** - Find a cadastre possession sheet by number
-- **`cadastral batch-fetch`** - Process multiple parcels (CLI list or file input). Returns LR unit references for each parcel.
-- **`cadastral batch-lr-unit`** - Process multiple land registry units (from file or batch-fetch output)
 - **`cadastral list-municipalities`** - List and filter municipalities
 - **`cadastral list-offices`** - List all cadastral offices
 - **`cadastral info`** - Display system information, cache status, and API settings
@@ -257,18 +255,18 @@ cadastral list-main-books --search SAVAR
 cadastral list-books-of-dc --search ZADAR
 cadastral search-possession-sheet 363 -m SAVAR
 
-# Batch processing from CLI list (returns LR unit refs)
-cadastral batch-fetch "103/2,45,396/1" --municipality SAVAR
+# A list of parcels: one row per parcel with its LR unit reference
+cadastral get-parcel "103/2,45,396/1" --municipality SAVAR --detail registry
 
-# Batch processing from file
-cadastral batch-fetch --input parcels.csv --format json --output results.json
+# A list from a file
+cadastral get-parcel --input parcels.csv --detail registry --format json --output results.json
 
-# Pipeline: batch parcels → batch LR units
-cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
-cadastral batch-lr-unit --from-batch-output parcels.json
+# Pipeline: parcels → their LR units
+cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry --format json -o parcels.json
+cadastral get-lr-unit --input parcels.json --all
 
-# Direct LR unit batch processing
-cadastral batch-lr-unit --input lr_units.csv --show-owners
+# A list of LR units from a CSV
+cadastral get-lr-unit --input lr_units.csv --show-owners
 
 # Get parcel geometry in WKT format
 cadastral get-geometry 103/2 -m 334979 --format wkt
@@ -360,42 +358,41 @@ with CadastralAPIClient() as client:
     print(f"WKT: {geometry.to_wkt()}")
 ```
 
-## Batch Processing
+## Lists of Parcels and Units
 
-Process multiple parcels and land registry units efficiently:
-
-### CLI Batch Mode
+`get-parcel` and `get-lr-unit` take one item or a list; there are no separate
+batch commands. A single parcel number gives the single-item output (one JSON
+object, fail fast). A comma-separated list, several positional arguments or
+`--input FILE` give the list output: a `summary` (counts) and `results` (one
+record per item with `status`, the item's summary fields and, unless
+`--detail registry`, its `full_data`). Failures are recorded per item and the
+exit code is 1 if any item failed; `--stop-on-error` aborts at the first one.
 
 ```bash
-# Comma-separated list (returns LR unit refs for each parcel)
-cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+# Comma-separated list, one row per parcel with its LR unit reference
+cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry
 
-# From CSV file
-cadastral batch-fetch --input parcels.csv --format json -o results.json
+# From CSV or JSON file
+cadastral get-parcel --input parcels.csv --detail registry --format json -o results.json
 
-# Continue on errors (default)
-cadastral batch-fetch --input parcels.csv --continue-on-error
+# Stop on first error (default is to continue)
+cadastral get-parcel --input parcels.csv --stop-on-error
 
-# Stop on first error
-cadastral batch-fetch --input parcels.csv --stop-on-error
+# Full parcel details for each item
+cadastral get-parcel "103/2,45" -m SAVAR --show-owners
 
-# Include full parcel details
-cadastral batch-fetch "103/2,45" -m SAVAR --detail full --show-owners
+# Pipeline: parcels → LR units (ownership and encumbrances)
+cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry --format json -o parcels.json
+cadastral get-lr-unit --input parcels.json --show-owners
 
-# Pipeline: Parcels → LR Units (for detailed ownership/encumbrances)
-cadastral batch-fetch "103/2,45,396/1" -m SAVAR --format json -o parcels.json
-cadastral batch-lr-unit --from-batch-output parcels.json --show-owners
-
-# Direct LR unit batch (from CSV with lr_unit_number,main_book_id)
-cadastral batch-lr-unit --input lr_units.csv --format json -o lr_results.json
+# Direct LR unit list (CSV with lr_unit_number,main_book_id)
+cadastral get-lr-unit --input lr_units.csv --format json -o lr_results.json
 ```
 
-**batch-fetch output now includes:**
-
-- `lr_unit_number` - Land registry unit number
-- `main_book_id` - Main book ID
-
-These can be passed to `batch-lr-unit` for detailed ownership and encumbrance info.
+`get-lr-unit --input` accepts a CSV or JSON with `lr_unit_number` and
+`main_book_id`, or the JSON that `get-parcel` writes for a list (it takes the
+`lr_unit_number` and `main_book_id` of every successful result and reads each
+unit once).
 
 ### Input File Formats
 
@@ -418,7 +415,7 @@ parcel_number,municipality
 ]
 ```
 
-**LR Unit CSV format (for batch-lr-unit):**
+**LR Unit CSV format (for get-lr-unit --input):**
 
 ```csv
 lr_unit_number,main_book_id
@@ -426,7 +423,7 @@ lr_unit_number,main_book_id
 123,45678
 ```
 
-**LR Unit JSON format (for batch-lr-unit):**
+**LR Unit JSON format (for get-lr-unit --input):**
 
 ```json
 [
@@ -435,22 +432,24 @@ lr_unit_number,main_book_id
 ]
 ```
 
-### Python Batch Processing
+### Python List Processing
 
 ```python
-from cadastral_cli.batch_processor import process_batch
+from cadastral_api import CadastralAPIClient
 from cadastral_cli.input_parsers import ParcelInput
+from cadastral_cli.list_processing import process_parcel_list
 
 inputs = [
     ParcelInput(parcel_number="103/2", municipality="334979"),
     ParcelInput(parcel_number="45", municipality="SAVAR"),
 ]
 
-results = process_batch(inputs, continue_on_error=True)
+with CadastralAPIClient() as client:
+    summary = process_parcel_list(client, inputs, continue_on_error=True)
 
-for result in results:
-    if result.status == "success":
-        print(f"✓ {result.parcel_data.parcel_number}")
+for result in summary.results:
+    if result.ok:
+        print(f"✓ {result.data.parcel_number}")
     else:
         print(f"✗ Error: {result.error_message}")
 ```
@@ -487,16 +486,14 @@ boljeuredjenazemlja/
 │   │   ├── main.py              # CLI entry point
 │   │   ├── commands/            # Command modules
 │   │   │   ├── search.py        # search, search-municipality
-│   │   │   ├── parcel.py        # get-parcel
-│   │   │   ├── registry.py      # get-lr-unit
-│   │   │   ├── batch.py         # batch-fetch
-│   │   │   ├── batch_lr_unit.py # batch-lr-unit
+│   │   │   ├── parcel.py        # get-parcel (one parcel or a list)
+│   │   │   ├── registry.py      # get-lr-unit (one unit or a list)
 │   │   │   ├── discovery.py     # list-offices, list-municipalities, info
 │   │   │   ├── gis.py           # get-geometry, download-gis
 │   │   │   └── cache.py         # cache-clear
 │   │   ├── formatters.py        # Output formatting
-│   │   ├── input_parsers.py     # Input parsing
-│   │   ├── batch_processor.py   # Batch processing
+│   │   ├── input_parsers.py     # Input parsing (lists, --input files)
+│   │   ├── list_processing.py   # List lookups (per-item results)
 │   │   └── lr_unit_output.py    # Shared LR unit output formatting
 │   ├── tests/                   # CLI tests
 │   ├── docs/                    # CLI documentation

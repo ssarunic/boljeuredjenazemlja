@@ -46,7 +46,7 @@ number and one tag.
   list C entries; the parcel list says whether it comes from the land register
   or the cadastre. `get-parcel` marks building parcels and prints the file of
   the last change per land use. JSON output carries the new fields under the
-  keys listed in `output_keys.py`; `batch-fetch` resolves the land registry
+  keys listed in `output_keys.py`; a `get-parcel` list resolves the land registry
   reference through parcel links too and reports `is_building_parcel`.
 - MCP: tools `find_main_book`, `find_book_of_dc` and `find_possession_sheet`;
   `get_lr_unit` accepts `main_book_name`; `detail="ownership"` owner rows carry
@@ -88,6 +88,50 @@ number and one tag.
   version to clients. Tools, resources and prompts are unchanged; 2025-era
   clients such as Claude Desktop keep working. Reinstall with
   `pip install -U -e ./mcp`.
+- CLI: `get-parcel` and `get-lr-unit` take a list as well as a single item;
+  the separate `batch-fetch` and `batch-lr-unit` commands are gone. `get-parcel`
+  accepts several parcel numbers (comma-separated or as separate arguments) or
+  `--input FILE` (CSV or JSON, any language), `--detail registry` prints one
+  row per parcel with its land registry unit, and `--continue-on-error/--stop-on-error`
+  moved over. `get-lr-unit --input FILE` reads a CSV or JSON of units or the
+  JSON that `get-parcel` writes for a list (replacing `--from-batch-output`).
+  A single parcel number keeps today's output and exit codes; a list gives the
+  `summary` plus `results` document, exit code 1 if any item failed, with each
+  successful result carrying the single-item record under `full_data` (except
+  in `registry` mode). Progress goes to stderr, so `--format json` on stdout
+  is clean. The CSV of a list of parcels names the column `possessors` (was
+  `owners`); `get-parcel --format yaml`, which never produced YAML, is removed.
+  Croatian spellings: `uz čestica "103/2,45" -ko SAVAR --detalji registry`,
+  `uz uložak --ulaz parcels.json --sve`.
+- MCP: the same merge on the tool surface. `get_parcel` (replaces
+  `batch_fetch_parcels`) and `get_lr_unit` (replaces `get_lr_unit`,
+  `get_lr_unit_from_parcel` and `batch_lr_units`) each take a list of typed
+  references and return one entry per reference, in order, with a `status`.
+  A `get_lr_unit` reference is `lr_unit_number` + `main_book_id`, `lr_unit_number`
+  + `main_book_name`, or `parcel_number` + `municipality`; units that several
+  references resolve to are fetched once (`status: "duplicate"`, `same_unit_as`).
+  A single unit that fails, or a `full` dump too large to return, is that entry's
+  `error` instead of a tool error. Nine tools instead of eleven. The MCP usage
+  guide is rewritten around the register choice and the two tools; the
+  `cadastral-lookup` skill follows.
+- MCP: `find_main_book`, `find_book_of_dc` and `find_possession_sheet` return
+  the named fields only (`main_book_id`, `sheet_number`, ...); the server's raw
+  `key1`/`value1`/`key2`/`value2`/`value3`/`display_value1` are no longer
+  repeated beside them.
+- MCP: `parcel_id` and `lr_unit_number` in tool references accept a number as
+  well as a string, so the `data.parcel_id` that `get_parcel` returns can be
+  passed back unchanged.
+- MCP: the `get_lr_unit` envelope carries a `duplicates` count next to
+  `successful` and `failed`, so the three add up to `total`; the tool
+  description says so.
+- SDK: numeric ids of the search results are integers, as they are in the
+  detailed models: `ParcelSearchResult.parcel_id`,
+  `PossessionSheetSearchResult.possession_sheet_id`,
+  `MainBookSearchResult.institution_id`, `BookOfDCSearchResult.office_id`,
+  `MunicipalitySearchResult.municipality_id`, `institution_id` and
+  `department_id`, and `CadastralOffice.id`. The municipality registration
+  number stays a string (it is a code). CLI JSON and MCP results follow; the
+  MCP `parcel_id` reference is an integer (a numeric string is accepted).
 - SDK: entry kinds follow the Land Registry Act. `ActionType` gains `uknjižba`
   (unconditional registration, previously folded into the generic `upis`);
   `upis` is now only the fallback for "upisuje se". A deletion is reported by

@@ -47,11 +47,13 @@ The server exposes three MCP primitive types:
 - `cadastral://office/{code}` - Office info
 
 ### Tools (AI-invoked actions)
-- `search_parcel` - Search parcels
-- `batch_fetch_parcels` - Fetch multiple parcels
+- `find_parcel` - Find one parcel (id, exact-match check, map link)
+- `get_parcel` - Cadastre record of one or more parcels (list of references)
+- `get_lr_unit` - One or more land registry units, by unit number or by parcel
 - `resolve_municipality` - Name to code resolution
 - `get_parcel_geometry` - Boundary coordinates
 - `list_cadastral_offices` - List offices
+- `find_main_book`, `find_book_of_dc`, `find_possession_sheet` - Registry lookups
 
 ### Prompts (User templates)
 - `explain_ownership_structure` - Ownership analysis

@@ -11,7 +11,7 @@ Model Context Protocol (MCP) server for querying Croatian cadastral and land reg
 
 ## 📖 For Claude Desktop Users
 
-**If you're using this with Claude Desktop, read the [Claude Usage Guide](claude-usage-guide.md) first!**
+**If you're using this with Claude Desktop, read the [MCP usage guide](../docs/mcp-usage-guide.md) first!**
 
 It includes:
 - ✅ Which tools work and how to use them
@@ -48,14 +48,12 @@ AI agents can auto-fetch contextual information:
 The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
-- **`find_parcel`** - Find parcels by number and municipality
-- **`batch_fetch_parcels`** - Process multiple parcels efficiently in a single operation (use when querying multiple parcels in the same cadastral municipality/K.O., or when analyzing property portfolios). Returns LR unit references for each parcel.
+- **`find_parcel`** - Find one parcel by number and municipality (parcel id, exact-match check, map link)
+- **`get_parcel`** - Detailed cadastre record of one or more parcels. Takes a list of references (`parcel_id`, or `parcel_number` + `municipality`) and returns one entry per reference; `source` selects the register (cadastre possessors, land-registry hint, or none). Each entry carries the land registry unit reference.
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 
 **Land Registry Operations:**
-- **`get_lr_unit`** - Get detailed land registry unit by unit number and main book ID
-- **`get_lr_unit_from_parcel`** - Get land registry unit information from a parcel number
-- **`batch_lr_units`** - Fetch multiple land registry units in a single operation (use after batch_fetch_parcels to get detailed ownership and encumbrance info)
+- **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail`, `owners_limit` and `include_plombe_detail` shape every entry.
 
 **Lookup Operations:**
 - **`resolve_municipality`** - Convert municipality names to codes
@@ -64,59 +62,36 @@ The AI decides when to invoke these based on user queries:
 - **`find_book_of_dc`** - Find books of deposited contracts (knjige položenih ugovora, KPU)
 - **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number
 
-#### When to Use Batch Operations
+#### One tool, one or many items
 
-Use `batch_fetch_parcels` instead of multiple `find_parcel` calls when:
-
-- **Multiple parcels mentioned**: User asks about "parcels 103/2, 45, and 396/1"
-- **Same cadastral municipality (K.O.)**: Multiple parcels in the same area/municipality
-- **Property portfolios**: Analyzing multiple properties owned by same entity
-- **Comparison queries**: "Compare these parcels..." or "Show me information for..."
-- **Land consolidation**: Research involving adjacent or related parcels
-
-**Performance Benefits:**
-
-- Single API operation instead of multiple sequential calls
-- Automatic rate limiting between parcel requests
-- Aggregated statistics (total, successful, failed)
-- Continue-on-error behavior (one failure doesn't stop others)
-
-**Example Use Cases:**
-
-- "Get info about parcels 103/2, 45, 396/1 in SAVAR" → Use batch
-- "Compare parcels in cadastral municipality LUKA" → Use batch
-- "Show me all properties owned by [person]" → Use batch
-- "Find parcel 103/2 in SAVAR" → Use single find_parcel
+There are no separate batch tools. `get_parcel` and `get_lr_unit` take a list
+of references; a single item is a list of one. The result shape is the same in
+both cases: `results` with one entry per reference (in order, each with a
+`status`), plus counts. A failed reference is an `error` entry and does not stop
+the others. This keeps the agent's decision simple ("which register?") and the
+result shape predictable.
 
 #### Pipeline: From Parcels to Land Registry Units
-
-The `batch_fetch_parcels` tool now returns LR unit references (`lr_unit.lr_unit_number` and `lr_unit.main_book_id`) for each parcel. Use `batch_lr_units` to get detailed ownership and encumbrance information:
-
-**Two-Step Workflow:**
-
-1. **Fetch parcels**: Get basic parcel info with LR unit references
-2. **Fetch LR units**: Get detailed ownership, all parcels in unit, and encumbrances
-
-**Example:**
 
 ```text
 User: "Get detailed ownership info for parcels 103/2, 45, and 396/1 in SAVAR"
 
-Step 1: batch_fetch_parcels([
-  {"parcel_number": "103/2", "municipality": "SAVAR"},
-  {"parcel_number": "45", "municipality": "SAVAR"},
-  {"parcel_number": "396/1", "municipality": "SAVAR"}
-])
-→ Returns parcels with lr_unit references
+Step 1 (optional, cadastre facts): get_parcel(
+  parcels=[{"parcel_number": "103/2", "municipality": "SAVAR"},
+           {"parcel_number": "45", "municipality": "SAVAR"},
+           {"parcel_number": "396/1", "municipality": "SAVAR"}],
+  source="land_registry")
+-> one entry per parcel with data.lr_unit = {lr_unit_number, main_book_id}
 
-Step 2: batch_lr_units([
-  {"lr_unit_number": "657", "main_book_id": 21277},
-  {"lr_unit_number": "123", "main_book_id": 21277}
-])
-→ Returns detailed ownership sheets, all parcels in each unit, encumbrances
+Step 2 (owners): get_lr_unit(
+  units=[{"parcel_number": "103/2", "municipality": "SAVAR"},
+         {"parcel_number": "45", "municipality": "SAVAR"},
+         {"parcel_number": "396/1", "municipality": "SAVAR"}])
+-> one entry per parcel; parcels of the same unit share one fetch
 ```
 
-**Note:** Multiple parcels may belong to the same LR unit. `batch_lr_units` automatically deduplicates, so you can pass all LR refs from step 1 without worrying about duplicates.
+Step 2 works on its own for an ownership question; step 1 is only needed for
+the cadastre side (area, land use, possessors, harmonisation).
 
 ### Prompts (User-selected templates)
 
@@ -286,7 +261,7 @@ Returns GeoJSON or WKT geometry data.
 
 **User**: "Get information about parcels 103/2, 45, and 396/1 in SAVAR"
 
-**Claude** (invokes `batch_fetch_parcels` tool):
+**Claude** (invokes `get_parcel` tool):
 ```json
 {
   "results": [

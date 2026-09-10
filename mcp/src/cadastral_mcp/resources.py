@@ -94,7 +94,7 @@ class CadastralResources:
 
             # Find office by code
             for office in offices:
-                if office.key1 == code:
+                if str(office.id) == str(code):
                     return office.model_dump(mode="json")
 
             raise ValueError(f"Cadastral office with code {code} not found")

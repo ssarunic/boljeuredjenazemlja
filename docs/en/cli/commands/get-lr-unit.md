@@ -28,7 +28,7 @@ you. If you already have the unit number and the main book (glavna knjiga) it
 belongs to, give those two instead.
 
 The main book is identified by a number the tool calls the main book ID. You
-get it from the [batch-fetch](batch-fetch.md) results or from a previous
+get it from a [get-parcel](get-parcel.md) list result or from a previous
 lookup. Starting from the parcel is the easier route.
 
 ## Step by step
@@ -166,6 +166,96 @@ lifetime maintenance contract or a dispute.
 To keep the result as a file, add `--format json` and `--output` with a file
 name.
 
+To read several units in one go, put them in a file and name it with
+`--input`. The easiest file is the JSON that [get-parcel](get-parcel.md)
+writes for a list of parcels with `--detail registry`: the tool takes the unit
+of every parcel found and reads each unit once. You can also prepare a CSV
+file with two columns, `lr_unit_number` and `main_book_id`, like the example
+[lr_units.csv](../examples/lr_units.csv):
+
+<!-- BEGIN GENERATED: file lr_units.csv -->
+```text
+lr_unit_number,main_book_id
+657,21277
+769,21277
+449,21277
+```
+<!-- END GENERATED: file -->
+
+Open Terminal in the folder where the file is and type:
+
+```bash
+cadastral get-lr-unit --input parcels-found.json --show-owners
+```
+
+<!-- BEGIN GENERATED: output cadastral get-lr-unit --input parcels-found.json --show-owners -->
+```text
+📄 Reading LR units from: parcels-found.json
+📊 Found 3 LR units to process
+
+                 LAND REGISTRY UNIT
+ Unit Number        657
+ Main Book          SAVAR
+ Institution        Test Land Registry Office SAVAR
+ Status             Aktivan
+ Unit Type          VLASNIČKI
+ Last Diary Number  Z-12345/2024
+
+                                 OWNERSHIP SHEET (LIST B)
+ Share  Owner                  Address                 OIB  Entry
+ 1/2    IVIĆ MARKO, SIN PETRA  TESTNA ULICA 15, SPLIT  -    1.1 · 2018-06-10 · Z-5678/2018
+ 1/2    IVIĆ ANA, KĆI PETRA    SAVAR                   -    2.1 · 2018-06-10 · Z-5678/2018
+
+---
+
+               LAND REGISTRY UNIT
+ Unit Number        769
+ Main Book          SAVAR
+ Institution        Zemljišnoknjižni odjel Zadar
+ Status             Aktivan
+ Unit Type          VLASNIČKI
+ Last Diary Number  Z-27986/2025
+
+                          OWNERSHIP SHEET (LIST B)
+ Share  Owner        Address    OIB          Entry
+ 4/8    Vlasnik 117  -          -            1.1 · 2012-04-05 · Z-3983/2012
+ 1/8    Vlasnik 119  -          -            3.1 · 2012-04-05 · Z-3983/2012
+ 1/8    Vlasnik 326  -          -            4.1 · 2012-04-05 · Z-3983/2012
+ 1/8    Vlasnik 116  Adresa 31  00000000036  5.2 · 2020-02-14 · Z-3937/2020
+ 1/24   Vlasnik 135  Adresa 10  00000000850  6.1 · 2018-03-21 · Z-6789/2018
+ 1/24   Vlasnik 327  Adresa 10  00000000868  7.1 · 2018-03-21 · Z-6789/2018
+ 1/24   Vlasnik 328  Adresa 32  00000000876  8.1 · 2018-03-21 · Z-6789/2018
+
+---
+
+                   LAND REGISTRY UNIT
+ Unit Number               449
+ Main Book                 SAVAR
+ Institution               Zemljišnoknjižni odjel Zadar
+ Status                    Aktivan
+ Unit Type                 VLASNIČKI
+ Last Diary Number         Z-18444/2026
+ Pending entries (plombe)  Z-12564/2026
+⚠️  This unit has pending entries (plombe) - a change may be in progress.
+
+                           OWNERSHIP SHEET (LIST B)
+ Share  Owner        Address    OIB          Entry
+ 1/4    Vlasnik 114  Adresa 75  00000000010  127.2 · 2026-05-14 · Z-15677/2026
+ 1/4    Vlasnik 115  Adresa 41  00000000028  128.1 · 2025-09-29 · Z-31325/2025
+ 1/4    Vlasnik 116  Adresa 31  00000000036  129.1 · 2025-09-29 · Z-31325/2025
+ 1/4    Vlasnik 116  Adresa 76  00000000036  133.1 · 2026-06-09 · Z-18444/2026
+
+✓ Successfully processed all 3 LR units
+```
+<!-- END GENERATED: output -->
+
+The units are printed one after another, separated by a line of dashes, each
+laid out as above. The sheet choices apply to every unit. When one unit cannot
+be read, the tool continues with the rest and lists the failures under
+**ERRORS** at the end; add `--stop-on-error` to stop at the first problem
+instead. For a long list, keep the result as a file with `--format json` and
+`--output`.
+
 <!-- BEGIN GENERATED: options -->
 | Type this | What it does | If you leave it out |
 |---|---|---|
@@ -179,8 +269,10 @@ name.
 | `--show-encumbrances`, `-e` | Display encumbrances (Sheet C) | Not switched on |
 | `--plombe-detail`, `-D` | Resolve detail of pending entries (plombe) - one extra request per plomba | Not switched on |
 | `--all`, `-a` | Show all sheets | Not switched on |
+| `--input`, `-i` `PATH` | File (CSV or JSON) with the units to read, or a get-parcel list result | Not used |
 | `--format`, `-f` | Output format (`table`, `json`, `csv`) | `table` is used |
 | `--output` `PATH` | Save output to file | Not used |
+| `--continue-on-error` / `--stop-on-error` | Continue processing after errors (default: continue) | `--continue-on-error` is used |
 <!-- END GENERATED: options -->
 
 ## If something goes wrong
@@ -202,7 +294,7 @@ messages are explained on the [errors page](../errors.md).
 ## Related pages
 
 - [get-parcel](get-parcel.md) shows the cadastral side of the same parcel, including the possessors.
-- [batch-lr-unit](batch-lr-unit.md) reads many units in one go.
+- [get-parcel](get-parcel.md) with `--detail registry` lists the units of many parcels, ready for `--input`.
 - [Glossary](../glossary.md) explains list A, B and C and the plomba.
 
 <details>
@@ -219,6 +311,10 @@ Usage: cadastral get-lr-unit [OPTIONS]
   Retrieve complete information about a land registry unit (zemljišnoknjižni
   uložak), including ownership (Sheet B), parcels (Sheet A), and encumbrances
   (Sheet C).
+
+  One unit, named by number and main book or found from a parcel; or a list of
+  units from a file with --input: a CSV or JSON with lr_unit_number and
+  main_book_id, or the JSON that get-parcel writes for a list of parcels.
 
   Examples:
     # Get by unit number and main book ID
@@ -237,28 +333,40 @@ Usage: cadastral get-lr-unit [OPTIONS]
     cadastral get-lr-unit -p 279/6 -m SAVAR --all
 
     # Export to JSON
-    cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json
+    cadastral get-lr-unit -u 769 -b 21277 --format json --output lr-unit.json
+
+    # Several units from a file, all sheets of each
+    cadastral get-lr-unit --input lr_units.csv --all
+
+    # The units of a list of parcels (pipeline)
+    cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry --format json -o parcels.json
+    cadastral get-lr-unit --input parcels.json --show-owners
 
   ⚠️  Demo project: before using any server other than the included mock, verify
   your rights to use it; use at your own risk
 
 Options:
-  -u, --unit-number TEXT         Land registry unit number (e.g., '769')
-  -b, --main-book INTEGER        Main book ID (e.g., 21277)
-  -n, --main-book-name TEXT      Main book name (e.g., SAVAR), used instead of
-                                 the ID
-  -p, --from-parcel TEXT         Get LR unit from parcel number
-  -m, --municipality TEXT        Municipality name or code (required with
-                                 --from-parcel)
-  -o, --show-owners              Display ownership details (Sheet B)
-  -P, --show-parcels             Display all parcels in unit (Sheet A)
-  -e, --show-encumbrances        Display encumbrances (Sheet C)
-  -D, --plombe-detail            Resolve detail of pending entries (plombe) -
-                                 one extra request per plomba
-  -a, --all                      Show all sheets
-  -f, --format [table|json|csv]  Output format
-  --output PATH                  Save output to file
-  --help                         Show this message and exit.
+  -u, --unit-number TEXT          Land registry unit number (e.g., '769')
+  -b, --main-book INTEGER         Main book ID (e.g., 21277)
+  -n, --main-book-name TEXT       Main book name (e.g., SAVAR), used instead of
+                                  the ID
+  -p, --from-parcel TEXT          Get LR unit from parcel number
+  -m, --municipality TEXT         Municipality name or code (required with
+                                  --from-parcel)
+  -o, --show-owners               Display ownership details (Sheet B)
+  -P, --show-parcels              Display all parcels in unit (Sheet A)
+  -e, --show-encumbrances         Display encumbrances (Sheet C)
+  -D, --plombe-detail             Resolve detail of pending entries (plombe) -
+                                  one extra request per plomba
+  -a, --all                       Show all sheets
+  -i, --input PATH                File (CSV or JSON) with the units to read, or
+                                  a get-parcel list result
+  -f, --format [table|json|csv]   Output format
+  --output PATH                   Save output to file
+  --continue-on-error / --stop-on-error
+                                  Continue processing after errors (default:
+                                  continue)
+  --help                          Show this message and exit.
 ```
 <!-- END GENERATED: synopsis -->
 

@@ -31,6 +31,6 @@ def test_routing_skill_exists_and_encodes_playbook() -> None:
     skill = SKILL.read_text(encoding="utf-8")
     # Register disambiguation and the key routing tool must be present.
     assert "cadastre" in skill and "land_registry" in skill
-    assert "get_lr_unit_from_parcel" in skill
+    assert "get_lr_unit" in skill and "get_parcel" in skill
     # Frontmatter description (the discovery surface) names the domain bilingually.
     assert "katastar" in skill and "zemljišne knjige" in skill

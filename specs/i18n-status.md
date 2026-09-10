@@ -78,7 +78,6 @@ on 2025-11-14; the gate output is authoritative.
 - `cli/src/cadastral_cli/formatters.py` - Output formatters
 - `cli/src/cadastral_cli/commands/search.py`
 - `cli/src/cadastral_cli/commands/parcel.py`
-- `cli/src/cadastral_cli/commands/batch.py`
 - `cli/src/cadastral_cli/commands/discovery.py`
 - `cli/src/cadastral_cli/commands/gis.py`
 - `cli/src/cadastral_cli/commands/cache.py`

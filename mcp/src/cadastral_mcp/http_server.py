@@ -75,11 +75,15 @@ def create_http_app(mcp_server: MCPServer) -> FastAPI:
                 "cadastral://office/{code}",
             ],
             "tools": [
-                "search_parcel",
-                "batch_fetch_parcels",
+                "find_parcel",
+                "get_parcel",
                 "resolve_municipality",
                 "get_parcel_geometry",
                 "list_cadastral_offices",
+                "get_lr_unit",
+                "find_main_book",
+                "find_book_of_dc",
+                "find_possession_sheet",
             ],
             "prompts": [
                 "explain_ownership_structure",

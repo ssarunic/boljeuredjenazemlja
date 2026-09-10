@@ -66,15 +66,15 @@ Full explanation: [get-lr-unit](commands/get-lr-unit.md).
 2. Type the following line and press Enter:
 
    ```bash
-   cadastral batch-fetch "103/2,45,396/1" -m SAVAR
+   cadastral get-parcel "103/2,45,396/1" -m SAVAR --detail registry
    ```
 
 3. Each row of the **RESULTS** table is one parcel. The **LR Unit** column is
    the land registry unit of each.
 
-Full explanation: [batch-fetch](commands/batch-fetch.md), and
-[batch-lr-unit](commands/batch-lr-unit.md) for reading all those units in one
-go.
+Full explanation: [get-parcel](commands/get-parcel.md), and
+[get-lr-unit](commands/get-lr-unit.md) with `--input` for reading all those
+units in one go.
 
 ## Task 4: save a result for a file or a colleague
 

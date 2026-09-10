@@ -48,8 +48,13 @@ def format_csv(data: list[dict[str, Any]]) -> str:
     if not data:
         return ""
 
+    # Rows may differ in keys (a failed item of a list carries an error
+    # message instead of data); the header is the union, in first-seen order.
+    fieldnames: list[str] = []
+    for row in data:
+        fieldnames.extend(key for key in row if key not in fieldnames)
     output = StringIO()
-    writer = csv.DictWriter(output, fieldnames=list(data[0].keys()))
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(data)
     return output.getvalue()
@@ -151,7 +156,7 @@ def describe_error(error: CadastralAPIError) -> str:
 
 
 def error_type_value_label(value: str | None) -> str:
-    """Translated label for an error type stored as a string (batch results)."""
+    """Translated label for an error type stored as a string (list results)."""
     if not value:
         return _("unknown")
     if value == "unexpected_error":

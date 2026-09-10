@@ -394,8 +394,8 @@ class CadastralAPIClient:
     def find_municipality(
         self,
         search_term: str | None = None,
-        office_id: str | None = None,
-        department_id: str | None = None,
+        office_id: str | int | None = None,
+        department_id: str | int | None = None,
     ) -> list[MunicipalitySearchResult]:
         """
         Find municipalities by name, code, or filter by cadastral office/department.
@@ -521,7 +521,7 @@ class CadastralAPIClient:
     def find_main_book(
         self,
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> list[MainBookSearchResult]:
         """
@@ -543,7 +543,7 @@ class CadastralAPIClient:
         endpoint = "/search-lr-parcels/main-books"
         params = {
             "search": search or "",
-            "officeId": office_id or "",
+            "officeId": "" if office_id is None else str(office_id),
             "institutionName": institution_name or "",
         }
         response_data = self._make_request(endpoint, params)
@@ -552,7 +552,7 @@ class CadastralAPIClient:
     def find_book_of_dc(
         self,
         search: str | None = None,
-        office_id: str | None = None,
+        office_id: str | int | None = None,
         institution_name: str | None = None,
     ) -> list[BookOfDCSearchResult]:
         """
@@ -574,7 +574,7 @@ class CadastralAPIClient:
         endpoint = "/search-lr-parcels/books-of-dc"
         params = {
             "search": search or "",
-            "officeId": office_id or "",
+            "officeId": "" if office_id is None else str(office_id),
             "institutionName": institution_name or "",
         }
         response_data = self._make_request(endpoint, params)
