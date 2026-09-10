@@ -137,7 +137,7 @@ pip install -e .
 ```
 
 This installs:
-- `mcp>=1.0.0` - MCP Python SDK (FastMCP framework)
+- `mcp>=2,<3` - MCP Python SDK v2 (`MCPServer`, formerly `FastMCP`)
 - `fastapi>=0.115.0` - For HTTP transport
 - `uvicorn[standard]>=0.32.0` - ASGI server
 - All existing cadastral API dependencies
@@ -380,7 +380,7 @@ Claude compares multiple parcels across:
 src/mcp/
 ├── __init__.py          # Package exports
 ├── config.py            # Configuration from environment
-├── server.py            # Main FastMCP server with all primitives
+├── server.py            # Main MCPServer with all primitives
 ├── resources.py         # Resource implementations
 ├── tools.py             # Tool implementations
 ├── prompts.py           # Prompt templates
@@ -441,7 +441,7 @@ async def my_new_tool(param: str) -> dict[str, Any]:
     return await tools_handler.my_new_tool(param)
 ```
 
-1. FastMCP automatically generates JSON schema from type annotations
+1. MCPServer automatically generates JSON schema from type annotations
 
 ### Adding New Prompts
 
@@ -545,7 +545,7 @@ Modify `config.http_cors_origins` for custom origins.
 ## Resources
 
 - **MCP Specification**: <https://spec.modelcontextprotocol.io/>
-- **FastMCP Framework**: <https://github.com/modelcontextprotocol/python-sdk>
+- **MCP Python SDK**: <https://github.com/modelcontextprotocol/python-sdk>
 - **Claude Desktop**: <https://claude.ai/download>
 - **Project Documentation**: [../README.md](../README.md)
 - **API Documentation**: [../specs/Croatian_Cadastral_API_Specification.md](../specs/Croatian_Cadastral_API_Specification.md)

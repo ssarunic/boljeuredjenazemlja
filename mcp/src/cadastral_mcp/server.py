@@ -1,11 +1,11 @@
-"""Main MCP server implementation using FastMCP."""
+"""Main MCP server implementation using the MCP Python SDK (MCPServer)."""
 
 import logging
 import sys
 from typing import Any
 
 from cadastral_api import CadastralAPIClient
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from .config import config
 from .prompts import CadastralPrompts
@@ -21,16 +21,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def create_mcp_server() -> FastMCP:
+def create_mcp_server() -> MCPServer:
     """
     Create and configure the Cadastral MCP server.
 
     Returns:
-        Configured FastMCP server instance
+        Configured MCPServer server instance
     """
-    # Initialize FastMCP server
-    mcp = FastMCP(
+    # Initialize the MCP server
+    mcp = MCPServer(
         name=config.server_name,
+        version=config.server_version,
     )
 
     # Initialize cadastral API client (shared across all requests)

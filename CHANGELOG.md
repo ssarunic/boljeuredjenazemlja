@@ -83,6 +83,11 @@ number and one tag.
 
 ### Changed
 
+- MCP server: upgraded to MCP Python SDK v2 (`mcp>=2,<3`, protocol revision
+  2026-07-28). `FastMCP` is now `MCPServer` and the server reports its own
+  version to clients. Tools, resources and prompts are unchanged; 2025-era
+  clients such as Claude Desktop keep working. Reinstall with
+  `pip install -U -e ./mcp`.
 - SDK: entry kinds follow the Land Registry Act. `ActionType` gains `uknjižba`
   (unconditional registration, previously folded into the generic `upis`);
   `upis` is now only the fallback for "upisuje se". A deletion is reported by

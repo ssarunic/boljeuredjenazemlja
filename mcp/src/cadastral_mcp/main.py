@@ -119,13 +119,13 @@ def run_stdio_server(mcp_server) -> None:
     or other local MCP clients.
 
     Args:
-        mcp_server: The configured FastMCP server instance
+        mcp_server: The configured MCPServer server instance
     """
     logger.info("Running in STDIO mode (for Claude Desktop integration)")
     logger.info("IMPORTANT: All logs go to stderr, JSON-RPC to stdout")
 
     try:
-        # Run the FastMCP server with STDIO transport
+        # Run the MCPServer server with STDIO transport
         mcp_server.run(transport="stdio")
     except KeyboardInterrupt:
         logger.info("Server shutdown requested")
