@@ -1,0 +1,42 @@
+name: CodeQL
+
+# Static analysis of the Python sources for security problems (injection,
+# unsafe deserialisation, path traversal and the rest of the CodeQL Python
+# security suite). Runs on pushes to main, on pull requests and weekly, so a
+# newly published query reaches the existing code without a code change.
+#
+# If CodeQL default setup is ever enabled in the repository settings, delete
+# this file: the two cannot both analyse the same language.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "30 6 * * 1"  # Mondays, 06:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze Python
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          build-mode: none
+          queries: security-and-quality
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:python"

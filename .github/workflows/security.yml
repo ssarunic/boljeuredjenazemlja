@@ -1,0 +1,63 @@
+name: Security and vulnerability checks
+
+# Two checks that complement the weekly Dependabot version bumps
+# (.github/dependabot.yml):
+#
+#   audit  - pip-audit reads the installed dependency tree of every project in
+#            the monorepo and fails on a package with a known advisory
+#   review  - dependency-review blocks a pull request that introduces a
+#            vulnerable or badly licensed dependency, before it is merged
+#
+# The audit also runs weekly, so an advisory published against a version this
+# repository already pins is caught without waiting for a pull request.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "30 5 * * 1"  # Mondays, 05:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Audit dependencies for known vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The runtime dependencies only, which is what someone installing the
+      # SDK, the CLI or the MCP server actually gets. The dev extras are test
+      # tooling and carry deliberate pins (cli/pyproject.toml pins click for
+      # the translation catalogs), so auditing them would report advisories
+      # against versions this repository never ships.
+      - name: Install every project in the monorepo
+        run: |
+          python -m pip install --upgrade pip setuptools
+          pip install -e ./api -e ./cli -e ./mcp
+          pip install -r mock-server/requirements.txt
+
+      - name: pip-audit
+        run: |
+          pip install pip-audit
+          pip-audit --skip-editable --progress-spinner off --desc
+
+  review:
+    name: Review dependencies added by the pull request
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: on-failure

@@ -1,0 +1,46 @@
+name: Tests
+
+# The unit suites of all four projects. The gates in docs-gate.yml check the
+# translations, the terminology, the output field names, the documentation and
+# the release consistency; this workflow checks that the code still works,
+# which is what catches a bad dependency bump from Dependabot.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install every project with its development extras
+        run: |
+          python -m pip install --upgrade pip setuptools
+          pip install -e "./api[dev]" -e "./cli[dev]" -e "./mcp[dev]"
+          pip install -r mock-server/requirements.txt
+
+      - name: SDK
+        working-directory: api
+        run: pytest tests -q
+
+      - name: CLI
+        working-directory: cli
+        run: pytest tests -q
+
+      - name: MCP server
+        working-directory: mcp
+        run: pytest tests -q
+
+      - name: Mock server
+        working-directory: mock-server
+        run: pytest tests -q

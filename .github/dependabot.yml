@@ -1,0 +1,63 @@
+# Weekly dependency updates for the whole monorepo.
+#
+# Version bumps arrive as pull requests; the gates in docs-gate.yml decide
+# whether a bump is safe to merge. Vulnerability fixes come through the same
+# pull requests once Dependabot alerts are enabled for the repository
+# (Settings -> Code security -> Dependabot alerts and security updates); that
+# switch lives in the repository settings, not in this file.
+
+version: 2
+
+updates:
+  # The actions used by the workflows in .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Europe/Zagreb"
+    commit-message:
+      prefix: "Chore"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # The SDK, the CLI, the MCP server, the mock server and the legacy root
+  # project. Minor and patch bumps arrive as one grouped pull request per
+  # directory; a major bump gets its own pull request so it can be read on its
+  # own.
+  #
+  # Note on click: cli/pyproject.toml pins click==8.3.0 as a development
+  # dependency on purpose, because po/*.po also translate click's own messages.
+  # A Dependabot pull request that moves that pin will fail the translation
+  # coverage gate until the catalogs are re-extracted with
+  # ./scripts/generate_pot.sh and ./scripts/update_translations.sh. That
+  # failure is the intended signal, not a broken pull request.
+  - package-ecosystem: "pip"
+    directories:
+      - "/"
+      - "/api"
+      - "/cli"
+      - "/mcp"
+      - "/mock-server"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Europe/Zagreb"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "Chore"
+    labels:
+      - "dependencies"
+      - "python"
+    groups:
+      python-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
