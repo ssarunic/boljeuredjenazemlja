@@ -75,7 +75,7 @@ MCP_HTTP_PORT=8080                             # HTTP port
 ```text
 src/mcp/
 ├── config.py         # Configuration
-├── server.py         # Main FastMCP server
+├── server.py         # Main MCPServer instance
 ├── resources.py      # Resource handlers
 ├── tools.py          # Tool handlers
 ├── prompts.py        # Prompt templates

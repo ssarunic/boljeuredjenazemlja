@@ -6,19 +6,19 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from .config import config
 
 logger = logging.getLogger(__name__)
 
 
-def create_http_app(mcp_server: FastMCP) -> FastAPI:
+def create_http_app(mcp_server: MCPServer) -> FastAPI:
     """
     Create a FastAPI application with MCP SSE endpoints.
 
     Args:
-        mcp_server: The configured FastMCP server instance
+        mcp_server: The configured MCPServer server instance
 
     Returns:
         FastAPI application with MCP transport
@@ -104,14 +104,14 @@ def create_http_app(mcp_server: FastMCP) -> FastAPI:
         body = await request.json()
         logger.debug(f"SSE request: {body}")
 
-        # Process MCP request through FastMCP
-        # Note: FastMCP's SSE handling will be implemented here
+        # Process MCP request through MCPServer
+        # Note: MCPServer's SSE handling will be implemented here
         # This is a placeholder for the actual SSE stream handling
 
         async def event_stream():
             """Generate SSE events."""
             # TODO: Implement actual MCP SSE protocol handling
-            # This requires deeper integration with FastMCP's transport layer
+            # This requires deeper integration with MCPServer's transport layer
             yield "data: {}\n\n"
 
         return StreamingResponse(
@@ -129,12 +129,12 @@ def create_http_app(mcp_server: FastMCP) -> FastAPI:
     return app
 
 
-def run_http_server(mcp_server: FastMCP) -> None:
+def run_http_server(mcp_server: MCPServer) -> None:
     """
     Run the MCP server with HTTP transport using Uvicorn.
 
     Args:
-        mcp_server: The configured FastMCP server instance
+        mcp_server: The configured MCPServer server instance
     """
     import uvicorn
 

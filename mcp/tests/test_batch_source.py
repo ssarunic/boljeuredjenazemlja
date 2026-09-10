@@ -1,6 +1,6 @@
 """Tests for batch_fetch_parcels register selection (Phase 1).
 
-The MCP package __init__ imports the MCP SDK (FastMCP), which need not be
+The MCP package __init__ imports the MCP SDK (MCPServer), which need not be
 installed to exercise the pure handler logic. tools.py only depends on
 cadastral_api, so we load it as a standalone module and drive it with a fake
 client backed by a real (redacted) parcel-info fixture.

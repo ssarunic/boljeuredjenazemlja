@@ -94,7 +94,7 @@ client code and bypass the cache policy.
                                      ▼
                      FastAPI app
                        ├─ /v1/*            REST routers
-                       ├─ /mcp             MCP streamable HTTP (mounted FastMCP app)
+                       ├─ /mcp             MCP streamable HTTP (mounted MCPServer app)
                        ├─ /healthz
                        │
                        ▼
