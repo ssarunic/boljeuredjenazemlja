@@ -176,6 +176,10 @@ def create_mcp_server() -> MCPServer:
     async def get_parcel(
         parcels: list[ParcelRef],
         source: str = "cadastre",
+        offset: int = 0,
+        limit: int | None = None,
+        possessor_name: str | None = None,
+        condominium_unit: str | None = None,
     ) -> dict[str, Any]:
         """
         Get the detailed cadastre (katastar) record of one or more parcels
@@ -204,19 +208,55 @@ def create_mcp_server() -> MCPServer:
         (karta) centred on the parcel, when the municipality's GIS data is
         available (downloaded once, then cached).
 
+        A parcel under a large condominium (etažno vlasništvo) carries hundreds
+        of possessors on one possession sheet. With source="cadastre" page
+        through them with ``limit`` and ``offset``: each entry has a ``page``
+        block and ``total_possessors``; when ``page.truncated`` is true call
+        again with ``offset=page.next_offset``. An entry too large to return
+        in one response is recorded as that parcel's error naming a smaller
+        limit; do not retry it without one. On such a sheet each possessor's
+        ``ownership`` is the share of their own unit and
+        ``condominium_share_ownership`` the share of the parcel; the sheet's
+        ``total_ownership`` sums the latter. A person holding two units is two
+        records: ``total_possessors`` counts records, ``distinct_possessors``
+        the different names. To find one person or one unit on such a sheet
+        pass ``possessor_name`` (every word must occur in the name; case and
+        diacritics ignored) or ``condominium_unit`` (the unit number, "E-16"
+        or "16") instead of paging through it.
+
         Args:
             parcels: One or more parcel references (parcel_id, or parcel_number + municipality)
             source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
+            offset: Skip this many possessor records of each parcel (counted
+                across its possession sheets, in sheet order); source="cadastre" only
+            limit: Return at most this many possessor records per parcel
+                (null for all); source="cadastre" only
+            possessor_name: Keep only possessors whose name contains every word
+                of this text (case and diacritics ignored); source="cadastre" only
+            condominium_unit: Keep only the possessors of this condominium unit
+                number ("E-16", "E16" and "16" agree); source="cadastre" only
 
         Returns:
             Dictionary with ``results`` (status, ref, register, data, map_url
-            per entry), ``total``, ``successful``, ``failed`` and the resolved
-            ``source``. Each successful entry includes the lr_unit reference
-            (``data.lr_unit``), which get_lr_unit accepts for ownership shares
-            and encumbrances.
+            per entry; with source="cadastre" also total_possessors,
+            possessors_truncated and a page block), ``total``, ``successful``,
+            ``failed`` and the resolved ``source``. Each successful entry
+            includes the lr_unit reference (``data.lr_unit``), which
+            get_lr_unit accepts for ownership shares and encumbrances.
         """
-        logger.info(f"Tool invoked: get_parcel({len(parcels)} parcels, source={source})")
-        return await tools_handler.get_parcel(list(parcels), source=source)
+        logger.info(
+            f"Tool invoked: get_parcel({len(parcels)} parcels, source={source}, "
+            f"offset={offset}, limit={limit}, possessor_name={possessor_name!r}, "
+            f"condominium_unit={condominium_unit!r})"
+        )
+        return await tools_handler.get_parcel(
+            list(parcels),
+            source=source,
+            offset=offset,
+            limit=limit,
+            possessor_name=possessor_name,
+            condominium_unit=condominium_unit,
+        )
 
     @mcp.tool()
     @anticipated_tool
@@ -376,6 +416,7 @@ def create_mcp_server() -> MCPServer:
         historical_overview: bool = False,
         offset: int = 0,
         limit: int | None = None,
+        owner_name: str | None = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak, zemljišne
@@ -407,6 +448,12 @@ def create_mcp_server() -> MCPServer:
         the owner on the share: order number, receipt date, diary number (Z-broj),
         action type. ``share_entries`` lists the annotations (zabilježbe) on
         individual shares.
+
+        To find one person in a unit ("is X an owner", "which flat does X
+        own") pass ``owner_name``: only the matching owners (or, in "shares"
+        and "full", the shares holding one) come back, in one call, however
+        many co-owners the unit has; ``matching_owners`` is 0 when the name is
+        not on the sheet.
 
         Args:
             units: One or more unit references (see above).
@@ -443,6 +490,14 @@ def create_mcp_server() -> MCPServer:
                 A response too large to return is reported as that unit's error
                 with the smaller options named, so pass a limit whenever a unit
                 may have many co-owners or encumbrances.
+            owner_name: Keep only the owners whose name contains every word of
+                this text (case and diacritics ignored, words in any order;
+                "sarunic" finds "ŠARUNIĆ SAŠA"). Applies to "ownership"
+                (owner rows), "shares" and "full" (the shares holding such an
+                owner, kept whole with their co-owners); the other levels
+                refuse it. The page walks the matches; ``matching_owners`` /
+                ``matching_shares`` count them, ``total_owners`` /
+                ``total_shares`` still describe the whole sheet.
 
         Returns:
             Dictionary with ``results`` (status, ref, lr_unit_number,
@@ -455,7 +510,10 @@ def create_mcp_server() -> MCPServer:
             carry a structured ``share`` ({num, den, decimal}) and a
             ``register`` tag.
         """
-        logger.info(f"Tool invoked: get_lr_unit({len(units)} refs, detail={detail})")
+        logger.info(
+            f"Tool invoked: get_lr_unit({len(units)} refs, detail={detail}, "
+            f"owner_name={owner_name!r})"
+        )
         return await tools_handler.get_lr_unit(
             list(units),
             detail,
@@ -464,6 +522,7 @@ def create_mcp_server() -> MCPServer:
             historical_overview=historical_overview,
             offset=offset,
             limit=limit,
+            owner_name=owner_name,
         )
 
     @mcp.tool()

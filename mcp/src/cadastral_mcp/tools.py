@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import math
+import unicodedata
 from typing import Any
 
 from cadastral_api import CadastralAPIClient, GMLParser
@@ -344,6 +345,10 @@ class CadastralTools:
         self,
         parcels: list[ParcelRef | dict[str, Any]],
         source: str = "cadastre",
+        offset: int = 0,
+        limit: int | None = None,
+        possessor_name: str | None = None,
+        condominium_unit: str | None = None,
     ) -> dict[str, Any]:
         """
         Fetch the detailed cadastre record of one or more parcels.
@@ -365,6 +370,26 @@ class CadastralTools:
             parcels: One or more parcel references (``ParcelRef``): parcel_id, or
                 parcel_number + municipality.
             source: One of "cadastre", "land_registry", "none".
+            offset: Skip this many possessor records of each parcel (with
+                ``source="cadastre"``). Possessors are counted across the
+                parcel's possession sheets, in sheet order.
+            limit: Return at most this many possessor records per parcel.
+                Each cadastre entry carries a ``page`` block (offset, limit,
+                total, returned, truncated, next_offset); when ``truncated``
+                is true call again with ``offset=next_offset`` for the rest.
+                An entry whose possession sheets are too large to return is
+                recorded as that parcel's error, naming the smaller options.
+                ``total_possessors`` counts records and ``distinct_possessors``
+                the different names among them (a person holding two units is
+                two records).
+            possessor_name: Keep only the possessors whose name contains every
+                word of this text (case and diacritics ignored, words in any
+                order), so a person can be found on a large sheet without
+                paging through it. ``page.total`` then counts the matching
+                records; ``total_possessors`` still counts the whole parcel.
+            condominium_unit: Keep only the possessors of this condominium
+                unit (``condominium_share_number``; "E-16", "E16" and "16"
+                are the same unit).
 
         Returns:
             Dictionary with ``results`` (one entry per reference, in order),
@@ -381,8 +406,21 @@ class CadastralTools:
             )
         if not parcels:
             raise ValueError("Give at least one parcel reference.")
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        possessor_filter = self._possessor_filter(possessor_name, condominium_unit)
+        if possessor_filter and source != "cadastre":
+            raise ValueError(
+                'possessor_name and condominium_unit filter the possession sheet, '
+                'which only source="cadastre" returns.'
+            )
 
-        logger.info(f"Fetching {len(parcels)} parcel(s) (source={source})")
+        logger.info(
+            f"Fetching {len(parcels)} parcel(s) (source={source}, offset={offset}, "
+            f"limit={limit}, filter={possessor_filter})"
+        )
         results: list[dict[str, Any]] = []
         for spec in parcels:
             try:
@@ -391,7 +429,9 @@ class CadastralTools:
                 results.append({"status": "error", "error": str(e), "ref": spec})
                 continue
             try:
-                results.append(await self._get_one_parcel(ref, source))
+                results.append(
+                    await self._get_one_parcel(ref, source, offset, limit, possessor_filter)
+                )
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Failed to fetch parcel {ref}: {e}")
                 results.append({
@@ -409,7 +449,14 @@ class CadastralTools:
             "source": source,
         }
 
-    async def _get_one_parcel(self, ref: ParcelRef, source: str) -> dict[str, Any]:
+    async def _get_one_parcel(
+        self,
+        ref: ParcelRef,
+        source: str,
+        offset: int = 0,
+        limit: int | None = None,
+        possessor_filter: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """The ``results`` entry of one parcel reference (raises on failure)."""
         search_result: dict[str, Any] | None = None
         if ref.parcel_id is not None:
@@ -424,8 +471,11 @@ class CadastralTools:
 
         # Possession sheets are CADASTRE data; only include them when
         # cadastre possessors were explicitly requested.
+        page: dict[str, Any] | None = None
         if source != "cadastre":
             result_data.pop("possession_sheets", None)
+        else:
+            page = self._window_possessors(result_data, offset, limit, possessor_filter)
         if source == "land_registry":
             result_data["land_registry_hint"] = self._lr_unit_hint(parcel)
 
@@ -436,6 +486,15 @@ class CadastralTools:
             "cadastre_lr_harmonized": parcel.is_harmonized,
             "data": result_data,
         }
+        if page is not None:
+            entry["total_possessors"] = parcel.total_possessors
+            entry["distinct_possessors"] = self._distinct_possessors(parcel)
+            if possessor_filter:
+                entry["possessor_filter"] = possessor_filter
+                entry["matching_possessors"] = page["total"]
+            entry["possessors_truncated"] = page["truncated"]
+            entry["page"] = page
+            self._check_parcel_size(entry, parcel, page)
         # A fallback match is not the parcel that was asked for; carry the
         # warning out of search_parcel rather than losing it here.
         if search_result is not None and not search_result["exact_match"]:
@@ -447,6 +506,149 @@ class CadastralTools:
         if map_url:
             entry["map_url"] = map_url
         return entry
+
+    #: Letters that Unicode decomposition leaves alone: đ is a letter of its
+    #: own, not a d with a mark, yet "andelic" must find "Anđelić".
+    _FOLD_LETTERS = str.maketrans({"đ": "d", "Đ": "D", "ł": "l", "Ł": "L", "ß": "ss"})
+
+    @classmethod
+    def _fold(cls, text: str) -> str:
+        """Text for matching: lower case, no diacritics, single spaces."""
+        stripped = "".join(
+            ch for ch in unicodedata.normalize("NFKD", text.translate(cls._FOLD_LETTERS))
+            if not unicodedata.combining(ch)
+        )
+        return " ".join(stripped.casefold().split())
+
+    @classmethod
+    def _unit_key(cls, unit: str) -> str:
+        """A condominium unit number for comparison: "E-16", "E16" and "16" agree."""
+        key = cls._fold(unit).replace(" ", "")
+        if key.startswith("e-"):
+            key = key[2:]
+        elif key.startswith("e") and key[1:2].isdigit():
+            key = key[1:]
+        return key
+
+    @classmethod
+    def _possessor_filter(
+        cls, possessor_name: str | None, condominium_unit: str | None
+    ) -> dict[str, Any] | None:
+        """The filter the caller asked for, or None; validated once per call."""
+        filter_: dict[str, Any] = {}
+        if possessor_name is not None:
+            if not cls._fold(possessor_name):
+                raise ValueError("possessor_name must not be blank")
+            filter_["possessor_name"] = possessor_name
+        if condominium_unit is not None:
+            if not cls._unit_key(condominium_unit):
+                raise ValueError("condominium_unit must not be blank")
+            filter_["condominium_unit"] = condominium_unit
+        return filter_ or None
+
+    @classmethod
+    def _possessor_matches(cls, possessor: dict[str, Any], filter_: dict[str, Any]) -> bool:
+        """Whether a dumped possessor record passes the filter."""
+        name = filter_.get("possessor_name")
+        if name is not None:
+            haystack = cls._fold(possessor.get("name") or "")
+            if not all(word in haystack for word in cls._fold(name).split()):
+                return False
+        unit = filter_.get("condominium_unit")
+        if unit is not None:
+            number = possessor.get("condominium_share_number")
+            if number is None or cls._unit_key(str(number)) != cls._unit_key(unit):
+                return False
+        return True
+
+    @classmethod
+    def _window_possessors(
+        cls,
+        result_data: dict[str, Any],
+        offset: int,
+        limit: int | None,
+        possessor_filter: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Keep the window ``[offset, offset + limit)`` of possessor records in a parcel dump.
+
+        Possessors are counted across the parcel's possession sheets, in sheet
+        order, and the window is cut through that flat sequence: a condominium
+        keeps its hundreds of possessors on one sheet, so paging by sheet would
+        change nothing. Every sheet stays in the dump with its header and a
+        ``total_possessors`` of its own, holding only the possessors that fall
+        inside the window (none, if the window is elsewhere), so the sheet
+        numbers are always visible and the continuation contract never skips
+        a record. With a ``possessor_filter`` only the matching records are
+        counted and windowed; ``total_possessors`` on the sheet still counts
+        them all.
+
+        Returns the ``page`` block for the entry.
+        """
+        sheets = result_data.get("possession_sheets") or []
+        matching: list[list[dict[str, Any]]] = []
+        for sheet in sheets:
+            possessors = sheet.get("possessors") or []
+            sheet["total_possessors"] = len(possessors)
+            if possessor_filter:
+                possessors = [p for p in possessors if cls._possessor_matches(p, possessor_filter)]
+            matching.append(possessors)
+        total = sum(len(possessors) for possessors in matching)
+        end = total if limit is None else offset + limit
+        seen = 0
+        returned = 0
+        for sheet, possessors in zip(sheets, matching):
+            start_here = max(offset - seen, 0)
+            end_here = max(min(end - seen, len(possessors)), 0)
+            sheet["possessors"] = possessors[start_here:end_here] if start_here < end_here else []
+            returned += len(sheet["possessors"])
+            seen += len(possessors)
+        return cls._page(offset, limit, total, returned)
+
+    @staticmethod
+    def _distinct_possessors(parcel: Any) -> int:
+        """How many different names the parcel's possessor records carry.
+
+        A person who holds two units of a condominium (a flat and a storage
+        room, say) is two possessor records, often with two addresses; the
+        records are kept as the cadastre holds them and this count, by
+        ``name_normalized`` across every sheet, says how many people that is.
+        Two different people with the same name count once.
+        """
+        return len({
+            possessor.name_normalized
+            for sheet in parcel.possession_sheets
+            for possessor in sheet.possessors
+        })
+
+    @classmethod
+    def _check_parcel_size(
+        cls, entry: dict[str, Any], parcel: Any, page: dict[str, Any]
+    ) -> None:
+        """Refuse a parcel entry too large to be read, with a way forward.
+
+        A parcel under a large condominium carries hundreds of possessors on
+        its possession sheet; returned whole it overruns the caller's
+        response limit and is lost. The ceiling and the message follow the
+        land-registry levels (``_check_size``).
+        """
+        size = len(json.dumps(entry, ensure_ascii=False))
+        if size <= cls.MAX_PARCEL_RESPONSE_CHARS:
+            return
+        returned = page.get("returned") or 0
+        # Possessor records are uniform, so the size scales with the window:
+        # suggest the largest window that fits, with a tenth to spare.
+        fits = int(returned * cls.MAX_PARCEL_RESPONSE_CHARS / size * 0.9) if returned else 10
+        smaller = max(1, fits)
+        raise ValueError(
+            f"The cadastre record of parcel {parcel.parcel_number} is {size:,} "
+            f"characters ({returned} of {page['total']} possessor records in this "
+            f"window), too large to return in one response. Pass a smaller limit "
+            f"(e.g. limit={smaller}) and page through the possessors with offset "
+            f"(the page block says where to continue), possessor_name or "
+            f"condominium_unit to pick the records you need, or source=\"none\" "
+            f"for the parcel without its possessors (source=\"land_registry\" for "
+            f"the land-registry reference instead)."
+        )
 
     @staticmethod
     def _municipality_record(muni: Any) -> dict[str, Any]:
@@ -780,18 +982,48 @@ class CadastralTools:
         return rows[offset:] if limit is None else rows[offset : offset + limit]
 
     @classmethod
-    def _ownership_rows(
-        cls, lr_unit: Any, offset: int, limit: int | None
-    ) -> tuple[list[dict[str, Any]], int, bool]:
-        """Owner rows for an LR unit, windowed at offset/limit.
+    def _name_matches(cls, name: str | None, wanted: str) -> bool:
+        """Whether a register name contains every word of ``wanted``.
 
-        Returns (rows, total_owners, truncated). The canonical row shape comes
-        from OwnershipSheetB.owner_rows() (shared with the CLI).
+        Folded with ``_fold`` (case and diacritics ignored), words in any
+        order: the registers write the surname first ("ŠARUNIĆ SAŠA"), people
+        write it last, and a caller unsure of the spelling passes the surname
+        alone.
+        """
+        haystack = cls._fold(name or "")
+        return all(word in haystack for word in cls._fold(wanted).split())
+
+    @classmethod
+    def _owner_name_filter(cls, owner_name: str | None, detail: str) -> str | None:
+        """The owner-name filter as given, or None; validated once per call."""
+        if owner_name is None:
+            return None
+        if not cls._fold(owner_name):
+            raise ValueError("owner_name must not be blank")
+        if detail not in cls.NAME_FILTERED_DETAIL:
+            raise ValueError(
+                f"owner_name filters owners, which detail \"{detail}\" does not "
+                f"return; use one of {cls.NAME_FILTERED_DETAIL}."
+            )
+        return owner_name
+
+    @classmethod
+    def _ownership_rows(
+        cls, lr_unit: Any, offset: int, limit: int | None, owner_name: str | None = None
+    ) -> tuple[list[dict[str, Any]], int, int, bool]:
+        """Owner rows for an LR unit, filtered by name and windowed at offset/limit.
+
+        Returns (rows, total_owners, matching_owners, truncated); the window
+        and ``truncated`` walk the matching rows (all of them without a
+        filter). The canonical row shape comes from
+        OwnershipSheetB.owner_rows() (shared with the CLI).
         """
         rows = lr_unit.ownership_sheet_b.owner_rows()
         total = len(rows)
+        if owner_name is not None:
+            rows = [row for row in rows if cls._name_matches(row.get("name"), owner_name)]
         window = cls._window(rows, offset, limit)
-        return window, total, offset + len(window) < total
+        return window, total, len(rows), offset + len(window) < len(rows)
 
     #: Characters of JSON a full dump may reach before it is refused. A large
     #: condominium runs to hundreds of shares, each with its own registration
@@ -800,6 +1032,14 @@ class CadastralTools:
     #: well under a typical MCP client's per-response limit, since a response
     #: the client truncates is worse than one it never asked for.
     MAX_FULL_RESPONSE_CHARS = 50_000
+
+    #: The same ceiling for one parcel's cadastre entry. Possessor records are
+    #: flat and uniform (a condominium's sheet is thousands of them at a few
+    #: hundred characters each, no nested entries), so the cost of a low
+    #: ceiling is paid in calls: at 50,000 a building of 3,000 possessors is
+    #: 25 pages. 100,000 halves that and is still an order of magnitude under
+    #: the per-response limit of the MCP clients seen so far.
+    MAX_PARCEL_RESPONSE_CHARS = 100_000
 
     @staticmethod
     def _sub_shares(share: dict[str, Any]) -> list[dict[str, Any]]:
@@ -817,9 +1057,23 @@ class CadastralTools:
         return total
 
     @classmethod
+    def _share_matches(cls, share: dict[str, Any], owner_name: str) -> bool:
+        """Whether a dumped share, or one of its sub-shares, has an owner of that name."""
+        if any(
+            cls._name_matches(owner.get("name"), owner_name)
+            for owner in share.get("owners") or []
+        ):
+            return True
+        return any(cls._share_matches(sub, owner_name) for sub in cls._sub_shares(share))
+
+    @classmethod
     def _window_shares(
-        cls, dump: dict[str, Any], offset: int, limit: int | None
-    ) -> tuple[int, int, int]:
+        cls,
+        dump: dict[str, Any],
+        offset: int,
+        limit: int | None,
+        owner_name: str | None = None,
+    ) -> tuple[int, int, int, int]:
         """Keep the window ``[offset, offset + limit)`` of top-level shares in a sheet-B dump.
 
         ``dump`` is a full unit dump or a bare sheet-B dump. A share is kept
@@ -832,15 +1086,23 @@ class CadastralTools:
         shares themselves, each with its own description and registration
         entry.
 
-        Returns (total_shares, returned_shares, shares_omitted), the last
-        counting sub-shares of the dropped shares too.
+        With ``owner_name`` only the shares holding a matching owner (in the
+        share itself or in a sub-share) are page items, and the window walks
+        those; a matching share is kept whole, its co-owners included.
+
+        Returns (total_shares, matching_shares, returned_shares,
+        shares_omitted), the last counting sub-shares of the dropped shares
+        too; ``matching_shares`` equals ``total_shares`` without a filter.
         """
         sheet = dump.get("ownership_sheet_b", dump) or {}
         shares = sheet.get("lr_unit_shares") or []
-        window = cls._window(shares, offset, limit)
+        matching = shares
+        if owner_name is not None:
+            matching = [share for share in shares if cls._share_matches(share, owner_name)]
+        window = cls._window(matching, offset, limit)
         sheet["lr_unit_shares"] = window
         omitted = cls._count_shares(shares) - cls._count_shares(window)
-        return len(shares), len(window), omitted
+        return len(shares), len(matching), len(window), omitted
 
     @classmethod
     def _count_shares(cls, shares: list[dict[str, Any]]) -> int:
@@ -859,9 +1121,18 @@ class CadastralTools:
             "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
         }
 
+    #: The detail levels ``owner_name`` applies to: the ones whose page items
+    #: carry owners.
+    NAME_FILTERED_DETAIL = ("ownership", "shares", "full")
+
     @classmethod
     def _shape_lr_unit(
-        cls, lr_unit: Any, detail: str, limit: int | None = None, offset: int = 0
+        cls,
+        lr_unit: Any,
+        detail: str,
+        limit: int | None = None,
+        offset: int = 0,
+        owner_name: str | None = None,
     ) -> dict[str, Any]:
         """Shape an LR unit for output at the requested detail level.
 
@@ -882,11 +1153,18 @@ class CadastralTools:
         condominium's weight is in the shares themselves, not only in their
         owners. Every level but "summary" carries a ``page`` block saying what
         window came back.
+
+        ``owner_name`` keeps only the owner rows of that name ("ownership") or
+        the shares holding such an owner ("shares", "full"); the page then
+        walks the matches, ``matching_owners`` / ``matching_shares`` count
+        them and the totals still describe the whole sheet. The other levels
+        return no owners and refuse it.
         """
         if detail not in cls.VALID_DETAIL:
             raise ValueError(
                 f"Invalid detail '{detail}'. Expected one of {cls.VALID_DETAIL}."
             )
+        owner_name = cls._owner_name_filter(owner_name, detail)
         summary = lr_unit.summary()
         is_condo = lr_unit.is_condominium()
         condo_fields: dict[str, Any] = {}
@@ -907,8 +1185,13 @@ class CadastralTools:
                 sheet = lr_unit.ownership_sheet_b.model_dump(mode="json")
                 result = {**cls._identity(lr_unit), "ownership_sheet_b": sheet}
             total_owners = cls._count_owner_records(sheet.get("lr_unit_shares") or [])
-            total, returned, omitted = cls._window_shares(sheet, offset, limit)
+            total, matching, returned, omitted = cls._window_shares(
+                sheet, offset, limit, owner_name
+            )
             result["total_shares"] = total
+            if owner_name is not None:
+                result["owner_name"] = owner_name
+                result["matching_shares"] = matching
             result["total_owners"] = total_owners
             result["owners_truncated"] = (
                 cls._count_owner_records(sheet.get("lr_unit_shares") or []) < total_owners
@@ -918,7 +1201,7 @@ class CadastralTools:
                 # emptied; say how many so the count is not read as the unit's
                 # full sheet B.
                 result["shares_omitted"] = omitted
-            result["page"] = cls._page(offset, limit, total, returned)
+            result["page"] = cls._page(offset, limit, matching, returned)
             result["summary"] = summary
             result.update(condo_fields)
             cls._check_size(result, lr_unit, detail, limit)
@@ -962,19 +1245,27 @@ class CadastralTools:
         # registration entry that put the owner on the share: order number,
         # receipt date, diary number, action type); ``share_entries`` are the
         # annotations (ZABILJEŽBA) registered on individual shares.
-        owners, total, truncated = cls._ownership_rows(lr_unit, offset, limit)
-        return {
+        owners, total, matching, truncated = cls._ownership_rows(
+            lr_unit, offset, limit, owner_name
+        )
+        result = {
             **cls._identity(lr_unit),
             "in_land_registry": True,
             "sheet_a1_source_key": lr_unit.sheet_a1_source_key,
             "is_condominium": is_condo,
             "owners": owners,
             "total_owners": total,
+        }
+        if owner_name is not None:
+            result["owner_name"] = owner_name
+            result["matching_owners"] = matching
+        result.update({
             "owners_truncated": truncated,
-            "page": cls._page(offset, limit, total, len(owners)),
+            "page": cls._page(offset, limit, matching, len(owners)),
             "share_entries": lr_unit.ownership_sheet_b.share_entry_rows(),
             "summary": summary,
-        }
+        })
+        return result
 
     @classmethod
     def _check_size(
@@ -1056,6 +1347,7 @@ class CadastralTools:
         historical_overview: bool = False,
         offset: int = 0,
         limit: int | None = None,
+        owner_name: str | None = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak).
@@ -1087,6 +1379,14 @@ class CadastralTools:
                 returning.
             limit: Return at most this many of them; ``page`` in every unit
                 says what window came back and where to continue.
+            owner_name: Keep only the owners whose name contains every word
+                of this text (case and diacritics ignored, words in any
+                order): the owner rows in "ownership", the shares holding such
+                an owner in "shares" and "full"; the other levels refuse it.
+                The page then walks the matches, ``matching_owners`` /
+                ``matching_shares`` count them and the totals still describe
+                the whole sheet, so one person is found in a condominium of
+                hundreds of shares without paging through it.
 
         Returns:
             Dictionary with ``results`` (one entry per reference, in order:
@@ -1109,10 +1409,11 @@ class CadastralTools:
             raise ValueError(f"limit must be at least 1, got {limit}")
         if offset < 0:
             raise ValueError(f"offset must not be negative, got {offset}")
+        owner_name = self._owner_name_filter(owner_name, detail)
 
         logger.info(
             f"Fetching {len(units)} land registry unit reference(s) "
-            f"(detail={detail}, historical={historical_overview})"
+            f"(detail={detail}, historical={historical_overview}, owner_name={owner_name!r})"
         )
         results: list[dict[str, Any]] = []
         fetched: dict[tuple[str, int], int] = {}  # (unit number, main book id) -> index
@@ -1163,7 +1464,7 @@ class CadastralTools:
                 continue
 
             try:
-                data = self._shape_lr_unit(lr_unit, detail, limit, offset)
+                data = self._shape_lr_unit(lr_unit, detail, limit, offset, owner_name)
                 if include_plombe_detail and lr_unit.has_pending_plombe():
                     data["plombe_detail"] = self._plombe_detail(lr_unit)
             except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
@@ -1185,7 +1486,7 @@ class CadastralTools:
         duplicates = sum(1 for r in results if r["status"] == "duplicate")
         # Every reference lands in exactly one of the three; clients can check
         # successful + failed + duplicates == total.
-        return {
+        response: dict[str, Any] = {
             "results": results,
             "total": len(units),
             "unique": len(fetched),
@@ -1194,6 +1495,9 @@ class CadastralTools:
             "duplicates": duplicates,
             "condominiums_found": condominiums_found,
         }
+        if owner_name is not None:
+            response["owner_name"] = owner_name
+        return response
 
     def _fetch_lr_unit(self, ref: LRUnitRef, historical_overview: bool = False) -> Any:
         """Fetch the unit a reference names; errors carry a message for the agent."""

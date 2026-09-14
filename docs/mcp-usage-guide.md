@@ -46,7 +46,7 @@ such parcel, here is what exists", not as a hit. A building parcel is never
 answered with a land parcel or the other way round. Building parcels may be
 written "35/1 ZGR", "35/1.ZGR", "zgr. 35/1" or "*35/1"; all resolve exactly.
 
-### `get_parcel(parcels, source="cadastre")`
+### `get_parcel(parcels, source="cadastre", offset=0, limit=None, possessor_name=None, condominium_unit=None)`
 
 The detailed cadastre record of one or more parcels: area, land use, possession
 sheet, land registry reference, `cadastre_lr_harmonized`, `map_url`. `parcels`
@@ -73,7 +73,38 @@ the land registry reference) and `map_url` when available. A failed parcel does
 not stop the others. An entry resolved from a fallback match carries
 `exact_match: false` and `match_note`, as `find_parcel` does.
 
-### `get_lr_unit(units, detail="ownership", limit=None, offset=0, include_plombe_detail=False, historical_overview=False)`
+With `source="cadastre"`, `offset` and `limit` page through the possessor
+records of each parcel, counted across its possession sheets in sheet order
+(a parcel under a condominium keeps hundreds of possessors on one sheet, so
+the page item is the possessor, not the sheet). Every sheet stays in `data`
+with its header and its own `total_possessors`, holding only the possessors
+that fall inside the window. The entry carries `total_possessors` (records),
+`distinct_possessors` (different names among them: a person holding a flat and
+a storage room is two records, often with two addresses, and the records are
+kept as the cadastre holds them), `possessors_truncated` and a `page` block
+(`offset`, `limit`, `total`,
+`returned`, `truncated`, `next_offset`); when `truncated` is true, call again
+with `offset=next_offset` for the rest. An entry too large to return in one
+response becomes that parcel's `error`, naming a smaller `limit` and the
+`source` values that omit the possessors altogether.
+
+To find one person or one unit on a large sheet, filter instead of paging:
+`possessor_name` keeps the possessors whose name contains every word of the
+text (case and diacritics ignored, words in any order: `"brkic andelic"` finds
+"Anđelić Brkić"), `condominium_unit` the possessors of one unit number ("E-16",
+"E16" and "16" agree). Both need `source="cadastre"`. A filtered entry carries
+`possessor_filter` and `matching_possessors`; `page.total` counts the matching
+records, `total_possessors` and `distinct_possessors` still the whole parcel.
+
+On a condominium sheet (`is_condominium` true on the sheet) a possessor's
+`ownership` is the share of their own unit ("1/1" of a flat, "1/2" of a shared
+one), not of the parcel; the unit's share of the parcel is
+`condominium_share_ownership` (the share of the common areas), and the sheet's
+`total_ownership` sums the product of the two, so two co-owners of one flat
+count that flat once. It is null when the cadastre gives no common-area shares.
+A total above 1 after that is a fact about the sheet, not the arithmetic.
+
+### `get_lr_unit(units, detail="ownership", limit=None, offset=0, owner_name=None, include_plombe_detail=False, historical_overview=False)`
 
 One or more land registry units: registered owners with shares (list B),
 parcels (list A), encumbrances (list C), pending entries (plombe). `units` is a
@@ -141,6 +172,17 @@ unit's `error`, naming the sheet at fault and the smaller options: a per-sheet
 level with a small limit is always small enough, so a unit that `full` refuses
 (a list C that alone exceeds the ceiling, for instance) can still be read
 completely, one sheet and one page at a time.
+
+`owner_name` finds one person in a unit without paging through it: only the
+owners whose name contains every word of the text (case and diacritics
+ignored, words in any order, so "sarunic" and "Saša Šarunić" both find
+"ŠARUNIĆ SAŠA") come back. In `ownership` those are the owner rows; in
+`shares` and `full` the shares holding such an owner, kept whole with their
+co-owners and entries. The page then walks the matches, `matching_owners` or
+`matching_shares` counts them (0 when the name is not on the sheet, which is
+an answer, not an error) and `total_owners` / `total_shares` still describe the
+whole sheet; the result carries `owner_name` back. `summary`, `parcels` and
+`encumbrances` return no owners and refuse it.
 
 `include_plombe_detail` resolves what each pending plomba is (request type,
 status, dates) into `plombe_detail` per unit, at one extra request per plomba.
@@ -252,10 +294,17 @@ this is for fetching ahead of many lookups or refreshing stale data.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
 - **A large unit** (a condominium with hundreds of shares, a long list C):
-  `get_lr_unit` with `detail="ownership"` and a `limit`, then `offset=next_offset`
-  until `page.truncated` is false; `detail="shares"`, `"encumbrances"` or
-  `"parcels"` with a limit for the raw sheets. Do not retry `full` on a unit it
-  refused.
+  `get_lr_unit` with `owner_name` when one person is wanted ("is X an owner",
+  "which flat does X own"); otherwise `detail="ownership"` and a `limit`, then
+  `offset=next_offset` until `page.truncated` is false; `detail="shares"`,
+  `"encumbrances"` or `"parcels"` with a limit for the raw sheets. Do not retry
+  `full` on a unit it refused.
+- **A parcel under a large building** (hundreds of possessors on its
+  possession sheet): `get_parcel` with `possessor_name` or `condominium_unit`
+  when one person or one unit is wanted; otherwise a `limit`, then
+  `offset=next_offset` until `page.truncated` is false; or `source="none"` for
+  the parcel alone and `get_lr_unit` for the owners. Do not retry a refused
+  parcel without a limit.
 - **Which parcels exist with a number**: `find_parcel` with `max_matches`. When
   no single parcel can be chosen (only the building parcel `*35/1` exists, say)
   the answer has `success: false` and `match_note`, and `matches` still lists

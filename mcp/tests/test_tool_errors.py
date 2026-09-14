@@ -54,3 +54,20 @@ def test_resource_failure_carries_the_handler_message(server) -> None:
         asyncio.run(server.read_resource("cadastral://office/999"))
     assert "999" in str(excinfo.value)
     assert not isinstance(excinfo.value, UnexpectedResourceError)
+
+
+def test_get_parcel_schema_exposes_possessor_paging(server) -> None:
+    tools = asyncio.run(server.list_tools())
+    schema = next(t for t in tools if t.name == "get_parcel").input_schema
+    assert {"parcels", "source", "offset", "limit", "possessor_name", "condominium_unit"} <= set(
+        schema["properties"]
+    )
+    assert schema["properties"]["offset"]["default"] == 0
+    assert schema["properties"]["limit"]["default"] is None
+
+
+def test_get_lr_unit_schema_exposes_owner_name(server) -> None:
+    tools = asyncio.run(server.list_tools())
+    schema = next(t for t in tools if t.name == "get_lr_unit").input_schema
+    assert {"units", "detail", "offset", "limit", "owner_name"} <= set(schema["properties"])
+    assert schema["properties"]["owner_name"]["default"] is None

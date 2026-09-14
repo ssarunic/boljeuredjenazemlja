@@ -119,7 +119,7 @@ def test_full_is_paged_by_share_and_drops_the_shares_outside_the_window(condomin
     # to 135,000 characters. Sheet B is cut to the window of shares instead.
     dump = condominium.model_dump(mode="json")
     before = dump["ownership_sheet_b"]["lr_unit_shares"]
-    total, returned, omitted = CadastralTools._window_shares(dump, 0, 5)
+    total, _, returned, omitted = CadastralTools._window_shares(dump, 0, 5)
     shares = dump["ownership_sheet_b"]["lr_unit_shares"]
     assert (total, returned) == (85, 5)
     assert len(shares) == 5 < len(before)
@@ -179,7 +179,7 @@ def test_full_pages_shares_with_offset_and_loses_none(condominium) -> None:
     pages, owners, offset = [], 0, 0
     while True:
         dump = condominium.model_dump(mode="json")
-        total, returned, omitted = CadastralTools._window_shares(dump, offset, 40)
+        total, _, returned, omitted = CadastralTools._window_shares(dump, offset, 40)
         pages.append(returned)
         owners += _dumped_owners(dump)
         assert omitted > 0
@@ -200,11 +200,11 @@ def test_paging_reaches_a_trailing_share_without_owners() -> None:
         ]}}
 
     first = dump()
-    assert CadastralTools._window_shares(first, 0, 1) == (2, 1, 1)
+    assert CadastralTools._window_shares(first, 0, 1) == (2, 2, 1, 1)
     page = CadastralTools._page(0, 1, 2, 1)
     assert page["truncated"] is True and page["next_offset"] == 1
     second = dump()
-    assert CadastralTools._window_shares(second, page["next_offset"], 1) == (2, 1, 1)
+    assert CadastralTools._window_shares(second, page["next_offset"], 1) == (2, 2, 1, 1)
     assert second["ownership_sheet_b"]["lr_unit_shares"][0]["order_number"] == "2"
 
 
@@ -291,3 +291,101 @@ ENCUMBERED = (
 def encumbered() -> LandRegistryUnitDetailed:
     raw = json.loads(ENCUMBERED.read_text(encoding="utf-8"))
     return LandRegistryUnitDetailed.model_validate(raw[0] if isinstance(raw, list) else raw)
+
+
+# --- Finding one owner by name ------------------------------------------------
+
+
+def _shape_ownership(unit, **kwargs) -> dict:
+    return CadastralTools._shape_lr_unit(unit, "ownership", None, 0, **kwargs)
+
+
+def test_owner_name_keeps_only_that_persons_rows(condominium) -> None:
+    # Vlasnik 335 co-owns E-22 through two sub-shares: two rows, one name.
+    shaped = _shape_ownership(condominium, owner_name="vlasnik 335")
+    assert [row["name"] for row in shaped["owners"]] == ["Vlasnik 335", "Vlasnik 335"]
+    assert all(row["condominium_number"] == "E-22" for row in shaped["owners"])
+    assert shaped["owner_name"] == "vlasnik 335"
+    assert shaped["matching_owners"] == 2
+    assert shaped["total_owners"] == 103  # the whole sheet, still visible
+    assert shaped["owners_truncated"] is False
+    assert shaped["page"] == {
+        "offset": 0, "limit": None, "total": 2, "returned": 2, "truncated": False,
+    }
+
+
+def test_owner_name_ignores_case_diacritics_and_word_order(unit) -> None:
+    unit.ownership_sheet_b.lr_unit_shares[0].owners[0].name = "ŠARUNIĆ SAŠA"
+    for spelling in ("Saša Šarunić", "sarunic sasa", "ŠARUNIĆ", "sarunic"):
+        shaped = _shape_ownership(unit, owner_name=spelling)
+        assert [row["name"] for row in shaped["owners"]] == ["ŠARUNIĆ SAŠA"], spelling
+    # Every word must occur: a stranger with the same surname is not enough.
+    assert _shape_ownership(unit, owner_name="Šarunić Ivan")["owners"] == []
+
+
+def test_owner_name_with_no_match_is_an_empty_answer_not_an_error(condominium) -> None:
+    shaped = _shape_ownership(condominium, owner_name="nobody here")
+    assert shaped["owners"] == []
+    assert shaped["matching_owners"] == 0
+    assert shaped["total_owners"] == 103
+    assert shaped["page"]["total"] == 0 and shaped["page"]["truncated"] is False
+
+
+def test_owner_name_pages_through_the_matches(condominium) -> None:
+    first = CadastralTools._shape_lr_unit(condominium, "ownership", 1, 0, owner_name="335")
+    assert len(first["owners"]) == 1
+    assert first["owners_truncated"] is True
+    assert first["page"] == {
+        "offset": 0, "limit": 1, "total": 2, "returned": 1, "truncated": True, "next_offset": 1,
+    }
+    second = CadastralTools._shape_lr_unit(condominium, "ownership", 1, 1, owner_name="335")
+    assert len(second["owners"]) == 1 and second["owners_truncated"] is False
+
+
+def test_owner_name_on_shares_keeps_the_matching_shares_whole(condominium) -> None:
+    # E-27 is held by three co-owners through sub-shares; asking for one of
+    # them returns the share with all three, so the co-ownership is visible.
+    shaped = CadastralTools._shape_lr_unit(condominium, "shares", None, 0, owner_name="Vlasnik 341")
+    shares = shaped["ownership_sheet_b"]["lr_unit_shares"]
+    assert [share["condominium_number"] for share in shares] == ["E-27"]
+    co_owners = [
+        owner["name"]
+        for sub in CadastralTools._sub_shares(shares[0])
+        for owner in sub["owners"]
+    ]
+    assert co_owners == ["Vlasnik 340", "Vlasnik 341", "Vlasnik 342"]
+    assert shaped["owner_name"] == "Vlasnik 341"
+    assert shaped["matching_shares"] == 1
+    assert shaped["total_shares"] == 85
+    assert shaped["page"]["total"] == 1 and shaped["page"]["truncated"] is False
+    # The shares not returned are counted as omitted, filtered-out ones included.
+    assert shaped["shares_omitted"] == CadastralTools._count_shares(
+        condominium.ownership_sheet_b.model_dump(mode="json")["lr_unit_shares"]
+    ) - CadastralTools._count_shares(shares)
+    assert len(json.dumps(shaped, ensure_ascii=False)) <= CadastralTools.MAX_FULL_RESPONSE_CHARS
+
+
+def test_owner_name_on_full_filters_sheet_b_only(unit) -> None:
+    name = unit.ownership_sheet_b.lr_unit_shares[0].owners[0].name
+    shaped = CadastralTools._shape_lr_unit(unit, "full", None, 0, owner_name=name)
+    assert shaped["matching_shares"] >= 1 and shaped["total_shares"] > 0
+    assert "encumbrance_sheet_c" in shaped and "possessory_sheet_a1" in shaped
+    assert all(
+        CadastralTools._share_matches(share, name)
+        for share in shaped["ownership_sheet_b"]["lr_unit_shares"]
+    )
+
+
+def test_owner_name_is_refused_where_there_are_no_owners(unit) -> None:
+    for detail in ("summary", "parcels", "encumbrances"):
+        with pytest.raises(ValueError, match="owner_name"):
+            CadastralTools._shape_lr_unit(unit, detail, None, 0, owner_name="x")
+    with pytest.raises(ValueError, match="blank"):
+        _shape_ownership(unit, owner_name="   ")
+
+
+def test_without_owner_name_nothing_about_the_answer_changes(unit) -> None:
+    shaped = _shape_ownership(unit)
+    assert "owner_name" not in shaped and "matching_owners" not in shaped
+    full = CadastralTools._shape_lr_unit(unit, "full", None, 0)
+    assert "owner_name" not in full and "matching_shares" not in full

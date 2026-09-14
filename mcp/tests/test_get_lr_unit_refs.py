@@ -204,7 +204,27 @@ def test_owners_limit_is_a_synonym_of_limit(tools) -> None:
     assert by_old["results"][0]["data"]["owners"] == by_new["results"][0]["data"]["owners"]
 
 
-@pytest.mark.parametrize("kwargs", [{"limit": 0}, {"offset": -1}, {"detail": "sheets"}])
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"limit": 0},
+        {"offset": -1},
+        {"detail": "sheets"},
+        {"owner_name": " "},
+        {"owner_name": "x", "detail": "parcels"},
+    ],
+)
 def test_bad_paging_or_detail_is_rejected(tools, kwargs) -> None:
     with pytest.raises(ValueError):
         _run(tools.get_lr_unit([{"lr_unit_number": "449", "main_book_id": 21277}], **kwargs))
+
+
+def test_owner_name_finds_one_person_in_a_unit(tools) -> None:
+    ref = {"lr_unit_number": "449", "main_book_id": 21277}
+    res = _run(tools.get_lr_unit([ref], owner_name="vlasnik 114"))
+    assert res["owner_name"] == "vlasnik 114"
+    data = res["results"][0]["data"]
+    assert [row["name"] for row in data["owners"]] == ["Vlasnik 114"]
+    assert data["matching_owners"] == 1 and data["total_owners"] == 4
+    missing = _run(tools.get_lr_unit([ref], owner_name="nobody"))["results"][0]
+    assert missing["status"] == "success" and missing["data"]["matching_owners"] == 0

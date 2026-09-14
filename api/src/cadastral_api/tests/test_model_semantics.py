@@ -117,6 +117,49 @@ def test_share_totals_are_exact() -> None:
         }
     )
     assert possession.total_ownership == 1.0
+    assert possession.is_condominium is False
+
+
+def test_condominium_sheet_sums_common_share_times_unit_share() -> None:
+    # Flat 1 is half the building, flats 2 and 3 a quarter each; flat 2 has two
+    # co-owners who both carry the flat's common share.
+    sheet = PossessionSheet.model_validate(
+        {
+            "possessionSheetId": 1,
+            "possessionSheetNumber": "1",
+            "cadMunicipalityId": 1,
+            "possessors": [
+                {"name": "A", "ownership": "1/1",
+                 "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+                {"name": "B", "ownership": "1/2",
+                 "condominiumShareNumber": "2", "condominiumShareOwnership": "1/4"},
+                {"name": "C", "ownership": "1/2",
+                 "condominiumShareNumber": "2", "condominiumShareOwnership": "1/4"},
+                {"name": "D",  # no unit share given: counts for the whole unit
+                 "condominiumShareNumber": "3", "condominiumShareOwnership": "1/4"},
+            ],
+        }
+    )
+    assert sheet.is_condominium is True
+    # Not 3.0 (sum of unit shares) and not 1.25 (flat 2's common share twice).
+    assert sheet.total_ownership == 1.0
+    assert sheet.model_dump()["is_condominium"] is True
+
+
+def test_condominium_sheet_without_common_shares_has_no_total() -> None:
+    sheet = PossessionSheet.model_validate(
+        {
+            "possessionSheetId": 1,
+            "possessionSheetNumber": "1",
+            "cadMunicipalityId": 1,
+            "possessors": [
+                {"name": "A", "ownership": "1/1", "condominiumShareNumber": "1"},
+                {"name": "B", "ownership": "1/1", "condominiumShareNumber": "2"},
+            ],
+        }
+    )
+    assert sheet.is_condominium is True
+    assert sheet.total_ownership is None  # never 2.0
 
 
 def test_has_entries_is_the_honest_name() -> None:

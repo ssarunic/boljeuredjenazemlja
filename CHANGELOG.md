@@ -10,7 +10,45 @@ number and one tag.
 
 ## [Unreleased]
 
+### Added
+
+- MCP: `get_parcel` pages through the possessors of a parcel with `offset` and
+  `limit`, counted across its possession sheets in sheet order, and every
+  cadastre entry carries `total_possessors`, `possessors_truncated` and a
+  `page` block (`next_offset` says where to continue). A parcel under a large
+  condominium keeps hundreds of possessors on one sheet and used to overrun
+  the client's response limit whole; an entry above the response ceiling is
+  now recorded as that parcel's error naming a smaller `limit` and the
+  `source` values that omit the possessors, as `get_lr_unit` already does.
+  Each entry also carries `distinct_possessors`, the different names among
+  the possessor records (a person holding two units is two records).
+  `possessor_name` (every word must occur in the name, case and diacritics
+  ignored) and `condominium_unit` ("E-16" or "16") filter the possessors, so
+  one person or one flat is found on a sheet of thousands without paging;
+  a filtered entry carries `possessor_filter` and `matching_possessors`.
+  A parcel entry is refused above 100,000 characters (twice the
+  land-registry ceiling, since possessor records are flat and uniform) and
+  the refusal suggests the largest limit that fits rather than a quarter of
+  the window.
+- MCP: `get_lr_unit` takes `owner_name` and returns only the owners whose
+  name contains every word of it (case and diacritics ignored, words in any
+  order): the owner rows with `detail="ownership"`, the shares holding such
+  an owner, kept whole with their co-owners, with `"shares"` and `"full"`.
+  "Is this person an owner in unit X" is one call on a condominium of
+  hundreds of shares instead of a walk through every page; the answer
+  carries `matching_owners` / `matching_shares` next to the whole sheet's
+  totals, and 0 matches is an answer, not an error.
+- SDK: `PossessionSheet.is_condominium`, true when a possessor carries a
+  condominium unit number or a common-area share.
+
 ### Fixed
+
+- SDK: `PossessionSheet.total_ownership` on a condominium sheet summed each
+  possessor's share of their own unit ("1/1" of a flat) and reported
+  thousands of percent for a large building; it now sums, per possessor, the
+  unit's common-area share (`condominium_share_ownership`) times the
+  possessor's share of the unit, so two co-owners of one flat count the flat
+  once, and is null when the cadastre gives no common-area shares.
 
 - CLI: the hint under a usage error ("Try 'cadastral ... --help' for help.")
   names the help option in the language of the session: `--help` in English,

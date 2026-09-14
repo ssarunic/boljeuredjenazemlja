@@ -77,11 +77,13 @@ This document specifies the implementation of Pydantic V2 business entities for 
 - `possessors: list[Possessor]` - List of owners
 
 **Computed Properties:**
-- `total_ownership: float | None` - Sum of all ownership fractions
+- `is_condominium: bool` - Whether any possessor carries a condominium unit number or a common-area share
+- `total_ownership: float | None` - Sum of the possessors' shares of the parcel: `ownership` on an ordinary sheet; on a condominium sheet `condominium_share_ownership × ownership` per possessor (the unit's share of the common areas times the possessor's share of the unit, so co-owners of one flat count it once; a missing `ownership` counts for the whole unit); None when no possessor carries the share in question
 
 **Notes:**
 - A parcel can have multiple possession sheets
 - Each sheet can have multiple possessors
+- A person holding several condominium units is several possessor records; the model does not merge them
 
 ---
 
