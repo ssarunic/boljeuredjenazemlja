@@ -70,6 +70,13 @@ class CadastralAPIClient:
     # Default to localhost test server (production API requires authorization)
     BASE_URL = os.getenv("CADASTRAL_API_BASE_URL", "http://localhost:8000")
     DEFAULT_TIMEOUT = float(os.getenv("CADASTRAL_API_TIMEOUT", "10.0"))
+    #: Read timeout of the two endpoints that return a whole record at once
+    #: (``/lr/lr-unit``, ``/cad/parcel-info``). A large condominium is
+    #: thousands of shares or possessors that the server assembles on every
+    #: request, unpaged and uncached: 20-25 s before the first byte for a
+    #: unit of 2,900 owners. The connect timeout stays at ``timeout`` so a
+    #: server that is down is still reported quickly.
+    LONG_READ_TIMEOUT = 120.0
     DEFAULT_RATE_LIMIT = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.375"))
     DEFAULT_UNKNOWN_FIELDS = os.getenv("CADASTRAL_API_UNKNOWN_FIELDS", "warn")
     MAX_RETRIES = 3
@@ -82,6 +89,7 @@ class CadastralAPIClient:
         cache_dir: Path | str | None = None,
         unknown_fields: UnknownFieldsPolicy | None = None,
         planning_wfs_urls: list[str] | str | None = None,
+        long_timeout: float | None = None,
     ) -> None:
         """
         Initialize the API client.
@@ -91,6 +99,11 @@ class CadastralAPIClient:
             rate_limit: Minimum seconds between requests
                 (default: from CADASTRAL_API_RATE_LIMIT env or 0.375)
             timeout: Request timeout in seconds (default: from CADASTRAL_API_TIMEOUT env or 10.0)
+            long_timeout: Read timeout in seconds for the endpoints that
+                return a whole land-registry unit or parcel record, which a
+                large condominium makes slow on the server side (default:
+                ``LONG_READ_TIMEOUT``, 120 s, or ``timeout`` when that is
+                larger). Connecting still has ``timeout``.
             cache_dir: Directory for GIS data cache (default: ~/.cadastral_api_cache)
             unknown_fields: What to do when a response carries a key no model
                 declares (it is kept in ``source_fields`` either way):
@@ -116,6 +129,10 @@ class CadastralAPIClient:
         self.base_url = base_url or self.BASE_URL
         self.rate_limit = rate_limit if rate_limit is not None else self.DEFAULT_RATE_LIMIT
         self.timeout = timeout if timeout is not None else self.DEFAULT_TIMEOUT
+        self.long_timeout = (
+            long_timeout if long_timeout is not None
+            else max(self.timeout, self.LONG_READ_TIMEOUT)
+        )
         policy = unknown_fields or self.DEFAULT_UNKNOWN_FIELDS
         if policy not in UNKNOWN_FIELDS_POLICIES:
             raise ValueError(
@@ -176,7 +193,12 @@ class CadastralAPIClient:
         self._last_request_time = time.time()
 
     def _make_request(
-        self, endpoint: str, params: dict[str, str] | None = None, retry_count: int = 0
+        self,
+        endpoint: str,
+        params: dict[str, str] | None = None,
+        retry_count: int = 0,
+        *,
+        read_timeout: float | None = None,
     ) -> dict:
         """
         Make HTTP request with rate limiting and retry logic.
@@ -185,6 +207,10 @@ class CadastralAPIClient:
             endpoint: API endpoint path
             params: Query parameters
             retry_count: Current retry attempt number
+            read_timeout: Wait this long for the response body (the time to
+                the first byte included) instead of ``timeout``; connecting
+                keeps ``timeout``. For the endpoints whose response the
+                server is slow to assemble (``long_timeout``).
 
         Returns:
             JSON response as dictionary
@@ -193,15 +219,20 @@ class CadastralAPIClient:
             CadastralAPIError: Any API error occurred
         """
         self._wait_for_rate_limit()
+        timeout: float | httpx.Timeout = self.timeout
+        if read_timeout is not None:
+            timeout = httpx.Timeout(self.timeout, read=read_timeout)
 
         try:
-            response = self.client.get(endpoint, params=params)
+            response = self.client.get(endpoint, params=params, timeout=timeout)
 
             # Handle rate limiting
             if response.status_code == 429:
                 if retry_count < self.MAX_RETRIES:
                     time.sleep(2 ** retry_count)  # Exponential backoff
-                    return self._make_request(endpoint, params, retry_count + 1)
+                    return self._make_request(
+                        endpoint, params, retry_count + 1, read_timeout=read_timeout
+                    )
                 raise CadastralAPIError(
                     error_type=ErrorType.RATE_LIMIT,
                     details={"retry_count": retry_count, "max_retries": self.MAX_RETRIES},
@@ -211,7 +242,9 @@ class CadastralAPIClient:
             if 500 <= response.status_code < 600:
                 if retry_count < self.MAX_RETRIES:
                     time.sleep(1.5 ** retry_count)
-                    return self._make_request(endpoint, params, retry_count + 1)
+                    return self._make_request(
+                        endpoint, params, retry_count + 1, read_timeout=read_timeout
+                    )
                 raise CadastralAPIError(
                     error_type=ErrorType.SERVER_ERROR,
                     details={
@@ -229,7 +262,10 @@ class CadastralAPIClient:
         except httpx.TimeoutException as e:
             raise CadastralAPIError(
                 error_type=ErrorType.TIMEOUT,
-                details={"timeout_seconds": self.timeout, "endpoint": endpoint},
+                details={
+                    "timeout_seconds": read_timeout if read_timeout is not None else self.timeout,
+                    "endpoint": endpoint,
+                },
                 cause=e,
             ) from e
         except httpx.ConnectError as e:
@@ -646,7 +682,9 @@ class CadastralAPIClient:
         endpoint = "/cad/parcel-info"
         params = {"parcelId": str(parcel_id)}
 
-        response_data = self._make_request(endpoint, params)
+        # A parcel under a large condominium is thousands of possessors that
+        # the server assembles on every request: wait for it.
+        response_data = self._make_request(endpoint, params, read_timeout=self.long_timeout)
 
         if not response_data:
             raise CadastralAPIError(
@@ -926,7 +964,9 @@ class CadastralAPIClient:
             "historicalOverview": str(historical_overview).lower(),
         }
 
-        response_data = self._make_request(endpoint, params)
+        # A unit of thousands of shares takes the server 20 s or more to
+        # assemble (unpaged, uncached): wait for it.
+        response_data = self._make_request(endpoint, params, read_timeout=self.long_timeout)
 
         if not response_data:
             raise CadastralAPIError(

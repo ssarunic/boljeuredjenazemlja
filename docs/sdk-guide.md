@@ -20,7 +20,7 @@ The client reads a `.env` file and these environment variables:
 | Variable | Default | Meaning |
 |---|---|---|
 | `CADASTRAL_API_BASE_URL` | `http://localhost:8000` | Upstream address, the mock server by default |
-| `CADASTRAL_API_TIMEOUT` | `10.0` | Request timeout in seconds |
+| `CADASTRAL_API_TIMEOUT` | `10.0` | Request timeout in seconds (connecting, and the response of every search); a land-registry unit or parcel record is waited for up to 120 s, see `long_timeout` below |
 | `CADASTRAL_API_RATE_LIMIT` | `0.375` | Minimum seconds between upstream requests |
 | `CADASTRAL_CACHE_DIR` | `~/.cadastral_api_cache` | Where downloaded GML files are kept |
 
@@ -36,6 +36,14 @@ client = CadastralAPIClient(
     cache_dir="./gis_cache",
 )
 ```
+
+`long_timeout` (default 120 s, or `timeout` when that is larger) is the read
+timeout of the two endpoints that return a whole record at once,
+`get_lr_unit_detailed` and `get_parcel_info`: the server assembles a large
+condominium's unit (thousands of shares) on every request, unpaged and
+uncached, and takes 20 s or more before the first byte. Connecting keeps
+`timeout`, so a server that is down is still reported after 10 s. A timeout
+error names the timeout that applied in `details["timeout_seconds"]`.
 
 Use the client as a context manager so the HTTP connection is closed.
 

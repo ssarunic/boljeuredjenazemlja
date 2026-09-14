@@ -43,6 +43,14 @@ number and one tag.
 
 ### Fixed
 
+- SDK: a large condominium's land-registry unit (`get_lr_unit_detailed`,
+  thousands of shares) or parcel record (`get_parcel_info`, thousands of
+  possessors) failed with a timeout after 10 s, since the server assembles
+  the whole record on every request and takes 20 s or more before the first
+  byte. Those two calls now wait up to `long_timeout` (120 s, or
+  `CADASTRAL_API_TIMEOUT` when that is larger) for the response body;
+  connecting and every other endpoint keep the 10 s, and the timeout error
+  names the value that applied.
 - SDK: `PossessionSheet.total_ownership` on a condominium sheet summed each
   possessor's share of their own unit ("1/1" of a flat) and reported
   thousands of percent for a large building; it now sums, per possessor, the
