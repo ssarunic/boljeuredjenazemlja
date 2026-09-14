@@ -69,7 +69,9 @@ is a list of references; pass one for a single parcel, several for a list.
 The result is `{results, total, successful, failed, source}` with one entry per
 reference, in order. An entry has `status` (`success` or `error`), `ref` (the
 reference as given), `register`, `data` (the parcel record; `data.lr_unit` is
-the land registry reference) and `map_url` when available. A failed parcel does
+the land registry reference, filled from the parcel links when the cadastre
+carries no direct one, with `data.lr_reference_shape` saying `direct`, `linked`
+or `none`) and `map_url` when available. A failed parcel does
 not stop the others. An entry resolved from a fallback match carries
 `exact_match: false` and `match_note`, as `find_parcel` does.
 
@@ -100,9 +102,17 @@ On a condominium sheet (`is_condominium` true on the sheet) a possessor's
 `ownership` is the share of their own unit ("1/1" of a flat, "1/2" of a shared
 one), not of the parcel; the unit's share of the parcel is
 `condominium_share_ownership` (the share of the common areas), and the sheet's
-`total_ownership` sums the product of the two, so two co-owners of one flat
-count that flat once. It is null when the cadastre gives no common-area shares.
-A total above 1 after that is a fact about the sheet, not the arithmetic.
+`total_ownership` counts each unit once: its common-area share times the
+co-owners' shares of the unit added together (capped at 1), so two co-owners
+of one flat count that flat once whether the cadastre records them "1/2"
+each, "1/1" each or without a unit share. It is null when the cadastre gives
+no common-area shares, and it describes the whole sheet regardless of
+`possessor_name`, `condominium_unit`, `offset` or `limit`. When it is not 1
+the sheet carries `total_ownership_note` with the exact fraction: the cadastre
+copies the units' shares from the land-registry unit's list B, where they are
+set per unit and not recomputed to a whole (unit 8974 of GRAD ZAGREB sums to
+13029/10000 on both sides), so report the excess and check it against the
+unit's shares rather than treating it as an error of the sum.
 
 ### `get_lr_unit(units, detail="ownership", limit=None, offset=0, owner_name=None, include_plombe_detail=False, historical_overview=False)`
 
@@ -152,7 +162,12 @@ duplicates = total`; `successful` alone equals `unique`, the units fetched.
   `historical_overview`, share descriptions, entries on the sheet itself).
 - `"parcels"`: list A (posjedovnica): the unit's parcels under `parcels`, with
   `total_parcels`, `total_area_m2`, `sheet_a1_source_key` and the list A2
-  entries.
+  entries. When `sheet_a1_source_key` is `lrParcels` the records are the
+  land register's own: `parcel_number` is the land-register number (not the
+  cadastre's where a new survey renumbered the parcels), `parcel_id` is null
+  and `lr_parcel_id` is an id of the land-register parcel table that
+  `get_parcel` cannot use; find the cadastre parcel with `find_parcel` by
+  number and cadastral municipality.
 - `"encumbrances"`: list C (teretovnica): the entry groups under
   `entry_groups` (`amount`, `beneficiaries`, entries), with
   `total_entry_groups`.

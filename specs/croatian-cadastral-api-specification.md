@@ -715,7 +715,12 @@ The response contains detailed information organized into three "sheets":
 
 - **Sheet A (possessionSheetA1)**: List of all parcels in the unit, under
   `lrParcels` (lean land-register records; `address` is the culture or toponym
-  of the old land register) or `cadParcels` (full cadastre records), never both
+  of the old land register, `parcelId` an id of the land-register parcel
+  table and `parcelNumber` the land-register number, which differ from the
+  cadastre's: unit 8974 of GRAD ZAGREB lists 7484/3 with id 36039405 where
+  the cadastre has 4090/1 in k.o. PEŠČENICA with id 21358541; the models
+  expose the id as `lr_parcel_id`) or `cadParcels` (full cadastre records),
+  never both
 - **Sheet A2 (possessionSheetA2)**: Entries about the parcels (building
   registration notes, cultural-heritage notes, use permits)
 - **Sheet B (ownershipSheetB)**: Ownership information with shares; sheet-level

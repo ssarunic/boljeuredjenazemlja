@@ -72,6 +72,20 @@ def test_land_registry_source_omits_possessors_and_hints(tools) -> None:
     assert hint["lr_unit_ref"]["lr_unit_number"]
 
 
+def test_linked_unit_is_promoted_into_data_lr_unit(tools) -> None:
+    # 1122/1 has lrUnit null; the docs promise data.lr_unit, so the unit
+    # reachable through the parcel links is placed there and labelled.
+    for source in ("cadastre", "land_registry", "none"):
+        res = _run(tools.get_parcel([{"parcel_id": "6564741"}], source=source))
+        data = res["results"][0]["data"]
+        assert data["lr_reference_shape"] == "linked"
+        assert data["lr_unit"] is not None
+        linked = data["lr_units_from_parcel_links"][0]
+        assert (data["lr_unit"]["lr_unit_number"], data["lr_unit"]["main_book_id"]) == (
+            linked["lr_unit_number"], linked["main_book_id"]
+        )
+
+
 def test_none_source_drops_possessors(tools) -> None:
     res = _run(tools.get_parcel([{"parcel_id": "6564741"}], source="none"))
     data = res["results"][0]["data"]

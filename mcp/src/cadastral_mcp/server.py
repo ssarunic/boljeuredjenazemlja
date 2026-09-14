@@ -240,9 +240,13 @@ def create_mcp_server() -> MCPServer:
             Dictionary with ``results`` (status, ref, register, data, map_url
             per entry; with source="cadastre" also total_possessors,
             possessors_truncated and a page block), ``total``, ``successful``,
-            ``failed`` and the resolved ``source``. Each successful entry
-            includes the lr_unit reference (``data.lr_unit``), which
-            get_lr_unit accepts for ownership shares and encumbrances.
+            ``failed`` and the resolved ``source``. Each successful entry of
+            a parcel that is in the land registry includes the unit reference
+            under ``data.lr_unit``, which get_lr_unit accepts for ownership
+            shares and encumbrances; ``data.lr_reference_shape`` says whether
+            the cadastre linked it directly ("direct") or only through parcel
+            links ("linked", the unit is then promoted from
+            ``lr_units_from_parcel_links``), or not at all ("none").
         """
         logger.info(
             f"Tool invoked: get_parcel({len(parcels)} parcels, source={source}, "

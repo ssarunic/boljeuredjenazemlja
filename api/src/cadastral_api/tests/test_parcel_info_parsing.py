@@ -57,3 +57,13 @@ def test_possession_sheet_possessors_parse(parcel_1122_1: ParcelInfo) -> None:
     assert possessors
     # ownership fraction is present on this parcel's possessors (as a raw string)
     assert any(p.ownership for p in possessors)
+
+
+def test_parcel_link_without_area_parses() -> None:
+    """Parcel 9970 in k.o. SPLIT (id 16901331) links a parcel with no ``area``."""
+    raw = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    link = dict(raw["parcelLinks"][0])
+    link.pop("area", None)
+    raw["parcelLinks"] = [link]
+    parcel = ParcelInfo.model_validate(raw)
+    assert parcel.parcel_links[0].area is None
