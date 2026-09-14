@@ -282,6 +282,10 @@ class LocalizedOption(click.Option):
 def localize_command(command: click.Command, command_path: str) -> None:
     """Attach every language's spellings to the options of ``command``."""
     command.canonical_path = command_path  # type: ignore[attr-defined]
+    if type(command) is click.Command:
+        # Same in-place specialisation as the options below: the hint of a
+        # usage error then names the active spelling of --help.
+        command.__class__ = LocalizedCommand
     command.options_metavar = active_spelling("usage", "[OPTIONS]")
     if isinstance(command, click.Group):
         command.subcommand_metavar = active_spelling("usage", "COMMAND [ARGS]...")
@@ -333,7 +337,39 @@ def _expand(command_path: str, canonical_opts: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-class LocalizedGroup(click.Group):
+class _LocalizedHelpOption:
+    """Accept every spelling of ``--help``; name the active one in error hints.
+
+    click's usage errors end with "Try '<command> <option>' for help.", and
+    since click 8.5 the option named there is the longest of the help option
+    names, so an English run would be told to try ``--pomoć``. The names that
+    click registers on the option must stay every spelling (a Croatian user
+    may type ``--pomoć`` in an English session), so registration sees them
+    all and the hint sees the active language's spelling alone.
+    """
+
+    _registering_help: bool = False
+
+    def get_help_option_names(self, ctx: click.Context) -> list[str]:
+        names = super().get_help_option_names(ctx)  # type: ignore[misc]
+        if self._registering_help:
+            return names
+        active = active_spelling(OPTION_CONTEXT, "--help")
+        return [active] if active in names else names
+
+    def get_help_option(self, ctx: click.Context) -> click.Option | None:
+        self._registering_help = True
+        try:
+            return super().get_help_option(ctx)  # type: ignore[misc]
+        finally:
+            self._registering_help = False
+
+
+class LocalizedCommand(_LocalizedHelpOption, click.Command):
+    """A Command whose usage-error hint names the active spelling of ``--help``."""
+
+
+class LocalizedGroup(_LocalizedHelpOption, click.Group):
     """A Group whose subcommands answer to their localized names as well."""
 
     canonical_path: str = ""
