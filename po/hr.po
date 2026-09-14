@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 15:40+0100\n"
+"POT-Creation-Date: 2026-09-14 18:11+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -14,7 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: cli/src/cadastral_cli/formatters.py:30
 msgid "No results found."
@@ -804,7 +805,7 @@ msgctxt "metavar"
 msgid "PATH"
 msgstr "PUTANJA"
 
-#: cli/src/cadastral_cli/localized.py:376 click/core.py:1799
+#: cli/src/cadastral_cli/localized.py:376 click/core.py:1981
 msgid "Commands"
 msgstr "Naredbe"
 
@@ -812,10 +813,12 @@ msgstr "Naredbe"
 msgid ""
 "Find out which spatial-plan building area a parcel lies in.\n"
 "\n"
-"Matches the parcel boundary against the building areas (građevinska područja)\n"
+"Matches the parcel boundary against the building areas (građevinska "
+"područja)\n"
 "derived from the spatial plans in force: inside a settlement, in a detached\n"
 "zone with its designation (for example T2 tourist settlement), or outside.\n"
-"This is a screening only: it does not say whether anything may be built, and\n"
+"This is a screening only: it does not say whether anything may be built, "
+"and\n"
 "the result is an interpretation of the plans, not the plans themselves.\n"
 "\n"
 "Examples:\n"
@@ -827,7 +830,8 @@ msgstr ""
 "Saznajte u kojem je građevinskom području prostornog plana čestica.\n"
 "\n"
 "Uspoređuje granicu čestice s građevinskim područjima izvedenima iz važećih\n"
-"prostornih planova: unutar naselja, u izdvojenom području s njegovom namjenom\n"
+"prostornih planova: unutar naselja, u izdvojenom području s njegovom "
+"namjenom\n"
 "(na primjer T2 turističko naselje) ili izvan njih. Ovo je samo provjera: ne\n"
 "govori smije li se što graditi, a rezultat je interpretacija planova, a ne\n"
 "sami planovi.\n"
@@ -908,8 +912,7 @@ msgid ""
 "Zones covering less than this share of the parcel (percent) are listed "
 "separately"
 msgstr ""
-"Zone koje pokrivaju manji udio čestice od ovoga (postotak) navode se "
-"odvojeno"
+"Zone koje pokrivaju manji udio čestice od ovoga (postotak) navode se odvojeno"
 
 #: cli/src/cadastral_cli/commands/zoning.py:113
 #, python-brace-format
@@ -1275,7 +1278,8 @@ msgstr "ID odjela"
 msgid ""
 "List books of deposited contracts (knjige položenih ugovora, KPU).\n"
 "\n"
-"A book of deposited contracts holds flats that were sold before their building\n"
+"A book of deposited contracts holds flats that were sold before their "
+"building\n"
 "had a land registry unit. The list gives the book ID and the land registry\n"
 "office that keeps it.\n"
 "\n"
@@ -1285,7 +1289,8 @@ msgid ""
 msgstr ""
 "Popis knjiga položenih ugovora (KPU).\n"
 "\n"
-"Knjiga položenih ugovora sadrži stanove prodane prije nego što je zgrada dobila\n"
+"Knjiga položenih ugovora sadrži stanove prodane prije nego što je zgrada "
+"dobila\n"
 "zemljišnoknjižni uložak. Popis daje identifikator knjige i zemljišnoknjižni\n"
 "odjel koji je vodi.\n"
 "\n"
@@ -1420,10 +1425,13 @@ msgstr "Greška pri dohvaćanju informacija o sustavu: {error}"
 msgid ""
 "Get detailed land registry unit information.\n"
 "\n"
-"Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),\n"
-"including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).\n"
+"Retrieve complete information about a land registry unit (zemljišnoknjižni "
+"uložak),\n"
+"including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet "
+"C).\n"
 "\n"
-"One unit, named by number and main book or found from a parcel; or a list of\n"
+"One unit, named by number and main book or found from a parcel; or a list "
+"of\n"
 "units from a file with --input: a CSV or JSON with lr_unit_number and\n"
 "main_book_id, or the JSON that get-parcel writes for a list of parcels.\n"
 "\n"
@@ -1431,7 +1439,8 @@ msgid ""
 "  # Get by unit number and main book ID\n"
 "  cadastral get-lr-unit --unit-number 769 --main-book 21277\n"
 "\n"
-"  # Get by unit number and main book name (resolved through the main-book search)\n"
+"  # Get by unit number and main book name (resolved through the main-book "
+"search)\n"
 "  cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR\n"
 "\n"
 "  # Get from parcel (automatic lookup)\n"
@@ -1450,10 +1459,12 @@ msgid ""
 "  cadastral get-lr-unit --input lr_units.csv --all\n"
 "\n"
 "  # The units of a list of parcels (pipeline)\n"
-"  cadastral get-parcel \"103/2,45,396/1\" -m SAVAR --detail registry --format json -o parcels.json\n"
+"  cadastral get-parcel \"103/2,45,396/1\" -m SAVAR --detail registry --"
+"format json -o parcels.json\n"
 "  cadastral get-lr-unit --input parcels.json --show-owners\n"
 "\n"
-"⚠️  Demo project: before using any server other than the included mock, verify\n"
+"⚠️  Demo project: before using any server other than the included mock, "
+"verify\n"
 "your rights to use it; use at your own risk"
 msgstr ""
 "Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.\n"
@@ -1461,15 +1472,18 @@ msgstr ""
 "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući vlasništvo\n"
 "(list B), čestice (list A) i terete (list C).\n"
 "\n"
-"Jedan uložak, zadan brojem i glavnom knjigom ili pronađen iz čestice; ili popis\n"
-"uložaka iz datoteke uz --ulaz: CSV ili JSON s lr_unit_number i main_book_id,\n"
+"Jedan uložak, zadan brojem i glavnom knjigom ili pronađen iz čestice; ili "
+"popis\n"
+"uložaka iz datoteke uz --ulaz: CSV ili JSON s lr_unit_number i "
+"main_book_id,\n"
 "ili JSON koji naredba čestica zapisuje za popis čestica.\n"
 "\n"
 "Primjeri:\n"
 "  # Prema broju uloška i ID-u glavne knjige\n"
 "  uz uložak --broj-uloška 769 --glavna-knjiga 21277\n"
 "\n"
-"  # Prema broju uloška i nazivu glavne knjige (pronalazi se pretragom glavnih knjiga)\n"
+"  # Prema broju uloška i nazivu glavne knjige (pronalazi se pretragom "
+"glavnih knjiga)\n"
 "  uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR\n"
 "\n"
 "  # Prema čestici (automatsko pronalaženje)\n"
@@ -1488,10 +1502,12 @@ msgstr ""
 "  uz uložak --ulaz lr_units.csv --sve\n"
 "\n"
 "  # Ulošci popisa čestica (lanac naredbi)\n"
-"  uz čestica \"103/2,45,396/1\" -ko SAVAR --detalji registry --oblik json -dt parcels.json\n"
+"  uz čestica \"103/2,45,396/1\" -ko SAVAR --detalji registry --oblik json "
+"-dt parcels.json\n"
 "  uz uložak --ulaz parcels.json --vlasnici\n"
 "\n"
-"⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim priloženog probnog\n"
+"⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim "
+"priloženog probnog\n"
 "provjerite svoja prava na njegovu uporabu; koristite na vlastitu odgovornost"
 
 #: cli/src/cadastral_cli/commands/registry.py:71
@@ -1547,8 +1563,7 @@ msgid "Continue processing after errors (default: continue)"
 msgstr "Nastavi obradu nakon grešaka (zadano: nastavi)"
 
 #: cli/src/cadastral_cli/commands/registry.py:134
-msgid ""
-"Cannot combine --input with --unit-number, --main-book or --from-parcel"
+msgid "Cannot combine --input with --unit-number, --main-book or --from-parcel"
 msgstr ""
 "--ulaz se ne može kombinirati s --broj-uloška, --glavna-knjiga ili --od-"
 "čestice"
@@ -1611,8 +1626,8 @@ msgstr ""
 #: cli/src/cadastral_cli/commands/registry.py:232
 #, python-brace-format
 msgid ""
-"Main book name '{name}' matches several books: {candidates}. Use --main-book"
-" with the ID"
+"Main book name '{name}' matches several books: {candidates}. Use --main-book "
+"with the ID"
 msgstr ""
 "Nazivu glavne knjige '{name}' odgovara više knjiga: {candidates}. "
 "Upotrijebite --main-book s identifikatorom"
@@ -1628,8 +1643,8 @@ msgid ""
 "Parcel {parcel} is linked to several land registry units: {candidates}. Use "
 "--unit-number and --main-book to choose one"
 msgstr ""
-"Čestica {parcel} povezana je s više zemljišnoknjižnih uložaka: {candidates}."
-" Odaberite jedan opcijama --unit-number i --main-book"
+"Čestica {parcel} povezana je s više zemljišnoknjižnih uložaka: {candidates}. "
+"Odaberite jedan opcijama --unit-number i --main-book"
 
 #: cli/src/cadastral_cli/commands/registry.py:252
 #: cli/src/cadastral_cli/commands/search.py:137
@@ -2091,7 +2106,8 @@ msgstr "Nema pronađenih općina za '{search}'"
 msgid ""
 "Find a possession sheet (posjedovni list) by number.\n"
 "\n"
-"Shows the sheet numbers that start with the number you give and the internal\n"
+"Shows the sheet numbers that start with the number you give and the "
+"internal\n"
 "ID of each sheet. The cadastre has no lookup of a sheet by ID: to see the\n"
 "possessors, look up one of the sheet's parcels with get-parcel.\n"
 "\n"
@@ -2103,7 +2119,8 @@ msgstr ""
 "\n"
 "Prikazuje brojeve posjedovnih listova koji počinju zadanim brojem i interni\n"
 "identifikator svakog lista. Katastar nema dohvat lista po identifikatoru:\n"
-"posjednike vidite tako da pogledate jednu od čestica lista naredbom uz čestica.\n"
+"posjednike vidite tako da pogledate jednu od čestica lista naredbom uz "
+"čestica.\n"
 "\n"
 "Primjeri:\n"
 "  uz posjedovni-list 363 -ko SAVAR\n"
@@ -2167,8 +2184,10 @@ msgid ""
 "Get complete parcel information with ownership details.\n"
 "\n"
 "One parcel, or a list of parcels: several numbers separated by commas (or\n"
-"given as separate arguments), or a file with --input. For a list, the result\n"
-"is one record per parcel with its status; a parcel that is not found does not\n"
+"given as separate arguments), or a file with --input. For a list, the "
+"result\n"
+"is one record per parcel with its status; a parcel that is not found does "
+"not\n"
 "stop the others.\n"
 "\n"
 "Examples:\n"
@@ -2181,7 +2200,8 @@ msgid ""
 "  cadastral get-parcel \"103/2,45,396/1\" -m SAVAR --detail registry\n"
 "\n"
 "  # A list from a file (CSV or JSON), saved as JSON for get-lr-unit --input\n"
-"  cadastral get-parcel --input parcels.csv --detail registry --format json -o parcels-found.json\n"
+"  cadastral get-parcel --input parcels.csv --detail registry --format json "
+"-o parcels-found.json\n"
 "\n"
 "CSV file (an empty municipality cell repeats the row above):\n"
 "  parcel_number,municipality\n"
@@ -2189,11 +2209,13 @@ msgid ""
 "  45,\n"
 "\n"
 "JSON file:\n"
-"  [{\"parcel_number\": \"103/2\", \"municipality\": \"SAVAR\"}, {\"parcel_id\": \"6564715\"}]"
+"  [{\"parcel_number\": \"103/2\", \"municipality\": \"SAVAR\"}, "
+"{\"parcel_id\": \"6564715\"}]"
 msgstr ""
 "Dohvat potpunih podataka o čestici s podacima o posjedu.\n"
 "\n"
-"Jedna čestica ili popis čestica: više brojeva odvojenih zarezima (ili zadanih\n"
+"Jedna čestica ili popis čestica: više brojeva odvojenih zarezima (ili "
+"zadanih\n"
 "kao zasebni argumenti), ili datoteka uz --ulaz. Za popis je rezultat jedan\n"
 "zapis po čestici s njezinim statusom; čestica koja nije pronađena ne\n"
 "zaustavlja ostale.\n"
@@ -2208,7 +2230,8 @@ msgstr ""
 "  uz čestica \"103/2,45,396/1\" -ko SAVAR --detalji registry\n"
 "\n"
 "  # Popis iz datoteke (CSV ili JSON), spremljen kao JSON za uložak --ulaz\n"
-"  uz čestica --ulaz parcels.csv --detalji registry --oblik json -dt parcels-found.json\n"
+"  uz čestica --ulaz parcels.csv --detalji registry --oblik json -dt parcels-"
+"found.json\n"
 "\n"
 "CSV datoteka (prazno polje općine ponavlja redak iznad):\n"
 "  parcel_number,municipality\n"
@@ -2216,7 +2239,8 @@ msgstr ""
 "  45,\n"
 "\n"
 "JSON datoteka:\n"
-"  [{\"parcel_number\": \"103/2\", \"municipality\": \"SAVAR\"}, {\"parcel_id\": \"6564715\"}]"
+"  [{\"parcel_number\": \"103/2\", \"municipality\": \"SAVAR\"}, "
+"{\"parcel_id\": \"6564715\"}]"
 
 #: cli/src/cadastral_cli/commands/parcel.py:65
 msgid "File (CSV or JSON) with the parcels to look up, instead of typing them"
@@ -2365,8 +2389,8 @@ msgid ""
 "Note: cadastre possessors may differ from registered owners. For land-"
 "registry owners (vlasnici), use: cadastral get-lr-unit"
 msgstr ""
-"Napomena: posjednici u katastru mogu se razlikovati od upisanih vlasnika. Za"
-" vlasnike iz zemljišnih knjiga koristite: cadastral get-lr-unit"
+"Napomena: posjednici u katastru mogu se razlikovati od upisanih vlasnika. Za "
+"vlasnike iz zemljišnih knjiga koristite: cadastral get-lr-unit"
 
 #: cli/src/cadastral_cli/commands/parcel.py:616
 msgid "No possession data available"
@@ -2401,8 +2425,8 @@ msgid ""
 "Building parcels have no land registry unit of their own; the building is "
 "registered on its land parcel."
 msgstr ""
-"Čestice zgrade nemaju vlastiti zemljišnoknjižni uložak; zgrada je upisana na"
-" svojoj zemljišnoj čestici."
+"Čestice zgrade nemaju vlastiti zemljišnoknjižni uložak; zgrada je upisana na "
+"svojoj zemljišnoj čestici."
 
 #: cli/src/cadastral_cli/commands/parcel.py:676
 msgid "This parcel is not in the land registry (cadastre only)"
@@ -2410,8 +2434,8 @@ msgstr "Ova čestica nije u zemljišnoj knjizi (samo katastar)"
 
 #: cli/src/cadastral_cli/commands/parcel.py:682
 msgid ""
-"(land registry unit resolved via related parcels - this parcel has no direct"
-" unit)"
+"(land registry unit resolved via related parcels - this parcel has no direct "
+"unit)"
 msgstr ""
 "(zemljišnoknjižni uložak razriješen preko povezanih čestica - ova čestica "
 "nema izravan uložak)"
@@ -2610,10 +2634,12 @@ msgstr "ZIP datoteka kopirana u: {dest_zip}"
 #, python-brace-format
 msgid ""
 "\n"
-"To get parcel geometry: cadastral get-geometry <parcel> -m {municipality_code}"
+"To get parcel geometry: cadastral get-geometry <parcel> -m "
+"{municipality_code}"
 msgstr ""
 "\n"
-"Za dohvaćanje geometrije čestice: uz granica <čestica> -ko {municipality_code}"
+"Za dohvaćanje geometrije čestice: uz granica <čestica> -ko "
+"{municipality_code}"
 
 #: cli/src/cadastral_cli/commands/gis.py:237
 #, python-brace-format
@@ -2656,7 +2682,8 @@ msgid ""
 "\n"
 "Documentation: https://github.com/yourusername/croatian-cadastral-api"
 msgstr ""
-"Hrvatski katastarski sustav - CLI za pristup katastarskim i zemljišnoknjižnim podacima.\n"
+"Hrvatski katastarski sustav - CLI za pristup katastarskim i "
+"zemljišnoknjižnim podacima.\n"
 "\n"
 "Primjeri:\n"
 "  uz pretraži 103/2 --općina SAVAR\n"
@@ -3543,26 +3570,38 @@ msgctxt "key possessors"
 msgid "ownership"
 msgstr "posjedovni_udio"
 
-#: click/_termui_impl.py:608
+#: click/_termui_impl.py:186
+msgid "d"
+msgstr "d"
+
+#: click/_termui_impl.py:736
 #, python-brace-format
 msgid "{editor}: Editing failed"
 msgstr "{editor}: uređivanje nije uspjelo"
 
-#: click/_termui_impl.py:612
+#: click/_termui_impl.py:740
 #, python-brace-format
 msgid "{editor}: Editing failed: {e}"
 msgstr "{editor}: uređivanje nije uspjelo: {e}"
 
-#: click/core.py:1104 click/core.py:1141
+#: click/_winconsole.py:156 click/_winconsole.py:173
 #, python-brace-format
-msgid "{text} {deprecated_message}"
-msgstr "{text} {deprecated_message}"
+msgid "Windows error: {error}"
+msgstr "Windows greška: {error}"
 
-#: click/core.py:1160
+#: click/core.py:104
+msgid "deprecated"
+msgstr "zastarjelo"
+
+#: click/core.py:1304
 msgid "Options"
 msgstr "Opcije"
 
-#: click/core.py:1222
+#: click/core.py:1316
+msgid "Positional arguments"
+msgstr "Pozicijski argumenti"
+
+#: click/core.py:1391
 #, no-python-brace-format
 msgid "Got unexpected extra argument ({args})"
 msgid_plural "Got unexpected extra arguments ({args})"
@@ -3570,27 +3609,23 @@ msgstr[0] "Neočekivani dodatni argument ({args})"
 msgstr[1] "Neočekivani dodatni argumenti ({args})"
 msgstr[2] "Neočekivani dodatni argumenti ({args})"
 
-#: click/core.py:1241
+#: click/core.py:1407
 msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
 msgstr "DeprecationWarning: naredba {name!r} je zastarjela.{extra_message}"
 
-#: click/core.py:1425
+#: click/core.py:1594
 msgid "Aborted!"
 msgstr "Prekinuto!"
 
-#: click/core.py:1830
+#: click/core.py:2012
 msgid "Missing command."
 msgstr "Nedostaje naredba."
 
-#: click/core.py:1908
-msgid "No such command {name!r}."
-msgstr "Nepostojeća naredba {name!r}."
-
-#: click/core.py:2332
+#: click/core.py:2547
 msgid "Value must be an iterable."
 msgstr "Vrijednost mora biti iterabilna."
 
-#: click/core.py:2355
+#: click/core.py:2570
 #, no-python-brace-format
 msgid "Takes {nargs} values but 1 was given."
 msgid_plural "Takes {nargs} values but {len} were given."
@@ -3598,115 +3633,162 @@ msgstr[0] "Prima {nargs} vrijednosti, a zadana je 1."
 msgstr[1] "Prima {nargs} vrijednosti, a zadane su {len}."
 msgstr[2] "Prima {nargs} vrijednosti, a zadano ih je {len}."
 
-#: click/core.py:2505
+#: click/core.py:2767
 msgid ""
 "DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
 msgstr ""
 "DeprecationWarning: {param_type} {name!r} je zastarjelo.{extra_message}"
 
-#: click/core.py:2956
+#: click/core.py:3246
+#, python-brace-format
+msgid "Name '{name}' defined twice"
+msgstr "Naziv '{name}' definiran je dvaput"
+
+#: click/core.py:3262
+msgid "Boolean option {decl!r} cannot use the same flag for true/false."
+msgstr ""
+"Logička opcija {decl!r} ne može koristiti istu zastavicu za true/false."
+
+#: click/core.py:3281
+msgid "Could not determine name for option with declarations {decls!r}"
+msgstr "Nije moguće odrediti naziv opcije s deklaracijama {decls!r}"
+
+#: click/core.py:3288
+#, python-brace-format
+msgid ""
+"No options defined but a name was passed ({name}). Did you mean to declare "
+"an argument instead? Did you mean to pass '--{name}'?"
+msgstr ""
+"Nijedna opcija nije definirana, ali je proslijeđen naziv ({name}). Jeste li "
+"htjeli deklarirati argument? Jeste li htjeli proslijediti '--{name}'?"
+
+#: click/core.py:3368
 #, python-brace-format
 msgid "env var: {var}"
 msgstr "varijabla okruženja: {var}"
 
-#: click/core.py:2959
+#: click/core.py:3371
 #, python-brace-format
 msgid "default: {default}"
 msgstr "zadano: {default}"
 
-#: click/core.py:3023
+#: click/core.py:3435
 msgid "(dynamic)"
 msgstr "(dinamički)"
 
-#: click/decorators.py:465
+#: click/core.py:3754
+#, python-brace-format
+msgid ""
+"Arguments take exactly one parameter declaration, got {length}: {decls}."
+msgstr ""
+"Argumenti primaju točno jednu deklaraciju parametra, zadano {length}: "
+"{decls}."
+
+#: click/decorators.py:399
+msgid "Do you want to continue?"
+msgstr "Želite li nastaviti?"
+
+#: click/decorators.py:400
+msgid "Confirm the action without prompting."
+msgstr "Potvrdi radnju bez pitanja."
+
+#: click/decorators.py:482
 #, python-format
 msgid "%(prog)s, version %(version)s"
 msgstr "%(prog)s, verzija %(version)s"
 
-#: click/decorators.py:522
+#: click/decorators.py:556 click/decorators.py:598
 msgid "Show the version and exit."
 msgstr "Prikaži verziju i izađi."
 
-#: click/decorators.py:548
+#: click/decorators.py:624
 msgid "Show this message and exit."
 msgstr "Prikaži ovu poruku i izađi."
 
-#: click/exceptions.py:50 click/exceptions.py:89
-#, python-brace-format
-msgid "Error: {message}"
-msgstr "Greška: {message}"
-
-#: click/exceptions.py:81
-#, python-brace-format
-msgid "Try '{command} {option}' for help."
-msgstr "Za pomoć pokrenite '{command} {option}'."
-
-#: click/exceptions.py:130
-#, python-brace-format
-msgid "Invalid value: {message}"
-msgstr "Neispravna vrijednost: {message}"
-
-#: click/exceptions.py:132
-#, python-brace-format
-msgid "Invalid value for {param_hint}: {message}"
-msgstr "Neispravna vrijednost za {param_hint}: {message}"
-
-#: click/exceptions.py:190
-msgid "Missing argument"
-msgstr "Nedostaje argument"
-
-#: click/exceptions.py:192
-msgid "Missing option"
-msgstr "Nedostaje opcija"
-
-#: click/exceptions.py:194
-msgid "Missing parameter"
-msgstr "Nedostaje parametar"
-
-#: click/exceptions.py:196
-#, python-brace-format
-msgid "Missing {param_type}"
-msgstr "Nedostaje {param_type}"
-
-#: click/exceptions.py:203
-#, python-brace-format
-msgid "Missing parameter: {param_name}"
-msgstr "Nedostaje parametar: {param_name}"
-
-#: click/exceptions.py:223
-#, python-brace-format
-msgid "No such option: {name}"
-msgstr "Nepostojeća opcija: {name}"
-
-#: click/exceptions.py:235
+#: click/exceptions.py:29
 #, no-python-brace-format
 msgid "Did you mean {possibility}?"
-msgid_plural "(Possible options: {possibilities})"
+msgid_plural "(Did you mean one of: {possibilities}?)"
 msgstr[0] "Jeste li mislili {possibility}?"
 msgstr[1] "(Jeste li mislili jedno od: {possibilities}?)"
 msgstr[2] "(Jeste li mislili jedno od: {possibilities}?)"
 
-#: click/exceptions.py:282
+#: click/exceptions.py:62 click/exceptions.py:108 click/termui.py:275
+#, python-brace-format
+msgid "Error: {message}"
+msgstr "Greška: {message}"
+
+#: click/exceptions.py:99
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr "Za pomoć pokrenite '{command} {option}'."
+
+#: click/exceptions.py:152
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr "Neispravna vrijednost: {message}"
+
+#: click/exceptions.py:154
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr "Neispravna vrijednost za {param_hint}: {message}"
+
+#: click/exceptions.py:214
+msgid "Missing argument"
+msgstr "Nedostaje argument"
+
+#: click/exceptions.py:216
+msgid "Missing option"
+msgstr "Nedostaje opcija"
+
+#: click/exceptions.py:218
+msgid "Missing parameter"
+msgstr "Nedostaje parametar"
+
+#: click/exceptions.py:220
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr "Nedostaje {param_type}"
+
+#: click/exceptions.py:227
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr "Nedostaje parametar: {param_name}"
+
+#: click/exceptions.py:249
+msgid "No such option {name!r}."
+msgstr "Nepostojeća opcija {name!r}."
+
+#: click/exceptions.py:285
+msgid "No such command {name!r}."
+msgstr "Nepostojeća naredba {name!r}."
+
+#: click/exceptions.py:350
 msgid "unknown error"
 msgstr "nepoznata greška"
 
-#: click/exceptions.py:289
+#: click/exceptions.py:357
 msgid "Could not open file {filename!r}: {message}"
 msgstr "Nije moguće otvoriti datoteku {filename!r}: {message}"
 
-#: click/formatting.py:156
+#: click/formatting.py:167
 msgid "Usage:"
 msgstr "Uporaba:"
 
-#: click/parser.py:199
+#: click/parser.py:145
+#, python-brace-format
+msgid "Invalid start character for option ({option})"
+msgstr "Neispravan početni znak opcije ({option})"
+
+#: click/parser.py:203
 msgid "Argument {name!r} takes {nargs} values."
 msgstr "Argument {name!r} prima {nargs} vrijednosti."
 
-#: click/parser.py:381
+#: click/parser.py:382
 msgid "Option {name!r} does not take a value."
 msgstr "Opcija {name!r} ne prima vrijednost."
 
-#: click/parser.py:444
+#: click/parser.py:445
 #, no-python-brace-format
 msgid "Option {name!r} requires an argument."
 msgid_plural "Option {name!r} requires {nargs} arguments."
@@ -3714,41 +3796,36 @@ msgstr[0] "Opcija {name!r} zahtijeva {nargs} argument."
 msgstr[1] "Opcija {name!r} zahtijeva {nargs} argumenta."
 msgstr[2] "Opcija {name!r} zahtijeva {nargs} argumenata."
 
-#: click/shell_completion.py:332
+#: click/shell_completion.py:417
 msgid "Shell completion is not supported for Bash versions older than 4.4."
 msgstr "Dovršavanje u ljusci nije podržano za verzije Basha starije od 4.4."
 
-#: click/shell_completion.py:339
+#: click/shell_completion.py:424
 msgid "Couldn't detect Bash version, shell completion is not supported."
 msgstr ""
 "Nije moguće utvrditi verziju Basha, dovršavanje u ljusci nije podržano."
 
-#: click/termui.py:162
+#: click/termui.py:256
 msgid "Repeat for confirmation"
 msgstr "Ponovite za potvrdu"
 
-#: click/termui.py:178
-msgid "Error: The value you entered was invalid."
-msgstr "Greška: Unesena vrijednost nije valjana."
-
-#: click/termui.py:180
-#, python-brace-format
-msgid "Error: {e.message}"
-msgstr "Greška: {e.message}"
-
-#: click/termui.py:191
+#: click/termui.py:286
 msgid "Error: The two entered values do not match."
 msgstr "Greška: dvije unesene vrijednosti se ne podudaraju."
 
-#: click/termui.py:247
+#: click/termui.py:340
 msgid "Error: invalid input"
 msgstr "Greška: neispravan unos"
 
-#: click/termui.py:866
+#: click/termui.py:638
+msgid "Unknown color {colour!r}"
+msgstr "Nepoznata boja {colour!r}"
+
+#: click/termui.py:1003
 msgid "Press any key to continue..."
 msgstr "Pritisnite bilo koju tipku za nastavak..."
 
-#: click/types.py:332
+#: click/types.py:439
 #, python-brace-format
 msgid ""
 "Choose from:\n"
@@ -3757,7 +3834,7 @@ msgstr ""
 "Odaberite između:\n"
 "\t{choices}"
 
-#: click/types.py:369
+#: click/types.py:476
 #, no-python-brace-format
 msgid "{value!r} is not {choice}."
 msgid_plural "{value!r} is not one of {choices}."
@@ -3765,7 +3842,12 @@ msgstr[0] "{value!r} nije {choice}."
 msgstr[1] "{value!r} nije jedno od {choices}."
 msgstr[2] "{value!r} nije jedno od {choices}."
 
-#: click/types.py:460
+#: click/types.py:482
+#, python-brace-format
+msgid "Choice({choices})"
+msgstr "Choice({choices})"
+
+#: click/types.py:570
 #, no-python-brace-format
 msgid "{value!r} does not match the format {format}."
 msgid_plural "{value!r} does not match the formats {formats}."
@@ -3773,61 +3855,61 @@ msgstr[0] "{value!r} ne odgovara formatu {format}."
 msgstr[1] "{value!r} ne odgovara formatima {formats}."
 msgstr[2] "{value!r} ne odgovara formatima {formats}."
 
-#: click/types.py:482
+#: click/types.py:594
 msgid "{value!r} is not a valid {number_type}."
 msgstr "{value!r} nije valjan {number_type}."
 
-#: click/types.py:538
+#: click/types.py:679
 #, python-brace-format
 msgid "{value} is not in the range {range}."
 msgstr "{value} nije u rasponu {range}."
 
-#: click/types.py:719
+#: click/types.py:866
 msgid "{value!r} is not a valid boolean. Recognized values: {states}"
 msgstr ""
 "{value!r} nije valjana logička vrijednost. Prihvaćene vrijednosti: {states}"
 
-#: click/types.py:747
+#: click/types.py:892
 msgid "{value!r} is not a valid UUID."
 msgstr "{value!r} nije valjan UUID."
 
-#: click/types.py:937
+#: click/types.py:1116
 msgid "file"
 msgstr "datoteka"
 
-#: click/types.py:939
+#: click/types.py:1118
 msgid "directory"
 msgstr "direktorij"
 
-#: click/types.py:941
+#: click/types.py:1120
 msgid "path"
 msgstr "putanja"
 
-#: click/types.py:988
+#: click/types.py:1167
 msgid "{name} {filename!r} does not exist."
 msgstr "{name} {filename!r} ne postoji."
 
-#: click/types.py:997
+#: click/types.py:1176
 msgid "{name} {filename!r} is a file."
 msgstr "{name} {filename!r} je datoteka."
 
-#: click/types.py:1005
+#: click/types.py:1184
 msgid "{name} {filename!r} is a directory."
 msgstr "{name} {filename!r} je direktorij."
 
-#: click/types.py:1014
+#: click/types.py:1193
 msgid "{name} {filename!r} is not readable."
 msgstr "{name} {filename!r} nije čitljiva."
 
-#: click/types.py:1023
+#: click/types.py:1202
 msgid "{name} {filename!r} is not writable."
 msgstr "{name} {filename!r} nije zapisiva."
 
-#: click/types.py:1032
+#: click/types.py:1211
 msgid "{name} {filename!r} is not executable."
 msgstr "{name} {filename!r} nije izvršna."
 
-#: click/types.py:1099
+#: click/types.py:1283
 #, no-python-brace-format
 msgid "{len_type} values are required, but {len_value} was given."
 msgid_plural "{len_type} values are required, but {len_value} were given."
@@ -3835,12 +3917,35 @@ msgstr[0] "Potrebno je {len_type} vrijednosti, a zadana je {len_value}."
 msgstr[1] "Potrebno je {len_type} vrijednosti, a zadane su {len_value}."
 msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 
+#: click/utils.py:362 click/utils.py:389
+#, python-brace-format
+msgid "Unknown standard stream '{name}'"
+msgstr "Nepoznat standardni tok '{name}'"
+
+#, python-brace-format
+#~ msgid "{text} {deprecated_message}"
+#~ msgstr "{text} {deprecated_message}"
+
+#, python-brace-format
+#~ msgid "No such option: {name}"
+#~ msgstr "Nepostojeća opcija: {name}"
+
+#~ msgid "Error: The value you entered was invalid."
+#~ msgstr "Greška: Unesena vrijednost nije valjana."
+
+#, python-brace-format
+#~ msgid "Error: {e.message}"
+#~ msgstr "Greška: {e.message}"
+
 #~ msgid ""
 #~ "Find out which spatial-plan building area a parcel lies in.\n"
 #~ "\n"
-#~ "Matches the parcel boundary against the building areas (građevinska područja)\n"
-#~ "derived from the spatial plans in force: inside a settlement, in a detached\n"
-#~ "zone with its designation (for example T2 tourist settlement), or outside.\n"
+#~ "Matches the parcel boundary against the building areas (građevinska "
+#~ "područja)\n"
+#~ "derived from the spatial plans in force: inside a settlement, in a "
+#~ "detached\n"
+#~ "zone with its designation (for example T2 tourist settlement), or "
+#~ "outside.\n"
 #~ "The result is an interpretation of the plans, not the plans themselves.\n"
 #~ "\n"
 #~ "Examples:\n"
@@ -3851,9 +3956,12 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr ""
 #~ "Saznajte u kojem je građevinskom području prostornog plana čestica.\n"
 #~ "\n"
-#~ "Uspoređuje granicu čestice s građevinskim područjima izvedenima iz važećih\n"
-#~ "prostornih planova: unutar naselja, u izdvojenom području s njegovom namjenom\n"
-#~ "(na primjer T2 turističko naselje) ili izvan njih. Rezultat je interpretacija\n"
+#~ "Uspoređuje granicu čestice s građevinskim područjima izvedenima iz "
+#~ "važećih\n"
+#~ "prostornih planova: unutar naselja, u izdvojenom području s njegovom "
+#~ "namjenom\n"
+#~ "(na primjer T2 turističko naselje) ili izvan njih. Rezultat je "
+#~ "interpretacija\n"
 #~ "planova, a ne sami planovi.\n"
 #~ "\n"
 #~ "Primjeri:\n"
@@ -3884,14 +3992,17 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgid ""
 #~ "Get detailed land registry unit information.\n"
 #~ "\n"
-#~ "Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),\n"
-#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).\n"
+#~ "Retrieve complete information about a land registry unit "
+#~ "(zemljišnoknjižni uložak),\n"
+#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet "
+#~ "C).\n"
 #~ "\n"
 #~ "Examples:\n"
 #~ "  # Get by unit number and main book ID\n"
 #~ "  cadastral get-lr-unit --unit-number 769 --main-book 21277\n"
 #~ "\n"
-#~ "  # Get by unit number and main book name (resolved through the main-book search)\n"
+#~ "  # Get by unit number and main book name (resolved through the main-book "
+#~ "search)\n"
 #~ "  cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR\n"
 #~ "\n"
 #~ "  # Get from parcel (automatic lookup)\n"
@@ -3906,12 +4017,14 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  # Export to JSON\n"
 #~ "  cadastral get-lr-unit -u 769 -b 21277 --format json -o lr-unit.json\n"
 #~ "\n"
-#~ "⚠️  Demo project: before using any server other than the included mock, verify\n"
+#~ "⚠️  Demo project: before using any server other than the included mock, "
+#~ "verify\n"
 #~ "your rights to use it; use at your own risk"
 #~ msgstr ""
 #~ "Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.\n"
 #~ "\n"
-#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući vlasništvo\n"
+#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući "
+#~ "vlasništvo\n"
 #~ "(list B), čestice (list A) i terete (list C).\n"
 #~ "\n"
 #~ "Primjeri:\n"
@@ -3930,8 +4043,10 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  # Izvoz u JSON\n"
 #~ "  uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json\n"
 #~ "\n"
-#~ "⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim priloženog probnog\n"
-#~ "provjerite svoja prava na njegovu uporabu; koristite na vlastitu odgovornost"
+#~ "⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim "
+#~ "priloženog probnog\n"
+#~ "provjerite svoja prava na njegovu uporabu; koristite na vlastitu "
+#~ "odgovornost"
 
 #, python-brace-format
 #~ msgid "Processing {current}/{total}: LR unit {unit}"
@@ -3946,7 +4061,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "   cadastral batch-lr-unit --input lr_units.csv\n"
 #~ "\n"
 #~ "2. From batch-fetch output (reads unique LR unit refs):\n"
-#~ "   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o parcels.json\n"
+#~ "   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o "
+#~ "parcels.json\n"
 #~ "   cadastral batch-lr-unit --from-batch-output parcels.json\n"
 #~ "\n"
 #~ "CSV Format:\n"
@@ -3965,16 +4081,20 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  cadastral batch-lr-unit --input lr_units.csv\n"
 #~ "\n"
 #~ "  # From batch-fetch output (pipeline)\n"
-#~ "  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o parcels.json\n"
+#~ "  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o "
+#~ "parcels.json\n"
 #~ "  cadastral batch-lr-unit --from-batch-output parcels.json\n"
 #~ "\n"
 #~ "  # With ownership details in JSON format\n"
-#~ "  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json\n"
+#~ "  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o "
+#~ "results.json\n"
 #~ "\n"
-#~ "⚠️  Demo project: before using any server other than the included mock, verify\n"
+#~ "⚠️  Demo project: before using any server other than the included mock, "
+#~ "verify\n"
 #~ "your rights to use it; use at your own risk"
 #~ msgstr ""
-#~ "Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).\n"
+#~ "Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna "
+#~ "obrada).\n"
 #~ "\n"
 #~ "Podržana su dva načina unosa:\n"
 #~ "\n"
@@ -3982,7 +4102,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "   uz skupno-ulošci --ulaz lr_units.csv\n"
 #~ "\n"
 #~ "2. Izlaz naredbe batch-fetch (učitava jedinstvene reference ZK uložaka):\n"
-#~ "   uz skupno-čestice \"103/2,45\" -ko SAVAR --oblik json -dt parcels.json\n"
+#~ "   uz skupno-čestice \"103/2,45\" -ko SAVAR --oblik json -dt "
+#~ "parcels.json\n"
 #~ "   uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 #~ "\n"
 #~ "CSV format:\n"
@@ -4001,14 +4122,18 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  uz skupno-ulošci --ulaz lr_units.csv\n"
 #~ "\n"
 #~ "  # Iz izlaza naredbe batch-fetch (lanac naredbi)\n"
-#~ "  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --oblik json -dt parcels.json\n"
+#~ "  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --oblik json -dt "
+#~ "parcels.json\n"
 #~ "  uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 #~ "\n"
 #~ "  # S podacima o vlasništvu u JSON formatu\n"
-#~ "  uz skupno-ulošci -ul lr_units.json --vlasnici --oblik json -dt results.json\n"
+#~ "  uz skupno-ulošci -ul lr_units.json --vlasnici --oblik json -dt "
+#~ "results.json\n"
 #~ "\n"
-#~ "⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim priloženog probnog\n"
-#~ "provjerite svoja prava na njegovu uporabu; koristite na vlastitu odgovornost"
+#~ "⚠️  Demonstracijski projekt: prije uporabe bilo kojeg poslužitelja osim "
+#~ "priloženog probnog\n"
+#~ "provjerite svoja prava na njegovu uporabu; koristite na vlastitu "
+#~ "odgovornost"
 
 #~ msgid "Input file (CSV or JSON) with LR unit specifications"
 #~ msgstr "Ulazna datoteka (CSV ili JSON) s popisom ZK uložaka"
@@ -4020,7 +4145,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr "Uključi detaljne podatke o vlasništvu u izlaz"
 
 #~ msgid "Must provide either --input file or --from-batch-output file"
-#~ msgstr "Potrebno je navesti --input datoteku ili --from-batch-output datoteku"
+#~ msgstr ""
+#~ "Potrebno je navesti --input datoteku ili --from-batch-output datoteku"
 
 #, python-brace-format
 #~ msgid ""
@@ -4035,7 +4161,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 
 #, python-brace-format
 #~ msgid "📄 Reading LR unit refs from batch-fetch output: {file}"
-#~ msgstr "📄 Učitavam reference ZK uložaka iz izlaza naredbe batch-fetch: {file}"
+#~ msgstr ""
+#~ "📄 Učitavam reference ZK uložaka iz izlaza naredbe batch-fetch: {file}"
 
 #, python-brace-format
 #~ msgid "✓ Successfully processed all {total} LR unit(s)"
@@ -4089,7 +4216,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --detail full\n"
 #~ "\n"
 #~ "  # Batch with ownership details in JSON format\n"
-#~ "  cadastral batch-fetch --input parcels.json --show-owners --format json -o results.json"
+#~ "  cadastral batch-fetch --input parcels.json --show-owners --format json "
+#~ "-o results.json"
 #~ msgstr ""
 #~ "Dohvat podataka za više čestica odjednom (skupna obrada).\n"
 #~ "\n"
@@ -4138,7 +4266,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --detalji full\n"
 #~ "\n"
 #~ "  # Skupna obrada s podacima o vlasništvu u JSON formatu\n"
-#~ "  uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -dt results.json"
+#~ "  uz skupno-čestice --ulaz parcels.json --posjednici --oblik json -dt "
+#~ "results.json"
 
 #~ msgid "Input file (CSV or JSON) with parcel specifications"
 #~ msgstr "Ulazna datoteka (CSV ili JSON) s popisom čestica"
@@ -4213,14 +4342,17 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgid ""
 #~ "Get detailed land registry unit information.\n"
 #~ "\n"
-#~ "Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),\n"
-#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).\n"
+#~ "Retrieve complete information about a land registry unit "
+#~ "(zemljišnoknjižni uložak),\n"
+#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet "
+#~ "C).\n"
 #~ "\n"
 #~ "Examples:\n"
 #~ "  # Get by unit number and main book ID\n"
 #~ "  cadastral get-lr-unit --unit-number 769 --main-book 21277\n"
 #~ "\n"
-#~ "  # Get by unit number and main book name (resolved through the main-book search)\n"
+#~ "  # Get by unit number and main book name (resolved through the main-book "
+#~ "search)\n"
 #~ "  cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR\n"
 #~ "\n"
 #~ "  # Get from parcel (automatic lookup)\n"
@@ -4239,14 +4371,16 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr ""
 #~ "Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.\n"
 #~ "\n"
-#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući vlasništvo\n"
+#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući "
+#~ "vlasništvo\n"
 #~ "(list B), čestice (list A) i terete (list C).\n"
 #~ "\n"
 #~ "Primjeri:\n"
 #~ "  # Prema broju uloška i ID-u glavne knjige\n"
 #~ "  uz uložak --broj-uloška 769 --glavna-knjiga 21277\n"
 #~ "\n"
-#~ "  # Prema broju uloška i nazivu glavne knjige (pronalazi se pretragom glavnih knjiga)\n"
+#~ "  # Prema broju uloška i nazivu glavne knjige (pronalazi se pretragom "
+#~ "glavnih knjiga)\n"
 #~ "  uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR\n"
 #~ "\n"
 #~ "  # Prema čestici (automatsko pronalaženje)\n"
@@ -4261,7 +4395,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  # Izvoz u JSON\n"
 #~ "  uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json\n"
 #~ "\n"
-#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja"
+#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog "
+#~ "poslužitelja"
 
 #~ msgid ""
 #~ "Fetch information for multiple land registry units in batch mode.\n"
@@ -4272,7 +4407,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "   cadastral batch-lr-unit --input lr_units.csv\n"
 #~ "\n"
 #~ "2. From batch-fetch output (reads unique LR unit refs):\n"
-#~ "   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o parcels.json\n"
+#~ "   cadastral batch-fetch \"103/2,45\" -m SAVAR --format json -o "
+#~ "parcels.json\n"
 #~ "   cadastral batch-lr-unit --from-batch-output parcels.json\n"
 #~ "\n"
 #~ "CSV Format:\n"
@@ -4291,15 +4427,18 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  cadastral batch-lr-unit --input lr_units.csv\n"
 #~ "\n"
 #~ "  # From batch-fetch output (pipeline)\n"
-#~ "  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o parcels.json\n"
+#~ "  cadastral batch-fetch \"103/2,45,396/1\" -m SAVAR --format json -o "
+#~ "parcels.json\n"
 #~ "  cadastral batch-lr-unit --from-batch-output parcels.json\n"
 #~ "\n"
 #~ "  # With ownership details in JSON format\n"
-#~ "  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o results.json\n"
+#~ "  cadastral batch-lr-unit -i lr_units.json --show-owners --format json -o "
+#~ "results.json\n"
 #~ "\n"
 #~ "⚠️  DEMO/EDUCATIONAL USE ONLY - Mock server data only"
 #~ msgstr ""
-#~ "Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna obrada).\n"
+#~ "Dohvat podataka za više zemljišnoknjižnih uložaka odjednom (skupna "
+#~ "obrada).\n"
 #~ "\n"
 #~ "Podržana su dva načina unosa:\n"
 #~ "\n"
@@ -4307,7 +4446,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "   uz skupno-ulošci --ulaz lr_units.csv\n"
 #~ "\n"
 #~ "2. Izlaz naredbe batch-fetch (učitava jedinstvene reference ZK uložaka):\n"
-#~ "   uz skupno-čestice \"103/2,45\" -ko SAVAR --oblik json -dt parcels.json\n"
+#~ "   uz skupno-čestice \"103/2,45\" -ko SAVAR --oblik json -dt "
+#~ "parcels.json\n"
 #~ "   uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 #~ "\n"
 #~ "CSV format:\n"
@@ -4326,19 +4466,24 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  uz skupno-ulošci --ulaz lr_units.csv\n"
 #~ "\n"
 #~ "  # Iz izlaza naredbe batch-fetch (lanac naredbi)\n"
-#~ "  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --oblik json -dt parcels.json\n"
+#~ "  uz skupno-čestice \"103/2,45,396/1\" -ko SAVAR --oblik json -dt "
+#~ "parcels.json\n"
 #~ "  uz skupno-ulošci --iz-skupnog-ispisa parcels.json\n"
 #~ "\n"
 #~ "  # S podacima o vlasništvu u JSON formatu\n"
-#~ "  uz skupno-ulošci -ul lr_units.json --vlasnici --oblik json -dt results.json\n"
+#~ "  uz skupno-ulošci -ul lr_units.json --vlasnici --oblik json -dt "
+#~ "results.json\n"
 #~ "\n"
-#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja"
+#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog "
+#~ "poslužitelja"
 
 #~ msgid ""
 #~ "Get detailed land registry unit information.\n"
 #~ "\n"
-#~ "Retrieve complete information about a land registry unit (zemljišnoknjižni uložak),\n"
-#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet C).\n"
+#~ "Retrieve complete information about a land registry unit "
+#~ "(zemljišnoknjižni uložak),\n"
+#~ "including ownership (Sheet B), parcels (Sheet A), and encumbrances (Sheet "
+#~ "C).\n"
 #~ "\n"
 #~ "Examples:\n"
 #~ "  # Get by unit number and main book ID\n"
@@ -4360,7 +4505,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr ""
 #~ "Dohvat detaljnih podataka o zemljišnoknjižnom ulošku.\n"
 #~ "\n"
-#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući vlasništvo\n"
+#~ "Dohvaća potpune podatke o zemljišnoknjižnom ulošku, uključujući "
+#~ "vlasništvo\n"
 #~ "(list B), čestice (list A) i terete (list C).\n"
 #~ "\n"
 #~ "Primjeri:\n"
@@ -4379,7 +4525,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ "  # Izvoz u JSON\n"
 #~ "  uz uložak -bu 769 -gk 21277 --oblik json -dt lr-unit.json\n"
 #~ "\n"
-#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog poslužitelja"
+#~ "⚠️  SAMO ZA DEMONSTRACIJU I EDUKACIJU - isključivo podaci probnog "
+#~ "poslužitelja"
 
 #~ msgid ""
 #~ "Either --from-parcel or both --unit-number and --main-book are required"
@@ -4395,69 +4542,6 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr[0] "{count} vlasnik"
 #~ msgstr[1] "{count} vlasnika"
 #~ msgstr[2] "{count} vlasnika"
-
-#~ msgid "d"
-#~ msgstr "d"
-
-#, python-brace-format
-#~ msgid "Windows error: {error}"
-#~ msgstr "Windows greška: {error}"
-
-#~ msgid "deprecated"
-#~ msgstr "zastarjelo"
-
-#~ msgid "Positional arguments"
-#~ msgstr "Pozicijski argumenti"
-
-#, python-brace-format
-#~ msgid "Name '{name}' defined twice"
-#~ msgstr "Naziv '{name}' definiran je dvaput"
-
-#~ msgid "Boolean option {decl!r} cannot use the same flag for true/false."
-#~ msgstr ""
-#~ "Logička opcija {decl!r} ne može koristiti istu zastavicu za true/false."
-
-#~ msgid "Could not determine name for option with declarations {decls!r}"
-#~ msgstr "Nije moguće odrediti naziv opcije s deklaracijama {decls!r}"
-
-#, python-brace-format
-#~ msgid ""
-#~ "No options defined but a name was passed ({name}). Did you mean to declare "
-#~ "an argument instead? Did you mean to pass '--{name}'?"
-#~ msgstr ""
-#~ "Nijedna opcija nije definirana, ali je proslijeđen naziv ({name}). Jeste li "
-#~ "htjeli deklarirati argument? Jeste li htjeli proslijediti '--{name}'?"
-
-#, python-brace-format
-#~ msgid ""
-#~ "Arguments take exactly one parameter declaration, got {length}: {decls}."
-#~ msgstr ""
-#~ "Argumenti primaju točno jednu deklaraciju parametra, zadano {length}: "
-#~ "{decls}."
-
-#~ msgid "Do you want to continue?"
-#~ msgstr "Želite li nastaviti?"
-
-#~ msgid "Confirm the action without prompting."
-#~ msgstr "Potvrdi radnju bez pitanja."
-
-#~ msgid "No such option {name!r}."
-#~ msgstr "Nepostojeća opcija {name!r}."
-
-#, python-brace-format
-#~ msgid "Invalid start character for option ({option})"
-#~ msgstr "Neispravan početni znak opcije ({option})"
-
-#~ msgid "Unknown color {colour!r}"
-#~ msgstr "Nepoznata boja {colour!r}"
-
-#, python-brace-format
-#~ msgid "Choice({choices})"
-#~ msgstr "Choice({choices})"
-
-#, python-brace-format
-#~ msgid "Unknown standard stream '{name}'"
-#~ msgstr "Nepoznat standardni tok '{name}'"
 
 #, python-brace-format
 #~ msgid "API error: {error_type}"
@@ -4504,8 +4588,8 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 
 #~ msgid "  • Try partial search: cadastral search {num} -m {muni} --partial"
 #~ msgstr ""
-#~ "  • Pokušajte djelomičnu pretragu: cadastral search {num} -m {muni} "
-#~ "--partial"
+#~ "  • Pokušajte djelomičnu pretragu: cadastral search {num} -m {muni} --"
+#~ "partial"
 
 #~ msgid "  • Check parcel number format"
 #~ msgstr "  • Provjerite format broja čestice"
@@ -4629,8 +4713,10 @@ msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
 #~ msgstr "  ... i još {count}"
 
 # Cache management
-#~ msgid "💡 Download GIS data: cadastral download-gis <municipality> -o ./output"
-#~ msgstr "💡 Preuzmite GIS podatke: cadastral download-gis <općina> -o ./izlaz"
+#~ msgid ""
+#~ "💡 Download GIS data: cadastral download-gis <municipality> -o ./output"
+#~ msgstr ""
+#~ "💡 Preuzmite GIS podatke: cadastral download-gis <općina> -o ./izlaz"
 
 #~ msgid "Cache Location: {path}"
 #~ msgstr "Lokacija predmemorije: {path}"

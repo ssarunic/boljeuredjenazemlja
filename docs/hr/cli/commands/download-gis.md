@@ -76,7 +76,7 @@ Ako zaboravite `--mapa`, alat staje i kaže vam da opcija nedostaje:
 <!-- BEGIN GENERATED: output uz preuzmi-gis SAVAR -->
 ```text
 Uporaba: uz preuzmi-gis [OPCIJE] OPĆINA
-Za pomoć pokrenite 'uz preuzmi-gis --help'.
+Za pomoć pokrenite 'uz preuzmi-gis --pomoć'.
 
 Greška: Nedostaje opcija '--mapa' / '-mp'.
 ```

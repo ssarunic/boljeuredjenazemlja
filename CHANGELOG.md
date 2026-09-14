@@ -12,6 +12,10 @@ number and one tag.
 
 ### Fixed
 
+- CLI: the hint under a usage error ("Try 'cadastral ... --help' for help.")
+  names the help option in the language of the session: `--help` in English,
+  `--pomoć` in Croatian. click 8.5 started naming the longest spelling, which
+  put `--pomoć` into English sessions; every spelling stays accepted.
 - CLI documentation: the generated pages of 0.2.0 still said `cadastral 0.1.0`
   in their banner and the `get-zoning` example had been captured from the real
   building-areas service through a developer's `.env`, so the documentation

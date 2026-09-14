@@ -252,3 +252,23 @@ def test_localized_choice_value_is_canonical_inside() -> None:
 def test_localize_cmdline(lang: str, line: str, expected: str) -> None:
     set_language(lang)
     assert localized.localize_cmdline(line, cli) == expected
+
+
+@pytest.mark.skipif(
+    tuple(int(part) for part in click.__version__.split(".")[:2]) < (8, 5),
+    reason="click before 8.5 always names the first help option in the hint",
+)
+@pytest.mark.parametrize(
+    ("lang", "named", "not_named"), [("en", "--help", "--pomoć"), ("hr", "--pomoć", "--help")]
+)
+def test_usage_error_hint_names_the_active_help_spelling(
+    lang: str, named: str, not_named: str
+) -> None:
+    # download-gis without its required --output is a usage error; the hint
+    # must name the help option in the language of the session, although
+    # every spelling stays accepted (see test_aliases_resolve_in_every_language).
+    set_language(lang)
+    result = CliRunner().invoke(cli, ["download-gis", "334979"])
+    assert result.exit_code == 2, result.output
+    hint = next(line for line in result.output.splitlines() if named in line or not_named in line)
+    assert named in hint and not_named not in hint

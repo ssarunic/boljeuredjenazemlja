@@ -40,7 +40,7 @@ dev = [
     # releases; the translation gate needs the exact version the catalog was
     # extracted from. Runtime keeps the range above (newer click just shows
     # its few new messages untranslated).
-    "click==8.3.0",
+    "click==8.5.0",
 ]
 
 [project.scripts]
