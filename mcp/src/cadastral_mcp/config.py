@@ -4,22 +4,25 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
+from cadastral_api import CadastralAPIClient
+from cadastral_api.gis import GISCache
+
 
 @dataclass
 class MCPConfig:
     """Configuration for the Cadastral MCP server."""
 
-    # API Configuration
-    api_base_url: str = os.getenv("CADASTRAL_API_BASE_URL", "http://localhost:8000")
-    api_timeout: float = float(os.getenv("CADASTRAL_API_TIMEOUT", "10.0"))
-    api_rate_limit: float = float(os.getenv("CADASTRAL_API_RATE_LIMIT", "0.375"))
+    # API Configuration (the SDK reads the CADASTRAL_API_* variables and
+    # owns the defaults; importing it loads the .env file first)
+    api_base_url: str = CadastralAPIClient.BASE_URL
+    api_timeout: float = CadastralAPIClient.DEFAULT_TIMEOUT
+    api_rate_limit: float = CadastralAPIClient.DEFAULT_RATE_LIMIT
 
     # Language Configuration
     language: str = os.getenv("CADASTRAL_LANG", "hr")
 
     # Cache Configuration
-    cache_dir: Path = Path(os.getenv("CADASTRAL_CACHE_DIR",
-                                     str(Path.home() / ".cadastral_api_cache")))
+    cache_dir: Path = Path(os.getenv("CADASTRAL_CACHE_DIR", str(GISCache.DEFAULT_CACHE_DIR)))
 
     # MCP Server Configuration
     server_name: str = "cadastral-mcp-server"

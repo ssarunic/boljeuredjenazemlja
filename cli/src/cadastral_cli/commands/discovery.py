@@ -72,6 +72,33 @@ def list_offices(ctx: click.Context, output_format: str, output: str | None) -> 
         raise SystemExit(1) from e
 
 
+def municipality_table_rows(municipalities: Sequence[Any]) -> list[dict[str, Any]]:
+    """Municipality search results as rows of the terminal table."""
+    return [
+        {
+            _("Code"): m.municipality_reg_num,
+            _("Name"): m.municipality_name,
+            _("Office"): m.institution_id,
+            _("Department"): m.department_id or _("N/A"),
+        }
+        for m in municipalities
+    ]
+
+
+def municipality_export_rows(municipalities: Sequence[Any]) -> list[dict[str, Any]]:
+    """Municipality search results as JSON/CSV records."""
+    return [
+        {
+            "municipality_code": m.municipality_reg_num,
+            "municipality_name": m.municipality_name,
+            "office_id": m.institution_id,
+            "department_id": m.department_id,
+            "display_name": m.display_value,
+        }
+        for m in municipalities
+    ]
+
+
 _LIST_MUNICIPALITIES_HELP = command_help(_("""List municipalities with optional filtering.
 
 Examples:
@@ -139,17 +166,6 @@ def list_municipalities(
                 ), style="green")
                 return
 
-            # Format output
-            data = [
-                {
-                    _("Code"): m.municipality_reg_num,
-                    _("Name"): m.municipality_name,
-                    _("Office"): m.institution_id,
-                    _("Department"): m.department_id or _("N/A"),
-                }
-                for m in municipalities
-            ]
-
             if output_format == "table":
                 filter_desc = ""
                 if filter_parts:
@@ -158,19 +174,13 @@ def list_municipalities(
                     count=len(municipalities),
                     filter_desc=filter_desc
                 ), style="green")
-                print_output(data, output_format="table")
+                print_output(municipality_table_rows(municipalities), output_format="table")
             else:
-                export_data = [
-                    {
-                        "municipality_code": m.municipality_reg_num,
-                        "municipality_name": m.municipality_name,
-                        "office_id": m.institution_id,
-                        "department_id": m.department_id,
-                        "display_name": m.display_value,
-                    }
-                    for m in municipalities
-                ]
-                print_output(export_data, output_format=output_format, file=output)
+                print_output(
+                    municipality_export_rows(municipalities),
+                    output_format=output_format,
+                    file=output,
+                )
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=describe_error(e)))
@@ -372,33 +382,19 @@ def info(ctx: click.Context) -> None:
 
             # Check cache size and cached municipalities
             if cache_dir.exists():
-                total_size = 0
-                cached_munis = []
-
-                for item in cache_dir.iterdir():
-                    if item.is_dir() and item.name.startswith("ko-"):
-                        # Calculate directory size
-                        dir_size = sum(f.stat().st_size for f in item.rglob('*') if f.is_file())
-                        total_size += dir_size
-
-                        # Extract municipality code
-                        muni_code = item.name.replace("ko-", "")
-                        size_kb = dir_size / 1024
-                        cached_munis.append(f"  • {muni_code} ({size_kb:.1f} KB)")
-
-                if cached_munis:
+                cached = client.gis_cache.cached_municipalities()
+                if cached:
+                    total_size = sum(entry.size_bytes for entry in cached)
                     console.print(_("Cache Size: {size} MB").format(
                         size=f"{total_size / 1024 / 1024:.1f}"
                     ))
-                    console.print(_("Cached Municipalities: {count}").format(
-                        count=len(cached_munis)
-                    ))
-                    for muni in cached_munis[:10]:  # Show first 10
-                        console.print(muni)
-                    if len(cached_munis) > 10:
-                        console.print(_("  ... and {more} more").format(
-                            more=len(cached_munis) - 10
-                        ))
+                    console.print(_("Cached Municipalities: {count}").format(count=len(cached)))
+                    for entry in cached[:10]:  # Show first 10
+                        console.print(
+                            f"  • {entry.municipality_reg_num} ({entry.size_bytes / 1024:.1f} KB)"
+                        )
+                    if len(cached) > 10:
+                        console.print(_("  ... and {more} more").format(more=len(cached) - 10))
                 else:
                     console.print(_("Cache is empty"))
             else:

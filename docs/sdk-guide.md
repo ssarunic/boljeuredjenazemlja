@@ -214,12 +214,6 @@ with CadastralAPIClient() as client:
         feature = geometry.to_geojson()      # GeoJSON Feature, properties carry map_url
         print(geometry.map_url())            # interactive map centred on the parcel
         print(geometry.map_url(zoom=20))     # closer, for very small parcels
-
-    # Download URL for the whole municipality, for QGIS and similar tools
-    url = client.get_municipality_gis_download_url("334979")
-
-    # Interactive map link for a parcel
-    map_url = client.get_map_url(parcel_id)
 ```
 
 Coordinates are in EPSG:3765 (HTRS96 / Croatia TM). The GML parser is available on

@@ -58,7 +58,7 @@ def _tools(zoning: ParcelZoning | None, error: Exception | None = None) -> Cadas
         client.get_parcel_zoning.return_value = zoning
     tools = CadastralTools(client)
 
-    async def resolve(name_or_code: str) -> str:
+    def resolve(name_or_code: str) -> str:
         return "334979"
 
     tools._resolve_municipality = resolve  # type: ignore[method-assign]

@@ -3,14 +3,14 @@
 import asyncio
 import json
 import logging
-import math
-import unicodedata
 from typing import Any
 
 from cadastral_api import CadastralAPIClient, GMLParser
-from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.models.entities import ParcelInfo
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
-from cadastral_api.utils import is_building_parcel_number, normalize_parcel_number
+from cadastral_api.planning import validate_min_overlap
+from cadastral_api.utils import fold_text, is_building_parcel_number, normalize_parcel_number
 from pydantic import BaseModel, ConfigDict, model_validator
 
 logger = logging.getLogger(__name__)
@@ -163,7 +163,7 @@ class CadastralTools:
             logger.info(f"Searching for parcel {parcel_number} in {municipality}")
 
             # Step 1: Resolve municipality if needed
-            muni_code = await self._resolve_municipality(municipality)
+            muni_code = self._resolve_municipality(municipality)
 
             # Step 2: Find parcel. The server matches on a substring, so prefer
             # the exact number (in the API spelling: "35/1.ZGR" -> "*35/1").
@@ -307,29 +307,19 @@ class CadastralTools:
         return pool[0], kind, pool[1:]
 
     @staticmethod
-    def _lr_unit_hint(parcel: Any) -> dict[str, Any]:
+    def _lr_unit_hint(parcel: ParcelInfo) -> dict[str, Any]:
         """Build a routing hint to the land-registry owners for a parcel.
 
         The direct ``lr_unit`` may be null while the unit is still reachable via
         parcel links; surface whichever is available so the caller can chain to
         get_lr_unit for the true owners.
         """
-        ref = None
-        derived_from_links = False
-        lr_unit = getattr(parcel, "lr_unit", None)
-        if lr_unit is not None:
-            ref = {
-                "lr_unit_number": lr_unit.lr_unit_number,
-                "main_book_id": lr_unit.main_book_id,
-            }
-        else:
-            links = getattr(parcel, "lr_units_from_parcel_links", None) or []
-            if links:
-                ref = {
-                    "lr_unit_number": links[0].lr_unit_number,
-                    "main_book_id": links[0].main_book_id,
-                }
-                derived_from_links = True
+        unit = parcel.resolved_lr_unit()
+        ref = (
+            {"lr_unit_number": unit.lr_unit_number, "main_book_id": unit.main_book_id}
+            if unit is not None
+            else None
+        )
         return {
             "message": (
                 "Cadastre possessors omitted. For registered owners "
@@ -338,7 +328,7 @@ class CadastralTools:
             ),
             "lr_unit_ref": ref,
             "in_land_registry": ref is not None,
-            "lr_unit_derived_from_links": derived_from_links,
+            "lr_unit_derived_from_links": parcel.lr_unit_from_links,
         }
 
     async def get_parcel(
@@ -510,24 +500,20 @@ class CadastralTools:
             entry["exact_match"] = False
             entry["requested_parcel_number"] = search_result["requested_parcel_number"]
             entry["match_note"] = search_result["match_note"]
-        # Best-effort map link from the cached municipality GIS data
-        map_url = self._map_url_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
+        # Best-effort map link from the cached municipality GIS data (the
+        # search already looked it up when the parcel was given by number)
+        if search_result is not None:
+            map_url = search_result.get("map_url")
+        else:
+            map_url = self._map_url_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
         if map_url:
             entry["map_url"] = map_url
         return entry
 
-    #: Letters that Unicode decomposition leaves alone: đ is a letter of its
-    #: own, not a d with a mark, yet "andelic" must find "Anđelić".
-    _FOLD_LETTERS = str.maketrans({"đ": "d", "Đ": "D", "ł": "l", "Ł": "L", "ß": "ss"})
-
-    @classmethod
-    def _fold(cls, text: str) -> str:
+    @staticmethod
+    def _fold(text: str) -> str:
         """Text for matching: lower case, no diacritics, single spaces."""
-        stripped = "".join(
-            ch for ch in unicodedata.normalize("NFKD", text.translate(cls._FOLD_LETTERS))
-            if not unicodedata.combining(ch)
-        )
-        return " ".join(stripped.casefold().split())
+        return fold_text(text)
 
     @classmethod
     def _unit_key(cls, unit: str) -> str:
@@ -797,7 +783,7 @@ class CadastralTools:
             )
 
             # Resolve municipality
-            muni_code = await self._resolve_municipality(municipality)
+            muni_code = self._resolve_municipality(municipality)
 
             # Fetch geometry using SDK (None when the parcel is not in the GML)
             geometry = self.client.get_parcel_geometry(parcel_number, muni_code)
@@ -860,13 +846,10 @@ class CadastralTools:
             disclaimer that must accompany any use), ``summary`` and a
             ``generation_note``.
         """
-        if not isinstance(min_overlap, (int, float)) or not math.isfinite(min_overlap):
-            raise ValueError("min_overlap must be a finite number between 0 and 1")
-        if not 0.0 <= min_overlap <= 1.0:
-            raise ValueError(f"min_overlap must be between 0 and 1, got {min_overlap}")
+        min_overlap = validate_min_overlap(min_overlap)
         try:
             logger.info(f"Fetching zoning for {parcel_number} in {municipality}")
-            muni_code = await self._resolve_municipality(municipality)
+            muni_code = self._resolve_municipality(municipality)
             zoning = await asyncio.to_thread(
                 self.client.get_parcel_zoning, parcel_number, muni_code, min_overlap
             )
@@ -1513,7 +1496,7 @@ class CadastralTools:
         try:
             if ref.by_parcel:
                 assert ref.parcel_number is not None and ref.municipality is not None
-                muni_code = self._resolve_municipality_sync(ref.municipality)
+                muni_code = self._resolve_municipality(ref.municipality)
                 return self.client.get_lr_unit_from_parcel(
                     ref.parcel_number, muni_code, historical_overview=historical_overview
                 )
@@ -1588,7 +1571,7 @@ class CadastralTools:
             {"municipality_code", "download_url", "already_cached", "zip_path",
             "zip_size_bytes", "gml_path", "parcel_count", "source"}.
         """
-        muni_code = await self._resolve_municipality(municipality)
+        muni_code = self._resolve_municipality(municipality)
         cache = self.client.gis_cache
         already_cached = cache.is_cached(muni_code) and not force
         try:
@@ -1673,7 +1656,7 @@ class CadastralTools:
         """
         try:
             logger.info(f"Finding possession sheet {sheet_number} in {municipality}")
-            muni_code = await self._resolve_municipality(municipality)
+            muni_code = self._resolve_municipality(municipality)
             sheets = self.client.find_possession_sheet(sheet_number, muni_code)
             return {
                 "possession_sheets": [search_record(sheet) for sheet in sheets],
@@ -1701,32 +1684,19 @@ class CadastralTools:
             return None
         return geometry.map_url() if geometry is not None else None
 
-    async def _resolve_municipality(self, name_or_code: str) -> str:
-        """Resolve a municipality name to its registration code (see the sync twin)."""
-        return self._resolve_municipality_sync(name_or_code)
-
-    def _resolve_municipality_sync(self, name_or_code: str) -> str:
-        """
-        Internal helper to resolve municipality name to code.
-
-        Args:
-            name_or_code: Municipality name or code
-
-        Returns:
-            Municipality registration code
+    def _resolve_municipality(self, name_or_code: str) -> str:
+        """Municipality name or code -> registration code (see the SDK resolver).
 
         Raises:
-            ValueError: If municipality cannot be resolved
+            ValueError: the municipality is unknown or the name is ambiguous
         """
-        # If it looks like a code (all digits), return as-is
-        if name_or_code.isdigit():
-            return name_or_code
-
-        # Find municipality by name
-        municipalities = self.client.find_municipality(name_or_code)
-
-        if not municipalities:
-            raise ValueError(f"Municipality '{name_or_code}' not found")
-
-        # Return first match registration number (used for parcel searches)
-        return municipalities[0].municipality_reg_num
+        try:
+            return self.client.resolve_municipality_reg_num(name_or_code)
+        except CadastralAPIError as e:
+            if e.error_type != ErrorType.MUNICIPALITY_NOT_FOUND:
+                raise
+            if e.details.get("reason") == "municipality_ambiguous":
+                raise ValueError(
+                    f"Municipality '{name_or_code}' is ambiguous: {e.details.get('candidates')}"
+                ) from e
+            raise ValueError(f"Municipality '{name_or_code}' not found") from e

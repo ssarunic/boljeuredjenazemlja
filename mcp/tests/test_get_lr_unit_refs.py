@@ -52,8 +52,10 @@ class _FakeClient:
         self.calls.append(("parcel", parcel_number, municipality))
         return self.unit
 
-    def find_municipality(self, search_term):
-        raise AssertionError("codes must not be resolved through the API")
+    def resolve_municipality_reg_num(self, name_or_code):
+        if not str(name_or_code).isdigit():
+            raise AssertionError("codes must not be resolved through the API")
+        return str(name_or_code)
 
 
 def _run(coro):

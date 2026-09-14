@@ -9,18 +9,21 @@ from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
 from cadastral_api.utils import display_parcel_number
 from rich.console import Console
-from rich.table import Table
 
 from cadastral_cli.formatters import (
     command_help,
     describe_error,
-    error_type_value_label,
     print_error,
     print_output,
-    print_success,
 )
 from cadastral_cli.input_parsers import LRUnitInput, parse_lr_unit_file
-from cadastral_cli.list_processing import ListSummary, lr_unit_row, process_lr_unit_list
+from cadastral_cli.list_processing import (
+    ListWording,
+    lr_unit_row,
+    print_list_errors,
+    print_list_footer,
+    process_lr_unit_list,
+)
 from cadastral_cli.lr_unit_output import print_lr_unit_full
 
 from .search import _resolve_municipality
@@ -329,7 +332,7 @@ def _get_lr_unit_list(
                 printed += 1
             if summary.failed and printed:
                 console.print("\n---\n")
-            _print_list_errors(summary)
+            print_list_errors(summary, _describe_input, _list_wording())
         elif output_format == "json":
             rows = []
             for result in summary.results:
@@ -361,7 +364,7 @@ def _get_lr_unit_list(
                 rows.append(row)
             print_output(rows, output_format="csv", file=output)
 
-        _print_list_footer(summary)
+        print_list_footer(summary, _list_wording())
         if summary.failed > 0:
             raise SystemExit(1)
 
@@ -379,53 +382,26 @@ def _get_lr_unit_list(
         raise SystemExit(1) from e
 
 
-def _print_list_errors(summary: ListSummary[LRUnitInput, LandRegistryUnitDetailed]) -> None:
-    if summary.failed == 0:
-        return
-    header = _("ERRORS")
-    console.print(header, style="bold red")
-    console.print("=" * len(header), style="bold red")
-    table = Table(show_header=True, box=None, padding=(0, 2))
-    table.add_column("#", justify="right", style="dim")
-    table.add_column(_("LR Unit"), style="bold")
-    table.add_column(_("Error Type"))
-    table.add_column(_("Error Message"))
-    for index, result in enumerate(summary.results, 1):
-        if result.status == "error":
-            table.add_row(
-                str(index),
-                f"{result.input.lr_unit_number} ({_('Main Book')} {result.input.main_book_id})",
-                error_type_value_label(result.error_type),
-                result.error_message or _("No error message"),
-            )
-    console.print(table)
-
-
-def _print_list_footer(summary: ListSummary[LRUnitInput, LandRegistryUnitDetailed]) -> None:
-    console.print()
-    if summary.failed == 0:
-        print_success(
-            ngettext(
-                "Successfully processed {total} LR unit",
-                "Successfully processed all {total} LR units",
-                summary.total,
-            ).format(total=summary.total)
-        )
-        return
-    console.print(
-        _("⚠️  Processed {successful}/{total} LR units ({rate}% success rate)").format(
-            successful=summary.successful, total=summary.total, rate=f"{summary.success_rate:.1f}"
+def _list_wording() -> ListWording:
+    """Words of the list summary, translated in the active language."""
+    return ListWording(
+        item_label=_("LR Unit"),
+        processed=lambda n: ngettext(
+            "Successfully processed {total} LR unit",
+            "Successfully processed all {total} LR units",
+            n,
         ),
-        style="yellow",
-    )
-    console.print(
-        ngettext(
+        processed_partly=_("⚠️  Processed {successful}/{total} LR units ({rate}% success rate)"),
+        failed=lambda n: ngettext(
             "   {count} LR unit failed - see output for details",
             "   {count} LR units failed - see output for details",
-            summary.failed,
-        ).format(count=summary.failed),
-        style="yellow",
+            n,
+        ),
     )
+
+
+def _describe_input(item: LRUnitInput) -> str:
+    return f"{item.lr_unit_number} ({_('Main Book')} {item.main_book_id})"
 
 
 # ---------------------------------------------------------------------------

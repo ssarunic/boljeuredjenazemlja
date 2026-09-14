@@ -60,8 +60,7 @@ system. A mapping program will know what to do with them.
                           s=DOF5_2023_2024,DKP_CESTICE,DKP_KATASTARSKE_OPCINE,zupanija,ulica,kucni_br
                           oj
 
-   POLYGON((380596.77 4880892.83, 380636.77 4880892.83, 380636.77 4880922.83, 380596.77 4880922.83,
-   380596.77 4880892.83))
+   POLYGON((380596.77 4880892.83, 380636.77 4880892.83, 380636.77 4880922.83, 380596.77 4880922.83, 380596.77 4880892.83))
    ```
    <!-- END GENERATED: output -->
 

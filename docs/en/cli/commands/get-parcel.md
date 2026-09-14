@@ -217,6 +217,11 @@ If the municipality is not recognised, the tool says so and stops:
 <!-- BEGIN GENERATED: output cadastral get-parcel 103/2 -m NOWHERE -->
 ```text
 ✗ Error: Municipality 'NOWHERE' not found
+
+Suggestions:
+  • Search for municipalities: cadastral search-municipality NOWHERE
+  • List all municipalities: cadastral list-municipalities
+  • Use municipality code directly: --municipality 334979
 ```
 <!-- END GENERATED: output -->
 

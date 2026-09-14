@@ -9,6 +9,8 @@ from rich.table import Table
 from cadastral_cli.formatters import command_help, print_error, print_success
 from cadastral_cli.localized import LocalizedGroup
 
+from .search import _resolve_municipality
+
 console = Console()
 
 
@@ -36,7 +38,6 @@ Example:
 def cache_list(ctx: click.Context) -> None:
     """List cached municipalities."""
     try:
-        from datetime import datetime
 
         with CadastralAPIClient() as client:
             cache_dir = client.gis_cache.cache_dir
@@ -46,31 +47,20 @@ def cache_list(ctx: click.Context) -> None:
                 return
 
             # Find cached municipalities
-            cached = []
-            total_size = 0
-
-            for item in cache_dir.iterdir():
-                if item.is_dir() and item.name.startswith("ko-"):
-                    # Extract municipality code
-                    muni_code = item.name.replace("ko-", "")
-
-                    # Calculate directory size
-                    dir_size = sum(f.stat().st_size for f in item.rglob('*') if f.is_file())
-                    total_size += dir_size
-
-                    # Get last modified time
-                    zip_file = item / f"ko-{muni_code}.zip"
-                    if zip_file.exists():
-                        mtime = datetime.fromtimestamp(zip_file.stat().st_mtime)
-                        last_modified = mtime.strftime("%Y-%m-%d %H:%M")
-                    else:
-                        last_modified = _("N/A")
-
-                    cached.append({
-                        "municipality": muni_code,
-                        "size": dir_size,
-                        "last_modified": last_modified,
-                    })
+            entries = client.gis_cache.cached_municipalities()
+            total_size = sum(entry.size_bytes for entry in entries)
+            cached = [
+                {
+                    "municipality": entry.municipality_reg_num,
+                    "size": entry.size_bytes,
+                    "last_modified": (
+                        entry.downloaded_at.strftime("%Y-%m-%d %H:%M")
+                        if entry.downloaded_at
+                        else _("N/A")
+                    ),
+                }
+                for entry in entries
+            ]
 
             if not cached:
                 console.print(_("Cache is empty"), style="yellow")
@@ -149,9 +139,7 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
                     return
 
                 # Calculate size before clearing
-                total_size = sum(
-                    f.stat().st_size for f in cache_dir.rglob('*') if f.is_file()
-                )
+                total_size = client.gis_cache.size_bytes()
 
                 with console.status(_("Clearing all cache...")):
                     client.gis_cache.clear_all()
@@ -162,8 +150,6 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
 
             else:
                 # Clear specific municipality
-                from .search import _resolve_municipality
-
                 municipality_code = _resolve_municipality(client, municipality)
 
                 # Check if cached
@@ -174,8 +160,7 @@ def cache_clear(ctx: click.Context, municipality: str | None, clear_all: bool, f
                     return
 
                 # Get size
-                muni_dir = client.gis_cache.get_municipality_dir(municipality_code)
-                dir_size = sum(f.stat().st_size for f in muni_dir.rglob('*') if f.is_file())
+                dir_size = client.gis_cache.size_bytes(municipality_code)
 
                 status_text = _("Clearing cache for municipality {municipality_code}...").format(
                     municipality_code=municipality_code
@@ -222,7 +207,6 @@ def cache_info(ctx: click.Context) -> None:
             total_size = 0
             zip_count = 0
             gml_count = 0
-            muni_count = 0
 
             for item in cache_dir.rglob('*'):
                 if item.is_file():
@@ -234,9 +218,7 @@ def cache_info(ctx: click.Context) -> None:
                     elif item.suffix == '.gml':
                         gml_count += 1
 
-            for item in cache_dir.iterdir():
-                if item.is_dir() and item.name.startswith("ko-"):
-                    muni_count += 1
+            muni_count = len(client.gis_cache.cached_municipalities())
 
             console.print(_("Status: Active"), style="green")
             console.print(_("Total Size: {size} MB").format(

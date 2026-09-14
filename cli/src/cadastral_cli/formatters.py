@@ -93,11 +93,6 @@ def print_success(message: str) -> None:
     console.print(f"✓ {message}", style="green")
 
 
-def print_info(message: str) -> None:
-    """Print info message."""
-    console.print(message, style="blue")
-
-
 def create_rich_table(title: str, columns: list[str]) -> Table:
     """Create a rich table with styling."""
     table = Table(title=title, show_header=True, header_style="bold magenta")

@@ -14,6 +14,8 @@ from cadastral_cli.formatters import (
     print_output,
 )
 
+from .discovery import municipality_export_rows, municipality_table_rows
+
 console = Console()
 
 
@@ -211,17 +213,6 @@ def search_municipality(
                 )
                 return
 
-            # Format output
-            data = [
-                {
-                    _("Code"): m.municipality_reg_num,
-                    _("Name"): m.municipality_name,
-                    _("Office"): m.institution_id,
-                    _("Department"): m.department_id or _("N/A"),
-                }
-                for m in results
-            ]
-
             if output_format == "table":
                 filter_desc = []
                 if search_term:
@@ -238,20 +229,11 @@ def search_municipality(
                     ),
                     style="green"
                 )
-                print_output(data, output_format="table")
+                print_output(municipality_table_rows(results), output_format="table")
             else:
-                # For JSON/CSV export
-                export_data = [
-                    {
-                        "municipality_code": m.municipality_reg_num,
-                        "municipality_name": m.municipality_name,
-                        "office_id": m.institution_id,
-                        "department_id": m.department_id,
-                        "display_name": m.display_value,
-                    }
-                    for m in results
-                ]
-                print_output(export_data, output_format=output_format, file=output)
+                print_output(
+                    municipality_export_rows(results), output_format=output_format, file=output
+                )
 
     except CadastralAPIError as e:
         if e.error_type == ErrorType.MUNICIPALITY_NOT_FOUND:
@@ -360,19 +342,26 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
         Municipality registration number
 
     Raises:
-        SystemExit: If municipality not found
+        SystemExit: If municipality not found or the name is ambiguous
     """
-    # If it's already a code (all digits), return it
-    if municipality.isdigit():
-        return municipality
-
-    # Find by name
     try:
-        results = client.find_municipality(municipality)
-        if not results:
-            print_error(_("Municipality '{municipality}' not found").format(
+        return client.resolve_municipality_reg_num(municipality)
+    except CadastralAPIError as e:
+        if e.error_type != ErrorType.MUNICIPALITY_NOT_FOUND:
+            print_error(_("Failed to resolve municipality: {error}").format(
+                error=describe_error(e)
+            ))
+        elif e.details.get("reason") == "municipality_ambiguous":
+            print_error(_("Multiple municipalities found for '{municipality}'").format(
                 municipality=municipality
             ))
+            console.print(f"\n{_('Please specify using municipality code')}:", style="yellow")
+            for candidate in str(e.details.get("candidates", "")).split(", ")[:5]:
+                code, _sep, name = candidate.partition(" ")
+                console.print(f"  • {code} - {name}")
+        else:
+            search = e.details.get("search_term", municipality)
+            print_error(_("Municipality '{municipality}' not found").format(municipality=search))
             console.print(f"\n{_('Suggestions')}:", style="yellow")
             console.print(
                 f"  • {_('Search for municipalities')}: "
@@ -380,25 +369,4 @@ def _resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
             )
             console.print(f"  • {_('List all municipalities')}: cadastral list-municipalities")
             console.print(f"  • {_('Use municipality code directly')}: --municipality 334979")
-            raise SystemExit(1)
-
-        if len(results) > 1:
-            print_error(_("Multiple municipalities found for '{municipality}'").format(
-                municipality=municipality
-            ))
-            console.print(f"\n{_('Please specify using municipality code')}:", style="yellow")
-            for r in results[:5]:
-                console.print(f"  • {r.municipality_reg_num} - {r.municipality_name}")
-            raise SystemExit(1)
-
-        return results[0].municipality_reg_num
-
-    except CadastralAPIError as e:
-        if e.error_type == ErrorType.MUNICIPALITY_NOT_FOUND:
-            search = e.details.get("search_term", municipality)
-            print_error(_("Municipality '{municipality}' not found").format(municipality=search))
-        else:
-            print_error(_("Failed to resolve municipality: {error}").format(
-                error=describe_error(e)
-            ))
         raise SystemExit(1) from e

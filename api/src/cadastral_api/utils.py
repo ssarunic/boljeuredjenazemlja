@@ -1,6 +1,8 @@
 """Shared helpers for parsing and normalizing cadastral/land-registry data."""
 
+import html
 import re
+import unicodedata
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
@@ -153,13 +155,36 @@ _RIGHT_TYPE_PATTERNS: tuple[tuple[str, str], ...] = (
 )
 
 
-def strip_html(text: str | None) -> str:
-    """Drop HTML tags, unescape ``&amp;``-style entities and collapse whitespace."""
+_HTML_BREAK = re.compile(r"<br\s*/?>", re.IGNORECASE)
+
+
+def strip_html(text: str | None, *, keep_breaks: bool = False) -> str:
+    """Drop HTML tags, unescape ``&amp;``-style entities and collapse whitespace.
+
+    With ``keep_breaks`` every ``<br>`` becomes a line break and the
+    whitespace is collapsed within each line (for a table cell).
+    """
     if not text:
         return ""
-    import html
-
+    if keep_breaks:
+        lines = (strip_html(line) for line in _HTML_BREAK.split(text))
+        return "\n".join(lines).strip()
     return " ".join(html.unescape(_HTML_TAG.sub(" ", text)).split())
+
+
+#: Letters that Unicode decomposition leaves alone: đ is a letter of its
+#: own, not a d with a mark, yet "andelic" must find "Anđelić".
+_FOLD_LETTERS = str.maketrans({"đ": "d", "Đ": "D", "ł": "l", "Ł": "L", "ß": "ss"})
+
+
+def fold_text(text: str) -> str:
+    """Text for matching: lower case, no diacritics, single spaces."""
+    stripped = "".join(
+        ch
+        for ch in unicodedata.normalize("NFKD", text.translate(_FOLD_LETTERS))
+        if not unicodedata.combining(ch)
+    )
+    return " ".join(stripped.casefold().split())
 
 
 def parse_right_type(text: str | None) -> str | None:

@@ -58,6 +58,38 @@ def point_in_polygon(x: float, y: float, polygon: Polygon) -> bool:
     return not any(point_in_ring(x, y, hole) for hole in polygon[1:])
 
 
+Edge = tuple[float, float, float, float]
+
+
+def _edges_near(ring: Ring, bounds: tuple[float, float, float, float]) -> list[Edge]:
+    """The edges of ``ring`` that a ray cast from a point inside ``bounds`` can cross.
+
+    A ray runs from the point towards +x, so an edge entirely below, above
+    or to the left of the box never counts; dropping such edges keeps the
+    crossing parity of every point inside the box unchanged. A settlement
+    polygon of thousands of vertices shrinks to the few edges near the parcel.
+    """
+    min_x, min_y, _max_x, max_y = bounds
+    edges: list[Edge] = []
+    n = len(ring)
+    for i in range(n):
+        xi, yi = ring[i]
+        xj, yj = ring[i - 1]
+        if max(yi, yj) <= min_y or min(yi, yj) > max_y or max(xi, xj) < min_x:
+            continue
+        edges.append((xi, yi, xj, yj))
+    return edges
+
+
+def _point_in_edges(x: float, y: float, edges: list[Edge]) -> bool:
+    """Ray-casting parity over a pre-filtered edge list (see ``_edges_near``)."""
+    inside = False
+    for xi, yi, xj, yj in edges:
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:
+            inside = not inside
+    return inside
+
+
 def _orientation(p: Point, q: Point, r: Point) -> int:
     value = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
     if abs(value) < 1e-12:
@@ -158,8 +190,18 @@ def overlap_fraction(
     points = samples if samples is not None else sample_points(parcel, grid)
     if not points:
         return 0.0
+    # Every sample lies inside the parcel's bounding box, so each zone ring is
+    # reduced once to the edges near that box before the samples are tested.
+    bounds = ring_bounds(points)
+    polygons = [
+        [_edges_near(ring, bounds) for ring in polygon] for polygon in zone if polygon
+    ]
     inside = 0
     for x, y in points:
-        if any(point_in_polygon(x, y, polygon) for polygon in zone):
-            inside += 1
+        for rings in polygons:
+            if _point_in_edges(x, y, rings[0]) and not any(
+                _point_in_edges(x, y, hole) for hole in rings[1:]
+            ):
+                inside += 1
+                break
     return inside / len(points)

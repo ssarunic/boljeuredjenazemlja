@@ -34,7 +34,7 @@ def _tools(geometry: ParcelGeometry | None) -> CadastralTools:
     client.get_parcel_geometry.return_value = geometry
     tools = CadastralTools(client)
 
-    async def resolve(name_or_code: str) -> str:
+    def resolve(name_or_code: str) -> str:
         return "334979"
 
     tools._resolve_municipality = resolve  # type: ignore[method-assign]
@@ -102,7 +102,7 @@ def _search_tools(geometry_or_error: object) -> CadastralTools:
         client.get_parcel_geometry.return_value = geometry_or_error
     tools = CadastralTools(client)
 
-    async def resolve(name_or_code: str) -> str:
+    def resolve(name_or_code: str) -> str:
         return "334979"
 
     tools._resolve_municipality = resolve  # type: ignore[method-assign]

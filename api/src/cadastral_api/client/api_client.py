@@ -140,6 +140,7 @@ class CadastralAPIClient:
             )
         self.unknown_fields: UnknownFieldsPolicy = policy  # type: ignore[assignment]
         self._last_request_time: float = 0.0
+        self._gml_parsers: dict[Path, tuple[int, GMLParser]] = {}
 
         self.headers = {
             "Accept": "application/json, text/plain, */*",
@@ -192,25 +193,30 @@ class CadastralAPIClient:
 
         self._last_request_time = time.time()
 
-    def _make_request(
+    def _request(
         self,
         endpoint: str,
         params: dict[str, str] | None = None,
-        retry_count: int = 0,
         *,
+        json_body: dict | None = None,
         read_timeout: float | None = None,
+        retry_count: int = 0,
     ) -> dict:
         """
-        Make HTTP request with rate limiting and retry logic.
+        Make an HTTP request with rate limiting and retry logic.
+
+        A GET request, or a POST request when ``json_body`` is given (the few
+        endpoints that take a JSON body, e.g. ``/lr/file-status``).
 
         Args:
             endpoint: API endpoint path
             params: Query parameters
-            retry_count: Current retry attempt number
+            json_body: JSON request body; makes the request a POST
             read_timeout: Wait this long for the response body (the time to
                 the first byte included) instead of ``timeout``; connecting
                 keeps ``timeout``. For the endpoints whose response the
                 server is slow to assemble (``long_timeout``).
+            retry_count: Current retry attempt number
 
         Returns:
             JSON response as dictionary
@@ -223,16 +229,26 @@ class CadastralAPIClient:
         if read_timeout is not None:
             timeout = httpx.Timeout(self.timeout, read=read_timeout)
 
+        def retry() -> dict:
+            return self._request(
+                endpoint,
+                params,
+                json_body=json_body,
+                read_timeout=read_timeout,
+                retry_count=retry_count + 1,
+            )
+
         try:
-            response = self.client.get(endpoint, params=params, timeout=timeout)
+            if json_body is not None:
+                response = self.client.post(endpoint, json=json_body, timeout=timeout)
+            else:
+                response = self.client.get(endpoint, params=params, timeout=timeout)
 
             # Handle rate limiting
             if response.status_code == 429:
                 if retry_count < self.MAX_RETRIES:
                     time.sleep(2 ** retry_count)  # Exponential backoff
-                    return self._make_request(
-                        endpoint, params, retry_count + 1, read_timeout=read_timeout
-                    )
+                    return retry()
                 raise CadastralAPIError(
                     error_type=ErrorType.RATE_LIMIT,
                     details={"retry_count": retry_count, "max_retries": self.MAX_RETRIES},
@@ -242,9 +258,7 @@ class CadastralAPIClient:
             if 500 <= response.status_code < 600:
                 if retry_count < self.MAX_RETRIES:
                     time.sleep(1.5 ** retry_count)
-                    return self._make_request(
-                        endpoint, params, retry_count + 1, read_timeout=read_timeout
-                    )
+                    return retry()
                 raise CadastralAPIError(
                     error_type=ErrorType.SERVER_ERROR,
                     details={
@@ -266,81 +280,6 @@ class CadastralAPIClient:
                     "timeout_seconds": read_timeout if read_timeout is not None else self.timeout,
                     "endpoint": endpoint,
                 },
-                cause=e,
-            ) from e
-        except httpx.ConnectError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.CONNECTION,
-                details={"endpoint": endpoint},
-                cause=e,
-            ) from e
-        except httpx.HTTPError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.CONNECTION,
-                details={"endpoint": endpoint},
-                cause=e,
-            ) from e
-        except ValueError as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.INVALID_RESPONSE,
-                details={"endpoint": endpoint},
-                cause=e,
-            ) from e
-
-    def _make_post_request(
-        self, endpoint: str, json_body: dict, retry_count: int = 0
-    ) -> dict:
-        """Make a POST request with rate limiting and retry logic.
-
-        Mirrors :meth:`_make_request` (GET) for the few endpoints that require a
-        JSON body, e.g. ``/lr/file-status``.
-
-        Args:
-            endpoint: API endpoint path
-            json_body: JSON request body
-            retry_count: Current retry attempt number
-
-        Returns:
-            JSON response as a dictionary
-
-        Raises:
-            CadastralAPIError: Any API error occurred
-        """
-        self._wait_for_rate_limit()
-
-        try:
-            response = self.client.post(endpoint, json=json_body)
-
-            if response.status_code == 429:
-                if retry_count < self.MAX_RETRIES:
-                    time.sleep(2 ** retry_count)
-                    return self._make_post_request(endpoint, json_body, retry_count + 1)
-                raise CadastralAPIError(
-                    error_type=ErrorType.RATE_LIMIT,
-                    details={"retry_count": retry_count, "max_retries": self.MAX_RETRIES},
-                )
-
-            if 500 <= response.status_code < 600:
-                if retry_count < self.MAX_RETRIES:
-                    time.sleep(1.5 ** retry_count)
-                    return self._make_post_request(endpoint, json_body, retry_count + 1)
-                raise CadastralAPIError(
-                    error_type=ErrorType.SERVER_ERROR,
-                    details={
-                        "status_code": response.status_code,
-                        "response_text": response.text,
-                        "retry_count": retry_count,
-                    },
-                )
-
-            response.raise_for_status()
-
-            return response.json()
-
-        except httpx.TimeoutException as e:
-            raise CadastralAPIError(
-                error_type=ErrorType.TIMEOUT,
-                details={"timeout_seconds": self.timeout, "endpoint": endpoint},
                 cause=e,
             ) from e
         except httpx.ConnectError as e:
@@ -433,7 +372,7 @@ class CadastralAPIClient:
         """
         endpoint = "/search-cad-parcels/offices"
 
-        response_data = self._make_request(endpoint)
+        response_data = self._request(endpoint)
 
         if not response_data:
             raise CadastralAPIError(
@@ -491,7 +430,7 @@ class CadastralAPIClient:
         if department_id:
             params["departmentId"] = str(department_id)
 
-        response_data = self._make_request(endpoint, params if params else None)
+        response_data = self._request(endpoint, params if params else None)
 
         if not response_data:
             raise CadastralAPIError(
@@ -534,7 +473,7 @@ class CadastralAPIClient:
             "municipalityRegNum": municipality_reg_num,
         }
 
-        response_data = self._make_request(endpoint, params)
+        response_data = self._request(endpoint, params)
 
         if not response_data:
             raise CadastralAPIError(
@@ -567,7 +506,7 @@ class CadastralAPIClient:
         """
         endpoint = "/search-cad-parcels/possession-sheet-numbers"
         params = {"search": str(sheet_number), "municipalityRegNum": municipality_reg_num}
-        response_data = self._make_request(endpoint, params)
+        response_data = self._request(endpoint, params)
         return self._parse_list(PossessionSheetSearchResult, response_data or [], endpoint)
 
     def find_main_book(
@@ -598,7 +537,7 @@ class CadastralAPIClient:
             "officeId": "" if office_id is None else str(office_id),
             "institutionName": institution_name or "",
         }
-        response_data = self._make_request(endpoint, params)
+        response_data = self._request(endpoint, params)
         return self._parse_list(MainBookSearchResult, response_data or [], endpoint)
 
     def find_book_of_dc(
@@ -629,8 +568,53 @@ class CadastralAPIClient:
             "officeId": "" if office_id is None else str(office_id),
             "institutionName": institution_name or "",
         }
-        response_data = self._make_request(endpoint, params)
+        response_data = self._request(endpoint, params)
         return self._parse_list(BookOfDCSearchResult, response_data or [], endpoint)
+
+    def resolve_municipality_reg_num(self, name_or_code: str | int) -> str:
+        """Municipality name or registration number -> registration number.
+
+        A string of digits is taken as the number as it is. A name is looked
+        up with :meth:`find_municipality`; the municipality whose name matches
+        exactly (case-insensitively) is chosen, otherwise the only match.
+
+        Raises:
+            CadastralAPIError: ``MUNICIPALITY_NOT_FOUND`` with reason
+                ``municipality_not_found`` when nothing matches, or
+                ``municipality_ambiguous`` (with the candidates) when several
+                municipalities match and none of them exactly.
+        """
+        text = str(name_or_code).strip()
+        if text.isdigit():
+            return text
+        try:
+            results = self.find_municipality(text)
+        except CadastralAPIError as e:
+            if e.error_type != ErrorType.MUNICIPALITY_NOT_FOUND:
+                raise
+            # find_municipality reports an empty answer without a reason;
+            # callers of the resolver get the same contract for both outcomes.
+            raise CadastralAPIError(
+                error_type=ErrorType.MUNICIPALITY_NOT_FOUND,
+                details={"search_term": text, "reason": "municipality_not_found"},
+                cause=e.cause,
+            ) from e
+        wanted = text.casefold()
+        exact = [m for m in results if m.municipality_name.strip().casefold() == wanted]
+        if len(exact) == 1:
+            return exact[0].municipality_reg_num
+        if len(results) == 1:
+            return results[0].municipality_reg_num
+        raise CadastralAPIError(
+            error_type=ErrorType.MUNICIPALITY_NOT_FOUND,
+            details={
+                "search_term": text,
+                "reason": "municipality_ambiguous",
+                "candidates": ", ".join(
+                    f"{m.municipality_reg_num} {m.municipality_name}" for m in (exact or results)
+                ),
+            },
+        )
 
     def resolve_main_book_id(self, main_book_name: str) -> int:
         """
@@ -684,7 +668,7 @@ class CadastralAPIClient:
 
         # A parcel under a large condominium is thousands of possessors that
         # the server assembles on every request: wait for it.
-        response_data = self._make_request(endpoint, params, read_timeout=self.long_timeout)
+        response_data = self._request(endpoint, params, read_timeout=self.long_timeout)
 
         if not response_data:
             raise CadastralAPIError(
@@ -746,56 +730,6 @@ class CadastralAPIClient:
         # Return first result
         return self.get_parcel_info(search_results[0].parcel_id)
 
-    def get_map_url(self, parcel_id: str | int) -> str:
-        """
-        Generate interactive map URL for a parcel.
-
-        Args:
-            parcel_id: Parcel ID
-
-        Returns:
-            URL to view parcel on interactive map
-        """
-        return f"https://oss.uredjenazemlja.hr/map?cad_parcel_id={parcel_id}"
-
-    def get_municipality_gis_download_url(self, municipality_reg_num: str) -> str:
-        """
-        Generate GIS data download URL for a municipality (ATOM feed).
-
-        Returns URL for downloading a ZIP file containing parcel boundaries and other
-        GIS information in GML format for the specified municipality.
-
-        Args:
-            municipality_reg_num: Municipality registration number (e.g., "334979" for SAVAR)
-
-        Returns:
-            URL to download municipality GIS data ZIP file
-
-        Example:
-            url = client.get_municipality_gis_download_url("334979")
-            # Returns: "https://oss.uredjenazemlja.hr/oss/public/atom/ko-334979.zip"
-
-            # Direct download works without authentication
-            import httpx
-            response = httpx.get(url)
-            with open("savar.zip", "wb") as f:
-                f.write(response.content)
-
-        ZIP Contents:
-            - katastarske_cestice.gml - Cadastral parcels (~1.4 MB for SAVAR)
-            - katastarske_opcine.gml - Cadastral municipalities
-            - nacini_uporabe_zemljista.gml - Land use types
-            - nacini_uporabe_zgrada.gml - Building use types
-
-        Note:
-            - No authentication required - direct download works
-            - INSPIRE-compliant spatial datasets
-            - File sizes range from ~200KB to several MB per municipality
-            - Suitable for automated bulk downloads
-            - The 'ko-' prefix stands for "katastarska općina" (cadastral municipality)
-        """
-        return f"https://oss.uredjenazemlja.hr/oss/public/atom/ko-{municipality_reg_num}.zip"
-
     def get_parcel_geometry(
         self, parcel_number: str, municipality_reg_num: str
     ) -> ParcelGeometry | None:
@@ -834,10 +768,20 @@ class CadastralAPIClient:
         """
         # Download and cache GIS data
         gml_path = self.gis_cache.get_parcel_data(municipality_reg_num, auto_download=True)
+        return self._gml_parser(gml_path).get_parcel_by_number(parcel_number)
 
-        # Parse GML and find parcel
-        parser = GMLParser(gml_path)
-        return parser.get_parcel_by_number(parcel_number)
+    def _gml_parser(self, gml_path: Path) -> GMLParser:
+        """The parser of a municipality's GML file, parsed once per client.
+
+        A list of parcels in one municipality then costs one parse of the
+        file instead of one per parcel; a file downloaded again (new mtime)
+        gets a new parser.
+        """
+        mtime = gml_path.stat().st_mtime_ns
+        cached = self._gml_parsers.get(gml_path)
+        if cached is None or cached[0] != mtime:
+            cached = self._gml_parsers[gml_path] = (mtime, GMLParser(gml_path))
+        return cached[1]
 
     def get_parcel_zoning(
         self,
@@ -966,7 +910,7 @@ class CadastralAPIClient:
 
         # A unit of thousands of shares takes the server 20 s or more to
         # assemble (unpaged, uncached): wait for it.
-        response_data = self._make_request(endpoint, params, read_timeout=self.long_timeout)
+        response_data = self._request(endpoint, params, read_timeout=self.long_timeout)
 
         if not response_data:
             raise CadastralAPIError(
@@ -978,17 +922,9 @@ class CadastralAPIClient:
                 },
             )
 
-        # API returns a list, typically with one element
+        # API returns a list, typically with one element (an empty list was
+        # rejected above as an empty response)
         if isinstance(response_data, list):
-            if not response_data:
-                raise CadastralAPIError(
-                    error_type=ErrorType.LR_UNIT_NOT_FOUND,
-                    details={
-                        "lr_unit_number": lr_unit_number,
-                        "main_book_id": main_book_id,
-                        "reason": "empty_list_response",
-                    },
-                )
             response_data = response_data[0]
 
         return self._parse(
@@ -1041,18 +977,7 @@ class CadastralAPIClient:
         """
         parcel_number = normalize_parcel_number(parcel_number)
         municipality = str(municipality)
-
-        # If municipality is a name, find it
-        if not municipality.isdigit():
-            municipalities = self.find_municipality(str(municipality))
-            if not municipalities:
-                raise CadastralAPIError(
-                    error_type=ErrorType.MUNICIPALITY_NOT_FOUND,
-                    details={"municipality": municipality},
-                )
-            municipality_reg_num = municipalities[0].municipality_reg_num
-        else:
-            municipality_reg_num = str(municipality)
+        municipality_reg_num = self.resolve_municipality_reg_num(municipality)
 
         # Get parcel info to extract LR unit details
         parcel_info = self.get_parcel_by_number(parcel_number, municipality_reg_num)
@@ -1156,9 +1081,9 @@ class CadastralAPIClient:
             return None
         code, order_number, year = parts
 
-        response_data = self._make_post_request(
+        response_data = self._request(
             "/lr/file-status",
-            {
+            json_body={
                 "lrFileCode": code,
                 "lrFileOrderNumber": order_number,
                 "lrFileYear": year,

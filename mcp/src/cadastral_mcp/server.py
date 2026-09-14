@@ -1,6 +1,7 @@
 """Main MCP server implementation using the MCP Python SDK (MCPServer)."""
 
 import functools
+import json
 import logging
 import sys
 from collections.abc import Callable
@@ -101,7 +102,6 @@ def create_mcp_server() -> MCPServer:
         logger.info(f"Resource request: cadastral://parcel/{parcel_id}")
 
         result = await resources_handler.get_parcel_resource(parcel_id)
-        import json
         return json.dumps(result, indent=2)
 
     @mcp.resource("cadastral://municipality/{code}")
@@ -111,7 +111,6 @@ def create_mcp_server() -> MCPServer:
         logger.info(f"Resource request: cadastral://municipality/{code}")
 
         result = await resources_handler.get_municipality_resource(code)
-        import json
         return json.dumps(result, indent=2)
 
     @mcp.resource("cadastral://office/{office_code}")
@@ -121,7 +120,6 @@ def create_mcp_server() -> MCPServer:
         logger.info(f"Resource request: cadastral://office/{office_code}")
 
         result = await resources_handler.get_office_resource(office_code)
-        import json
         return json.dumps(result, indent=2)
 
     # ========================================================================

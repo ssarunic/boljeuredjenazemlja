@@ -1,10 +1,14 @@
 """GIS commands for CLI - geometry and spatial data."""
 
 import json
+import shutil
+import zipfile
+from pathlib import Path
 
 import click
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
+from cadastral_api.gis import GMLParser
 from cadastral_api.i18n import _
 from rich.console import Console
 from rich.table import Table
@@ -77,37 +81,18 @@ def get_geometry(
 
             # Format and output geometry
             if output_format == "wkt":
-                output_data = geometry.to_wkt()
-                if output:
-                    with open(output, "w", encoding="utf-8") as f:
-                        f.write(output_data)
-                    print_success(_("WKT saved to: {output}").format(output=output))
-                else:
-                    console.print(output_data)
-
+                text, saved = geometry.to_wkt(), _("WKT saved to: {output}")
             elif output_format == "geojson":
                 # GeoJSON is a standard format: keys are never localized
-                output_data = json.dumps(geometry.to_geojson(), indent=2, ensure_ascii=False)
-                if output:
-                    with open(output, "w", encoding="utf-8") as f:
-                        f.write(output_data)
-                    print_success(_("GeoJSON saved to: {output}").format(output=output))
-                else:
-                    print(output_data)
-
+                text = json.dumps(geometry.to_geojson(), indent=2, ensure_ascii=False)
+                saved = _("GeoJSON saved to: {output}")
             elif output_format == "csv":
-                csv_output = ",".join(key_display(k) for k in ("x", "y", "vertex")) + "\n"
-                for i, coord in enumerate(geometry.coordinates, 1):
-                    csv_output += f"{coord.x},{coord.y},{i}\n"
-
-                if output:
-                    with open(output, "w", encoding="utf-8") as f:
-                        f.write(csv_output)
-                    print_success(_("CSV saved to: {output}").format(output=output))
-                else:
-                    print(csv_output)
-
-            elif output_format == "json":
+                header = ",".join(key_display(k) for k in ("x", "y", "vertex"))
+                rows = [
+                    f"{coord.x},{coord.y},{i}" for i, coord in enumerate(geometry.coordinates, 1)
+                ]
+                text, saved = "\n".join([header, *rows]) + "\n", _("CSV saved to: {output}")
+            else:
                 json_data = {
                     "parcel_number": geometry.broj_cestice,
                     "municipality": geometry.maticni_broj_ko,
@@ -123,13 +108,15 @@ def get_geometry(
                     "coordinates": [[c.x, c.y] for c in geometry.coordinates],
                     "map_url": geometry.map_url(),
                 }
-                output_data = json.dumps(localize_keys(json_data), indent=2, ensure_ascii=False)
-                if output:
-                    with open(output, "w", encoding="utf-8") as f:
-                        f.write(output_data)
-                    print_success(_("JSON saved to: {output}").format(output=output))
-                else:
-                    print(output_data)
+                text = json.dumps(localize_keys(json_data), indent=2, ensure_ascii=False)
+                saved = _("JSON saved to: {output}")
+
+            if output:
+                with open(output, "w", encoding="utf-8") as f:
+                    f.write(text)
+                print_success(saved.format(output=output))
+            else:
+                print(text)
 
     except CadastralAPIError as e:
         print_error(_("API error: {error}").format(error=describe_error(e)))
@@ -159,10 +146,6 @@ def download_gis(
 ) -> None:
     """Download complete GIS data for a municipality."""
     try:
-        import shutil
-        import zipfile
-        from pathlib import Path
-
         with CadastralAPIClient() as client:
             # Resolve municipality
             municipality_code = _resolve_municipality(client, municipality)
@@ -209,7 +192,6 @@ def download_gis(
 
                 # Try to count parcels
                 try:
-                    from cadastral_api.gis import GMLParser
                     parcel_file = output_path / "katastarske_cestice.gml"
                     if parcel_file.exists():
                         parser = GMLParser(parcel_file)

@@ -22,7 +22,6 @@ run the translation scripts, translate the new entry in ``po/hr.po``.
 from __future__ import annotations
 
 import re
-import unicodedata
 from collections.abc import Iterable
 from functools import lru_cache
 from typing import Any
@@ -30,6 +29,7 @@ from typing import Any
 import click
 from cadastral_api import i18n
 from cadastral_api.i18n import SUPPORTED_LANGUAGES, pgettext
+from cadastral_api.utils import fold_text as fold
 
 COMMAND_CONTEXT = "command"
 OPTION_CONTEXT = "option"
@@ -192,13 +192,6 @@ def active_spelling(context: str, msgid: str) -> str:
     """The spelling in the active language (the canonical one if untranslated)."""
     spelling = _lookup(i18n.TRANSLATIONS, context, msgid)
     return spelling or msgid
-
-
-def fold(text: str) -> str:
-    """Case-insensitive, diacritic-insensitive form used for matching."""
-    text = text.replace("đ", "d").replace("Đ", "D")
-    decomposed = unicodedata.normalize("NFKD", text)
-    return "".join(ch for ch in decomposed if not unicodedata.combining(ch)).lower()
 
 
 # ---------------------------------------------------------------------------
