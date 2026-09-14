@@ -46,6 +46,7 @@ _main_books: list[dict[str, Any]] = []  # six-key search records (E5)
 _books_of_dc: list[dict[str, Any]] = []  # six-key search records (E6)
 # municipality_code -> {possessionSheetId: possessionSheetNumber}, derived from the parcels
 _possession_sheets: dict[str, dict[int, str]] = {}
+_zones: list[dict[str, Any]] = []  # spatial-plan building areas (GeoJSON features)
 
 
 def _six_key_record(
@@ -77,7 +78,7 @@ def load_json(filepath: Path) -> Any:
 async def load_data():
     """Load all static data into memory on startup."""
     global _offices, _municipalities, _parcels, _lr_units, _file_status
-    global _main_books, _books_of_dc, _possession_sheets
+    global _main_books, _books_of_dc, _possession_sheets, _zones
 
     # Load offices
     offices_file = DATA_DIR / "offices.json"
@@ -135,6 +136,12 @@ async def load_data():
         _books_of_dc = load_json(books_of_dc_file)
         print(f"✓ Loaded {len(_books_of_dc)} books of deposited contracts")
 
+    # Spatial-plan building areas served by the WFS imitation
+    zones_file = DATA_DIR / "planning" / "zones.json"
+    if zones_file.exists():
+        _zones = load_json(zones_file)["features"]
+        print(f"✓ Loaded {len(_zones)} spatial-plan zones")
+
     print(
         f"\n🚀 Mock server ready with {len(_parcels)} municipalities, "
         f"{len(_lr_units)} LR units, {len(_file_status)} file statuses"
@@ -159,6 +166,7 @@ async def root():
             "lr_unit": "/lr/lr-unit",
             "file_status": "/lr/file-status",
             "gis_download": "/atom/ko-{code}.zip",
+            "planning_wfs": "/planning/wfs",
         },
         "data_loaded": {
             "offices": len(_offices),
@@ -501,6 +509,211 @@ async def download_gis_data(municipality_code: str):
         status_code=404,
         content={"error": "GIS data not available", "municipality": municipality_code},
     )
+
+
+# ============================================================================
+# Spatial-plan building areas: an imitation of the Ministry's GeoServer WFS
+# (specs/spatial-planning-api-specification.md, section 3). Supports the
+# subset the SDK uses: GetCapabilities, GetFeature with typeNames, cql_filter
+# (INTERSECTS(geom, WKT) and attr='value' clauses joined by AND), bbox,
+# count/startIndex, propertyName, resultType=hits, GeoJSON output.
+# ============================================================================
+
+_WFS_TYPES = (
+    "GradjPodrucje_MGIPU_Public:Gradj_podrucje_naselje",
+    "GradjPodrucje_MGIPU_Public:Gradj_podrucje_izvan_naselja",
+)
+_INTERSECTS_RE = re.compile(
+    r"INTERSECTS\s*\(\s*geom\s*,\s*(?P<wkt>POLYGON\s*\(\(.*?\)\))\s*\)", re.I | re.S
+)
+_CLAUSE_RE = re.compile(r"^\s*(?P<attr>[a-z_0-9]+)\s*=\s*'(?P<value>(?:[^']|'')*)'\s*$", re.I)
+
+
+def _wfs_exception(code: str, locator: str, text: str) -> Any:
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" version="2.0.0">'
+        f'<ows:Exception exceptionCode="{code}" locator="{locator}">'
+        f"<ows:ExceptionText>{text}</ows:ExceptionText></ows:Exception></ows:ExceptionReport>"
+    )
+    from fastapi.responses import Response
+
+    return Response(content=body, status_code=400, media_type="application/xml")
+
+
+def _parse_wkt_polygon(wkt: str) -> list[tuple[float, float]]:
+    inner = wkt[wkt.index("((") + 2 : wkt.index("))")]
+    first_ring = inner.split("),(")[0]  # outer ring only (holes ignored)
+    points = []
+    for pair in first_ring.split(","):
+        x, y = pair.split()
+        points.append((float(x), float(y)))
+    return points
+
+
+def _point_in_ring(x: float, y: float, ring: list[tuple[float, float]]) -> bool:
+    inside = False
+    j = len(ring) - 1
+    for i in range(len(ring)):
+        xi, yi = ring[i]
+        xj, yj = ring[j]
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:
+            inside = not inside
+        j = i
+    return inside
+
+
+def _segments_cross(p1, p2, p3, p4) -> bool:
+    def orient(a, b, c) -> float:
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+    d1, d2 = orient(p3, p4, p1), orient(p3, p4, p2)
+    d3, d4 = orient(p1, p2, p3), orient(p1, p2, p4)
+    return ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0))
+
+
+def _rings_intersect(a: list[tuple[float, float]], b: list[tuple[float, float]]) -> bool:
+    if any(_point_in_ring(x, y, b) for x, y in a) or any(_point_in_ring(x, y, a) for x, y in b):
+        return True
+    for i in range(len(a)):
+        for j in range(len(b)):
+            if _segments_cross(a[i], a[(i + 1) % len(a)], b[j], b[(j + 1) % len(b)]):
+                return True
+    return False
+
+
+def _feature_rings(feature: dict[str, Any]) -> list[list[tuple[float, float]]]:
+    geometry = feature["geometry"]
+    coords = geometry["coordinates"]
+    polygons = [coords] if geometry["type"] == "Polygon" else coords
+    return [[(float(x), float(y)) for x, y in polygon[0]] for polygon in polygons]
+
+
+def _feature_bbox(feature: dict[str, Any]) -> tuple[float, float, float, float]:
+    points = [p for ring in _feature_rings(feature) for p in ring]
+    return (
+        min(p[0] for p in points),
+        min(p[1] for p in points),
+        max(p[0] for p in points),
+        max(p[1] for p in points),
+    )
+
+
+@app.get("/planning/wfs")
+async def planning_wfs(
+    request: Optional[str] = Query(None),
+    type_names: Optional[str] = Query(None, alias="typeNames"),
+    type_name_11: Optional[str] = Query(None, alias="typeName"),
+    cql_filter: Optional[str] = Query(None),
+    bbox: Optional[str] = Query(None),
+    count: Optional[int] = Query(None),
+    start_index: int = Query(0, alias="startIndex"),
+    result_type: Optional[str] = Query(None, alias="resultType"),
+    property_name: Optional[str] = Query(None, alias="propertyName"),
+):
+    """Imitation of the building-areas WFS (GetCapabilities and GetFeature)."""
+    from fastapi.responses import Response
+
+    op = (request or "").lower()
+    if op == "getcapabilities":
+        types = "".join(
+            f"<FeatureType><Name>{t}</Name><Title>{t.split(':')[1]}</Title>"
+            "<DefaultCRS>urn:ogc:def:crs:EPSG::3765</DefaultCRS></FeatureType>"
+            for t in _WFS_TYPES
+        )
+        body = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<wfs:WFS_Capabilities xmlns:wfs="http://www.opengis.net/wfs/2.0" '
+            'xmlns:ows="http://www.opengis.net/ows/1.1" version="2.0.0">'
+            "<ows:ServiceIdentification><ows:Title>Mock building-areas WFS</ows:Title>"
+            "<ows:Fees>NONE</ows:Fees><ows:AccessConstraints>NONE</ows:AccessConstraints>"
+            f"</ows:ServiceIdentification><FeatureTypeList>{types}</FeatureTypeList>"
+            "</wfs:WFS_Capabilities>"
+        )
+        return Response(content=body, media_type="application/xml")
+    if op != "getfeature":
+        return _wfs_exception("OperationNotSupported", "request", f"Unsupported request {request}")
+
+    type_name = type_names or type_name_11 or ""
+    if type_name not in _WFS_TYPES:
+        return _wfs_exception(
+            "InvalidParameterValue", "typeName", f"Feature type {type_name} unknown"
+        )
+    kind = type_name.split(":", 1)[1]
+    selected = [f for f in _zones if f.get("typeName") == type_name]
+
+    if cql_filter:
+        text = cql_filter
+        match = _INTERSECTS_RE.search(text)
+        if match:
+            ring = _parse_wkt_polygon(match.group("wkt"))
+            selected = [
+                f for f in selected if any(_rings_intersect(ring, r) for r in _feature_rings(f))
+            ]
+            text = text[: match.start()] + text[match.end() :]
+        for clause in re.split(r"\bAND\b", text, flags=re.I):
+            if not clause.strip():
+                continue
+            parsed = _CLAUSE_RE.match(clause)
+            if not parsed:
+                return _wfs_exception(
+                    "NoApplicableCode", "cql_filter", f"Could not parse: {clause.strip()}"
+                )
+            attr, value = parsed.group("attr"), parsed.group("value").replace("''", "'")
+            known = selected[0]["properties"] if selected else {attr: None}
+            if attr != "geom" and attr not in known:
+                return _wfs_exception(
+                    "InvalidParameterValue", "cql_filter", f"Attribute {attr} not found on {kind}"
+                )
+            selected = [f for f in selected if str(f["properties"].get(attr)) == value]
+
+    if bbox:
+        parts = bbox.split(",")
+        x0, y0, x1, y1 = (float(v) for v in parts[:4])
+
+        def overlaps(f: dict[str, Any]) -> bool:
+            fx0, fy0, fx1, fy1 = _feature_bbox(f)
+            return not (fx1 < x0 or x1 < fx0 or fy1 < y0 or y1 < fy0)
+
+        selected = [f for f in selected if overlaps(f)]
+
+    matched = len(selected)
+    if (result_type or "").lower() == "hits":
+        body = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<wfs:FeatureCollection xmlns:wfs="http://www.opengis.net/wfs/2.0" '
+            f'numberMatched="{matched}" numberReturned="0" timeStamp="2026-01-01T00:00:00Z"/>'
+        )
+        return Response(content=body, media_type="application/xml")
+
+    page = selected[start_index:]
+    if count is not None:
+        page = page[:count]
+
+    wanted = [p.strip() for p in property_name.split(",")] if property_name else None
+    features = []
+    for feature in page:
+        props = feature["properties"]
+        if wanted is not None:
+            props = {k: v for k, v in props.items() if k in wanted}
+        features.append(
+            {
+                "type": "Feature",
+                "id": feature["id"],
+                "geometry": feature["geometry"] if wanted is None or "geom" in wanted else None,
+                "geometry_name": "geom",
+                "properties": props,
+            }
+        )
+    return {
+        "type": "FeatureCollection",
+        "totalFeatures": matched,
+        "numberMatched": matched,
+        "numberReturned": len(features),
+        "timeStamp": "2026-01-01T00:00:00Z",
+        "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::3765"}},
+        "features": features,
+    }
 
 
 if __name__ == "__main__":

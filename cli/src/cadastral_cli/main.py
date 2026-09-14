@@ -59,6 +59,7 @@ from .commands import (  # noqa: E402
     parcel,
     registry,
     search,
+    zoning,
 )
 
 console = Console()
@@ -117,6 +118,7 @@ cli.add_command(parcel.get_parcel)
 cli.add_command(registry.get_lr_unit)
 cli.add_command(gis.get_geometry)
 cli.add_command(gis.download_gis)
+cli.add_command(zoning.get_zoning)
 cli.add_command(discovery.list_offices)
 cli.add_command(discovery.list_municipalities)
 cli.add_command(discovery.list_main_books)

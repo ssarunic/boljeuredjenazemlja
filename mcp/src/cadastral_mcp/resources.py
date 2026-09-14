@@ -38,7 +38,7 @@ class CadastralResources:
         """
         try:
             logger.info(f"Fetching parcel resource: {parcel_id}")
-            parcel = self.client.get_parcel_by_id(parcel_id)
+            parcel = self.client.get_parcel_info(parcel_id)
             return parcel.model_dump(mode="json")
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch parcel {parcel_id}: {e}", exc_info=True)
@@ -61,11 +61,11 @@ class CadastralResources:
         """
         try:
             logger.info(f"Fetching municipality resource: {code}")
-            municipalities = self.client.search_municipalities("")
-
-            # Find municipality by code
+            # Search by code; the server also matches the code as a substring
+            # of the name field, so pick the record whose code is exactly this.
+            municipalities = self.client.find_municipality(code)
             for muni in municipalities:
-                if muni.key1 == code:
+                if muni.municipality_reg_num == code:
                     return muni.model_dump(mode="json")
 
             raise ValueError(f"Municipality with code {code} not found")
@@ -101,35 +101,3 @@ class CadastralResources:
         except CadastralAPIError as e:
             logger.error(f"Failed to fetch office {code}: {e}", exc_info=True)
             raise ValueError(f"Could not retrieve cadastral office {code}.") from e
-
-    async def get_parcel_geometry_resource(
-        self, parcel_id: str, format: str = "geojson"
-    ) -> dict[str, Any] | str:
-        """
-        Get parcel boundary geometry.
-
-        Resource URI: cadastral://parcel/{parcel_id}/geometry
-
-        Args:
-            parcel_id: The unique parcel identifier
-            format: Output format - "geojson" or "wkt"
-
-        Returns:
-            Geometry data in requested format
-
-        Raises:
-            CadastralAPIError: If geometry cannot be fetched
-        """
-        try:
-            logger.info(f"Fetching geometry resource for parcel {parcel_id} (format: {format})")
-
-            # Extract parcel number and municipality from parcel_id if needed
-            # This assumes parcel_id format or we need additional context
-            # For now, we'll return a placeholder that indicates additional info needed
-            raise NotImplementedError(
-                "Geometry resources require parcel number and municipality code. "
-                "Use the get_parcel_geometry tool instead."
-            )
-        except CadastralAPIError as e:
-            logger.error(f"Failed to fetch geometry for {parcel_id}: {e}", exc_info=True)
-            raise ValueError(f"Could not retrieve geometry for parcel {parcel_id}.") from e

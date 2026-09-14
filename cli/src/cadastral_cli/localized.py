@@ -45,6 +45,7 @@ COMMANDS: dict[str, str] = {
     "get-lr-unit": pgettext("command", "get-lr-unit"),
     "get-geometry": pgettext("command", "get-geometry"),
     "download-gis": pgettext("command", "download-gis"),
+    "get-zoning": pgettext("command", "get-zoning"),
     "list-offices": pgettext("command", "list-offices"),
     "list-municipalities": pgettext("command", "list-municipalities"),
     "list-main-books": pgettext("command", "list-main-books"),
@@ -93,6 +94,7 @@ OPTIONS: dict[str, str] = {
     "--no-extract": pgettext("option", "--no-extract"),
     "--clear-cache": pgettext("option", "--clear-cache"),
     "--force": pgettext("option", "--force"),
+    "--min-overlap": pgettext("option", "--min-overlap"),
     # Short spellings. English ones are single letters; Croatian ones are two
     # ASCII letters taken from the Croatian long spelling (``-gk`` for
     # ``--glavna-knjiga``), see specs/terminology.md section 4.

@@ -212,6 +212,64 @@ with CadastralAPIClient() as client:
 Coordinates are in EPSG:3765 (HTRS96 / Croatia TM). The GML parser is available on
 its own as `cadastral_api.GMLParser` when you already have a file.
 
+## Spatial plans: building areas
+
+Spatial plans do not reference parcels, so the only way to ask "is this parcel
+in a building area, and of what kind" is a spatial join. The client takes the
+parcel outline from the cadastral GIS data, asks the building-areas WFS
+(građevinska područja, the nationwide vector layer the county spatial-planning
+institutes derived from the plans in force) for every zone that intersects it,
+and estimates by point sampling how much of the parcel each zone covers.
+
+```python
+with CadastralAPIClient() as client:
+    zoning = client.get_parcel_zoning("396/1", "334979")
+    if zoning is None:
+        print("no geometry for this parcel")
+    else:
+        print(zoning.status)                 # inside_settlement | detached_zone |
+                                             # touches_below_threshold | outside
+        print(zoning.buildability)           # always "unknown": this is a screening
+        for match in zoning.matches:         # largest overlap first
+            zone = match.zone
+            print(zone.designation_code,     # "T3" (camp), "GPN" (settlement area) ...
+                  zone.designation,          # text as written in the plan
+                  zone.zone_name,            # "SAVAR - KAMP"
+                  zone.plan_name,            # "PPUO SALI - III. ID"
+                  zone.plan_id,              # "HR-ISPU-PPGO-03794-R05"
+                  zone.generation,           # old | new: which code list applies
+                  f"{match.overlap_fraction:.0%}", match.overlap_m2)
+        print(zoning.dataset.disclaimer)     # must accompany any use
+
+    # The WFS on its own: zones by attribute, by bounding box or by WKT
+    t2_zones = client.planning.find_zones(municipality_code="03794", designation_code="T2")
+    nearby = client.planning.zones_in_bbox((380000, 4880000, 382000, 4882000))
+```
+
+Zones covering less than two per cent of the parcel (`min_overlap`, 0 to 1)
+are listed in `below_threshold` rather than `matches`, and a parcel that only
+touches a zone gets the status `touches_below_threshold`, never `outside`; plan
+boundaries are drawn at 1:5000 and rarely follow parcel lines. Being inside a
+building area does not mean anything may be built: provisions, plot size,
+access, infrastructure and protection regimes are not evaluated, so
+`buildability` is always `"unknown"`. `generation` matters: in old plans T1, T2 and T3 mean hotel, tourist
+settlement and camp; in plans made under the 2024 Pravilnik they mean tourism
+inside a settlement, a detached zone with accommodation and one without. Every
+zone the service publishes today is `old`.
+
+The endpoint is `CADASTRAL_PLANNING_WFS_URLS` (comma-separated mirrors, tried in
+order on gateway errors and timeouts) or the `planning_wfs_urls` argument;
+the default is `<base_url>/planning/wfs`, which the mock server serves. The
+building areas are an interpretation of the plans, not the plans themselves:
+the disclaimer in `ParcelZoning.dataset` has to be shown with the result.
+`dataset.source_url` and `dataset.retrieved_at` record which mirror answered
+the requests of that lookup (two mirrors are joined with "; " when the two
+requests were answered by different ones) and when; the service publishes no
+machine-readable date, and `state_note` says what the catalogues claim.
+`plans` lists the plans of the matches and of the below-threshold zones, so a
+boundary case still names the plan to read next.
+Endpoint details: `specs/spatial-planning-api-specification.md`.
+
 ## Error handling
 
 Every failure raises `CadastralAPIError` carrying an `ErrorType`:

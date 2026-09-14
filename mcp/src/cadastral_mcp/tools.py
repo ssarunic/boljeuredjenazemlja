@@ -1,10 +1,12 @@
 """MCP Tools - AI-invoked actions that perform operations."""
 
+import asyncio
 import json
 import logging
+import math
 from typing import Any
 
-from cadastral_api import CadastralAPIClient
+from cadastral_api import CadastralAPIClient, GMLParser
 from cadastral_api.exceptions import CadastralAPIError
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
 from cadastral_api.utils import is_building_parcel_number, normalize_parcel_number
@@ -104,7 +106,7 @@ class CadastralTools:
         self.client = client
 
     async def search_parcel(
-        self, parcel_number: str, municipality: str
+        self, parcel_number: str, municipality: str, max_matches: int = 0
     ) -> dict[str, Any]:
         """
         Search for a parcel and return basic information.
@@ -117,6 +119,14 @@ class CadastralTools:
         Args:
             parcel_number: Cadastral parcel number (e.g., "103/2")
             municipality: Municipality name or registration code
+            max_matches: When above 0, also return every search record the
+                server answered with (up to this many) under ``matches``, with
+                ``matches_total`` and ``matches_truncated``; 0 keeps the
+                response to the one chosen parcel. With it, a search from
+                which no single parcel can be chosen (nothing found, or only
+                the other numbering series) is not an error: ``success`` is
+                False, ``parcel_id`` is null, ``match_note`` carries the
+                warning and ``matches`` the records.
 
         Returns:
             Dictionary with parcel search results including parcel_id and,
@@ -159,12 +169,39 @@ class CadastralTools:
             wanted = normalize_parcel_number(parcel_number)
             results = self.client.find_parcel(wanted, muni_code)
 
-            if not results:
-                raise ValueError(
-                    f"No parcels found matching '{parcel_number}' in {municipality}"
-                )
+            matches: dict[str, Any] = {}
+            if max_matches > 0:
+                # The complete search response, not only the parcel chosen
+                # from it: every record the server matched, in its order.
+                matches = {
+                    "matches": [search_record(r) for r in results[:max_matches]],
+                    "matches_total": len(results),
+                    "matches_truncated": len(results) > max_matches,
+                }
 
-            result, kind, siblings = self._pick_parcel_match(results, wanted, municipality)
+            try:
+                if not results:
+                    raise ValueError(
+                        f"No parcels found matching '{parcel_number}' in {municipality}"
+                    )
+                result, kind, siblings = self._pick_parcel_match(results, wanted, municipality)
+            except ValueError as e:
+                if not matches:
+                    raise
+                # No single parcel answers the request (nothing found, or only
+                # the other numbering series); the search records were asked
+                # for, so return them with the warning instead of nothing.
+                return {
+                    "parcel_id": None,
+                    "parcel_number": None,
+                    "requested_parcel_number": wanted,
+                    "exact_match": False,
+                    "match_note": str(e),
+                    "municipality": municipality,
+                    "municipality_code": muni_code,
+                    "success": False,
+                    **matches,
+                }
             exact_match = kind == "exact"
             response: dict[str, Any] = {
                 "parcel_id": result.parcel_id,
@@ -184,6 +221,7 @@ class CadastralTools:
                 response["other_matches"] = [
                     r.parcel_number for r in siblings
                 ][: self.MAX_OTHER_MATCHES]
+            response.update(matches)
             map_url = self._map_url_for(result.parcel_number, muni_code)
             if map_url:
                 response["map_url"] = map_url
@@ -410,39 +448,106 @@ class CadastralTools:
             entry["map_url"] = map_url
         return entry
 
+    @staticmethod
+    def _municipality_record(muni: Any) -> dict[str, Any]:
+        """A municipality search record as the agent should see it."""
+        return {
+            "code": muni.municipality_reg_num,
+            "name": muni.municipality_name,
+            "full_name": muni.display_value,
+            "municipality_id": muni.municipality_id,
+            "office_id": muni.institution_id,
+            "department_id": muni.department_id,
+        }
+
     async def resolve_municipality(self, name_or_code: str) -> dict[str, Any]:
         """
-        Resolve municipality name to registration code.
+        Resolve municipality name (or code) to its complete search record.
 
         Args:
             name_or_code: Municipality name (e.g., "SAVAR") or code (e.g., "334979")
 
         Returns:
-            Dictionary with municipality code and name
+            Dictionary with ``code`` (the registration number every parcel
+            search needs), ``name``, ``full_name`` (with the cadastral office),
+            ``municipality_id``, ``office_id`` and ``department_id``. When the
+            name matched several municipalities the first is returned and the
+            others are listed under ``other_matches``.
 
         Example:
             >>> await resolve_municipality("SAVAR")
-            {"code": "334979", "name": "SAVAR", "full_name": "..."}
+            {"code": "334979", "name": "SAVAR", "full_name": "334979 SAVAR, ZADAR, PUK ZADAR",
+             "municipality_id": 2387, "office_id": 114, "department_id": 116}
         """
         try:
             logger.info(f"Resolving municipality: {name_or_code}")
-            code = await self._resolve_municipality(name_or_code)
+            municipalities = self.client.find_municipality(name_or_code)
+            if name_or_code.isdigit():
+                municipalities = [
+                    m for m in municipalities if m.municipality_reg_num == name_or_code
+                ]
+            if not municipalities:
+                raise ValueError(f"Municipality '{name_or_code}' not found")
 
-            # Fetch full municipality info
-            municipalities = self.client.find_municipality("")
-            for muni in municipalities:
-                if muni.municipality_reg_num == code:
-                    return {
-                        "code": muni.municipality_reg_num,
-                        "name": muni.municipality_name,
-                        "full_name": muni.display_value,
-                    }
-
-            raise ValueError(f"Municipality {name_or_code} not found")
+            record = self._municipality_record(municipalities[0])
+            if len(municipalities) > 1:
+                record["other_matches"] = [
+                    self._municipality_record(m)
+                    for m in municipalities[1 : 1 + self.MAX_OTHER_MATCHES]
+                ]
+                record["matches_total"] = len(municipalities)
+            return record
 
         except CadastralAPIError as e:
             logger.error(f"Failed to resolve municipality {name_or_code}: {e}", exc_info=True)
             raise ValueError(f"Could not resolve municipality '{name_or_code}'.") from e
+
+    #: Municipality records returned by list_municipalities unless asked otherwise.
+    DEFAULT_MUNICIPALITY_LIMIT = 200
+
+    async def list_municipalities(
+        self,
+        search: str | None = None,
+        office_id: str | int | None = None,
+        department_id: str | int | None = None,
+        offset: int = 0,
+        limit: int | None = DEFAULT_MUNICIPALITY_LIMIT,
+    ) -> dict[str, Any]:
+        """
+        List cadastral municipalities, filtered by name, office or department.
+
+        Args:
+            search: Name or code to match (substring); None for all.
+            office_id: Cadastral office id (``id`` from list_cadastral_offices).
+            department_id: Department id within the office.
+            offset: Skip this many records.
+            limit: Return at most this many (default 200; None for all).
+
+        Returns:
+            {"municipalities": [record, ...], "total": n, "page": {...}} where
+            each record is shaped as in resolve_municipality.
+        """
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        try:
+            logger.info(
+                f"Listing municipalities (search={search}, office={office_id}, "
+                f"department={department_id})"
+            )
+            municipalities = self.client.find_municipality(
+                search, office_id=office_id, department_id=department_id
+            )
+            window = self._window(municipalities, offset, limit)
+            return {
+                "municipalities": [self._municipality_record(m) for m in window],
+                "total": len(municipalities),
+                "page": self._page(offset, limit, len(municipalities), len(window)),
+            }
+        except CadastralAPIError as e:
+            logger.error(f"Failed to list municipalities: {e}", exc_info=True)
+            raise ValueError("Could not list municipalities.") from e
 
     async def get_parcel_geometry(
         self,
@@ -510,6 +615,99 @@ class CadastralTools:
                 f"GIS data may not be available."
             ) from e
 
+    async def get_parcel_zoning(
+        self,
+        parcel_number: str,
+        municipality: str,
+        include_geometry: bool = False,
+        min_overlap: float = 0.02,
+    ) -> dict[str, Any]:
+        """
+        Screening of a parcel against the spatial plans' building areas.
+
+        Matches the parcel outline (from the cached cadastral GIS data)
+        against the building areas derived from the plans in force and
+        reports the zones that cover it with the estimated share of the
+        parcel each one covers. It never determines whether anything may be
+        built (``buildability`` is always ``"unknown"``). The blocking work
+        (GIS download, WFS calls over several mirrors) runs in a worker
+        thread so the event loop stays free.
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "103/2")
+            municipality: Municipality name or registration code
+            include_geometry: Include the zone polygons (EPSG:3765) in the answer
+            min_overlap: Zones covering a smaller share of the parcel go to
+                ``below_threshold`` (0 to 1, default 0.02)
+
+        Returns:
+            Dictionary with ``status`` (``inside_settlement``, ``detached_zone``,
+            ``touches_below_threshold`` or ``outside``), ``buildability``
+            (always ``"unknown"``), ``matches`` (zone with designation code, text,
+            zone name, plan name and id, generation of the code list, overlap
+            fraction and m2), ``plans``, ``dataset`` (name, state and the
+            disclaimer that must accompany any use), ``summary`` and a
+            ``generation_note``.
+        """
+        if not isinstance(min_overlap, (int, float)) or not math.isfinite(min_overlap):
+            raise ValueError("min_overlap must be a finite number between 0 and 1")
+        if not 0.0 <= min_overlap <= 1.0:
+            raise ValueError(f"min_overlap must be between 0 and 1, got {min_overlap}")
+        try:
+            logger.info(f"Fetching zoning for {parcel_number} in {municipality}")
+            muni_code = await self._resolve_municipality(municipality)
+            zoning = await asyncio.to_thread(
+                self.client.get_parcel_zoning, parcel_number, muni_code, min_overlap
+            )
+            if zoning is None:
+                raise ValueError(
+                    f"Parcel '{parcel_number}' has no geometry in the GIS data for "
+                    f"municipality '{municipality}' ({muni_code}), so it cannot be matched "
+                    f"against the spatial plans. Check the parcel number; if the cached GIS "
+                    f"data may be stale, clear it for this municipality and try again."
+                )
+            exclude = None
+            if not include_geometry:
+                without_polygons = {"__all__": {"zone": {"polygons"}}}
+                exclude = {"matches": without_polygons, "below_threshold": without_polygons}
+            data = zoning.model_dump(mode="json", exclude=exclude)
+            data["summary"] = zoning.summary()
+            data["generation_note"] = (
+                "Designation codes follow the code list of the plan's generation: in old "
+                "plans T1 is a hotel zone, T2 a tourist settlement and T3 a camp; in plans "
+                "made under the 2024 Pravilnik T1 is tourism inside a settlement, T2 a "
+                "detached zone with accommodation and T3 one without."
+            )
+            return data
+        except CadastralAPIError as e:
+            logger.error(f"Failed to fetch zoning for {parcel_number}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not match parcel '{parcel_number}' against the building areas: "
+                f"{e}. {self._planning_endpoint_hint()}"
+            ) from e
+
+    def _planning_endpoint_hint(self) -> str:
+        """Say which building-areas endpoints were tried and, when they are the
+        default (the mock server's imitation) on a server that is not the mock,
+        how to point the lookup at the real WFS."""
+        planning = getattr(self.client, "planning", None)
+        urls = list(getattr(planning, "base_urls", None) or [])
+        if not urls:
+            return "The building-areas service may be unavailable."
+        hint = f"Building-areas WFS endpoint(s) tried: {', '.join(urls)}."
+        default_path = urls[0].endswith("/planning/wfs")
+        on_mock = "localhost" in urls[0] or "127.0.0.1" in urls[0]
+        if default_path and not on_mock:
+            hint += (
+                " That is the default endpoint, the mock server's imitation of the WFS, "
+                "which does not exist on other servers. Set CADASTRAL_PLANNING_WFS_URLS "
+                "to the building-areas WFS mirror(s) (see .env.example; verify your "
+                "rights to use them first) and restart the MCP server."
+            )
+        else:
+            hint += " The service may be unavailable; try again later."
+        return hint
+
     async def list_cadastral_offices(self, filter_name: str | None = None) -> dict[str, Any]:
         """
         List all cadastral offices, optionally filtered by name.
@@ -550,23 +748,50 @@ class CadastralTools:
             raise ValueError("Could not retrieve cadastral offices.") from e
 
     #: Valid detail levels for land-registry unit output.
-    VALID_DETAIL = ("summary", "ownership", "full")
+    VALID_DETAIL = ("summary", "ownership", "shares", "parcels", "encumbrances", "full")
+
+    #: The list that ``offset`` and ``limit`` page through at each detail level.
+    PAGED_LIST = {
+        "ownership": "owners",
+        "shares": "shares",
+        "full": "shares",
+        "parcels": "parcels",
+        "encumbrances": "entry_groups",
+    }
 
     @staticmethod
+    def _page(offset: int, limit: int | None, total: int, returned: int) -> dict[str, Any]:
+        """The paging block of a shaped unit: which window of the list came back."""
+        truncated = offset + returned < total
+        page: dict[str, Any] = {
+            "offset": offset,
+            "limit": limit,
+            "total": total,
+            "returned": returned,
+            "truncated": truncated,
+        }
+        if truncated:
+            page["next_offset"] = offset + returned
+        return page
+
+    @staticmethod
+    def _window(rows: list[Any], offset: int, limit: int | None) -> list[Any]:
+        """The window ``[offset, offset + limit)`` of a list (all of it past offset if no limit)."""
+        return rows[offset:] if limit is None else rows[offset : offset + limit]
+
+    @classmethod
     def _ownership_rows(
-        lr_unit: Any, owners_limit: int | None
+        cls, lr_unit: Any, offset: int, limit: int | None
     ) -> tuple[list[dict[str, Any]], int, bool]:
-        """Owner rows for an LR unit, capped at owners_limit.
+        """Owner rows for an LR unit, windowed at offset/limit.
 
         Returns (rows, total_owners, truncated). The canonical row shape comes
         from OwnershipSheetB.owner_rows() (shared with the CLI).
         """
         rows = lr_unit.ownership_sheet_b.owner_rows()
         total = len(rows)
-        truncated = owners_limit is not None and total > owners_limit
-        if truncated:
-            rows = rows[:owners_limit]
-        return rows, total, truncated
+        window = cls._window(rows, offset, limit)
+        return window, total, offset + len(window) < total
 
     #: Characters of JSON a full dump may reach before it is refused. A large
     #: condominium runs to hundreds of shares, each with its own registration
@@ -592,76 +817,71 @@ class CadastralTools:
         return total
 
     @classmethod
-    def _cap_dumped_owners(
-        cls, dump: dict[str, Any], limit: int | None
-    ) -> tuple[int, bool, int]:
-        """Cap sheet B inside a full dump; return (total, truncated, shares_omitted).
+    def _window_shares(
+        cls, dump: dict[str, Any], offset: int, limit: int | None
+    ) -> tuple[int, int, int]:
+        """Keep the window ``[offset, offset + limit)`` of top-level shares in a sheet-B dump.
 
-        Walks the shares of sheet B in document order (recursing into the
-        sub-shares that hold an apartment's co-owners) and keeps them until
-        ``limit`` owner records have been taken; the shares after that are
-        dropped whole. Dropping the owners alone is not enough: a condominium
-        keeps its weight in the shares themselves, each with its own
-        description and registration entry, so a 85-share unit still serialises
-        to 135,000 characters with every owner removed.
+        ``dump`` is a full unit dump or a bare sheet-B dump. A share is kept
+        whole, with its sub-shares (an apartment's co-owners) and its entries;
+        the shares outside the window are dropped whole. Paging by share, not
+        by owner record, keeps every share reachable: a share without owners
+        (one that holds only annotations) is a page item like any other, so
+        the continuation contract never skips it. Dropping shares rather than
+        emptying them matters because a condominium keeps its weight in the
+        shares themselves, each with its own description and registration
+        entry.
 
-        Unlike the "ownership" view, which lists active shares only, ``total``
-        counts every owner record in the dump. ``limit`` of None only counts.
+        Returns (total_shares, returned_shares, shares_omitted), the last
+        counting sub-shares of the dropped shares too.
         """
-        sheet = dump.get("ownership_sheet_b") or {}
+        sheet = dump.get("ownership_sheet_b", dump) or {}
         shares = sheet.get("lr_unit_shares") or []
-        total = cls._count_owner_records(shares)
-        if limit is None:
-            return total, False, 0
-
-        omitted = 0
-
-        def take(shares: list[dict[str, Any]], budget: int) -> tuple[list[dict[str, Any]], int]:
-            nonlocal omitted
-            kept: list[dict[str, Any]] = []
-            for index, share in enumerate(shares):
-                if budget <= 0:
-                    rest = shares[index:]
-                    omitted += len(rest) + sum(
-                        cls._count_shares(cls._sub_shares(item)) for item in rest
-                    )
-                    break
-                owners = share.get("owners") or []
-                share["owners"] = owners[:budget]
-                budget -= len(share["owners"])
-                nested = cls._sub_shares(share)
-                if nested:
-                    kept_nested, budget = take(nested, budget)
-                    keep = set(id(item) for item in kept_nested)
-                    share["sub_shares_and_entries"] = [
-                        item
-                        for item in share["sub_shares_and_entries"]
-                        if not (isinstance(item, dict) and "owners" in item) or id(item) in keep
-                    ]
-                kept.append(share)
-            return kept, budget
-
-        sheet["lr_unit_shares"], _ = take(shares, limit)
-        return total, total > limit, omitted
+        window = cls._window(shares, offset, limit)
+        sheet["lr_unit_shares"] = window
+        omitted = cls._count_shares(shares) - cls._count_shares(window)
+        return len(shares), len(window), omitted
 
     @classmethod
     def _count_shares(cls, shares: list[dict[str, Any]]) -> int:
         """Number of share dicts here and below (for the omitted-share count)."""
         return sum(1 + cls._count_shares(cls._sub_shares(share)) for share in shares)
 
+    @staticmethod
+    def _identity(lr_unit: Any) -> dict[str, Any]:
+        """The fields that name a unit, present at every detail level."""
+        return {
+            "lr_unit_number": lr_unit.lr_unit_number,
+            "main_book_id": lr_unit.main_book_id,
+            "main_book_name": lr_unit.main_book_name,
+            "institution_id": lr_unit.institution_id,
+            "institution_name": lr_unit.institution_name,
+            "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+        }
+
     @classmethod
     def _shape_lr_unit(
-        cls, lr_unit: Any, detail: str, owners_limit: int | None
+        cls, lr_unit: Any, detail: str, limit: int | None = None, offset: int = 0
     ) -> dict[str, Any]:
         """Shape an LR unit for output at the requested detail level.
 
         - "summary": identity + summary statistics only.
         - "ownership" (default): B-list owners (with structured shares) + summary;
           drops geometry, Sheet A2, the C-sheet, and raw internal IDs.
-        - "full": every sheet (raw model dump) + summary, with sheet B cut off
-          at ``owners_limit`` owner records: the shares past it are dropped
-          whole (counted in ``shares_omitted``), since a condominium's weight
-          is in the shares themselves, not only in their owners.
+        - "shares": sheet B as the register holds it (raw shares with their
+          sub-shares, entries and status, plus the sheet-level entries).
+        - "parcels": sheet A (the parcels of the unit, with sheet A2 entries).
+        - "encumbrances": sheet C (the encumbrance entry groups).
+        - "full": every sheet (raw model dump) + summary.
+
+        ``offset`` and ``limit`` page through the list the level is about
+        (``PAGED_LIST``): owner records for "ownership", top-level shares for
+        "shares" and "full", parcels for "parcels", entry groups for
+        "encumbrances". In "shares" and "full" the shares outside the window
+        are dropped whole (counted in ``shares_omitted``), since a
+        condominium's weight is in the shares themselves, not only in their
+        owners. Every level but "summary" carries a ``page`` block saying what
+        window came back.
         """
         if detail not in cls.VALID_DETAIL:
             raise ValueError(
@@ -669,63 +889,98 @@ class CadastralTools:
             )
         summary = lr_unit.summary()
         is_condo = lr_unit.is_condominium()
-
-        if detail == "full":
-            result = lr_unit.model_dump(mode="json")
-            total, truncated, omitted = cls._cap_dumped_owners(result, owners_limit)
-            result["total_owners"] = total
-            result["owners_truncated"] = truncated
-            if omitted:
-                # The shares past the owner budget were dropped whole, not
-                # merely emptied; say how many so the count is not read as the
-                # unit's full sheet B.
-                result["shares_omitted"] = omitted
-            result["summary"] = summary
-            if is_condo:
-                result["is_condominium"] = True
-                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
-            cls._check_full_size(result, lr_unit, total, owners_limit)
-            return result
+        condo_fields: dict[str, Any] = {}
+        if is_condo:
+            condo_fields = {
+                "is_condominium": True,
+                "condominium_units_count": lr_unit.get_condominium_units_count(),
+            }
 
         if detail == "summary":
+            return {**cls._identity(lr_unit), "summary": summary, **condo_fields}
+
+        if detail in ("full", "shares"):
+            if detail == "full":
+                result = lr_unit.model_dump(mode="json")
+                sheet = result["ownership_sheet_b"]
+            else:
+                sheet = lr_unit.ownership_sheet_b.model_dump(mode="json")
+                result = {**cls._identity(lr_unit), "ownership_sheet_b": sheet}
+            total_owners = cls._count_owner_records(sheet.get("lr_unit_shares") or [])
+            total, returned, omitted = cls._window_shares(sheet, offset, limit)
+            result["total_shares"] = total
+            result["total_owners"] = total_owners
+            result["owners_truncated"] = (
+                cls._count_owner_records(sheet.get("lr_unit_shares") or []) < total_owners
+            )
+            if omitted:
+                # The shares outside the window were dropped whole, not merely
+                # emptied; say how many so the count is not read as the unit's
+                # full sheet B.
+                result["shares_omitted"] = omitted
+            result["page"] = cls._page(offset, limit, total, returned)
+            result["summary"] = summary
+            result.update(condo_fields)
+            cls._check_size(result, lr_unit, detail, limit)
+            return result
+
+        if detail == "parcels":
+            sheet = lr_unit.possessory_sheet_a1
+            window = cls._window(sheet.cad_parcels, offset, limit)
             result = {
-                "lr_unit_number": lr_unit.lr_unit_number,
-                "main_book_name": lr_unit.main_book_name,
-                "institution_name": lr_unit.institution_name,
-                "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+                **cls._identity(lr_unit),
+                "sheet_a1_source_key": lr_unit.sheet_a1_source_key,
+                "parcels": [parcel.model_dump(mode="json") for parcel in window],
+                "total_parcels": len(sheet.cad_parcels),
+                "total_area_m2": sheet.total_area(),
+                "sheet_a2_entries": [
+                    entry.model_dump(mode="json")
+                    for entry in lr_unit.possessory_sheet_a2.lr_entries
+                ],
+                "page": cls._page(offset, limit, len(sheet.cad_parcels), len(window)),
                 "summary": summary,
+                **condo_fields,
             }
-            if is_condo:
-                result["is_condominium"] = True
-                result["condominium_units_count"] = lr_unit.get_condominium_units_count()
+            cls._check_size(result, lr_unit, detail, limit)
+            return result
+
+        if detail == "encumbrances":
+            groups = lr_unit.encumbrance_sheet_c.lr_entry_groups
+            window = cls._window(groups, offset, limit)
+            result = {
+                **cls._identity(lr_unit),
+                "entry_groups": [group.model_dump(mode="json") for group in window],
+                "total_entry_groups": len(groups),
+                "page": cls._page(offset, limit, len(groups), len(window)),
+                "summary": summary,
+                **condo_fields,
+            }
+            cls._check_size(result, lr_unit, detail, limit)
             return result
 
         # detail == "ownership". Each owner row carries ``entry`` (the
         # registration entry that put the owner on the share: order number,
         # receipt date, diary number, action type); ``share_entries`` are the
         # annotations (ZABILJEŽBA) registered on individual shares.
-        owners, total, truncated = cls._ownership_rows(lr_unit, owners_limit)
+        owners, total, truncated = cls._ownership_rows(lr_unit, offset, limit)
         return {
-            "lr_unit_number": lr_unit.lr_unit_number,
-            "main_book_id": lr_unit.main_book_id,
-            "main_book_name": lr_unit.main_book_name,
-            "institution_name": lr_unit.institution_name,
+            **cls._identity(lr_unit),
             "in_land_registry": True,
-            "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
             "sheet_a1_source_key": lr_unit.sheet_a1_source_key,
             "is_condominium": is_condo,
             "owners": owners,
             "total_owners": total,
             "owners_truncated": truncated,
+            "page": cls._page(offset, limit, total, len(owners)),
             "share_entries": lr_unit.ownership_sheet_b.share_entry_rows(),
             "summary": summary,
         }
 
     @classmethod
-    def _check_full_size(
-        cls, result: dict[str, Any], lr_unit: Any, total_owners: int, owners_limit: int | None
+    def _check_size(
+        cls, result: dict[str, Any], lr_unit: Any, detail: str, limit: int | None
     ) -> None:
-        """Refuse a full dump that is too large to be read, with a way forward.
+        """Refuse a response that is too large to be read, with a way forward.
 
         A unit with hundreds of shares serialises to hundreds of kilobytes even
         after the owners are capped, because every share keeps its own
@@ -735,15 +990,31 @@ class CadastralTools:
         size = len(json.dumps(result, ensure_ascii=False))
         if size <= cls.MAX_FULL_RESPONSE_CHARS:
             return
+        page = result.get("page") or {}
+        returned = page.get("returned") or 0
+        smaller = max(1, returned // 4) if returned else 10
+        if detail != "full":
+            raise ValueError(
+                f"The {detail} of land-registry unit {lr_unit.lr_unit_number} are "
+                f"{size:,} characters ({returned} {cls.PAGED_LIST[detail]} in this window), "
+                f"too large to return in one response. Pass a smaller limit (e.g. "
+                f"limit={smaller}) and page through with offset (the page block says "
+                f"where to continue)."
+            )
+        total_owners = result.get("total_owners") or 0
         sheet, sheet_size = cls._largest_sheet(result)
         options = [
             'detail="ownership" for the owners without the other sheets',
+            'detail="shares", detail="parcels" or detail="encumbrances" for one sheet '
+            "at a time, each paged with offset and limit",
             'detail="summary" for the totals alone',
         ]
-        # owners_limit only helps while sheet B is what makes the dump large;
+        # A share cap only helps while sheet B is what makes the dump large;
         # on a unit whose weight is in the encumbrances it changes nothing.
-        if owners_limit is None and total_owners > 0 and sheet == "ownership_sheet_b":
-            options.insert(0, "owners_limit (e.g. owners_limit=10) to cap the owner records")
+        if limit is None and total_owners > 0 and sheet == "ownership_sheet_b":
+            options.insert(0, "owners_limit (e.g. owners_limit=10) to cap the shares returned")
+        elif limit is not None and sheet == "ownership_sheet_b":
+            options.insert(0, f"a smaller limit (e.g. limit={smaller}), paged with offset")
         raise ValueError(
             f"A full dump of land-registry unit {lr_unit.lr_unit_number} is "
             f"{size:,} characters ({total_owners} owner records; the largest part is "
@@ -782,6 +1053,9 @@ class CadastralTools:
         detail: str = "ownership",
         owners_limit: int | None = None,
         include_plombe_detail: bool = False,
+        historical_overview: bool = False,
+        offset: int = 0,
+        limit: int | None = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak).
@@ -797,13 +1071,22 @@ class CadastralTools:
 
         Args:
             units: One or more unit references.
-            detail: "summary" | "ownership" | "full" (default "ownership"),
-                applied to every unit.
-            owners_limit: Cap owner records per unit ("ownership" and "full");
-                total_owners and owners_truncated report the full count.
+            detail: "summary" | "ownership" | "shares" | "parcels" |
+                "encumbrances" | "full" (default "ownership"), applied to
+                every unit.
+            owners_limit: Synonym of ``limit`` kept for the owner-centred
+                levels ("ownership" and "full"); ``limit`` wins when both are
+                given.
             include_plombe_detail: Resolve what each pending plomba is (request
                 type, status, dates) into a ``plombe_detail`` map per unit; one
                 extra request per plomba.
+            historical_overview: Ask the register for the historical overview
+                (deleted entries and shares with a non-active status) as well.
+            offset: Skip this many items of the list the level is about
+                (owner records, shares, parcels or entry groups) before
+                returning.
+            limit: Return at most this many of them; ``page`` in every unit
+                says what window came back and where to continue.
 
         Returns:
             Dictionary with ``results`` (one entry per reference, in order:
@@ -820,8 +1103,17 @@ class CadastralTools:
             )
         if not units:
             raise ValueError("Give at least one land registry unit reference.")
+        if limit is None:
+            limit = owners_limit
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
 
-        logger.info(f"Fetching {len(units)} land registry unit reference(s) (detail={detail})")
+        logger.info(
+            f"Fetching {len(units)} land registry unit reference(s) "
+            f"(detail={detail}, historical={historical_overview})"
+        )
         results: list[dict[str, Any]] = []
         fetched: dict[tuple[str, int], int] = {}  # (unit number, main book id) -> index
         by_name: dict[tuple[str, str], int] = {}  # (unit number, MAIN BOOK NAME) -> index
@@ -854,7 +1146,7 @@ class CadastralTools:
                 continue
 
             try:
-                lr_unit = self._fetch_lr_unit(ref)
+                lr_unit = self._fetch_lr_unit(ref, historical_overview)
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Failed to fetch {ref.describe()}: {e}")
                 entry.update(status="error", error=str(e))
@@ -871,7 +1163,7 @@ class CadastralTools:
                 continue
 
             try:
-                data = self._shape_lr_unit(lr_unit, detail, owners_limit)
+                data = self._shape_lr_unit(lr_unit, detail, limit, offset)
                 if include_plombe_detail and lr_unit.has_pending_plombe():
                     data["plombe_detail"] = self._plombe_detail(lr_unit)
             except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
@@ -903,21 +1195,110 @@ class CadastralTools:
             "condominiums_found": condominiums_found,
         }
 
-    def _fetch_lr_unit(self, ref: LRUnitRef) -> Any:
+    def _fetch_lr_unit(self, ref: LRUnitRef, historical_overview: bool = False) -> Any:
         """Fetch the unit a reference names; errors carry a message for the agent."""
         try:
             if ref.by_parcel:
                 assert ref.parcel_number is not None and ref.municipality is not None
                 muni_code = self._resolve_municipality_sync(ref.municipality)
-                return self.client.get_lr_unit_from_parcel(ref.parcel_number, muni_code)
+                return self.client.get_lr_unit_from_parcel(
+                    ref.parcel_number, muni_code, historical_overview=historical_overview
+                )
             assert ref.lr_unit_number is not None
             return self.client.get_lr_unit_detailed(
-                ref.lr_unit_number, ref.main_book_id, main_book_name=ref.main_book_name
+                ref.lr_unit_number,
+                ref.main_book_id,
+                main_book_name=ref.main_book_name,
+                historical_overview=historical_overview,
             )
         except CadastralAPIError as e:
             raise ValueError(
                 f"Could not retrieve the land registry unit for {ref.describe()}: {e}"
             ) from e
+
+    async def get_file_status(self, file_number: str, institution_id: int) -> dict[str, Any]:
+        """
+        Processing status of one land-registry file (spis, plomba) by number.
+
+        Args:
+            file_number: Rendered file number, e.g. "Z-12564/2026".
+            institution_id: Owning land-registry office id (``institution_id``
+                of the unit from get_lr_unit, or of the main book from
+                find_main_book).
+
+        Returns:
+            {"file_number", "institution_id", "found": bool, "status": {...}}
+            where ``status`` is the file's record (what the request is, its
+            processing stage, key dates); ``found`` is False when the register
+            has no record for that number at that office.
+        """
+        try:
+            logger.info(f"Fetching file status {file_number} at institution {institution_id}")
+            status = self.client.get_file_status(file_number, int(institution_id))
+        except CadastralAPIError as e:
+            logger.error(f"File status failed for {file_number}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not retrieve the status of file '{file_number}' at institution "
+                f"{institution_id}: {e}"
+            ) from e
+        response: dict[str, Any] = {
+            "file_number": file_number,
+            "institution_id": int(institution_id),
+            "found": status is not None,
+        }
+        if status is None:
+            response["message"] = (
+                f"No land-registry file '{file_number}' at institution {institution_id}. "
+                "Check the number (code-order/year, e.g. Z-12564/2026) and that the "
+                "institution is the office that holds the unit."
+            )
+        else:
+            response["status"] = status.model_dump(mode="json", by_alias=False)
+        return response
+
+    async def download_municipality_gis(
+        self, municipality: str, force: bool = False
+    ) -> dict[str, Any]:
+        """
+        Download (or refresh) the GIS data of a whole cadastral municipality.
+
+        The ATOM feed serves one ZIP per municipality with the parcel
+        boundaries in GML; this fetches it into the local cache that
+        get_parcel_geometry and get_parcel_zoning read, and reports what was
+        cached. The download runs in a worker thread.
+
+        Args:
+            municipality: Municipality name or registration code.
+            force: Download again even when the municipality is cached.
+
+        Returns:
+            {"municipality_code", "download_url", "already_cached", "zip_path",
+            "zip_size_bytes", "gml_path", "parcel_count", "source"}.
+        """
+        muni_code = await self._resolve_municipality(municipality)
+        cache = self.client.gis_cache
+        already_cached = cache.is_cached(muni_code) and not force
+        try:
+            logger.info(f"Downloading GIS data for municipality {muni_code} (force={force})")
+            zip_path = await asyncio.to_thread(cache.download_municipality, muni_code, force)
+            gml_path = await asyncio.to_thread(cache.get_parcel_data, muni_code, True)
+            parcel_count = await asyncio.to_thread(lambda: GMLParser(gml_path).count_parcels())
+        except Exception as e:  # noqa: BLE001 - HTTP, zip and parse errors alike
+            logger.error(f"GIS download failed for {muni_code}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not download the GIS data of municipality '{municipality}' "
+                f"({muni_code}): {e}"
+            ) from e
+        return {
+            "municipality_code": muni_code,
+            "download_url": f"{cache.base_url}/atom/ko-{muni_code}.zip",
+            "already_cached": already_cached,
+            "zip_path": str(zip_path),
+            "zip_size_bytes": zip_path.stat().st_size,
+            "gml_path": str(gml_path),
+            "parcel_count": parcel_count,
+            "source": cache.get_source(muni_code),
+        }
 
     async def find_main_book(
         self,

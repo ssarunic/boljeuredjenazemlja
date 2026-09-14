@@ -1174,9 +1174,10 @@ https://oss.uredjenazemlja.hr/map?cad_parcel_id=PARCELID
 ## Related Services
 
 ### WFS INSPIRE Service
-- **URL**: `https://oss.uredjenazemlja.hr/wfs`
+- **URL**: `https://api.uredjenazemlja.hr/services/inspire/cp/wfs` (WFS 2.0, feature types `cp:CadastralParcel`, `cp:CadastralZoning`, EPSG:3765; per-request limits of 1000 parcels and a 2000 m diagonal)
 - **Purpose**: Download cadastral geometries
-- **Format**: GML
+- **Format**: GML 3.2, GeoJSON, SHAPE-ZIP, CSV
+- **Note**: `https://oss.uredjenazemlja.hr/wfs` no longer serves a WFS (it returns the OSS web app). The OSS GeoServer at `https://oss.uredjenazemlja.hr/OssWebServices/wfs` requires a token. Details in [spatial-planning-api-specification.md](spatial-planning-api-specification.md) section 9.
 
 ### ATOM Download Service
 - **URL**: `https://catalog.uredjenazemlja.hr/katalogpodataka/atom-usluga-preuzimanja-dkp-a`

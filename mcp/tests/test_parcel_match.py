@@ -124,3 +124,41 @@ def test_land_parcel_that_exists_only_as_a_building_parcel_names_the_zgr_spellin
     with pytest.raises(ValueError) as excinfo:
         _search("parcel_search_bare_building.json", "35/1")
     assert "35/1 ZGR" in str(excinfo.value)
+
+
+def test_max_matches_returns_the_complete_search_response() -> None:
+    result, client = _search("parcel_search_prefix.json", "1072")
+    assert "matches" not in result  # the default keeps the response small
+    client = _FakeClient("parcel_search_prefix.json")
+    result = asyncio.run(CadastralTools(client).search_parcel("1072", "334979", max_matches=2))
+    assert result["matches_total"] == len(client.results)
+    assert result["matches_truncated"] is True
+    assert [m["parcel_number"] for m in result["matches"]] == [
+        r.parcel_number for r in client.results[:2]
+    ]
+    assert all("parcel_id" in m and "is_building_parcel" in m for m in result["matches"])
+    assert all("key1" not in m for m in result["matches"])
+
+
+def test_max_matches_returns_the_records_when_no_parcel_can_be_chosen() -> None:
+    # Only the building parcel *35/1 exists; the bare number selects nothing,
+    # but the records were asked for, so they come back with the warning.
+    client = _FakeClient("parcel_search_bare_building.json")
+    result = asyncio.run(CadastralTools(client).search_parcel("35/1", "334979", max_matches=5))
+    assert result["success"] is False
+    assert result["parcel_id"] is None
+    assert result["exact_match"] is False
+    assert "35/1 ZGR" in result["match_note"]
+    assert [m["parcel_number"] for m in result["matches"]] == ["*35/1"]
+    assert result["matches"][0]["is_building_parcel"] is True
+    assert result["matches_total"] == 1
+
+
+def test_no_results_with_max_matches_is_an_empty_list_not_an_error() -> None:
+    client = _FakeClient("parcel_search_bare_building.json")
+    client.results = []
+    result = asyncio.run(CadastralTools(client).search_parcel("9999", "334979", max_matches=5))
+    assert result["success"] is False and result["matches"] == []
+    assert "No parcels found" in result["match_note"]
+    with pytest.raises(ValueError):  # without max_matches it stays an error
+        asyncio.run(CadastralTools(client).search_parcel("9999", "334979"))

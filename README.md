@@ -67,6 +67,7 @@ encumbrances?"
 | Is the cadastre in step with the land registry? | shown on every parcel and unit | [get-parcel](docs/en/cli/commands/get-parcel.md) |
 | Many parcels, then many units, in one pipeline | `cadastral get-parcel --detail registry`, `get-lr-unit --input` | [get-parcel](docs/en/cli/commands/get-parcel.md), [get-lr-unit](docs/en/cli/commands/get-lr-unit.md) |
 | Parcel boundaries as WKT or GeoJSON, offline GIS download | `cadastral get-geometry`, `download-gis` | [get-geometry](docs/en/cli/commands/get-geometry.md) |
+| Spatial plans: is the parcel in a building area, of what kind (tourist zone, settlement) | `cadastral get-zoning` | [get-zoning](docs/en/cli/commands/get-zoning.md) |
 | Table, JSON, or CSV output, in Croatian or English | `--format`, `--lang` | [complete reference](docs/en/cli/reference.md) |
 
 Everything the CLI does is also available as Python calls and as MCP tools.

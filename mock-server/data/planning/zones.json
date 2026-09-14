@@ -1,0 +1,144 @@
+{
+  "_comment": "Synthetic building-area zones for the mock server's imitation of the Ministry's WFS (GradjPodrucje_MGIPU_Public). Drawn around the synthetic parcels of data/geometry/334979.zip: the settlement area covers parcel 103/2 entirely and about half of parcel 45; the T3 camp zone covers about a quarter of parcel 396/1; the T2 zone touches no parcel. Attribute names are those of the real service; values are invented and no plan sheet was consulted.",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "Gradj_podrucje_naselje.1",
+      "typeName": "GradjPodrucje_MGIPU_Public:Gradj_podrucje_naselje",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[380500.0, 4880850.0], [380656.0, 4880850.0], [380656.0, 4880925.0], [380500.0, 4880925.0], [380500.0, 4880850.0]]]
+      },
+      "properties": {
+        "objectid_1": null,
+        "zup_rb": "00013",
+        "jls_mb": "03794",
+        "jls_st": "OP",
+        "jls_ime": "SALI",
+        "plan_naziv": "PPUO SALI - III. ID",
+        "ozn_ispu": "HR-ISPU-PPGO-03794-R05",
+        "izvor": "4.5.",
+        "mj_izvora": "1:5.000",
+        "napomena": null,
+        "ozn_namjen": "GPN",
+        "naz_vl": "SAVAR",
+        "pov": 11700.0,
+        "shape_area": 11700.0,
+        "shape_length": 462.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Gradj_podrucje_naselje.2",
+      "typeName": "GradjPodrucje_MGIPU_Public:Gradj_podrucje_naselje",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[381000.0, 4881200.0], [381300.0, 4881200.0], [381300.0, 4881450.0], [381000.0, 4881450.0], [381000.0, 4881200.0]]]
+      },
+      "properties": {
+        "objectid_1": null,
+        "zup_rb": "00013",
+        "jls_mb": "03794",
+        "jls_st": "OP",
+        "jls_ime": "SALI",
+        "plan_naziv": "PPUO SALI - III. ID",
+        "ozn_ispu": "HR-ISPU-PPGO-03794-R05",
+        "izvor": "4.6.",
+        "mj_izvora": "1:5.000",
+        "napomena": null,
+        "ozn_namjen": "GPN",
+        "naz_vl": "BRBINJ",
+        "pov": 75000.0,
+        "shape_area": 75000.0,
+        "shape_length": 1100.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Gradj_podrucje_izvan_naselja.11",
+      "typeName": "GradjPodrucje_MGIPU_Public:Gradj_podrucje_izvan_naselja",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[380800.0, 4881000.0], [380900.0, 4881000.0], [380900.0, 4881100.0], [380800.0, 4881100.0], [380800.0, 4881000.0]]]
+      },
+      "properties": {
+        "zup_rb": "00013",
+        "jls_mb": "03794",
+        "jls_st": "OP",
+        "jls_ime": "SALI",
+        "plan_naziv": "PPUO SALI - III. ID",
+        "ozn_ispu": "HR-ISPU-PPGO-03794-R05",
+        "izvor": "4.5.",
+        "mj_izvora": "1:5.000",
+        "znacaj": 2,
+        "napomena": null,
+        "namjena": "GOSPODARSKA - UGOSTITELJSKO TURISTIČKA (TURISTIČKO NASELJE)",
+        "namjena_vl": null,
+        "ozn_namjen": "T2",
+        "naz_vl": "SAVAR - UVALA ILO",
+        "az_oznaka": "T",
+        "pov": 10000.0,
+        "shape_area": 10000.0,
+        "shape_length": 400.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Gradj_podrucje_izvan_naselja.12",
+      "typeName": "GradjPodrucje_MGIPU_Public:Gradj_podrucje_izvan_naselja",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[380630.0, 4880930.0], [380700.0, 4880930.0], [380700.0, 4881000.0], [380630.0, 4881000.0], [380630.0, 4880930.0]]]
+      },
+      "properties": {
+        "zup_rb": "00013",
+        "jls_mb": "03794",
+        "jls_st": "OP",
+        "jls_ime": "SALI",
+        "plan_naziv": "PPUO SALI - III. ID",
+        "ozn_ispu": "HR-ISPU-PPGO-03794-R05",
+        "izvor": "4.5.",
+        "mj_izvora": "1:5.000",
+        "znacaj": 0,
+        "napomena": null,
+        "namjena": "GOSPODARSKA - UGOSTITELJSKO TURISTIČKA (KAMP)",
+        "namjena_vl": null,
+        "ozn_namjen": "T3",
+        "naz_vl": "SAVAR - KAMP",
+        "az_oznaka": "T",
+        "pov": 4900.0,
+        "shape_area": 4900.0,
+        "shape_length": 280.0
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "Gradj_podrucje_izvan_naselja.13",
+      "typeName": "GradjPodrucje_MGIPU_Public:Gradj_podrucje_izvan_naselja",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[380300.0, 4880700.0], [380380.0, 4880700.0], [380380.0, 4880760.0], [380300.0, 4880760.0], [380300.0, 4880700.0]]]
+      },
+      "properties": {
+        "zup_rb": "00013",
+        "jls_mb": "03794",
+        "jls_st": "OP",
+        "jls_ime": "SALI",
+        "plan_naziv": "PPUO SALI - III. ID",
+        "ozn_ispu": "HR-ISPU-PPGO-03794-R05",
+        "izvor": "4.5.",
+        "mj_izvora": "1:5.000",
+        "znacaj": 0,
+        "napomena": null,
+        "namjena": "GROBLJE",
+        "namjena_vl": null,
+        "ozn_namjen": "G",
+        "naz_vl": null,
+        "az_oznaka": "G",
+        "pov": 4800.0,
+        "shape_area": 4800.0,
+        "shape_length": 280.0
+      }
+    }
+  ]
+}

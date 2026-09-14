@@ -37,6 +37,7 @@ Every command, with a link to its page. The command is what you type; the link i
 
 ## Other
 
+- `cadastral get-zoning`: [Find out whether a parcel is in a building area](commands/get-zoning.md). Find out which spatial-plan building area a parcel lies in.
 - `cadastral list-books-of-dc`: [List the books of deposited contracts](commands/list-books-of-dc.md). List books of deposited contracts (knjige položenih ugovora, KPU).
 - `cadastral list-main-books`: [Find the main book of a cadastral municipality](commands/list-main-books.md). List land registry main books (glavne knjige).
 - `cadastral search-possession-sheet`: [Find a possession sheet by its number](commands/search-possession-sheet.md). Find a possession sheet (posjedovni list) by number.

@@ -1,8 +1,8 @@
 # MCP Usage Guide
 
 How an AI agent (Claude Desktop, Claude Code, any MCP client) should use the
-Cadastral MCP server. The server exposes nine tools, three resources and four
-prompts over the Model Context Protocol; it is a demonstration that runs against
+Cadastral MCP server. The server exposes thirteen tools, three resources and
+four prompts over the Model Context Protocol; it is a demonstration that runs against
 the included mock server by default (see [legal.md](legal.md) before pointing it
 anywhere else).
 
@@ -27,12 +27,17 @@ and unit numbers) are strings.
 
 ## Tools
 
-### `find_parcel(parcel_number, municipality)`
+### `find_parcel(parcel_number, municipality, max_matches=0)`
 
 Finds one parcel and returns its `parcel_id`, `parcel_number`,
 `municipality_code`, `is_building_parcel` and, when the municipality's GIS data
 is available, `map_url` (the interactive map centred on the parcel). Use it to
 confirm a parcel exists or to get its id; `get_parcel` gives the record.
+
+`max_matches` above 0 adds the complete search response: `matches` lists every
+record the server matched (`parcel_id`, `parcel_number`, `is_building_parcel`),
+up to that many, with `matches_total` and `matches_truncated`. Use it to answer
+"which parcels start with 103" rather than to pick one.
 
 The search matches on a substring, so a number that does not exist can come
 back as a longer one ("973" as 973/1). Check `exact_match`. When it is `false`,
@@ -68,7 +73,7 @@ the land registry reference) and `map_url` when available. A failed parcel does
 not stop the others. An entry resolved from a fallback match carries
 `exact_match: false` and `match_note`, as `find_parcel` does.
 
-### `get_lr_unit(units, detail="ownership", owners_limit=None, include_plombe_detail=False)`
+### `get_lr_unit(units, detail="ownership", limit=None, offset=0, include_plombe_detail=False, historical_overview=False)`
 
 One or more land registry units: registered owners with shares (list B),
 parcels (list A), encumbrances (list C), pending entries (plombe). `units` is a
@@ -98,7 +103,9 @@ building parcel) is an `error` entry and does not stop the others. Every
 reference has exactly one of the three statuses, so `successful + failed +
 duplicates = total`; `successful` alone equals `unique`, the units fetched.
 
-`detail` shapes `data` for every unit:
+`detail` shapes `data` for every unit. Every level names the unit
+(`lr_unit_number`, `main_book_id`, `main_book_name`, `institution_id`,
+`institution_name`):
 
 - `"ownership"` (default): owners with structured shares
   (`share = {num, den, decimal}`), each with `entry` (the registration entry
@@ -106,25 +113,62 @@ duplicates = total`; `successful` alone equals `unique`, the units fetched.
   action type), plus `share_entries` (notes on individual shares) and
   `summary`. Fits in context.
 - `"summary"`: identity and totals only.
-- `"full"`: every sheet, including list C encumbrances (`amount`,
-  `beneficiaries`) and geometry.
+- `"shares"`: list B (vlastovnica) as the register holds it: the raw shares
+  under `ownership_sheet_b.lr_unit_shares`, each with its sub-shares, entries
+  and status, plus the sheet-level entries in `ownership_sheet_b.lr_entries`;
+  `total_shares` and `total_owners` give the whole sheet's size. Use it when
+  the flattened `ownership` rows are not enough (historical shares with
+  `historical_overview`, share descriptions, entries on the sheet itself).
+- `"parcels"`: list A (posjedovnica): the unit's parcels under `parcels`, with
+  `total_parcels`, `total_area_m2`, `sheet_a1_source_key` and the list A2
+  entries.
+- `"encumbrances"`: list C (teretovnica): the entry groups under
+  `entry_groups` (`amount`, `beneficiaries`, entries), with
+  `total_entry_groups`.
+- `"full"`: every sheet at once, including geometry.
 
-`owners_limit` caps owner records per unit in `ownership` and `full`;
-`total_owners` and `owners_truncated` report the full count. In `full` the cap
-cuts list B off at that many records and `shares_omitted` counts the shares
-dropped. A `full` dump too large to return becomes that unit's `error`, naming
-the sheet at fault and the smaller options; use `ownership` there.
+`offset` and `limit` page through the list the level is about: owner records
+for `ownership`, top-level shares for `shares` and `full`, parcels for
+`parcels`, entry groups for `encumbrances`. Every level but `summary` carries a
+`page` block (`offset`, `limit`, `total`, `returned`, `truncated`,
+`next_offset`); when `truncated` is true, call again with `offset=next_offset`
+for the rest. `owners_limit` is an older synonym of `limit`. In `shares` and
+`full` a share is a page item whether or not it has owners (a share may hold
+only annotations), and the shares outside the window are dropped whole,
+counted in `shares_omitted`; `total_owners` and `owners_truncated` report the
+owner records of the whole sheet. A response too large to return becomes that
+unit's `error`, naming the sheet at fault and the smaller options: a per-sheet
+level with a small limit is always small enough, so a unit that `full` refuses
+(a list C that alone exceeds the ceiling, for instance) can still be read
+completely, one sheet and one page at a time.
 
 `include_plombe_detail` resolves what each pending plomba is (request type,
 status, dates) into `plombe_detail` per unit, at one extra request per plomba.
+`get_file_status` does the same for one file number you already hold.
+
+`historical_overview` asks the register for the historical overview (povijesni
+pregled) as well: deleted entries and shares whose status is not active. Off by
+default, so the owners returned are the current ones.
 
 Condominiums (etažno vlasništvo): an entry carries `is_condominium: true`; each
 share is one apartment with `condominium_number` and `condominium_descriptions`.
 
 ### `resolve_municipality(name_or_code)`
 
-Cadastral municipality (katastarska općina, k.o.) name to registration code.
-Once you have the code, use it; it is unambiguous where a name may not be.
+Cadastral municipality (katastarska općina, k.o.) name to its complete search
+record: `code` (the registration number), `name`, `full_name` (with the
+cadastral office), `municipality_id`, `office_id` and `department_id`. Once you
+have the code, use it; it is unambiguous where a name may not be. A name that
+matches several municipalities returns the first with the others under
+`other_matches` and `matches_total`.
+
+### `list_municipalities(search=None, office_id=None, department_id=None, offset=0, limit=200)`
+
+Cadastral municipalities filtered by name (substring), cadastral office
+(`id` from `list_cadastral_offices`) or department, paged with `offset` and
+`limit` (`limit=null` returns all). Each record is shaped as in
+`resolve_municipality`; the result carries `total` and a `page` block. Use it
+for "which cadastral municipalities belong to the Zadar office".
 
 ### `get_parcel_geometry(parcel_number, municipality, format="geojson", zoom=19)`
 
@@ -133,6 +177,20 @@ Boundary of a parcel as `geojson` (a Feature whose properties include
 Coordinates are EPSG:3765. The first request for a municipality downloads its
 GIS data; later requests use the cache. `zoom` 19 fits one ordinary parcel, 20
 suits very small ones.
+
+### `get_parcel_zoning(parcel_number, municipality, include_geometry=False, min_overlap=0.02)`
+
+Screening of a parcel against the spatial plans' building areas. `status` is
+`inside_settlement`, `detached_zone`, `touches_below_threshold` or `outside`;
+`buildability` is always `"unknown"` (the tool never decides whether anything
+may be built); `matches` lists every building-area zone covering
+the parcel with its designation code and text (`T2` tourist settlement, `T3`
+camp, `GPN` settlement area ...), zone name, plan name and identifier,
+`generation` of the code list and the estimated overlap. `dataset.disclaimer`
+says the layer is an interpretation of the plans by the county institutes and
+not valid for official acts; repeat it to the user. `generation_note` explains
+why T1/T2/T3 mean different things in old and new-generation plans. Zone
+polygons (EPSG:3765) are included only with `include_geometry=True`.
 
 ### `list_cadastral_offices(filter_name=None)`
 
@@ -155,6 +213,27 @@ Cadastre possession sheets by number (prefix match). The cadastre has no lookup
 by sheet id; to see a sheet's possessors, call `get_parcel` on one of its
 parcels.
 
+### `get_file_status(file_number, institution_id)`
+
+Processing status of one land-registry file (spis, plomba) by its number, for
+example "Z-12564/2026": what the request is (`application_content`), where it
+is in processing (`status_description`), the registration number, the
+resolution once there is one, and the dates. `institution_id` is the
+land-registry office that holds the unit (`institution_id` of the unit from
+`get_lr_unit`, or of the book from `find_main_book`). `found: false` with a
+`message` means the register has no such file at that office; it is not an
+error.
+
+### `download_municipality_gis(municipality, force=False)`
+
+Downloads the GIS data of a whole cadastral municipality (the ATOM ZIP with
+the parcel boundaries in GML) into the local cache that `get_parcel_geometry`
+and `get_parcel_zoning` read, or refreshes it with `force=true`. Returns the
+`download_url`, whether it was `already_cached`, the cached `zip_path` and
+`gml_path`, the ZIP size, the `parcel_count` of the municipality and the
+`source` server the cache came from. The two geometry tools download on demand;
+this is for fetching ahead of many lookups or refreshing stale data.
+
 ## Playbook
 
 - **Who owns parcel X (prema ZK)**: `get_lr_unit` with
@@ -172,6 +251,19 @@ parcels.
   the parcel is not in the land registry rather than inventing an owner.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
+- **A large unit** (a condominium with hundreds of shares, a long list C):
+  `get_lr_unit` with `detail="ownership"` and a `limit`, then `offset=next_offset`
+  until `page.truncated` is false; `detail="shares"`, `"encumbrances"` or
+  `"parcels"` with a limit for the raw sheets. Do not retry `full` on a unit it
+  refused.
+- **Which parcels exist with a number**: `find_parcel` with `max_matches`. When
+  no single parcel can be chosen (only the building parcel `*35/1` exists, say)
+  the answer has `success: false` and `match_note`, and `matches` still lists
+  the records.
+- **What is pending on a unit**: `summary.pending_plombe` lists the file
+  numbers; `include_plombe_detail` or `get_file_status` say what each one is.
+- **Municipalities of an office**: `list_municipalities` with the `office_id`
+  from `list_cadastral_offices`.
 - **Not harmonized**: `cadastre_lr_harmonized: false` on a parcel means the
   cadastre and the land registry disagree about it; show both registers.
 
@@ -181,10 +273,13 @@ someone became owner.
 
 ## Resources and prompts
 
-Resources: `cadastral://parcel/{parcel_id}`, `cadastral://municipality/{code}`,
-`cadastral://office/{code}`. Prompts: `explain_ownership_structure(parcel_id)`,
-`property_report(parcel_id)`, `compare_parcels(parcel_ids)`,
-`land_use_summary(parcel_id)`.
+Resources: `cadastral://parcel/{parcel_id}` (the parcel record),
+`cadastral://municipality/{code}` (the municipality search record),
+`cadastral://office/{code}` (the office by id). Prompts:
+`explain_ownership_structure(parcel_id)`, `property_report(parcel_id)`,
+`compare_parcels(parcel_ids)`, `land_use_summary(parcel_id)`; all four take
+the numeric `parcel_id` that `find_parcel` returns and read the cadastre
+record (possessors, not land-registry owners).
 
 ## Troubleshooting
 
@@ -197,6 +292,12 @@ Resources: `cadastral://parcel/{parcel_id}`, `cadastral://municipality/{code}`,
   `cadastral cache clear -m <code>`.
 - **Could not retrieve the land registry unit**: check the reference. A parcel
   that is `parcel_not_in_land_registry` is cadastre-only.
+- **Could not match parcel against the building areas ... status_code=404**:
+  the building-areas lookup went to the default endpoint, the mock server's
+  imitation of the WFS at `<CADASTRAL_API_BASE_URL>/planning/wfs`, which
+  exists only on the mock. When the server is pointed elsewhere, set
+  `CADASTRAL_PLANNING_WFS_URLS` to the building-areas WFS mirror(s) as well
+  (see `.env.example`; verify your rights first) and restart the MCP server.
 - **Rate limiting**: the server spaces its requests; pass lists to `get_parcel`
   and `get_lr_unit` instead of calling once per item.
 

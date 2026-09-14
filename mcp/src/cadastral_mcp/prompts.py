@@ -34,13 +34,13 @@ class CadastralPrompts:
         try:
             logger.info(f"Generating ownership explanation prompt for parcel {parcel_id}")
 
-            parcel = self.client.get_parcel_by_id(parcel_id)
+            parcel = self.client.get_parcel_info(parcel_id)
 
             prompt = f"""Analyze the ownership structure of parcel {parcel.parcel_number}:
 
 **Basic Information:**
 - Parcel Number: {parcel.parcel_number}
-- Municipality: {parcel.municipality_name}
+- Municipality: {parcel.cad_municipality_name}
 - Total Area: {parcel.area} m²
 - Address: {parcel.address or 'N/A'}
 
@@ -89,14 +89,14 @@ Please explain:
         try:
             logger.info(f"Generating property report prompt for parcel {parcel_id}")
 
-            parcel = self.client.get_parcel_by_id(parcel_id)
+            parcel = self.client.get_parcel_info(parcel_id)
 
             prompt = f"""Generate a comprehensive property report for parcel {parcel.parcel_number}:
 
 **Property Details:**
 - Parcel Number: {parcel.parcel_number}
-- Municipality: {parcel.municipality_name}
-- Cadastral Office: {parcel.cadastral_office_name}
+- Municipality: {parcel.cad_municipality_name}
+- Cadastral Office (institution id): {parcel.institution_id}
 - Total Area: {parcel.area} m²
 - Address: {parcel.address or 'N/A'}
 - Building Rights: {'Yes' if parcel.has_building_right else 'No'}
@@ -106,7 +106,7 @@ Please explain:
 
             if parcel.parcel_parts:
                 for part in parcel.parcel_parts:
-                    prompt += f"  - {part.land_use_name}: {part.area} m²\n"
+                    prompt += f"  - {part.name}: {part.area} m²\n"
             else:
                 prompt += "  No land use data available\n"
 
@@ -157,16 +157,16 @@ Please create a detailed property report including:
 
             for idx, parcel_id in enumerate(parcel_ids, 1):
                 try:
-                    parcel = self.client.get_parcel_by_id(parcel_id)
+                    parcel = self.client.get_parcel_info(parcel_id)
 
                     prompt += f"**Parcel {idx}: {parcel.parcel_number}**\n"
-                    prompt += f"- Municipality: {parcel.municipality_name}\n"
+                    prompt += f"- Municipality: {parcel.cad_municipality_name}\n"
                     prompt += f"- Area: {parcel.area} m²\n"
                     prompt += f"- Building Rights: {'Yes' if parcel.has_building_right else 'No'}\n"
 
                     if parcel.parcel_parts:
                         prompt += "- Land Use: "
-                        land_uses = [part.land_use_name for part in parcel.parcel_parts]
+                        land_uses = [part.name for part in parcel.parcel_parts]
                         prompt += ", ".join(land_uses) + "\n"
 
                     if parcel.possession_sheets and parcel.possession_sheets[0].possessors:
@@ -207,13 +207,13 @@ Please create a detailed property report including:
         try:
             logger.info(f"Generating land use summary prompt for parcel {parcel_id}")
 
-            parcel = self.client.get_parcel_by_id(parcel_id)
+            parcel = self.client.get_parcel_info(parcel_id)
 
             prompt = f"""Analyze the land use distribution for parcel {parcel.parcel_number}:
 
 **Parcel Information:**
 - Parcel Number: {parcel.parcel_number}
-- Municipality: {parcel.municipality_name}
+- Municipality: {parcel.cad_municipality_name}
 - Total Area: {parcel.area} m²
 
 **Land Use Breakdown:**
@@ -227,10 +227,10 @@ Please create a detailed property report including:
                     percentage = (part_area / total_area * 100) if total_area > 0 else 0
 
                     prompt += f"""
-- **{part.land_use_name}**
+- **{part.name}**
   - Area: {part.area} m²
   - Percentage: {percentage:.1f}%
-  - Code: {part.land_use}
+  - Type: {part.part_type or 'N/A'}
 """
             else:
                 prompt += "\nNo land use classification data available.\n"

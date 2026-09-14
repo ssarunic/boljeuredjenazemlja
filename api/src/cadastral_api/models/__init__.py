@@ -32,8 +32,26 @@ from .entities import (
     entry_row,
 )
 from .gis_entities import Coordinate, ParcelGeometry, build_map_url
+from .planning_entities import (
+    BUILDING_AREAS_DISCLAIMER,
+    ParcelZoning,
+    PlanGeneration,
+    PlanningDataset,
+    PlanningZone,
+    ZoneKind,
+    ZoneMatch,
+    ZoningStatus,
+)
 
 __all__ = [
+    "BUILDING_AREAS_DISCLAIMER",
+    "ParcelZoning",
+    "PlanGeneration",
+    "PlanningDataset",
+    "PlanningZone",
+    "ZoneKind",
+    "ZoneMatch",
+    "ZoningStatus",
     "BookOfDCSearchResult",
     "CadastralOffice",
     "Coordinate",

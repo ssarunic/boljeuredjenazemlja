@@ -21,7 +21,7 @@ msgstr ""
 #: commands/cache-clear.md:15 commands/cache-info.md:14
 #: commands/cache-list.md:15 commands/download-gis.md:15
 #: commands/get-geometry.md:15 commands/get-lr-unit.md:17
-#: commands/get-parcel.md:15 commands/info.md:15
+#: commands/get-parcel.md:15 commands/get-zoning.md:17 commands/info.md:15
 #: commands/list-books-of-dc.md:16 commands/list-main-books.md:16
 #: commands/list-municipalities.md:14 commands/list-offices.md:14
 #: commands/search-municipality.md:15 commands/search-possession-sheet.md:16
@@ -42,7 +42,7 @@ msgstr ""
 #: commands/cache-clear.md:20 commands/cache-info.md:19
 #: commands/cache-list.md:20 commands/download-gis.md:20
 #: commands/get-geometry.md:21 commands/get-lr-unit.md:23
-#: commands/get-parcel.md:22 commands/info.md:20
+#: commands/get-parcel.md:22 commands/get-zoning.md:24 commands/info.md:20
 #: commands/list-books-of-dc.md:21 commands/list-main-books.md:21
 #: commands/list-municipalities.md:19 commands/list-offices.md:19
 #: commands/search-municipality.md:21 commands/search-possession-sheet.md:21
@@ -60,7 +60,7 @@ msgstr ""
 #: commands/cache-clear.md:26 commands/cache-info.md:23
 #: commands/cache-list.md:24 commands/download-gis.md:26
 #: commands/get-geometry.md:31 commands/get-lr-unit.md:34
-#: commands/get-parcel.md:33 commands/info.md:24
+#: commands/get-parcel.md:33 commands/get-zoning.md:41 commands/info.md:24
 #: commands/list-books-of-dc.md:27 commands/list-main-books.md:26
 #: commands/list-municipalities.md:24 commands/list-offices.md:23
 #: commands/search-municipality.md:25 commands/search-possession-sheet.md:27
@@ -71,7 +71,7 @@ msgstr ""
 #: commands/cache-clear.md:28 commands/cache-info.md:25
 #: commands/cache-list.md:26 commands/download-gis.md:28
 #: commands/get-geometry.md:33 commands/get-lr-unit.md:36
-#: commands/get-parcel.md:35 commands/info.md:26
+#: commands/get-parcel.md:35 commands/get-zoning.md:43 commands/info.md:26
 #: commands/list-books-of-dc.md:29 commands/list-main-books.md:28
 #: commands/list-municipalities.md:26 commands/list-offices.md:25
 #: commands/search-municipality.md:27 commands/search-possession-sheet.md:29
@@ -88,7 +88,7 @@ msgstr ""
 #: commands/cache-clear.md:36 commands/cache-info.md:32
 #: commands/cache-list.md:33 commands/download-gis.md:35
 #: commands/get-geometry.md:40 commands/get-lr-unit.md:43
-#: commands/get-parcel.md:42 commands/info.md:33
+#: commands/get-parcel.md:42 commands/get-zoning.md:50 commands/info.md:33
 #: commands/list-books-of-dc.md:36 commands/list-main-books.md:35
 #: commands/list-municipalities.md:33 commands/list-offices.md:32
 #: commands/search-municipality.md:34 commands/search-possession-sheet.md:36
@@ -103,7 +103,7 @@ msgstr ""
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
 #: commands/get-geometry.md:75 commands/get-lr-unit.md:99
-#: commands/get-parcel.md:102 commands/info.md:65
+#: commands/get-parcel.md:102 commands/get-zoning.md:90 commands/info.md:65
 #: commands/list-books-of-dc.md:53 commands/list-main-books.md:53
 #: commands/list-municipalities.md:66 commands/list-offices.md:89
 #: commands/search-municipality.md:52 commands/search-possession-sheet.md:55
@@ -125,7 +125,7 @@ msgstr ""
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
 #: commands/get-geometry.md:99 commands/get-lr-unit.md:278
-#: commands/get-parcel.md:213 commands/info.md:73
+#: commands/get-parcel.md:213 commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
 #: commands/list-municipalities.md:90 commands/list-offices.md:104
 #: commands/search-municipality.md:75 commands/search-possession-sheet.md:73
@@ -146,7 +146,7 @@ msgstr ""
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
 #: commands/get-geometry.md:118 commands/get-lr-unit.md:294
-#: commands/get-parcel.md:260 commands/info.md:80
+#: commands/get-parcel.md:260 commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
 #: commands/list-municipalities.md:103 commands/list-offices.md:110
 #: commands/search-municipality.md:89 commands/search-possession-sheet.md:86
@@ -165,7 +165,7 @@ msgstr ""
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
 #: commands/get-geometry.md:124 commands/get-lr-unit.md:301
-#: commands/get-parcel.md:267 commands/info.md:86
+#: commands/get-parcel.md:267 commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
 #: commands/list-municipalities.md:109 commands/list-offices.md:116
 #: commands/search-municipality.md:96 commands/search-possession-sheet.md:92
@@ -199,7 +199,8 @@ msgstr ""
 
 #: commands/cache-info.md:26 commands/cache-list.md:27
 #: commands/download-gis.md:29 commands/get-geometry.md:34
-#: commands/get-lr-unit.md:37 commands/get-parcel.md:36 commands/info.md:27
+#: commands/get-lr-unit.md:37 commands/get-parcel.md:36
+#: commands/get-zoning.md:44 commands/info.md:27
 #: commands/list-books-of-dc.md:30 commands/list-main-books.md:29
 #: commands/list-municipalities.md:27 commands/list-offices.md:26
 #: commands/search-municipality.md:28 commands/search-possession-sheet.md:30
@@ -410,13 +411,13 @@ msgid ""
 "GeoJSON file can be dragged onto many online map viewers:"
 msgstr ""
 
-#: commands/get-geometry.md:101
+#: commands/get-geometry.md:101 commands/get-zoning.md:124
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr ""
 
-#: commands/get-geometry.md:111
+#: commands/get-geometry.md:111 commands/get-zoning.md:134
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
@@ -793,6 +794,113 @@ msgstr ""
 #: commands/get-parcel.md:264
 msgid ""
 "[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
+msgstr ""
+
+#: commands/get-zoning.md:9
+msgid "Find out whether a parcel is in a building area"
+msgstr ""
+
+#: commands/get-zoning.md:11
+msgid ""
+"Tells you where a parcel lies with respect to the building areas of the "
+"spatial plans: inside the building area of a settlement, in a separate zone "
+"outside a settlement (a tourist settlement, a camp, an industrial zone), or "
+"outside every building area. It names the zone, its designation code and the "
+"plan it comes from. It does not tell you whether anything may be built there."
+msgstr ""
+
+#: commands/get-zoning.md:19
+msgid ""
+"A client is about to buy a parcel and you want a first check of whether it "
+"lies in a building area at all, before reading the plan."
+msgstr ""
+
+#: commands/get-zoning.md:20
+msgid ""
+"You want to know whether a parcel is in a tourist zone before a valuation."
+msgstr ""
+
+#: commands/get-zoning.md:21
+msgid ""
+"You are checking which spatial plan applies to a parcel before asking the "
+"municipality for a lokacijska informacija."
+msgstr ""
+
+#: commands/get-zoning.md:26
+msgid ""
+"You need the parcel number and the cadastral municipality, as for [get-"
+"geometry](get-geometry.md). The boundary data of the municipality is "
+"downloaded once and kept on your computer."
+msgstr ""
+
+#: commands/get-zoning.md:30
+msgid ""
+"The answer comes from the building areas (građevinska područja) that the "
+"county spatial-planning institutes drew from the plans in force. It is an "
+"interpretation of the plans, not the plans themselves: the tool says so at "
+"the end of every answer, and an official answer still needs the plan or a "
+"lokacijska informacija from the municipality."
+msgstr ""
+
+#: commands/get-zoning.md:36
+msgid ""
+"Being inside a building area is not permission to build. The plan's "
+"provisions, the size of the plot, access, utilities, protected areas and the "
+"need for a more detailed plan are not checked by this tool, so the "
+"**Buildability** line always says it was not determined."
+msgstr ""
+
+#: commands/get-zoning.md:80
+msgid ""
+"**Status** is the short answer: inside a settlement building area, in a "
+"detached building area outside a settlement, touching a building area below "
+"the overlap threshold, or outside building areas. The **Zones** table lists "
+"every zone that covers part of the parcel, with its **Code** (for example "
+"`T3` for a camp or `GPN` for a settlement area), its **Designation** as "
+"written in the plan, the **Zone** name, the **Plan** it was read from and the"
+" share of the parcel it covers (**Overlap**). The yellow note at the end is "
+"the warning that must go with any use of this answer."
+msgstr ""
+
+#: commands/get-zoning.md:92
+msgid ""
+"`--format` chooses the form of the answer. `table` is what you see above. "
+"`json` gives the same data for other programs, including the plan identifier "
+"and the county and municipality of the zone. `csv` gives one line per zone "
+"for a spreadsheet, including the zones under the threshold, which are marked "
+"in the `match` column. `geojson` gives the zone outlines for a mapping "
+"program, marked the same way; add `--show-geometry` to include them in the "
+"`json` form as well."
+msgstr ""
+
+#: commands/get-zoning.md:100
+msgid ""
+"Zones that cover only a sliver of the parcel are listed separately, below the"
+" table, because plan boundaries are drawn on small-scale maps and rarely "
+"follow parcel lines exactly. `--min-overlap` sets that threshold as a "
+"percentage of the parcel, between 0 and 100; the usual value is 2."
+msgstr ""
+
+#: commands/get-zoning.md:105
+msgid "To keep the answer, write it to a file with `--output`:"
+msgstr ""
+
+#: commands/get-zoning.md:137
+msgid ""
+"If the answer says the building areas could not be reached, the plan service "
+"is down or the tool is not set up for it; ask the person who installed the "
+"tool. Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/get-zoning.md:143
+msgid ""
+"[get-geometry](get-geometry.md) shows the parcel boundary the answer is based"
+" on."
+msgstr ""
+
+#: commands/get-zoning.md:144
+msgid ""
+"[get-parcel](get-parcel.md) shows what the cadastre records for the parcel."
 msgstr ""
 
 #: commands/info.md:9
@@ -1767,24 +1875,24 @@ msgstr ""
 msgid "Complete reference"
 msgstr ""
 
-#: reference.md:45
+#: reference.md:46
 msgid "Other pages"
 msgstr ""
 
-#: reference.md:47
+#: reference.md:48
 msgid "[Start here](start-here.md): the tutorial."
 msgstr ""
 
-#: reference.md:48
+#: reference.md:49
 msgid ""
 "[Glossary](glossary.md): the words of the land registry and the cadastre."
 msgstr ""
 
-#: reference.md:49
+#: reference.md:50
 msgid "[Errors](errors.md): what the messages mean."
 msgstr ""
 
-#: reference.md:50
+#: reference.md:51
 msgid ""
 "[Installation](install.md): for the technical colleague who sets the tool up."
 msgstr ""

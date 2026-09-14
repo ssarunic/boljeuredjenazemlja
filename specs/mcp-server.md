@@ -48,15 +48,19 @@ AI agents can auto-fetch contextual information:
 The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
-- **`find_parcel`** - Find one parcel by number and municipality (parcel id, exact-match check, map link)
+- **`find_parcel`** - Find one parcel by number and municipality (parcel id, exact-match check, map link); `max_matches` returns the complete search response
 - **`get_parcel`** - Detailed cadastre record of one or more parcels. Takes a list of references (`parcel_id`, or `parcel_number` + `municipality`) and returns one entry per reference; `source` selects the register (cadastre possessors, land-registry hint, or none). Each entry carries the land registry unit reference.
 - **`get_parcel_geometry`** - Download and return parcel boundaries
+- **`get_parcel_zoning`** - Screening of a parcel against the spatial plans' building areas
+- **`download_municipality_gis`** - Download (or refresh) a whole municipality's GIS data into the cache and report what was cached
 
 **Land Registry Operations:**
-- **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail`, `owners_limit` and `include_plombe_detail` shape every entry.
+- **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail` (`summary`, `ownership`, `shares`, `parcels`, `encumbrances`, `full`), `offset`/`limit` paging over the list the level is about (owner rows, shares, parcels or entry groups), `include_plombe_detail` and `historical_overview` shape every entry.
+- **`get_file_status`** - Processing status of one land-registry file (spis, plomba) by number and institution id
 
 **Lookup Operations:**
-- **`resolve_municipality`** - Convert municipality names to codes
+- **`resolve_municipality`** - Municipality name or code to its complete search record (code, name, office and department ids)
+- **`list_municipalities`** - List municipalities filtered by name, cadastral office or department, paged
 - **`list_cadastral_offices`** - List available cadastral offices
 - **`find_main_book`** - Find land registry main books (glavne knjige) by name, office or institution; gives the `main_book_id` for `get_lr_unit`
 - **`find_book_of_dc`** - Find books of deposited contracts (knjige položenih ugovora, KPU)

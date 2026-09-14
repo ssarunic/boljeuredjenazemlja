@@ -65,3 +65,17 @@ The included `334979.zip` holds a small synthetic `katastarske_cestice.gml`
 `data/parcels/334979.json`). It exists so that `get-geometry` and
 `download-gis` work offline against the mock server, and so that the
 documentation build can capture their output.
+
+## Spatial-plan building areas fixture
+
+`data/planning/zones.json` is served by `/planning/wfs`, an imitation of the
+Ministry's building-areas WFS (`GradjPodrucje_MGIPU_Public`, see
+`specs/spatial-planning-api-specification.md` section 3). It answers
+`GetCapabilities` and `GetFeature` with `typeNames`, `cql_filter`
+(`INTERSECTS(geom, WKT)` and `attribute='value'` clauses joined by `AND`),
+`bbox`, `count`/`startIndex`, `propertyName` and `resultType=hits`, always as
+GeoJSON in EPSG:3765. The five synthetic zones are drawn around the synthetic
+parcels: the settlement area of Savar covers parcel 103/2 entirely and half of
+parcel 45, a T3 camp zone covers about a quarter of parcel 396/1, and a T2
+tourist-settlement zone touches no parcel. Attribute names are those of the
+real service; the values are invented.

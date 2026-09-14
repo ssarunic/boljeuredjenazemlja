@@ -23,7 +23,7 @@ msgstr ""
 #: commands/cache-clear.md:15 commands/cache-info.md:14
 #: commands/cache-list.md:15 commands/download-gis.md:15
 #: commands/get-geometry.md:15 commands/get-lr-unit.md:17
-#: commands/get-parcel.md:15 commands/info.md:15
+#: commands/get-parcel.md:15 commands/get-zoning.md:17 commands/info.md:15
 #: commands/list-books-of-dc.md:16 commands/list-main-books.md:16
 #: commands/list-municipalities.md:14 commands/list-offices.md:14
 #: commands/search-municipality.md:15 commands/search-possession-sheet.md:16
@@ -45,7 +45,7 @@ msgstr "Želite osloboditi prostor na disku."
 #: commands/cache-clear.md:20 commands/cache-info.md:19
 #: commands/cache-list.md:20 commands/download-gis.md:20
 #: commands/get-geometry.md:21 commands/get-lr-unit.md:23
-#: commands/get-parcel.md:22 commands/info.md:20
+#: commands/get-parcel.md:22 commands/get-zoning.md:24 commands/info.md:20
 #: commands/list-books-of-dc.md:21 commands/list-main-books.md:21
 #: commands/list-municipalities.md:19 commands/list-offices.md:19
 #: commands/search-municipality.md:21 commands/search-possession-sheet.md:21
@@ -65,7 +65,7 @@ msgstr ""
 #: commands/cache-clear.md:26 commands/cache-info.md:23
 #: commands/cache-list.md:24 commands/download-gis.md:26
 #: commands/get-geometry.md:31 commands/get-lr-unit.md:34
-#: commands/get-parcel.md:33 commands/info.md:24
+#: commands/get-parcel.md:33 commands/get-zoning.md:41 commands/info.md:24
 #: commands/list-books-of-dc.md:27 commands/list-main-books.md:26
 #: commands/list-municipalities.md:24 commands/list-offices.md:23
 #: commands/search-municipality.md:25 commands/search-possession-sheet.md:27
@@ -76,7 +76,7 @@ msgstr "Korak po korak"
 #: commands/cache-clear.md:28 commands/cache-info.md:25
 #: commands/cache-list.md:26 commands/download-gis.md:28
 #: commands/get-geometry.md:33 commands/get-lr-unit.md:36
-#: commands/get-parcel.md:35 commands/info.md:26
+#: commands/get-parcel.md:35 commands/get-zoning.md:43 commands/info.md:26
 #: commands/list-books-of-dc.md:29 commands/list-main-books.md:28
 #: commands/list-municipalities.md:26 commands/list-offices.md:25
 #: commands/search-municipality.md:27 commands/search-possession-sheet.md:29
@@ -95,7 +95,7 @@ msgstr ""
 #: commands/cache-clear.md:36 commands/cache-info.md:32
 #: commands/cache-list.md:33 commands/download-gis.md:35
 #: commands/get-geometry.md:40 commands/get-lr-unit.md:43
-#: commands/get-parcel.md:42 commands/info.md:33
+#: commands/get-parcel.md:42 commands/get-zoning.md:50 commands/info.md:33
 #: commands/list-books-of-dc.md:36 commands/list-main-books.md:35
 #: commands/list-municipalities.md:33 commands/list-offices.md:32
 #: commands/search-municipality.md:34 commands/search-possession-sheet.md:36
@@ -110,7 +110,7 @@ msgstr "Alat potvrđuje što je uklonio i koliko je prostora oslobodio."
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
 #: commands/get-geometry.md:75 commands/get-lr-unit.md:99
-#: commands/get-parcel.md:102 commands/info.md:65
+#: commands/get-parcel.md:102 commands/get-zoning.md:90 commands/info.md:65
 #: commands/list-books-of-dc.md:53 commands/list-main-books.md:53
 #: commands/list-municipalities.md:66 commands/list-offices.md:89
 #: commands/search-municipality.md:52 commands/search-possession-sheet.md:55
@@ -135,7 +135,7 @@ msgstr "Da biste uklonili sve, umjesto naziva općine upotrijebite `--sve`:"
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
 #: commands/get-geometry.md:99 commands/get-lr-unit.md:278
-#: commands/get-parcel.md:213 commands/info.md:73
+#: commands/get-parcel.md:213 commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
 #: commands/list-municipalities.md:90 commands/list-offices.md:104
 #: commands/search-municipality.md:75 commands/search-possession-sheet.md:73
@@ -158,7 +158,7 @@ msgstr "Ako ne navedete ni općinu ni `--sve`, vidjet ćete ovo:"
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
 #: commands/get-geometry.md:118 commands/get-lr-unit.md:294
-#: commands/get-parcel.md:260 commands/info.md:80
+#: commands/get-parcel.md:260 commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
 #: commands/list-municipalities.md:103 commands/list-offices.md:110
 #: commands/search-municipality.md:89 commands/search-possession-sheet.md:86
@@ -179,7 +179,7 @@ msgstr "[preuzmi-gis](download-gis.md) ponovno preuzima općinu."
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
 #: commands/get-geometry.md:124 commands/get-lr-unit.md:301
-#: commands/get-parcel.md:267 commands/info.md:86
+#: commands/get-parcel.md:267 commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
 #: commands/list-municipalities.md:109 commands/list-offices.md:116
 #: commands/search-municipality.md:96 commands/search-possession-sheet.md:92
@@ -216,7 +216,8 @@ msgstr "Ništa. Ova naredba ne traži unos i ništa ne mijenja."
 
 #: commands/cache-info.md:26 commands/cache-list.md:27
 #: commands/download-gis.md:29 commands/get-geometry.md:34
-#: commands/get-lr-unit.md:37 commands/get-parcel.md:36 commands/info.md:27
+#: commands/get-lr-unit.md:37 commands/get-parcel.md:36
+#: commands/get-zoning.md:44 commands/info.md:27
 #: commands/list-books-of-dc.md:30 commands/list-main-books.md:29
 #: commands/list-municipalities.md:27 commands/list-offices.md:26
 #: commands/search-municipality.md:28 commands/search-possession-sheet.md:30
@@ -497,13 +498,13 @@ msgstr ""
 "Da biste granicu nekome predali, zapišite je u datoteku pomoću `--datoteka`. "
 "GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:"
 
-#: commands/get-geometry.md:101
+#: commands/get-geometry.md:101 commands/get-zoning.md:124
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr "Ako čestice nema u podacima o granicama općine, vidjet ćete ovo:"
 
-#: commands/get-geometry.md:111
+#: commands/get-geometry.md:111 commands/get-zoning.md:134
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
@@ -1074,6 +1075,159 @@ msgstr "[pretraži](search.md) je kraći oblik ove naredbe."
 msgid ""
 "[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
 msgstr "[granica](get-geometry.md) daje granicu čestice za kartu."
+
+#: commands/get-zoning.md:9
+msgid "Find out whether a parcel is in a building area"
+msgstr "Saznajte je li čestica u građevinskom području"
+
+#: commands/get-zoning.md:11
+msgid ""
+"Tells you where a parcel lies with respect to the building areas of the "
+"spatial plans: inside the building area of a settlement, in a separate zone "
+"outside a settlement (a tourist settlement, a camp, an industrial zone), or "
+"outside every building area. It names the zone, its designation code and the "
+"plan it comes from. It does not tell you whether anything may be built there."
+msgstr ""
+"Kaže vam gdje čestica leži u odnosu na građevinska područja prostornih "
+"planova: unutar građevinskog područja naselja, u izdvojenom području izvan "
+"naselja (turističko naselje, kamp, gospodarska zona) ili izvan svih "
+"građevinskih područja. Navodi zonu, njezinu oznaku namjene i plan iz kojega "
+"potječe. Ne govori vam smije li se ondje što graditi."
+
+#: commands/get-zoning.md:19
+msgid ""
+"A client is about to buy a parcel and you want a first check of whether it "
+"lies in a building area at all, before reading the plan."
+msgstr ""
+"Stranka namjerava kupiti česticu i želite prvu provjeru leži li uopće u "
+"građevinskom području, prije čitanja plana."
+
+#: commands/get-zoning.md:20
+msgid ""
+"You want to know whether a parcel is in a tourist zone before a valuation."
+msgstr ""
+"Želite znati je li čestica u turističkoj zoni prije procjene vrijednosti."
+
+#: commands/get-zoning.md:21
+msgid ""
+"You are checking which spatial plan applies to a parcel before asking the "
+"municipality for a lokacijska informacija."
+msgstr ""
+"Provjeravate koji se prostorni plan odnosi na česticu prije nego što od "
+"općine zatražite lokacijsku informaciju."
+
+#: commands/get-zoning.md:26
+msgid ""
+"You need the parcel number and the cadastral municipality, as for [get-"
+"geometry](get-geometry.md). The boundary data of the municipality is "
+"downloaded once and kept on your computer."
+msgstr ""
+"Trebate broj čestice i katastarsku općinu, kao i za [granica](get-"
+"geometry.md). Podaci o granicama općine preuzimaju se jednom i čuvaju na "
+"vašem računalu."
+
+#: commands/get-zoning.md:30
+msgid ""
+"The answer comes from the building areas (građevinska područja) that the "
+"county spatial-planning institutes drew from the plans in force. It is an "
+"interpretation of the plans, not the plans themselves: the tool says so at "
+"the end of every answer, and an official answer still needs the plan or a "
+"lokacijska informacija from the municipality."
+msgstr ""
+"Odgovor dolazi iz građevinskih područja koja su županijski zavodi za "
+"prostorno uređenje iscrtali iz važećih planova. To je interpretacija planova,"
+" a ne sami planovi: alat to kaže na kraju svakog odgovora, a za službeni "
+"odgovor i dalje trebate plan ili lokacijsku informaciju općine."
+
+#: commands/get-zoning.md:36
+msgid ""
+"Being inside a building area is not permission to build. The plan's "
+"provisions, the size of the plot, access, utilities, protected areas and the "
+"need for a more detailed plan are not checked by this tool, so the "
+"**Buildability** line always says it was not determined."
+msgstr ""
+"Položaj unutar građevinskog područja nije dozvola za gradnju. Odredbe plana, "
+"veličinu građevne čestice, pristup, komunalnu opremu, zaštićena područja i "
+"obvezu izrade detaljnijeg plana ovaj alat ne provjerava, pa redak **Mogućnost"
+" gradnje** uvijek kaže da nije utvrđena."
+
+#: commands/get-zoning.md:80
+msgid ""
+"**Status** is the short answer: inside a settlement building area, in a "
+"detached building area outside a settlement, touching a building area below "
+"the overlap threshold, or outside building areas. The **Zones** table lists "
+"every zone that covers part of the parcel, with its **Code** (for example "
+"`T3` for a camp or `GPN` for a settlement area), its **Designation** as "
+"written in the plan, the **Zone** name, the **Plan** it was read from and the"
+" share of the parcel it covers (**Overlap**). The yellow note at the end is "
+"the warning that must go with any use of this answer."
+msgstr ""
+"**Status** je kratki odgovor: unutar građevinskog područja naselja, u "
+"izdvojenom građevinskom području izvan naselja, dodiruje građevinsko područje"
+" ispod praga preklopa ili izvan građevinskih područja. Tablica **Zone** "
+"navodi svaku zonu koja pokriva dio čestice, s njezinom oznakom (**Šifra**, na"
+" primjer `T3` za kamp ili `GPN` za područje naselja), namjenom kako je "
+"zapisana u planu (**Namjena**), nazivom zone (**Zona**), planom iz kojega je "
+"očitana (**Plan**) i udjelom čestice koji pokriva (**Preklop**). Žuta "
+"napomena na kraju upozorenje je koje mora pratiti svaku uporabu ovog "
+"odgovora."
+
+#: commands/get-zoning.md:92
+msgid ""
+"`--format` chooses the form of the answer. `table` is what you see above. "
+"`json` gives the same data for other programs, including the plan identifier "
+"and the county and municipality of the zone. `csv` gives one line per zone "
+"for a spreadsheet, including the zones under the threshold, which are marked "
+"in the `match` column. `geojson` gives the zone outlines for a mapping "
+"program, marked the same way; add `--show-geometry` to include them in the "
+"`json` form as well."
+msgstr ""
+"`--oblik` bira oblik odgovora. `tablica` je ono što vidite gore. `json` daje "
+"iste podatke za druge programe, uključujući oznaku plana te županiju i općinu"
+" zone. `csv` daje jedan redak po zoni za tablicu, uključujući zone ispod "
+"praga, koje su označene u stupcu `podudaranje`. `geojson` daje obrise zona za"
+" kartografski program, označene na isti način; dodajte `--geometrija` da ih "
+"uključite i u oblik `json`."
+
+#: commands/get-zoning.md:100
+msgid ""
+"Zones that cover only a sliver of the parcel are listed separately, below the"
+" table, because plan boundaries are drawn on small-scale maps and rarely "
+"follow parcel lines exactly. `--min-overlap` sets that threshold as a "
+"percentage of the parcel, between 0 and 100; the usual value is 2."
+msgstr ""
+"Zone koje pokrivaju tek rub čestice navode se odvojeno, ispod tablice, jer se"
+" granice planova crtaju na kartama sitnog mjerila i rijetko točno prate "
+"granice čestica. `--najmanji-preklop` postavlja taj prag kao postotak "
+"čestice, između 0 i 100; uobičajena vrijednost je 2."
+
+#: commands/get-zoning.md:105
+msgid "To keep the answer, write it to a file with `--output`:"
+msgstr "Da biste odgovor sačuvali, zapišite ga u datoteku pomoću `--datoteka`:"
+
+#: commands/get-zoning.md:137
+msgid ""
+"If the answer says the building areas could not be reached, the plan service "
+"is down or the tool is not set up for it; ask the person who installed the "
+"tool. Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+"Ako odgovor kaže da građevinska područja nisu dostupna, servis planova ne "
+"radi ili alat za njega nije postavljen; obratite se osobi koja je alat "
+"instalirala. Ostale poruke objašnjene su na [stranici o "
+"pogreškama](../errors.md)."
+
+#: commands/get-zoning.md:143
+msgid ""
+"[get-geometry](get-geometry.md) shows the parcel boundary the answer is based"
+" on."
+msgstr ""
+"[granica](get-geometry.md) prikazuje granicu čestice na kojoj se odgovor "
+"temelji."
+
+#: commands/get-zoning.md:144
+msgid ""
+"[get-parcel](get-parcel.md) shows what the cadastre records for the parcel."
+msgstr "[čestica](get-parcel.md) prikazuje što katastar bilježi o čestici."
 
 #: commands/info.md:9
 msgid "Check that the tool is set up"
@@ -2367,24 +2521,24 @@ msgstr ""
 msgid "Complete reference"
 msgstr "Potpuni pregled naredbi"
 
-#: reference.md:45
+#: reference.md:46
 msgid "Other pages"
 msgstr "Ostale stranice"
 
-#: reference.md:47
+#: reference.md:48
 msgid "[Start here](start-here.md): the tutorial."
 msgstr "[Počnite ovdje](start-here.md): vodič za početak."
 
-#: reference.md:48
+#: reference.md:49
 msgid ""
 "[Glossary](glossary.md): the words of the land registry and the cadastre."
 msgstr "[Pojmovnik](glossary.md): riječi zemljišne knjige i katastra."
 
-#: reference.md:49
+#: reference.md:50
 msgid "[Errors](errors.md): what the messages mean."
 msgstr "[Greške](errors.md): što znače poruke."
 
-#: reference.md:50
+#: reference.md:51
 msgid ""
 "[Installation](install.md): for the technical colleague who sets the tool up."
 msgstr "[Instalacija](install.md): za tehničkog kolegu koji postavlja alat."
@@ -2597,6 +2751,62 @@ msgid ""
 "calls them."
 msgstr ""
 "[Pojmovnik](glossary.md): riječi zemljišne knjige i kako ih alat naziva."
+
+#~ msgid ""
+#~ "`--format` chooses the form of the answer. `table` is what you see above. "
+#~ "`json` gives the same data for other programs, including the plan identifier "
+#~ "and the county and municipality of the zone. `csv` gives one line per zone "
+#~ "for a spreadsheet. `geojson` gives the zone outlines for a mapping program; "
+#~ "add `--show-geometry` to include them in the `json` form as well."
+#~ msgstr ""
+#~ "`--oblik` bira oblik odgovora. `tablica` je ono što vidite gore. `json` daje "
+#~ "iste podatke za druge programe, uključujući oznaku plana te županiju i općinu"
+#~ " zone. `csv` daje jedan redak po zoni za tablicu. `geojson` daje obrise zona "
+#~ "za kartografski program; dodajte `--geometrija` da ih uključite i u oblik "
+#~ "`json`."
+
+#~ msgid ""
+#~ "Tells you what the spatial plans say about a parcel: whether it lies inside "
+#~ "the building area of a settlement, in a separate zone outside a settlement (a"
+#~ " tourist settlement, a camp, an industrial zone), or outside every building "
+#~ "area. It names the zone, its designation code and the plan it comes from."
+#~ msgstr ""
+#~ "Kaže vam što prostorni planovi govore o čestici: leži li unutar građevinskog "
+#~ "područja naselja, u izdvojenom području izvan naselja (turističko naselje, "
+#~ "kamp, gospodarska zona) ili izvan svih građevinskih područja. Navodi zonu, "
+#~ "njezinu oznaku namjene i plan iz kojega potječe."
+
+#~ msgid "A client asks whether they can build on a parcel they are about to buy."
+#~ msgstr "Stranka pita može li graditi na čestici koju namjerava kupiti."
+
+#~ msgid ""
+#~ "**Status** is the short answer: inside a settlement building area, in a "
+#~ "detached building area outside a settlement, or outside building areas. The "
+#~ "**Zones** table lists every zone that covers part of the parcel, with its "
+#~ "**Code** (for example `T3` for a camp or `GPN` for a settlement area), its "
+#~ "**Designation** as written in the plan, the **Zone** name, the **Plan** it "
+#~ "was read from and the share of the parcel it covers (**Overlap**). The yellow"
+#~ " note at the end is the warning that must go with any use of this answer."
+#~ msgstr ""
+#~ "**Status** je kratki odgovor: unutar građevinskog područja naselja, u "
+#~ "izdvojenom građevinskom području izvan naselja ili izvan građevinskih "
+#~ "područja. Tablica **Zone** navodi svaku zonu koja pokriva dio čestice, s "
+#~ "njezinom oznakom (**Šifra**, na primjer `T3` za kamp ili `GPN` za područje "
+#~ "naselja), namjenom kako je zapisana u planu (**Namjena**), nazivom zone "
+#~ "(**Zona**), planom iz kojega je očitana (**Plan**) i udjelom čestice koji "
+#~ "pokriva (**Preklop**). Žuta napomena na kraju upozorenje je koje mora pratiti"
+#~ " svaku uporabu ovog odgovora."
+
+#~ msgid ""
+#~ "Zones that cover only a sliver of the parcel are left out, because plan "
+#~ "boundaries are drawn on small-scale maps and rarely follow parcel lines "
+#~ "exactly. `--min-overlap` sets that threshold as a percentage of the parcel; "
+#~ "the usual value is 2."
+#~ msgstr ""
+#~ "Zone koje pokrivaju tek rub čestice izostavljaju se, jer se granice planova "
+#~ "crtaju na kartama sitnog mjerila i rijetko točno prate granice čestica. "
+#~ "`--najmanji-preklop` postavlja taj prag kao postotak čestice; uobičajena "
+#~ "vrijednost je 2."
 
 #~ msgid "Look up a list of parcels at once"
 #~ msgstr "Pretraga više čestica odjednom"

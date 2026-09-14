@@ -113,21 +113,17 @@ def test_owners_limit_applies_to_full_not_only_ownership(unit) -> None:
     assert "possessory_sheet_a1" in shaped
 
 
-def test_owners_limit_drops_the_shares_past_the_cap_not_only_their_owners(condominium) -> None:
+def test_full_is_paged_by_share_and_drops_the_shares_outside_the_window(condominium) -> None:
     # Emptying the owners is not enough: each share carries its own description
     # and registration entry, so this unit's 85 emptied shares still serialise
-    # to 135,000 characters. Sheet B is cut off at the cap instead.
+    # to 135,000 characters. Sheet B is cut to the window of shares instead.
     dump = condominium.model_dump(mode="json")
-    before = len(dump["ownership_sheet_b"]["lr_unit_shares"])
-    total, truncated, omitted = CadastralTools._cap_dumped_owners(dump, 5)
+    before = dump["ownership_sheet_b"]["lr_unit_shares"]
+    total, returned, omitted = CadastralTools._window_shares(dump, 0, 5)
     shares = dump["ownership_sheet_b"]["lr_unit_shares"]
-    assert len(shares) == 5 < before
-    assert _dumped_owners(dump) == 5
-    assert (total, truncated) == (103, True)
-    assert omitted == CadastralTools._count_shares(
-        # every share dropped, sub-shares included
-        condominium.model_dump(mode="json")["ownership_sheet_b"]["lr_unit_shares"]
-    ) - CadastralTools._count_shares(shares)
+    assert (total, returned) == (85, 5)
+    assert len(shares) == 5 < len(before)
+    assert omitted == CadastralTools._count_shares(before) - CadastralTools._count_shares(shares)
 
 
 def test_a_capped_full_dump_is_still_refused_when_another_sheet_is_the_bulk(condominium) -> None:
@@ -152,3 +148,146 @@ def test_full_dump_too_large_to_return_is_refused_with_the_smaller_options(condo
     # The smaller views still work for the same unit.
     assert CadastralTools._shape_lr_unit(condominium, "ownership", 3)["owners_truncated"] is True
     assert CadastralTools._shape_lr_unit(condominium, "summary", None)["summary"]
+
+
+# --- paging and the per-sheet detail levels -------------------------------
+
+
+def test_every_level_names_the_unit_and_its_office(unit) -> None:
+    for detail in CadastralTools.VALID_DETAIL:
+        shaped = CadastralTools._shape_lr_unit(unit, detail, 3)
+        assert shaped["lr_unit_number"] == unit.lr_unit_number
+        assert shaped["institution_id"] == unit.institution_id
+        if detail != "summary":
+            assert shaped["page"]["total"] >= shaped["page"]["returned"]
+
+
+def test_ownership_pages_with_offset(unit) -> None:
+    first = CadastralTools._shape_lr_unit(unit, "ownership", 3, 0)
+    assert first["page"] == {
+        "offset": 0, "limit": 3, "total": 4, "returned": 3, "truncated": True, "next_offset": 3
+    }
+    rest = CadastralTools._shape_lr_unit(unit, "ownership", 3, first["page"]["next_offset"])
+    assert len(rest["owners"]) == 1
+    assert rest["owners_truncated"] is False
+    assert rest["page"]["truncated"] is False
+    names = [o["name"] for o in first["owners"]] + [o["name"] for o in rest["owners"]]
+    assert names == [o["name"] for o in unit.ownership_sheet_b.owner_rows()]
+
+
+def test_full_pages_shares_with_offset_and_loses_none(condominium) -> None:
+    pages, owners, offset = [], 0, 0
+    while True:
+        dump = condominium.model_dump(mode="json")
+        total, returned, omitted = CadastralTools._window_shares(dump, offset, 40)
+        pages.append(returned)
+        owners += _dumped_owners(dump)
+        assert omitted > 0
+        offset += returned
+        if offset >= total:
+            break
+    assert pages == [40, 40, 5]
+    assert owners == 103  # every owner record of every share, once
+
+
+def test_paging_reaches_a_trailing_share_without_owners() -> None:
+    # A share that holds only annotations is a page item like any other: with
+    # limit=1 the first page says there is more, and the second page is it.
+    def dump() -> dict:
+        return {"ownership_sheet_b": {"lr_unit_shares": [
+            {"order_number": "1", "owners": [{"name": "A"}], "sub_shares_and_entries": []},
+            {"order_number": "2", "owners": [], "sub_shares_and_entries": [{"entry": "x"}]},
+        ]}}
+
+    first = dump()
+    assert CadastralTools._window_shares(first, 0, 1) == (2, 1, 1)
+    page = CadastralTools._page(0, 1, 2, 1)
+    assert page["truncated"] is True and page["next_offset"] == 1
+    second = dump()
+    assert CadastralTools._window_shares(second, page["next_offset"], 1) == (2, 1, 1)
+    assert second["ownership_sheet_b"]["lr_unit_shares"][0]["order_number"] == "2"
+
+
+def test_shares_level_is_raw_sheet_b_paged(condominium) -> None:
+    # The condominium's list C alone overruns the full-dump ceiling, so full
+    # is refused even with limit=1; the raw sheet B is still reachable here.
+    with pytest.raises(ValueError):
+        CadastralTools._shape_lr_unit(condominium, "full", 1)
+    first = CadastralTools._shape_lr_unit(condominium, "shares", 10, 0)
+    sheet = first["ownership_sheet_b"]
+    assert len(sheet["lr_unit_shares"]) == 10
+    assert sheet["lr_entries"]  # the sheet-level B entries come along
+    share = sheet["lr_unit_shares"][0]
+    assert {"status", "sub_shares_and_entries", "owners"} <= set(share)  # raw, not flattened
+    assert first["total_shares"] == 85
+    assert first["total_owners"] == 103
+    assert first["owners_truncated"] is True
+    assert first["page"]["next_offset"] == 10
+    assert "encumbrance_sheet_c" not in first and "possessory_sheet_a1" not in first
+    # The pages cover the whole sheet exactly once.
+    seen, offset = [], 0
+    while True:
+        page = CadastralTools._shape_lr_unit(condominium, "shares", 10, offset)
+        seen += [s["order_number"] for s in page["ownership_sheet_b"]["lr_unit_shares"]]
+        if not page["page"]["truncated"]:
+            break
+        offset = page["page"]["next_offset"]
+    assert seen == [s.order_number for s in condominium.ownership_sheet_b.lr_unit_shares]
+
+
+def test_full_window_past_the_end_is_empty_not_an_error(unit) -> None:
+    shaped = CadastralTools._shape_lr_unit(unit, "full", 2, 10)
+    assert _dumped_owners(shaped) == 0
+    assert shaped["page"]["returned"] == 0
+    assert shaped["page"]["truncated"] is False
+
+
+def test_parcels_level_is_sheet_a_paged(encumbered) -> None:
+    shaped = CadastralTools._shape_lr_unit(encumbered, "parcels", 3, 0)
+    assert "ownership_sheet_b" not in shaped and "owners" not in shaped
+    assert shaped["total_parcels"] == 7
+    assert len(shaped["parcels"]) == 3
+    assert shaped["page"]["next_offset"] == 3
+    assert shaped["sheet_a1_source_key"] in ("lrParcels", "cadParcels")
+    assert "sheet_a2_entries" in shaped
+    numbers = [p["parcel_number"] for p in shaped["parcels"]]
+    assert numbers == encumbered.possessory_sheet_a1.parcel_numbers()[:3]
+
+
+def test_encumbrances_level_is_sheet_c_paged(condominium) -> None:
+    # The condominium's sheet C alone overruns the full-dump ceiling; paged
+    # by entry group it comes back a window at a time.
+    groups = condominium.encumbrance_sheet_c.lr_entry_groups
+    first = CadastralTools._shape_lr_unit(condominium, "encumbrances", 5, 0)
+    assert first["total_entry_groups"] == len(groups) == 30
+    assert len(first["entry_groups"]) == 5
+    assert first["page"]["truncated"] is True
+    assert "ownership_sheet_b" not in first and "owners" not in first
+    last = CadastralTools._shape_lr_unit(condominium, "encumbrances", 5, 25)
+    assert len(last["entry_groups"]) == 5
+    assert last["page"]["truncated"] is False
+
+
+def test_a_paged_level_too_large_says_how_to_page_smaller(condominium) -> None:
+    with pytest.raises(ValueError) as excinfo:
+        CadastralTools._shape_lr_unit(condominium, "encumbrances", None, 0)
+    message = str(excinfo.value)
+    assert "encumbrances" in message and "limit=" in message and "offset" in message
+
+
+def test_refused_full_dump_names_the_per_sheet_levels(condominium) -> None:
+    with pytest.raises(ValueError) as excinfo:
+        CadastralTools._shape_lr_unit(condominium, "full", None)
+    assert 'detail="encumbrances"' in str(excinfo.value)
+    assert 'detail="shares"' in str(excinfo.value)
+
+
+ENCUMBERED = (
+    REPO / "api" / "src" / "cadastral_api" / "tests" / "fixtures" / "lr_unit_encumbrances.json"
+)
+
+
+@pytest.fixture
+def encumbered() -> LandRegistryUnitDetailed:
+    raw = json.loads(ENCUMBERED.read_text(encoding="utf-8"))
+    return LandRegistryUnitDetailed.model_validate(raw[0] if isinstance(raw, list) else raw)

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-09 19:01+0100\n"
+"POT-Creation-Date: 2026-09-14 15:40+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -84,6 +84,7 @@ msgid "LAND REGISTRY UNIT"
 msgstr "ZEMLJIŠNOKNJIŽNI ULOŽAK"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:89
+#: cli/src/cadastral_cli/commands/zoning.py:235
 #: cli/src/cadastral_cli/commands/parcel.py:517
 #: cli/src/cadastral_cli/commands/parcel.py:688
 #: cli/src/cadastral_cli/commands/parcel.py:710
@@ -94,6 +95,7 @@ msgstr "Polje"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:90
 #: cli/src/cadastral_cli/lr_unit_output.py:168
+#: cli/src/cadastral_cli/commands/zoning.py:236
 #: cli/src/cadastral_cli/commands/parcel.py:518
 #: cli/src/cadastral_cli/commands/parcel.py:689
 #: cli/src/cadastral_cli/commands/parcel.py:711
@@ -121,6 +123,7 @@ msgstr "Institucija"
 
 #: cli/src/cadastral_cli/lr_unit_output.py:95
 #: cli/src/cadastral_cli/lr_unit_output.py:130
+#: cli/src/cadastral_cli/commands/zoning.py:241
 #: cli/src/cadastral_cli/commands/parcel.py:324
 #: cli/src/cadastral_cli/commands/parcel.py:697
 msgid "Status"
@@ -393,407 +396,663 @@ msgstr "preuzmi-gis"
 
 #: cli/src/cadastral_cli/localized.py:48
 msgctxt "command"
+msgid "get-zoning"
+msgstr "namjena"
+
+#: cli/src/cadastral_cli/localized.py:49
+msgctxt "command"
 msgid "list-offices"
 msgstr "uredi"
 
-#: cli/src/cadastral_cli/localized.py:49
+#: cli/src/cadastral_cli/localized.py:50
 msgctxt "command"
 msgid "list-municipalities"
 msgstr "općine"
 
-#: cli/src/cadastral_cli/localized.py:50
+#: cli/src/cadastral_cli/localized.py:51
 msgctxt "command"
 msgid "list-main-books"
 msgstr "glavne-knjige"
 
-#: cli/src/cadastral_cli/localized.py:51
+#: cli/src/cadastral_cli/localized.py:52
 msgctxt "command"
 msgid "list-books-of-dc"
 msgstr "kpu"
 
-#: cli/src/cadastral_cli/localized.py:52
+#: cli/src/cadastral_cli/localized.py:53
 msgctxt "command"
 msgid "info"
 msgstr "info"
 
-#: cli/src/cadastral_cli/localized.py:53
+#: cli/src/cadastral_cli/localized.py:54
 msgctxt "command"
 msgid "cache"
 msgstr "predmemorija"
 
-#: cli/src/cadastral_cli/localized.py:54
+#: cli/src/cadastral_cli/localized.py:55
 msgctxt "command"
 msgid "cache list"
 msgstr "predmemorija popis"
 
-#: cli/src/cadastral_cli/localized.py:55
+#: cli/src/cadastral_cli/localized.py:56
 msgctxt "command"
 msgid "cache clear"
 msgstr "predmemorija obriši"
 
-#: cli/src/cadastral_cli/localized.py:56
+#: cli/src/cadastral_cli/localized.py:57
 msgctxt "command"
 msgid "cache info"
 msgstr "predmemorija info"
 
-#: cli/src/cadastral_cli/localized.py:62
+#: cli/src/cadastral_cli/localized.py:63
 msgctxt "option"
 msgid "--help"
 msgstr "--pomoć"
 
-#: cli/src/cadastral_cli/localized.py:63
+#: cli/src/cadastral_cli/localized.py:64
 msgctxt "option"
 msgid "--lang"
 msgstr "--jezik"
 
-#: cli/src/cadastral_cli/localized.py:64
+#: cli/src/cadastral_cli/localized.py:65
 msgctxt "option"
 msgid "--verbose"
 msgstr "--opširno"
 
-#: cli/src/cadastral_cli/localized.py:65
+#: cli/src/cadastral_cli/localized.py:66
 msgctxt "option"
 msgid "--version"
 msgstr "--verzija"
 
-#: cli/src/cadastral_cli/localized.py:66
+#: cli/src/cadastral_cli/localized.py:67
 msgctxt "option"
 msgid "--municipality"
 msgstr "--općina"
 
-#: cli/src/cadastral_cli/localized.py:67
+#: cli/src/cadastral_cli/localized.py:68
 msgctxt "option"
 msgid "-m"
 msgstr "-ko"
 
-#: cli/src/cadastral_cli/localized.py:68
+#: cli/src/cadastral_cli/localized.py:69
 msgctxt "option"
 msgid "--exact"
 msgstr "--točno"
 
-#: cli/src/cadastral_cli/localized.py:69
+#: cli/src/cadastral_cli/localized.py:70
 msgctxt "option"
 msgid "--partial"
 msgstr "--djelomično"
 
-#: cli/src/cadastral_cli/localized.py:70
+#: cli/src/cadastral_cli/localized.py:71
 msgctxt "option"
 msgid "--format"
 msgstr "--oblik"
 
-#: cli/src/cadastral_cli/localized.py:71
+#: cli/src/cadastral_cli/localized.py:72
 msgctxt "option"
 msgid "--output"
 msgstr "--datoteka"
 
-#: cli/src/cadastral_cli/localized.py:72
+#: cli/src/cadastral_cli/localized.py:73
 msgctxt "option"
 msgid "--office"
 msgstr "--ured"
 
-#: cli/src/cadastral_cli/localized.py:73
+#: cli/src/cadastral_cli/localized.py:74
 msgctxt "option"
 msgid "--department"
 msgstr "--odjel"
 
-#: cli/src/cadastral_cli/localized.py:74
+#: cli/src/cadastral_cli/localized.py:75
 msgctxt "option"
 msgid "--count-only"
 msgstr "--samo-broj"
 
-#: cli/src/cadastral_cli/localized.py:75
+#: cli/src/cadastral_cli/localized.py:76
 msgctxt "option"
 msgid "--search"
 msgstr "--traži"
 
-#: cli/src/cadastral_cli/localized.py:76
+#: cli/src/cadastral_cli/localized.py:77
 msgctxt "option"
 msgid "--detail"
 msgstr "--detalji"
 
-#: cli/src/cadastral_cli/localized.py:77
+#: cli/src/cadastral_cli/localized.py:78
 msgctxt "option"
 msgid "--show-owners"
 msgstr "--vlasnici"
 
-#: cli/src/cadastral_cli/localized.py:78
+#: cli/src/cadastral_cli/localized.py:79
 msgctxt "option"
 msgid "--show-geometry"
 msgstr "--geometrija"
 
-#: cli/src/cadastral_cli/localized.py:79
+#: cli/src/cadastral_cli/localized.py:80
 msgctxt "option"
 msgid "--unit-number"
 msgstr "--broj-uloška"
 
-#: cli/src/cadastral_cli/localized.py:80
+#: cli/src/cadastral_cli/localized.py:81
 msgctxt "option"
 msgid "--main-book"
 msgstr "--glavna-knjiga"
 
-#: cli/src/cadastral_cli/localized.py:81
+#: cli/src/cadastral_cli/localized.py:82
 msgctxt "option"
 msgid "--main-book-name"
 msgstr "--naziv-glavne-knjige"
 
-#: cli/src/cadastral_cli/localized.py:82
+#: cli/src/cadastral_cli/localized.py:83
 msgctxt "option"
 msgid "--institution"
 msgstr "--ustanova"
 
-#: cli/src/cadastral_cli/localized.py:83
+#: cli/src/cadastral_cli/localized.py:84
 msgctxt "option"
 msgid "--from-parcel"
 msgstr "--od-čestice"
 
-#: cli/src/cadastral_cli/localized.py:84
+#: cli/src/cadastral_cli/localized.py:85
 msgctxt "option"
 msgid "--show-parcels"
 msgstr "--čestice"
 
-#: cli/src/cadastral_cli/localized.py:85
+#: cli/src/cadastral_cli/localized.py:86
 msgctxt "option"
 msgid "--show-encumbrances"
 msgstr "--tereti"
 
-#: cli/src/cadastral_cli/localized.py:86
+#: cli/src/cadastral_cli/localized.py:87
 msgctxt "option"
 msgid "--plombe-detail"
 msgstr "--plombe"
 
-#: cli/src/cadastral_cli/localized.py:87
+#: cli/src/cadastral_cli/localized.py:88
 msgctxt "option"
 msgid "--all"
 msgstr "--sve"
 
-#: cli/src/cadastral_cli/localized.py:88
+#: cli/src/cadastral_cli/localized.py:89
 msgctxt "option"
 msgid "--input"
 msgstr "--ulaz"
 
-#: cli/src/cadastral_cli/localized.py:89
+#: cli/src/cadastral_cli/localized.py:90
 msgctxt "option"
 msgid "--continue-on-error"
 msgstr "--nastavi-kod-greške"
 
-#: cli/src/cadastral_cli/localized.py:90
+#: cli/src/cadastral_cli/localized.py:91
 msgctxt "option"
 msgid "--stop-on-error"
 msgstr "--stani-kod-greške"
 
-#: cli/src/cadastral_cli/localized.py:91
+#: cli/src/cadastral_cli/localized.py:92
 msgctxt "option"
 msgid "--show-stats"
 msgstr "--statistika"
 
-#: cli/src/cadastral_cli/localized.py:92
+#: cli/src/cadastral_cli/localized.py:93
 msgctxt "option"
 msgid "--extract"
 msgstr "--raspakiraj"
 
-#: cli/src/cadastral_cli/localized.py:93
+#: cli/src/cadastral_cli/localized.py:94
 msgctxt "option"
 msgid "--no-extract"
 msgstr "--bez-raspakiravanja"
 
-#: cli/src/cadastral_cli/localized.py:94
+#: cli/src/cadastral_cli/localized.py:95
 msgctxt "option"
 msgid "--clear-cache"
 msgstr "--obriši-predmemoriju"
 
-#: cli/src/cadastral_cli/localized.py:95
+#: cli/src/cadastral_cli/localized.py:96
 msgctxt "option"
 msgid "--force"
 msgstr "--bez-pitanja"
 
-#: cli/src/cadastral_cli/localized.py:99
+#: cli/src/cadastral_cli/localized.py:97
+msgctxt "option"
+msgid "--min-overlap"
+msgstr "--najmanji-preklop"
+
+#: cli/src/cadastral_cli/localized.py:101
 msgctxt "option"
 msgid "-u"
 msgstr "-bu"
 
-#: cli/src/cadastral_cli/localized.py:100
+#: cli/src/cadastral_cli/localized.py:102
 msgctxt "option"
 msgid "-b"
 msgstr "-gk"
 
-#: cli/src/cadastral_cli/localized.py:101
+#: cli/src/cadastral_cli/localized.py:103
 msgctxt "option"
 msgid "-n"
 msgstr "-ng"
 
-#: cli/src/cadastral_cli/localized.py:102
+#: cli/src/cadastral_cli/localized.py:104
 msgctxt "option"
 msgid "-p"
 msgstr "-oc"
 
-#: cli/src/cadastral_cli/localized.py:103
+#: cli/src/cadastral_cli/localized.py:105
 msgctxt "option"
 msgid "-o"
 msgstr "-dt"
 
-#: cli/src/cadastral_cli/localized.py:104
+#: cli/src/cadastral_cli/localized.py:106
 msgctxt "option"
 msgid "-P"
 msgstr "-ce"
 
-#: cli/src/cadastral_cli/localized.py:105
+#: cli/src/cadastral_cli/localized.py:107
 msgctxt "option"
 msgid "-e"
 msgstr "-te"
 
-#: cli/src/cadastral_cli/localized.py:106
+#: cli/src/cadastral_cli/localized.py:108
 msgctxt "option"
 msgid "-D"
 msgstr "-pl"
 
-#: cli/src/cadastral_cli/localized.py:107
+#: cli/src/cadastral_cli/localized.py:109
 msgctxt "option"
 msgid "-a"
 msgstr "-sv"
 
-#: cli/src/cadastral_cli/localized.py:108
+#: cli/src/cadastral_cli/localized.py:110
 msgctxt "option"
 msgid "-f"
 msgstr "-ob"
 
-#: cli/src/cadastral_cli/localized.py:109
+#: cli/src/cadastral_cli/localized.py:111
 msgctxt "option"
 msgid "-i"
 msgstr "-ul"
 
-#: cli/src/cadastral_cli/localized.py:110
+#: cli/src/cadastral_cli/localized.py:112
 msgctxt "option"
 msgid "-d"
 msgstr "-od"
 
-#: cli/src/cadastral_cli/localized.py:111
+#: cli/src/cadastral_cli/localized.py:113
 msgctxt "option"
 msgid "-s"
 msgstr "-tr"
 
-#: cli/src/cadastral_cli/localized.py:112
+#: cli/src/cadastral_cli/localized.py:114
 msgctxt "option"
 msgid "-v"
 msgstr "-op"
 
-#: cli/src/cadastral_cli/localized.py:113
+#: cli/src/cadastral_cli/localized.py:115
 msgctxt "option"
 msgid "-out"
 msgstr "-dt"
 
-#: cli/src/cadastral_cli/localized.py:120
+#: cli/src/cadastral_cli/localized.py:122
 msgctxt "option get-parcel"
 msgid "--show-owners"
 msgstr "--posjednici"
 
-#: cli/src/cadastral_cli/localized.py:121
+#: cli/src/cadastral_cli/localized.py:123
 msgctxt "option download-gis"
 msgid "--output"
 msgstr "--mapa"
 
-#: cli/src/cadastral_cli/localized.py:123
+#: cli/src/cadastral_cli/localized.py:125
 msgctxt "option get-lr-unit"
 msgid "-o"
 msgstr "-vl"
 
-#: cli/src/cadastral_cli/localized.py:124
+#: cli/src/cadastral_cli/localized.py:126
 msgctxt "option list-municipalities"
 msgid "-o"
 msgstr "-ur"
 
-#: cli/src/cadastral_cli/localized.py:125
+#: cli/src/cadastral_cli/localized.py:127
 msgctxt "option list-main-books"
 msgid "-o"
 msgstr "-ur"
 
-#: cli/src/cadastral_cli/localized.py:126
+#: cli/src/cadastral_cli/localized.py:128
 msgctxt "option list-books-of-dc"
 msgid "-o"
 msgstr "-ur"
 
-#: cli/src/cadastral_cli/localized.py:127
+#: cli/src/cadastral_cli/localized.py:129
 msgctxt "option search-municipality"
 msgid "-o"
 msgstr "-ur"
 
-#: cli/src/cadastral_cli/localized.py:128
+#: cli/src/cadastral_cli/localized.py:130
 msgctxt "option download-gis"
 msgid "-o"
 msgstr "-mp"
 
-#: cli/src/cadastral_cli/localized.py:130
+#: cli/src/cadastral_cli/localized.py:132
 msgctxt "option cache clear"
 msgid "-f"
 msgstr "-bp"
 
-#: cli/src/cadastral_cli/localized.py:135
+#: cli/src/cadastral_cli/localized.py:137
 msgctxt "choice"
 msgid "table"
 msgstr "tablica"
 
-#: cli/src/cadastral_cli/localized.py:139
+#: cli/src/cadastral_cli/localized.py:141
 msgctxt "program"
 msgid "cadastral"
 msgstr "uz"
 
-#: cli/src/cadastral_cli/localized.py:144
+#: cli/src/cadastral_cli/localized.py:146
 msgctxt "argument"
 msgid "PARCEL_NUMBER"
 msgstr "BROJ_ČESTICE"
 
-#: cli/src/cadastral_cli/localized.py:145
+#: cli/src/cadastral_cli/localized.py:147
 msgctxt "argument"
 msgid "SHEET_NUMBER"
 msgstr "BROJ_POSJEDOVNOG_LISTA"
 
-#: cli/src/cadastral_cli/localized.py:146
+#: cli/src/cadastral_cli/localized.py:148
 msgctxt "argument"
 msgid "SEARCH_TERM"
 msgstr "POJAM"
 
-#: cli/src/cadastral_cli/localized.py:147
+#: cli/src/cadastral_cli/localized.py:149
 msgctxt "argument"
 msgid "PARCELS"
 msgstr "ČESTICE"
 
-#: cli/src/cadastral_cli/localized.py:148
+#: cli/src/cadastral_cli/localized.py:150
 msgctxt "argument"
 msgid "MUNICIPALITY"
 msgstr "OPĆINA"
 
-#: cli/src/cadastral_cli/localized.py:150
+#: cli/src/cadastral_cli/localized.py:152
 msgctxt "usage"
 msgid "[OPTIONS]"
 msgstr "[OPCIJE]"
 
-#: cli/src/cadastral_cli/localized.py:151
+#: cli/src/cadastral_cli/localized.py:153
 msgctxt "usage"
 msgid "COMMAND [ARGS]..."
 msgstr "NAREDBA [ARGUMENTI]..."
 
-#: cli/src/cadastral_cli/localized.py:155
+#: cli/src/cadastral_cli/localized.py:157
 msgctxt "metavar"
 msgid "TEXT"
 msgstr "TEKST"
 
-#: cli/src/cadastral_cli/localized.py:156
+#: cli/src/cadastral_cli/localized.py:158
 msgctxt "metavar"
 msgid "INTEGER"
 msgstr "CIJELI_BROJ"
 
-#: cli/src/cadastral_cli/localized.py:157
+#: cli/src/cadastral_cli/localized.py:159
 msgctxt "metavar"
 msgid "FLOAT"
 msgstr "BROJ"
 
-#: cli/src/cadastral_cli/localized.py:158
+#: cli/src/cadastral_cli/localized.py:160
 msgctxt "metavar"
 msgid "PATH"
 msgstr "PUTANJA"
 
-#: cli/src/cadastral_cli/localized.py:374 click/core.py:1799
+#: cli/src/cadastral_cli/localized.py:376 click/core.py:1799
 msgid "Commands"
 msgstr "Naredbe"
+
+#: cli/src/cadastral_cli/commands/zoning.py:29
+msgid ""
+"Find out which spatial-plan building area a parcel lies in.\n"
+"\n"
+"Matches the parcel boundary against the building areas (građevinska područja)\n"
+"derived from the spatial plans in force: inside a settlement, in a detached\n"
+"zone with its designation (for example T2 tourist settlement), or outside.\n"
+"This is a screening only: it does not say whether anything may be built, and\n"
+"the result is an interpretation of the plans, not the plans themselves.\n"
+"\n"
+"Examples:\n"
+"  cadastral get-zoning 103/2 -m SAVAR\n"
+"  cadastral get-zoning 396/1 -m 334979 --format json\n"
+"  cadastral get-zoning 45 -m SAVAR --format csv -o zoning.csv\n"
+"  cadastral get-zoning 103/2 -m SAVAR --format geojson --show-geometry"
+msgstr ""
+"Saznajte u kojem je građevinskom području prostornog plana čestica.\n"
+"\n"
+"Uspoređuje granicu čestice s građevinskim područjima izvedenima iz važećih\n"
+"prostornih planova: unutar naselja, u izdvojenom području s njegovom namjenom\n"
+"(na primjer T2 turističko naselje) ili izvan njih. Ovo je samo provjera: ne\n"
+"govori smije li se što graditi, a rezultat je interpretacija planova, a ne\n"
+"sami planovi.\n"
+"\n"
+"Primjeri:\n"
+"  uz namjena 103/2 -ko SAVAR\n"
+"  uz namjena 396/1 -ko 334979 --oblik json\n"
+"  uz namjena 45 -ko SAVAR --oblik csv -dt namjena.csv\n"
+"  uz namjena 103/2 -ko SAVAR --oblik geojson --geometrija"
+
+#: cli/src/cadastral_cli/commands/zoning.py:46
+msgid "Inside a settlement building area"
+msgstr "Unutar građevinskog područja naselja"
+
+#: cli/src/cadastral_cli/commands/zoning.py:47
+msgid "In a detached building area outside a settlement"
+msgstr "U izdvojenom građevinskom području izvan naselja"
+
+#: cli/src/cadastral_cli/commands/zoning.py:49
+msgid "Touches a building area, below the overlap threshold"
+msgstr "Dodiruje građevinsko područje, ispod praga preklopa"
+
+#: cli/src/cadastral_cli/commands/zoning.py:51
+msgid "Outside building areas"
+msgstr "Izvan građevinskih područja"
+
+#: cli/src/cadastral_cli/commands/zoning.py:61
+msgid "must be a number between 0 and 100"
+msgstr "mora biti broj između 0 i 100"
+
+#: cli/src/cadastral_cli/commands/zoning.py:67
+msgid "settlement"
+msgstr "naselje"
+
+#: cli/src/cadastral_cli/commands/zoning.py:68
+msgid "detached"
+msgstr "izdvojeno"
+
+# Search command strings
+#: cli/src/cadastral_cli/commands/zoning.py:74
+#: cli/src/cadastral_cli/commands/gis.py:31
+msgid "Municipality name or code"
+msgstr "Naziv ili šifra općine"
+
+#: cli/src/cadastral_cli/commands/zoning.py:81
+#: cli/src/cadastral_cli/commands/discovery.py:31
+#: cli/src/cadastral_cli/commands/discovery.py:94
+#: cli/src/cadastral_cli/commands/discovery.py:201
+#: cli/src/cadastral_cli/commands/discovery.py:266
+#: cli/src/cadastral_cli/commands/registry.py:103
+#: cli/src/cadastral_cli/commands/search.py:43
+#: cli/src/cadastral_cli/commands/search.py:174
+#: cli/src/cadastral_cli/commands/search.py:292
+#: cli/src/cadastral_cli/commands/parcel.py:84
+msgid "Output format"
+msgstr "Format izlaza"
+
+#: cli/src/cadastral_cli/commands/zoning.py:83
+#: cli/src/cadastral_cli/commands/discovery.py:33
+#: cli/src/cadastral_cli/commands/discovery.py:96
+#: cli/src/cadastral_cli/commands/discovery.py:203
+#: cli/src/cadastral_cli/commands/discovery.py:268
+#: cli/src/cadastral_cli/commands/registry.py:105
+#: cli/src/cadastral_cli/commands/search.py:45
+#: cli/src/cadastral_cli/commands/search.py:176
+#: cli/src/cadastral_cli/commands/search.py:294
+#: cli/src/cadastral_cli/commands/parcel.py:86
+#: cli/src/cadastral_cli/commands/gis.py:40
+msgid "Save output to file"
+msgstr "Spremi izlaz u datoteku"
+
+#: cli/src/cadastral_cli/commands/zoning.py:87
+msgid "Include the zone polygons in JSON output"
+msgstr "Uključi poligone zona u JSON ispis"
+
+#: cli/src/cadastral_cli/commands/zoning.py:95
+msgid ""
+"Zones covering less than this share of the parcel (percent) are listed "
+"separately"
+msgstr ""
+"Zone koje pokrivaju manji udio čestice od ovoga (postotak) navode se "
+"odvojeno"
+
+#: cli/src/cadastral_cli/commands/zoning.py:113
+#, python-brace-format
+msgid "Matching parcel {parcel_number} against the spatial plans..."
+msgstr "Usporedba čestice {parcel_number} s prostornim planovima..."
+
+#: cli/src/cadastral_cli/commands/zoning.py:123
+#: cli/src/cadastral_cli/commands/gis.py:64
+#, python-brace-format
+msgid "Geometry not found for parcel '{parcel_number}'"
+msgstr "Geometrija nije pronađena za česticu '{parcel_number}'"
+
+#: cli/src/cadastral_cli/commands/zoning.py:128
+#: cli/src/cadastral_cli/commands/gis.py:68
+msgid ""
+"\n"
+"Note: GIS data must be downloaded first (this happens automatically)"
+msgstr ""
+"\n"
+"Napomena: GIS podaci moraju biti prvo preuzeti (to se događa automatski)"
+
+#: cli/src/cadastral_cli/commands/zoning.py:141
+#: cli/src/cadastral_cli/commands/gis.py:94
+#, python-brace-format
+msgid "GeoJSON saved to: {output}"
+msgstr "GeoJSON spremljen u: {output}"
+
+#: cli/src/cadastral_cli/commands/zoning.py:154
+#: cli/src/cadastral_cli/commands/discovery.py:71
+#: cli/src/cadastral_cli/commands/discovery.py:176
+#: cli/src/cadastral_cli/commands/discovery.py:344
+#: cli/src/cadastral_cli/commands/registry.py:260
+#: cli/src/cadastral_cli/commands/registry.py:369
+#: cli/src/cadastral_cli/commands/search.py:151
+#: cli/src/cadastral_cli/commands/search.py:261
+#: cli/src/cadastral_cli/commands/search.py:347
+#: cli/src/cadastral_cli/commands/parcel.py:178
+#: cli/src/cadastral_cli/commands/parcel.py:255
+#: cli/src/cadastral_cli/commands/gis.py:135
+#: cli/src/cadastral_cli/commands/gis.py:234
+#, python-brace-format
+msgid "API error: {error}"
+msgstr "API greška: {error}"
+
+#: cli/src/cadastral_cli/commands/zoning.py:230
+msgid "SPATIAL PLAN: BUILDING AREAS"
+msgstr "PROSTORNI PLAN: GRAĐEVINSKA PODRUČJA"
+
+#: cli/src/cadastral_cli/commands/zoning.py:237
+#: cli/src/cadastral_cli/commands/parcel.py:302
+#: cli/src/cadastral_cli/commands/parcel.py:305
+#: cli/src/cadastral_cli/commands/parcel.py:310
+#: cli/src/cadastral_cli/commands/parcel.py:325
+#: cli/src/cadastral_cli/commands/parcel.py:382
+#: cli/src/cadastral_cli/commands/gis.py:251
+msgid "Parcel"
+msgstr "Čestica"
+
+#: cli/src/cadastral_cli/commands/zoning.py:238
+#: cli/src/cadastral_cli/commands/cache.py:91
+#: cli/src/cadastral_cli/commands/search.py:88
+#: cli/src/cadastral_cli/commands/parcel.py:326
+#: cli/src/cadastral_cli/commands/parcel.py:525
+msgid "Municipality"
+msgstr "Općina"
+
+#: cli/src/cadastral_cli/commands/zoning.py:240
+#: cli/src/cadastral_cli/commands/gis.py:254
+msgid "Area (GIS)"
+msgstr "Površina (GIS)"
+
+#: cli/src/cadastral_cli/commands/zoning.py:242
+msgid "Buildability"
+msgstr "Mogućnost gradnje"
+
+#: cli/src/cadastral_cli/commands/zoning.py:242
+msgid "Not determined (screening only)"
+msgstr "Nije utvrđena (samo provjera)"
+
+#: cli/src/cadastral_cli/commands/zoning.py:244
+msgid "Plans"
+msgstr "Planovi"
+
+#: cli/src/cadastral_cli/commands/zoning.py:249
+msgid "Zones"
+msgstr "Zone"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+msgid "Kind"
+msgstr "Vrsta"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+#: cli/src/cadastral_cli/commands/discovery.py:145
+#: cli/src/cadastral_cli/commands/search.py:217
+msgid "Code"
+msgstr "Šifra"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+msgid "Designation"
+msgstr "Namjena"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+msgid "Zone"
+msgstr "Zona"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+msgid "Plan"
+msgstr "Plan"
+
+#: cli/src/cadastral_cli/commands/zoning.py:250
+msgid "Overlap"
+msgstr "Preklop"
+
+#: cli/src/cadastral_cli/commands/zoning.py:268
+#, python-brace-format
+msgid "Below the {threshold:.0%} threshold: {zones}"
+msgstr "Ispod praga od {threshold:.0%}: {zones}"
+
+#: cli/src/cadastral_cli/commands/zoning.py:280
+msgid ""
+"Building areas are an interpretation of the spatial plans by the county "
+"spatial-planning institutes and may deviate from the plans in force. They "
+"must not be used to issue acts for spatial interventions or other public "
+"documents; for official purposes use the original plans in force."
+msgstr ""
+"Građevinska područja interpretacija su prostornih planova koju su izradili "
+"županijski zavodi za prostorno uređenje i mogu odstupati od važećih "
+"prostornih planova. Ne smiju se koristiti za izdavanje akata za provedbu "
+"zahvata u prostoru ni drugih javnih isprava; u službene svrhe koristite "
+"izvornike važećih prostornih planova."
+
+#: cli/src/cadastral_cli/commands/zoning.py:289
+#, python-brace-format
+msgid "Source: {dataset}"
+msgstr "Izvor: {dataset}"
+
+#: cli/src/cadastral_cli/commands/zoning.py:291
+msgid ""
+"Whether anything may be built is not determined here; read the plan or ask "
+"for a lokacijska informacija."
+msgstr ""
+"Smije li se što graditi ovdje se ne utvrđuje; pročitajte plan ili zatražite "
+"lokacijsku informaciju."
 
 #: cli/src/cadastral_cli/commands/discovery.py:17
 msgid ""
@@ -808,31 +1067,6 @@ msgstr ""
 "Primjer:\n"
 "  uz uredi\n"
 "  uz uredi --oblik json"
-
-#: cli/src/cadastral_cli/commands/discovery.py:31
-#: cli/src/cadastral_cli/commands/discovery.py:94
-#: cli/src/cadastral_cli/commands/discovery.py:201
-#: cli/src/cadastral_cli/commands/discovery.py:266
-#: cli/src/cadastral_cli/commands/registry.py:103
-#: cli/src/cadastral_cli/commands/search.py:43
-#: cli/src/cadastral_cli/commands/search.py:174
-#: cli/src/cadastral_cli/commands/search.py:292
-#: cli/src/cadastral_cli/commands/parcel.py:84
-msgid "Output format"
-msgstr "Format izlaza"
-
-#: cli/src/cadastral_cli/commands/discovery.py:33
-#: cli/src/cadastral_cli/commands/discovery.py:96
-#: cli/src/cadastral_cli/commands/discovery.py:203
-#: cli/src/cadastral_cli/commands/discovery.py:268
-#: cli/src/cadastral_cli/commands/registry.py:105
-#: cli/src/cadastral_cli/commands/search.py:45
-#: cli/src/cadastral_cli/commands/search.py:176
-#: cli/src/cadastral_cli/commands/search.py:294
-#: cli/src/cadastral_cli/commands/parcel.py:86
-#: cli/src/cadastral_cli/commands/gis.py:40
-msgid "Save output to file"
-msgstr "Spremi izlaz u datoteku"
 
 # Discovery commands
 #: cli/src/cadastral_cli/commands/discovery.py:39
@@ -864,22 +1098,6 @@ msgid ""
 msgstr ""
 "\n"
 "{count} katastarskih ureda u Hrvatskoj:\n"
-
-#: cli/src/cadastral_cli/commands/discovery.py:71
-#: cli/src/cadastral_cli/commands/discovery.py:176
-#: cli/src/cadastral_cli/commands/discovery.py:344
-#: cli/src/cadastral_cli/commands/registry.py:260
-#: cli/src/cadastral_cli/commands/registry.py:369
-#: cli/src/cadastral_cli/commands/search.py:151
-#: cli/src/cadastral_cli/commands/search.py:261
-#: cli/src/cadastral_cli/commands/search.py:347
-#: cli/src/cadastral_cli/commands/parcel.py:178
-#: cli/src/cadastral_cli/commands/parcel.py:255
-#: cli/src/cadastral_cli/commands/gis.py:135
-#: cli/src/cadastral_cli/commands/gis.py:234
-#, python-brace-format
-msgid "API error: {error}"
-msgstr "API greška: {error}"
 
 #: cli/src/cadastral_cli/commands/discovery.py:75
 msgid ""
@@ -938,11 +1156,6 @@ msgstr "Nema pronađenih općina"
 #, python-brace-format
 msgid "Found {count} municipality(ies)"
 msgstr "Pronađeno {count} općin(a)"
-
-#: cli/src/cadastral_cli/commands/discovery.py:145
-#: cli/src/cadastral_cli/commands/search.py:217
-msgid "Code"
-msgstr "Šifra"
 
 #: cli/src/cadastral_cli/commands/discovery.py:147
 #: cli/src/cadastral_cli/commands/search.py:219
@@ -1551,13 +1764,6 @@ msgstr ""
 "\n"
 "GIS podaci u predmemoriji ({count} općina):\n"
 
-#: cli/src/cadastral_cli/commands/cache.py:91
-#: cli/src/cadastral_cli/commands/search.py:88
-#: cli/src/cadastral_cli/commands/parcel.py:326
-#: cli/src/cadastral_cli/commands/parcel.py:525
-msgid "Municipality"
-msgstr "Općina"
-
 #: cli/src/cadastral_cli/commands/cache.py:92
 msgid "Size"
 msgstr "Veličina"
@@ -2071,15 +2277,6 @@ msgstr[0] "📊 Pronađena {count} čestica za obradu\n"
 msgstr[1] "📊 Pronađene {count} čestice za obradu\n"
 msgstr[2] "📊 Pronađeno {count} čestica za obradu\n"
 
-#: cli/src/cadastral_cli/commands/parcel.py:302
-#: cli/src/cadastral_cli/commands/parcel.py:305
-#: cli/src/cadastral_cli/commands/parcel.py:310
-#: cli/src/cadastral_cli/commands/parcel.py:325
-#: cli/src/cadastral_cli/commands/parcel.py:382
-#: cli/src/cadastral_cli/commands/gis.py:251
-msgid "Parcel"
-msgstr "Čestica"
-
 #: cli/src/cadastral_cli/commands/parcel.py:303
 msgid "ERROR"
 msgstr "GREŠKA"
@@ -2299,11 +2496,6 @@ msgstr ""
 "  uz granica 103/2 -ko 334979 --oblik geojson -dt parcel.geojson\n"
 "  uz granica 103/2 -ko 334979 --oblik csv -dt coords.csv"
 
-# Search command strings
-#: cli/src/cadastral_cli/commands/gis.py:31
-msgid "Municipality name or code"
-msgstr "Naziv ili šifra općine"
-
 # GIS commands
 #: cli/src/cadastral_cli/commands/gis.py:38
 msgid "Export format"
@@ -2318,28 +2510,10 @@ msgstr "Uključi statistiku geometrije"
 msgid "Fetching geometry for parcel {parcel_number}..."
 msgstr "Dohvaćam geometriju za česticu {parcel_number}..."
 
-#: cli/src/cadastral_cli/commands/gis.py:64
-#, python-brace-format
-msgid "Geometry not found for parcel '{parcel_number}'"
-msgstr "Geometrija nije pronađena za česticu '{parcel_number}'"
-
-#: cli/src/cadastral_cli/commands/gis.py:68
-msgid ""
-"\n"
-"Note: GIS data must be downloaded first (this happens automatically)"
-msgstr ""
-"\n"
-"Napomena: GIS podaci moraju biti prvo preuzeti (to se događa automatski)"
-
 #: cli/src/cadastral_cli/commands/gis.py:84
 #, python-brace-format
 msgid "WKT saved to: {output}"
 msgstr "WKT spremljen u: {output}"
-
-#: cli/src/cadastral_cli/commands/gis.py:94
-#, python-brace-format
-msgid "GeoJSON saved to: {output}"
-msgstr "GeoJSON spremljen u: {output}"
 
 #: cli/src/cadastral_cli/commands/gis.py:106
 #, python-brace-format
@@ -2450,10 +2624,6 @@ msgstr "Greška pri preuzimanju GIS podataka: {error}"
 msgid "GEOMETRY STATISTICS"
 msgstr "STATISTIKA GEOMETRIJE"
 
-#: cli/src/cadastral_cli/commands/gis.py:254
-msgid "Area (GIS)"
-msgstr "Površina (GIS)"
-
 #: cli/src/cadastral_cli/commands/gis.py:259
 msgid "  Min X"
 msgstr "  Min X"
@@ -2474,7 +2644,7 @@ msgstr "  Max Y"
 msgid "required"
 msgstr "obavezno"
 
-#: cli/src/cadastral_cli/main.py:68
+#: cli/src/cadastral_cli/main.py:69
 msgid ""
 "Croatian Cadastral System CLI - Access cadastral and land registry data.\n"
 "\n"
@@ -2497,20 +2667,20 @@ msgstr ""
 "Dokumentacija: https://github.com/yourusername/croatian-cadastral-api"
 
 # Common UI strings
-#: cli/src/cadastral_cli/main.py:86
+#: cli/src/cadastral_cli/main.py:87
 msgid "Verbose output"
 msgstr "Opširni ispis"
 
-#: cli/src/cadastral_cli/main.py:90
+#: cli/src/cadastral_cli/main.py:91
 msgid "Language for output (overrides system locale)"
 msgstr "Jezik za ispis (nadjačava postavke sustava)"
 
-#: cli/src/cadastral_cli/main.py:106
+#: cli/src/cadastral_cli/main.py:107
 #, python-brace-format
 msgid "✗ Error: {error}"
 msgstr "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:134
+#: cli/src/cadastral_cli/main.py:136
 #, python-brace-format
 msgid ""
 "\n"
@@ -2519,7 +2689,7 @@ msgstr ""
 "\n"
 "✗ Greška: {error}"
 
-#: cli/src/cadastral_cli/main.py:137
+#: cli/src/cadastral_cli/main.py:139
 msgid ""
 "\n"
 "\n"
@@ -2529,7 +2699,7 @@ msgstr ""
 "\n"
 "Operacija otkazana od strane korisnika."
 
-#: cli/src/cadastral_cli/main.py:140
+#: cli/src/cadastral_cli/main.py:142
 #, python-brace-format
 msgid ""
 "\n"
@@ -3180,30 +3350,195 @@ msgstr "y"
 
 #: cli/src/cadastral_cli/output_keys.py:171
 msgctxt "key"
+msgid "parcel_area_m2"
+msgstr "povrsina_cestice_m2"
+
+#: cli/src/cadastral_cli/output_keys.py:172
+msgctxt "key"
+msgid "in_building_area"
+msgstr "u_gradjevinskom_podrucju"
+
+#: cli/src/cadastral_cli/output_keys.py:173
+msgctxt "key"
+msgid "matches"
+msgstr "podudaranja"
+
+#: cli/src/cadastral_cli/output_keys.py:174
+msgctxt "key"
+msgid "zone"
+msgstr "zona"
+
+#: cli/src/cadastral_cli/output_keys.py:175
+msgctxt "key"
+msgid "zones"
+msgstr "broj_zona"
+
+#: cli/src/cadastral_cli/output_keys.py:176
+msgctxt "key"
+msgid "feature_id"
+msgstr "id_objekta"
+
+#: cli/src/cadastral_cli/output_keys.py:177
+msgctxt "key"
+msgid "zone_kind"
+msgstr "vrsta_zone"
+
+#: cli/src/cadastral_cli/output_keys.py:178
+msgctxt "key"
+msgid "generation"
+msgstr "generacija"
+
+#: cli/src/cadastral_cli/output_keys.py:179
+msgctxt "key"
+msgid "designation_code"
+msgstr "oznaka_namjene"
+
+#: cli/src/cadastral_cli/output_keys.py:180
+msgctxt "key"
+msgid "designation"
+msgstr "namjena"
+
+#: cli/src/cadastral_cli/output_keys.py:181
+msgctxt "key"
+msgid "designation_detail"
+msgstr "namjena_detalj"
+
+#: cli/src/cadastral_cli/output_keys.py:182
+msgctxt "key"
+msgid "designation_class"
+msgstr "razred_namjene"
+
+#: cli/src/cadastral_cli/output_keys.py:183
+msgctxt "key"
+msgid "zone_name"
+msgstr "naziv_zone"
+
+#: cli/src/cadastral_cli/output_keys.py:184
+msgctxt "key"
+msgid "plan_name"
+msgstr "naziv_plana"
+
+#: cli/src/cadastral_cli/output_keys.py:185
+msgctxt "key"
+msgid "plan_id"
+msgstr "oznaka_plana"
+
+#: cli/src/cadastral_cli/output_keys.py:186
+msgctxt "key"
+msgid "county_code"
+msgstr "sifra_zupanije"
+
+#: cli/src/cadastral_cli/output_keys.py:187
+msgctxt "key"
+msgid "source_sheet"
+msgstr "izvorni_list"
+
+#: cli/src/cadastral_cli/output_keys.py:188
+msgctxt "key"
+msgid "source_scale"
+msgstr "mjerilo_izvora"
+
+#: cli/src/cadastral_cli/output_keys.py:189
+msgctxt "key"
+msgid "polygons"
+msgstr "poligoni"
+
+#: cli/src/cadastral_cli/output_keys.py:190
+msgctxt "key"
+msgid "overlap_fraction"
+msgstr "udio_preklopa"
+
+#: cli/src/cadastral_cli/output_keys.py:191
+msgctxt "key"
+msgid "overlap_m2"
+msgstr "preklop_m2"
+
+#: cli/src/cadastral_cli/output_keys.py:192
+msgctxt "key"
+msgid "plans"
+msgstr "planovi"
+
+#: cli/src/cadastral_cli/output_keys.py:193
+msgctxt "key"
+msgid "dataset"
+msgstr "skup_podataka"
+
+#: cli/src/cadastral_cli/output_keys.py:194
+msgctxt "key"
+msgid "state"
+msgstr "stanje"
+
+#: cli/src/cadastral_cli/output_keys.py:195
+msgctxt "key"
+msgid "source_url"
+msgstr "url_izvora"
+
+#: cli/src/cadastral_cli/output_keys.py:196
+msgctxt "key"
+msgid "disclaimer"
+msgstr "napomena"
+
+#: cli/src/cadastral_cli/output_keys.py:197
+msgctxt "key"
+msgid "buildability"
+msgstr "mogucnost_gradnje"
+
+#: cli/src/cadastral_cli/output_keys.py:198
+msgctxt "key"
+msgid "below_threshold"
+msgstr "ispod_praga"
+
+#: cli/src/cadastral_cli/output_keys.py:199
+msgctxt "key"
+msgid "intersecting_zones"
+msgstr "broj_presjecenih_zona"
+
+#: cli/src/cadastral_cli/output_keys.py:200
+msgctxt "key"
+msgid "min_overlap"
+msgstr "najmanji_preklop"
+
+#: cli/src/cadastral_cli/output_keys.py:201
+msgctxt "key"
+msgid "state_note"
+msgstr "napomena_o_stanju"
+
+#: cli/src/cadastral_cli/output_keys.py:202
+msgctxt "key"
+msgid "retrieved_at"
+msgstr "dohvaceno"
+
+#: cli/src/cadastral_cli/output_keys.py:203
+msgctxt "key"
+msgid "match"
+msgstr "podudaranje"
+
+#: cli/src/cadastral_cli/output_keys.py:205
+msgctxt "key"
 msgid "code"
 msgstr "maticni_broj"
 
-#: cli/src/cadastral_cli/output_keys.py:172
+#: cli/src/cadastral_cli/output_keys.py:206
 msgctxt "key"
 msgid "display_name"
 msgstr "puni_naziv"
 
-#: cli/src/cadastral_cli/output_keys.py:173
+#: cli/src/cadastral_cli/output_keys.py:207
 msgctxt "key"
 msgid "office_id"
 msgstr "id_ureda"
 
-#: cli/src/cadastral_cli/output_keys.py:174
+#: cli/src/cadastral_cli/output_keys.py:208
 msgctxt "key"
 msgid "office_name"
 msgstr "naziv_ureda"
 
-#: cli/src/cadastral_cli/output_keys.py:175
+#: cli/src/cadastral_cli/output_keys.py:209
 msgctxt "key"
 msgid "department_id"
 msgstr "id_odjela"
 
-#: cli/src/cadastral_cli/output_keys.py:182
+#: cli/src/cadastral_cli/output_keys.py:216
 msgctxt "key possessors"
 msgid "ownership"
 msgstr "posjedovni_udio"
@@ -3499,6 +3834,36 @@ msgid_plural "{len_type} values are required, but {len_value} were given."
 msgstr[0] "Potrebno je {len_type} vrijednosti, a zadana je {len_value}."
 msgstr[1] "Potrebno je {len_type} vrijednosti, a zadane su {len_value}."
 msgstr[2] "Potrebno je {len_type} vrijednosti, a zadano ih je {len_value}."
+
+#~ msgid ""
+#~ "Find out which spatial-plan building area a parcel lies in.\n"
+#~ "\n"
+#~ "Matches the parcel boundary against the building areas (građevinska područja)\n"
+#~ "derived from the spatial plans in force: inside a settlement, in a detached\n"
+#~ "zone with its designation (for example T2 tourist settlement), or outside.\n"
+#~ "The result is an interpretation of the plans, not the plans themselves.\n"
+#~ "\n"
+#~ "Examples:\n"
+#~ "  cadastral get-zoning 103/2 -m SAVAR\n"
+#~ "  cadastral get-zoning 396/1 -m 334979 --format json\n"
+#~ "  cadastral get-zoning 45 -m SAVAR --format csv -o zoning.csv\n"
+#~ "  cadastral get-zoning 103/2 -m SAVAR --format geojson --show-geometry"
+#~ msgstr ""
+#~ "Saznajte u kojem je građevinskom području prostornog plana čestica.\n"
+#~ "\n"
+#~ "Uspoređuje granicu čestice s građevinskim područjima izvedenima iz važećih\n"
+#~ "prostornih planova: unutar naselja, u izdvojenom području s njegovom namjenom\n"
+#~ "(na primjer T2 turističko naselje) ili izvan njih. Rezultat je interpretacija\n"
+#~ "planova, a ne sami planovi.\n"
+#~ "\n"
+#~ "Primjeri:\n"
+#~ "  uz namjena 103/2 -ko SAVAR\n"
+#~ "  uz namjena 396/1 -ko 334979 --oblik json\n"
+#~ "  uz namjena 45 -ko SAVAR --oblik csv -dt namjena.csv\n"
+#~ "  uz namjena 103/2 -ko SAVAR --oblik geojson --geometrija"
+
+#~ msgid "Ignore zones covering less than this share of the parcel (percent)"
+#~ msgstr "Zanemari zone koje pokrivaju manji udio čestice od ovoga (postotak)"
 
 #~ msgctxt "command"
 #~ msgid "batch-fetch"

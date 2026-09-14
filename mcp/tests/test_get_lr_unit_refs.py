@@ -38,7 +38,9 @@ class _FakeClient:
         )
         self.calls: list[tuple] = []
 
-    def get_lr_unit_detailed(self, unit_number, main_book_id=None, main_book_name=None):
+    def get_lr_unit_detailed(
+        self, unit_number, main_book_id=None, main_book_name=None, historical_overview=False
+    ):
         self.calls.append(("unit", unit_number, main_book_id, main_book_name))
         if unit_number == "999999":
             raise CadastralAPIError(
@@ -46,7 +48,7 @@ class _FakeClient:
             )
         return self.unit
 
-    def get_lr_unit_from_parcel(self, parcel_number, municipality):
+    def get_lr_unit_from_parcel(self, parcel_number, municipality, historical_overview=False):
         self.calls.append(("parcel", parcel_number, municipality))
         return self.unit
 
@@ -161,3 +163,48 @@ def test_invalid_detail_and_empty_list_are_refused(tools) -> None:
         _run(tools.get_lr_unit([{"lr_unit_number": "449", "main_book_id": 21277}], "bogus"))
     with pytest.raises(ValueError):
         _run(tools.get_lr_unit([]))
+
+
+def test_historical_overview_and_paging_reach_the_client(tools, client) -> None:
+    result = _run(
+        tools.get_lr_unit(
+            [{"lr_unit_number": "449", "main_book_id": 21277}],
+            historical_overview=True,
+            offset=1,
+            limit=2,
+        )
+    )
+    assert client.calls == [("unit", "449", 21277, None)]
+    entry = result["results"][0]
+    assert entry["status"] == "success"
+    assert entry["data"]["page"] == {
+        "offset": 1, "limit": 2, "total": 4, "returned": 2, "truncated": True, "next_offset": 3
+    }
+
+
+def test_historical_overview_is_passed_to_the_client() -> None:
+    class _Recording(_FakeClient):
+        def get_lr_unit_detailed(self, unit_number, main_book_id=None, **kwargs):
+            self.calls.append(kwargs)
+            return self.unit
+
+    client = _Recording()
+    _run(
+        CadastralTools(client).get_lr_unit(
+            [{"lr_unit_number": "449", "main_book_id": 21277}], historical_overview=True
+        )
+    )
+    assert client.calls == [{"main_book_name": None, "historical_overview": True}]
+
+
+def test_owners_limit_is_a_synonym_of_limit(tools) -> None:
+    ref = {"lr_unit_number": "449", "main_book_id": 21277}
+    by_old = _run(tools.get_lr_unit([ref], owners_limit=2))
+    by_new = _run(tools.get_lr_unit([ref], limit=2))
+    assert by_old["results"][0]["data"]["owners"] == by_new["results"][0]["data"]["owners"]
+
+
+@pytest.mark.parametrize("kwargs", [{"limit": 0}, {"offset": -1}, {"detail": "sheets"}])
+def test_bad_paging_or_detail_is_rejected(tools, kwargs) -> None:
+    with pytest.raises(ValueError):
+        _run(tools.get_lr_unit([{"lr_unit_number": "449", "main_book_id": 21277}], **kwargs))

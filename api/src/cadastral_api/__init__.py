@@ -18,13 +18,20 @@ from .models import (
     ParcelLink,
     ParcelPart,
     ParcelSearchResult,
+    ParcelZoning,
     Party,
+    PlanGeneration,
+    PlanningZone,
     Plumb,
     PossessionSheet,
     PossessionSheetSearchResult,
     Possessor,
+    ZoneKind,
+    ZoneMatch,
+    ZoningStatus,
     build_map_url,
 )
+from .planning import PlanningWFSClient
 from .utils import display_parcel_number, normalize_parcel_number
 
 __version__ = "0.1.0"
@@ -38,6 +45,14 @@ __all__ = [
     # GIS
     "GISCache",
     "GMLParser",
+    # Spatial plans
+    "PlanningWFSClient",
+    "ParcelZoning",
+    "PlanGeneration",
+    "PlanningZone",
+    "ZoneKind",
+    "ZoneMatch",
+    "ZoningStatus",
     # Models
     "BookOfDCSearchResult",
     "CadastralOffice",

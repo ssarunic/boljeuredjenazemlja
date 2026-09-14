@@ -40,6 +40,7 @@ This is a **monorepo** containing multiple related projects demonstrating modern
 - **CLI Tool** (`cli/`): Rich terminal interface with table/JSON/CSV/WKT/GeoJSON output formats
 - **MCP Server** (`mcp/`): AI agent integration via Model Context Protocol
 - **GIS Integration**: Parcel geometry parsing and local caching from GML files
+- **Spatial plans**: Parcel matched against the building areas derived from the plans in force (`get_parcel_zoning`, `get-zoning`, MCP `get_parcel_zoning`); zones carry designation code, plan, `generation` (old/new code list) and the dataset disclaimer; see [specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)
 - **Lists**: `get-parcel` and `get-lr-unit` accept a list of items (comma-separated or from a file) as well as a single one
 - **Internationalization**: Croatian (default) and English support via gettext
 - **Rate Limiting**: Automatic request throttling (0.375s default, configurable)
@@ -138,6 +139,7 @@ The API client can be configured via environment variables or a `.env` file:
 - `CADASTRAL_API_BASE_URL`: API base URL (default: `http://localhost:8000`)
 - `CADASTRAL_API_TIMEOUT`: Request timeout in seconds (default: `10.0`)
 - `CADASTRAL_API_RATE_LIMIT`: Rate limit between requests in seconds (default: `0.375`)
+- `CADASTRAL_PLANNING_WFS_URLS`: Building-areas WFS endpoint(s) for `get-zoning`, comma-separated mirrors tried in order (default: `<base URL>/planning/wfs`, the mock server)
 - `CADASTRAL_LANG`: Language for CLI output (`hr`, `en`) - Croatian is default
 
 **Setup:**
@@ -228,6 +230,7 @@ The project includes a comprehensive command-line interface (`cadastral`) with m
 - **`cadastral list-offices`** - List all cadastral offices
 - **`cadastral info`** - Display system information, cache status, and API settings
 - **`cadastral get-geometry`** - Retrieve parcel boundary coordinates
+- **`cadastral get-zoning`** - What the spatial plans' building areas say about a parcel (inside a settlement, in a detached T2/T3 zone, or outside), with the plan it comes from and the dataset disclaimer
 - **`cadastral download-gis`** - Download GIS data for a municipality
 - **`cadastral cache clear`** - Clear local GIS cache
 
@@ -670,6 +673,7 @@ bad release with a new PATCH release.
 
 - **[specs/croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md)** - Complete API specification
 - **[specs/api-coverage-specification.md](specs/api-coverage-specification.md)** - Field inventory of every endpoint and the plan for complete coverage (models, client, CLI, MCP, mock, coverage gate)
+- **[specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)** - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model and the parcel-matching recipe (research, not implemented)
 - **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
 - **[specs/gateway-service.md](specs/gateway-service.md)** - Hosted REST + remote MCP gateway service (draft)
@@ -694,7 +698,7 @@ bad release with a new PATCH release.
 
 ## Related Services
 
-- **WFS INSPIRE Service:** `https://oss.uredjenazemlja.hr/wfs` - Download cadastral geometries in GML format
+- **WFS INSPIRE Service:** `https://api.uredjenazemlja.hr/services/inspire/cp/wfs` - Download cadastral geometries (WFS 2.0, GML/GeoJSON); the old `oss.uredjenazemlja.hr/wfs` address no longer serves a WFS
 - **ATOM Download Service:** Bulk municipality data downloads via catalog.uredjenazemlja.hr
 - **Interactive Map:** `https://oss.uredjenazemlja.hr/map?cad_parcel_id=PARCELID` - View parcels on map
 

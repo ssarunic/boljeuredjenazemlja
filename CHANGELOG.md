@@ -12,6 +12,21 @@ number and one tag.
 
 ### Added
 
+- Spatial plans: what the building areas (građevinska područja) derived from
+  the plans in force say about a parcel. SDK `CadastralAPIClient.get_parcel_zoning`
+  and `PlanningWFSClient` (mirror rotation over the Ministry's GeoServer
+  hosts, `CADASTRAL_PLANNING_WFS_URLS`), models `ParcelZoning`, `PlanningZone`
+  (with `generation`, because T1/T2/T3 mean different things in old and
+  new-generation plans), `ZoneMatch` with an overlap fraction estimated by
+  point sampling, `ParcelZoning.buildability` (always `unknown`: the lookup is
+  a screening, never a building permission), a `touches_below_threshold`
+  status with the sub-threshold zones kept in `below_threshold`, and
+  `PlanningDataset` carrying the dataset's disclaimer, the mirror that
+  answered and the retrieval time. CLI `get-zoning` (`uz namjena`) with
+  table, JSON, CSV and GeoJSON output;
+  MCP tool `get_parcel_zoning`; the mock server imitates the WFS at
+  `/planning/wfs` with synthetic zones around the SAVAR sample parcels.
+  Endpoint research in `specs/spatial-planning-api-specification.md`.
 - Complete API coverage per `specs/api-coverage-specification.md`. Every key
   the public API returns is now a declared, typed field: `Party.entry` (the
   registration entry that put an owner on a share, with `priority_diary_number`
@@ -51,6 +66,23 @@ number and one tag.
 - MCP: tools `find_main_book`, `find_book_of_dc` and `find_possession_sheet`;
   `get_lr_unit` accepts `main_book_name`; `detail="ownership"` owner rows carry
   `entry` and the result carries `share_entries` and `sheet_a1_source_key`.
+- MCP parity with the SDK and CLI. New tools `list_municipalities` (filter by
+  name, cadastral office or department, paged), `get_file_status` (one
+  land-registry file by number and institution id, without fetching a unit)
+  and `download_municipality_gis` (fetch or refresh a municipality's GIS data
+  into the cache and report the parcel count). `get_lr_unit` gains
+  `historical_overview`, the per-sheet levels `detail="shares"` (raw list B),
+  `detail="parcels"` (list A) and `detail="encumbrances"` (list C), and
+  `offset`/`limit` paging over owner rows, top-level shares, parcels or entry
+  groups with a `page` block in every response (`owners_limit` stays as a
+  synonym of `limit`; in `full` it now counts shares, so a share without
+  owners is never skipped), so a unit whose full dump is refused can still be
+  read completely in pages; every level names the unit's `institution_id`.
+  `find_parcel` takes `max_matches` and returns the complete search response
+  under `matches`, also when no single parcel can be chosen (`success: false`
+  with the warning in `match_note`). `resolve_municipality` returns the complete
+  record (`municipality_id`, `office_id`, `department_id`, `other_matches`)
+  with one request instead of listing every municipality.
 - Mock server: routes for possession sheet, main book and books-of-DC search;
   the parcel search reproduces the observed prefix, asterisk-wildcard and
   `ZGR` semantics; data sets regenerated from the redacted capture (59 parcels
@@ -185,6 +217,20 @@ number and one tag.
 
 ### Fixed
 
+- MCP: tool and resource failures reach the agent with their message. The MCP
+  SDK withholds the text of any exception that is not its own `ToolError` or
+  `ResourceError`, and the handlers raised `ValueError`, so every failure
+  ("No parcels found ...", "Could not match parcel ... against the building
+  areas ...") arrived as the bare "Error executing tool <name>". The server now
+  converts them. `get_parcel_zoning` failures name the WFS endpoint(s) tried
+  and, when that is the mock server's default path on another server, say to
+  set `CADASTRAL_PLANNING_WFS_URLS`.
+- MCP: the three resources and the four prompts work again. They called
+  `get_parcel_by_id` and `search_municipalities`, which the SDK never had, and
+  read `municipality_name`, `cadastral_office_name`, `land_use_name` and
+  `land_use`, which `ParcelInfo` does not have, so every parcel resource, the
+  municipality resource and every prompt failed at runtime. A test now checks
+  each `self.client.<method>` in the MCP sources against the real client.
 - SDK: an encumbrance in favour of a legal person no longer comes back without a
   beneficiary. The server sends no person record when the name is written into
   the entry text ("... za korist REPUBLIKE HRVATSKE, Centar za socijalnu skrb

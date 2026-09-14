@@ -41,6 +41,8 @@ from ..models import (
     PossessionSheetSearchResult,
 )
 from ..models.gis_entities import ParcelGeometry
+from ..models.planning_entities import ParcelZoning
+from ..planning import PlanningWFSClient, validate_min_overlap
 from ..utils import is_building_parcel_number, normalize_parcel_number, parse_file_number
 
 # Load environment variables from .env file
@@ -79,6 +81,7 @@ class CadastralAPIClient:
         timeout: float | None = None,
         cache_dir: Path | str | None = None,
         unknown_fields: UnknownFieldsPolicy | None = None,
+        planning_wfs_urls: list[str] | str | None = None,
     ) -> None:
         """
         Initialize the API client.
@@ -94,12 +97,16 @@ class CadastralAPIClient:
                 ``"warn"`` logs each new key path once per process (default),
                 ``"ignore"`` stays silent, ``"error"`` raises
                 ``CadastralAPIError(INVALID_RESPONSE, reason="unknown_fields")``.
+            planning_wfs_urls: Endpoint(s) of the spatial-plan building-areas
+                WFS, tried in order (default: ``CADASTRAL_PLANNING_WFS_URLS``
+                or ``<base_url>/planning/wfs``, the mock server's imitation).
 
         Environment Variables:
             CADASTRAL_API_BASE_URL: API base URL (default: http://localhost:8000)
             CADASTRAL_API_RATE_LIMIT: Rate limit in seconds (default: 0.375)
             CADASTRAL_API_TIMEOUT: Request timeout in seconds (default: 10.0)
             CADASTRAL_API_UNKNOWN_FIELDS: warn | ignore | error (default: warn)
+            CADASTRAL_PLANNING_WFS_URLS: comma-separated building-areas WFS mirrors
 
         Note:
             Before pointing the client at any server other than the included
@@ -132,6 +139,14 @@ class CadastralAPIClient:
         # Initialize GIS cache
         self.gis_cache = GISCache(cache_dir, base_url=self.base_url)
 
+        # Spatial-plan building areas (mirrors rotate on gateway errors)
+        self.planning = PlanningWFSClient(
+            planning_wfs_urls,
+            timeout=self.timeout,
+            rate_limit=self.rate_limit,
+            api_base_url=self.base_url,
+        )
+
     def __enter__(self) -> "CadastralAPIClient":
         """Context manager entry."""
         return self
@@ -141,8 +156,9 @@ class CadastralAPIClient:
         self.close()
 
     def close(self) -> None:
-        """Close the HTTP client."""
+        """Close the HTTP clients."""
         self.client.close()
+        self.planning.close()
 
     def _wait_for_rate_limit(self) -> None:
         """
@@ -784,6 +800,62 @@ class CadastralAPIClient:
         # Parse GML and find parcel
         parser = GMLParser(gml_path)
         return parser.get_parcel_by_number(parcel_number)
+
+    def get_parcel_zoning(
+        self,
+        parcel_number: str,
+        municipality_reg_num: str,
+        min_overlap: float = 0.02,
+    ) -> ParcelZoning | None:
+        """
+        Screening of a parcel against the spatial plans' building areas.
+
+        Takes the parcel outline from the cadastral GIS data (downloaded and
+        cached as for ``get_parcel_geometry``), asks the building-areas WFS for
+        every zone that intersects it, and estimates how much of the parcel
+        each zone covers. It says where the parcel lies with respect to the
+        building areas, not whether anything may be built there
+        (``buildability`` is always ``"unknown"``).
+
+        Args:
+            parcel_number: Parcel number (e.g., "103/2"); any spelling of a
+                building parcel is accepted
+            municipality_reg_num: Municipality registration number (e.g., "334979")
+            min_overlap: Zones covering a smaller share of the parcel are
+                listed under ``below_threshold`` instead of ``matches``
+                (default 0.02, i.e. 2 %); must be between 0 and 1
+
+        Returns:
+            ParcelZoning (status, matches with overlap, below-threshold zones,
+            plans, dataset and disclaimer), or None when the parcel has no
+            geometry
+
+        Raises:
+            ValueError: ``min_overlap`` is not a finite number between 0 and 1
+
+        Example:
+            zoning = client.get_parcel_zoning("103/2", "334979")
+            if zoning:
+                print(zoning.status)  # inside_settlement, detached_zone,
+                                      # touches_below_threshold or outside
+                for match in zoning.matches:
+                    print(match.zone.label(), f"{match.overlap_fraction:.0%}")
+                print(zoning.dataset.disclaimer)
+
+        Note:
+            The building areas are an interpretation of the plans by the county
+            institutes, not the plans themselves (see ``dataset.disclaimer``);
+            the generation field of every zone says which code list its
+            designation code belongs to.
+        """
+        # Reject a bad threshold before any download or request is made.
+        min_overlap = validate_min_overlap(min_overlap)
+        geometry = self.get_parcel_geometry(
+            normalize_parcel_number(parcel_number), municipality_reg_num
+        )
+        if geometry is None:
+            return None
+        return self.planning.zoning_for_geometry(geometry, min_overlap=min_overlap)
 
     def get_lr_unit_detailed(
         self,

@@ -6,6 +6,7 @@ This directory contains technical specifications, architecture documentation, an
 
 - [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md) - Complete API endpoint documentation with request/response formats
 - [api-coverage-specification.md](api-coverage-specification.md) - Field-level inventory of every endpoint and the changes required for complete model, client, CLI, MCP and mock coverage
+- [spatial-planning-api-specification.md](spatial-planning-api-specification.md) - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model, and how to match plans against cadastral parcels
 
 ## Implementation Specifications
 

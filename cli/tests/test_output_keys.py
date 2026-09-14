@@ -49,6 +49,7 @@ JSON_COMMANDS = [
     "get-parcel 103/2,45 -m SAVAR --detail registry",
     "get-lr-unit --input lr_units.csv --show-owners",
     "get-geometry 103/2 -m SAVAR",
+    "get-zoning 396/1 -m SAVAR",
     "list-offices",
     "list-municipalities --office 114",
     "list-main-books --search SAVAR",
@@ -62,6 +63,7 @@ CSV_COMMANDS = [
     "get-parcel 103/2,45,999 -m SAVAR --show-owners",
     "get-lr-unit --input lr_units.csv --show-owners",
     "get-geometry 103/2 -m SAVAR",
+    "get-zoning 45 -m SAVAR",
     "list-offices",
 ]
 

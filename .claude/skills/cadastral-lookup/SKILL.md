@@ -54,18 +54,27 @@ item, several for a portfolio) and return one entry per reference, in order.
   its land parcel), so their `get_lr_unit` entry is an error saying so.
 - **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
   `find_book_of_dc`.
+- **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,
+  or `get_file_status` for one file number and the unit's `institution_id`.
+- **Municipalities of an office** -> `list_municipalities` with the
+  `office_id` from `list_cadastral_offices`.
 - **Map / boundaries** -> `get_parcel_geometry`.
 
 ## Response shaping
 
-`get_lr_unit` takes `detail` = `summary` | `ownership` (default) | `full`:
+`get_lr_unit` takes `detail` = `summary` | `ownership` (default) | `shares` |
+`parcels` | `encumbrances` | `full`:
 
 - Default `ownership` returns B-list owners + structured shares
   (`share = {num, den, decimal}`) + a summary - it already fits in context.
-- For large units, pass `owners_limit` and summarise; `total_owners` /
-  `owners_truncated` report what was capped. Reach for `full` only when geometry
-  or the C-sheet (encumbrances) is actually needed; a `full` dump too large to
-  return comes back as that unit's `error` with the smaller options named.
+- `shares` is raw list B (shares with sub-shares, entries, status), `parcels`
+  is list A and `encumbrances` is list C, each on its own; reach for `full`
+  only when every sheet and the geometry are needed at once.
+- For large units, pass `limit` and page with `offset`: every level carries a
+  `page` block (`total`, `returned`, `truncated`, `next_offset`). A response
+  too large to return comes back as that unit's `error` with the smaller
+  options named; use a per-sheet level with a limit instead of retrying `full`.
+- `historical_overview=true` adds deleted entries and non-active shares.
 - Every entry has a `status` (`success`, `error`, `duplicate`); read the
   `error` of a failed reference instead of retrying blindly.
 
