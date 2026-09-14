@@ -23,7 +23,7 @@ class MCPConfig:
 
     # MCP Server Configuration
     server_name: str = "cadastral-mcp-server"
-    server_version: str = "0.1.0"
+    server_version: str = "0.2.0"
 
     # HTTP Server Configuration (when running in HTTP mode)
     http_host: str = os.getenv("MCP_HTTP_HOST", "127.0.0.1")

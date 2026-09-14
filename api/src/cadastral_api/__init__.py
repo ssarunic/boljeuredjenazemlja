@@ -34,7 +34,7 @@ from .models import (
 from .planning import PlanningWFSClient
 from .utils import display_parcel_number, normalize_parcel_number
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     # Client

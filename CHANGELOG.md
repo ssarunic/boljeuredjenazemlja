@@ -10,6 +10,8 @@ number and one tag.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-14
+
 ### Added
 
 - Spatial plans: what the building areas (građevinska područja) derived from
@@ -362,5 +364,6 @@ was introduced.
 - Bilingual CLI user documentation (`docs/en/cli/`, `docs/hr/cli/`) generated
   by `scripts/build_docs.py`, with documentation and terminology gates in CI.
 
-[Unreleased]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ssarunic/boljeuredjenazemlja/releases/tag/v0.1.0
