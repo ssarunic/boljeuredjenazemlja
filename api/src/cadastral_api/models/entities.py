@@ -412,15 +412,49 @@ class PossessionSheet(SourceModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def is_condominium(self) -> bool:
+        """Whether the sheet records a condominium (etažno vlasništvo).
+
+        True when any possessor carries a condominium unit number or a share
+        of the common areas; such a possessor's ``ownership`` is the share of
+        their own unit, not of the parcel.
+        """
+        return any(
+            p.condominium_share_number or p.condominium_share_ownership
+            for p in self.possessors
+        )
+
+    @computed_field  # type: ignore[misc]
+    @property
     def total_ownership(self) -> float | None:
         """
-        Sum of the possessors' shares on this sheet.
+        Sum of the possessors' shares of the parcel on this sheet.
+
+        On an ordinary sheet this sums ``ownership``. On a condominium sheet
+        (``is_condominium``) ``ownership`` is each possessor's share of their
+        own unit ("1/1" of a flat, "1/2" of a storage room) and
+        ``condominium_share_ownership`` the unit's share of the common areas
+        (e.g. "61/4651"); a possessor's share of the parcel is the product of
+        the two, and that is what is summed. Two co-owners of one flat each
+        carry the flat's common share, so summing the common share alone would
+        count that flat twice. A condominium possessor without ``ownership``
+        counts for the whole unit share.
 
         Summed exactly as fractions, then converted once, so thirds and sixths
-        add up to 1.0. None when no possessor carries a share.
+        add up to 1.0. None when no possessor carries the share in question.
         """
-        pairs = [parse_fraction(p.ownership) for p in self.possessors]
-        fractions = [Fraction(num, den) for pair in pairs if pair for num, den in [pair]]
+        fractions: list[Fraction] = []
+        for p in self.possessors:
+            if self.is_condominium:
+                common = parse_fraction(p.condominium_share_ownership)
+                if common is None:
+                    continue
+                unit = parse_fraction(p.ownership) or (1, 1)
+                fractions.append(Fraction(*common) * Fraction(*unit))
+            else:
+                pair = parse_fraction(p.ownership)
+                if pair is not None:
+                    fractions.append(Fraction(*pair))
         return float(sum(fractions)) if fractions else None
 
 

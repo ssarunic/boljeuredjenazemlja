@@ -155,3 +155,188 @@ def test_own_output_parcel_id_is_accepted_as_input(tools) -> None:
     # A numeric string is accepted and normalised to the integer id.
     as_text = _run(tools.get_parcel([{"parcel_id": str(parcel_id)}], source="none"))
     assert as_text["results"][0]["ref"] == {"parcel_id": parcel_id}
+
+
+# --- Paging through the possessors of a large parcel -------------------------
+
+
+def _possessor_names(entry: dict) -> list[str]:
+    return [
+        p["name"]
+        for sheet in entry["data"]["possession_sheets"]
+        for p in sheet["possessors"]
+    ]
+
+
+class _FakeCondominiumClient:
+    """A parcel under a condominium: a first sheet with three possessors and a
+    second sheet with ``n`` of them, each carrying an address, so the record
+    is as heavy as a real one."""
+
+    def __init__(self, n: int = 400) -> None:
+        raw = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        template = (raw["possessionSheets"][0]["possessors"] or [{"name": "X"}])[0]
+        first = dict(raw["possessionSheets"][0])
+        first["possessors"] = [
+            {**template, "name": f"FIRST {i}", "ownership": "1/3"} for i in range(3)
+        ]
+        second = dict(raw["possessionSheets"][0])
+        second["possessionSheetId"] = 99
+        second["possessionSheetNumber"] = "99"
+        second["possessors"] = [
+            {
+                **template,
+                "name": f"POSSESSOR {i:04d}",
+                "address": "Ulica grada Vukovara 269d, 10000 Zagreb, Hrvatska",
+                "condominiumShareNumber": str(i),
+                "condominiumShareOwnership": f"{i}/4651",
+            }
+            for i in range(n)
+        ]
+        raw["possessionSheets"] = [first, second]
+        self._parcel = ParcelInfo.model_validate(raw)
+
+    def get_parcel_info(self, parcel_id: str) -> ParcelInfo:
+        return self._parcel
+
+
+def test_cadastre_entry_carries_a_page_block_and_totals(tools) -> None:
+    entry = _run(tools.get_parcel([{"parcel_id": "6564741"}]))["results"][0]
+    total = sum(s["total_possessors"] for s in entry["data"]["possession_sheets"])
+    assert entry["total_possessors"] == total > 0
+    assert entry["possessors_truncated"] is False
+    assert entry["page"] == {
+        "offset": 0, "limit": None, "total": total, "returned": total, "truncated": False,
+    }
+
+
+def test_other_sources_carry_no_page_block(tools) -> None:
+    for source in ("land_registry", "none"):
+        entry = _run(tools.get_parcel([{"parcel_id": "1"}], source=source))["results"][0]
+        assert "page" not in entry and "total_possessors" not in entry
+
+
+def test_possessors_are_paged_across_sheets_and_none_is_lost() -> None:
+    tools = CadastralTools(_FakeCondominiumClient(n=10))
+    seen: list[str] = []
+    offset = 0
+    while True:
+        res = _run(tools.get_parcel([{"parcel_id": "1"}], offset=offset, limit=4))
+        entry = res["results"][0]
+        assert entry["status"] == "success", entry
+        seen.extend(_possessor_names(entry))
+        # Both sheet headers stay visible on every page, with their own totals.
+        assert [s["total_possessors"] for s in entry["data"]["possession_sheets"]] == [3, 10]
+        assert entry["total_possessors"] == 13
+        if not entry["page"]["truncated"]:
+            break
+        offset = entry["page"]["next_offset"]
+    assert seen == [f"FIRST {i}" for i in range(3)] + [f"POSSESSOR {i:04d}" for i in range(10)]
+    # The first page cuts through the sheet boundary: 3 from the first, 1 from the second.
+    first = _run(tools.get_parcel([{"parcel_id": "1"}], limit=4))["results"][0]
+    assert [len(s["possessors"]) for s in first["data"]["possession_sheets"]] == [3, 1]
+    assert first["page"] == {
+        "offset": 0, "limit": 4, "total": 13, "returned": 4, "truncated": True, "next_offset": 4,
+    }
+    assert first["possessors_truncated"] is True
+
+
+def test_window_past_the_end_is_empty_not_an_error() -> None:
+    tools = CadastralTools(_FakeCondominiumClient(n=10))
+    entry = _run(tools.get_parcel([{"parcel_id": "1"}], offset=50, limit=5))["results"][0]
+    assert entry["status"] == "success"
+    assert _possessor_names(entry) == []
+    assert entry["page"]["returned"] == 0 and entry["page"]["truncated"] is False
+
+
+def test_a_parcel_too_large_to_return_is_that_parcels_error_with_a_smaller_limit() -> None:
+    tools = CadastralTools(_FakeCondominiumClient(n=400))
+    res = _run(tools.get_parcel([{"parcel_id": "1"}]))
+    entry = res["results"][0]
+    assert entry["status"] == "error"
+    assert res["failed"] == 1
+    assert "too large" in entry["error"]
+    assert "limit=" in entry["error"] and 'source="none"' in entry["error"]
+    # The way forward it names works.
+    paged = _run(tools.get_parcel([{"parcel_id": "1"}], limit=50))["results"][0]
+    assert paged["status"] == "success"
+    assert paged["page"]["returned"] == 50 and paged["page"]["total"] == 403
+    assert len(json.dumps(paged, ensure_ascii=False)) <= CadastralTools.MAX_PARCEL_RESPONSE_CHARS
+    # The suggested limit is proportional to what fits, not a quarter of the window.
+    refused = _run(tools.get_parcel([{"parcel_id": "1"}], limit=300))["results"][0]
+    assert refused["status"] == "error"
+    suggested = int(refused["error"].split("limit=")[1].split(")")[0])
+    assert 150 < suggested < 300
+    retry = _run(tools.get_parcel([{"parcel_id": "1"}], limit=suggested))["results"][0]
+    assert retry["status"] == "success"
+    # Without the possessors the parcel itself is never refused.
+    bare = _run(tools.get_parcel([{"parcel_id": "1"}], source="none"))["results"][0]
+    assert bare["status"] == "success"
+
+
+def test_bad_paging_arguments_are_refused(tools) -> None:
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([{"parcel_id": "1"}], limit=0))
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([{"parcel_id": "1"}], offset=-1))
+
+
+def test_distinct_possessors_counts_names_not_records() -> None:
+    client = _FakeCondominiumClient(n=6)
+    # The same person holds a flat and a storage room: two records, one name.
+    sheet = client._parcel.possession_sheets[1]
+    sheet.possessors[1].name = "ANA  Anić"
+    sheet.possessors[4].name = "Ana Anić"
+    tools = CadastralTools(client)
+    entry = _run(tools.get_parcel([{"parcel_id": "1"}], limit=2))["results"][0]
+    assert entry["total_possessors"] == 9
+    assert entry["distinct_possessors"] == 8
+    # Counted over the whole parcel, whatever the window.
+    later = _run(tools.get_parcel([{"parcel_id": "1"}], offset=8, limit=2))["results"][0]
+    assert later["distinct_possessors"] == 8
+
+
+def test_possessor_name_filter_finds_a_person_without_paging() -> None:
+    client = _FakeCondominiumClient(n=30)
+    sheet = client._parcel.possession_sheets[1]
+    sheet.possessors[17].name = "ANĐELIĆ BRKIĆ MARIJA"
+    sheet.possessors[23].name = "Brkić Ivan"
+    tools = CadastralTools(client)
+    entry = _run(
+        tools.get_parcel([{"parcel_id": "1"}], possessor_name="brkic andelic")
+    )["results"][0]
+    assert entry["status"] == "success", entry
+    assert _possessor_names(entry) == ["ANĐELIĆ BRKIĆ MARIJA"]
+    assert entry["matching_possessors"] == 1
+    assert entry["possessor_filter"] == {"possessor_name": "brkic andelic"}
+    assert entry["page"]["total"] == 1 and entry["page"]["truncated"] is False
+    # The whole-parcel counts are untouched by the filter.
+    assert entry["total_possessors"] == 33
+    assert [s["total_possessors"] for s in entry["data"]["possession_sheets"]] == [3, 30]
+    both = _run(tools.get_parcel([{"parcel_id": "1"}], possessor_name="brkić"))["results"][0]
+    assert _possessor_names(both) == ["ANĐELIĆ BRKIĆ MARIJA", "Brkić Ivan"]
+    # Paging applies to the matches.
+    second = _run(
+        tools.get_parcel([{"parcel_id": "1"}], possessor_name="brkić", offset=1, limit=1)
+    )["results"][0]
+    assert _possessor_names(second) == ["Brkić Ivan"]
+
+
+def test_condominium_unit_filter_accepts_the_e_spelling() -> None:
+    tools = CadastralTools(_FakeCondominiumClient(n=30))
+    for spelling in ("5", "E-5", "E5", " e-5 "):
+        entry = _run(
+            tools.get_parcel([{"parcel_id": "1"}], condominium_unit=spelling)
+        )["results"][0]
+        assert _possessor_names(entry) == ["POSSESSOR 0005"], spelling
+    none = _run(tools.get_parcel([{"parcel_id": "1"}], condominium_unit="99"))["results"][0]
+    assert none["status"] == "success" and none["matching_possessors"] == 0
+
+
+def test_filters_need_the_cadastre_source_and_a_value(tools) -> None:
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([{"parcel_id": "1"}], source="none", possessor_name="x"))
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([{"parcel_id": "1"}], possessor_name="   "))
+    with pytest.raises(ValueError):
+        _run(tools.get_parcel([{"parcel_id": "1"}], condominium_unit=""))

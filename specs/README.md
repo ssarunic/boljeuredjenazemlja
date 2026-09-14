@@ -19,6 +19,7 @@ for the record, may be stale).
 | [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md) | reference | Every public OSS endpoint with request and response shapes, headers, rate limits, the three-step parcel workflow | OSS API, endpoints, key1, posjedovni list, zk uložak, sheet A B C, condominium, etažno, WFS, ATOM, map URL |
 | [api-coverage-specification.md](api-coverage-specification.md) | implemented | Field-level inventory of every endpoint and the changes that gave complete model, client, CLI, MCP and mock coverage; redacted fixtures | coverage, fixtures, redaction, capture, mock data, entries, lrEntry, KPU, file status, plomba |
 | [spatial-planning-api-specification.md](spatial-planning-api-specification.md) | partial | Spatial-plan data sources: county plan-sheet WMS, nationwide building-areas WFS, regional services, ISPU internal API, eKatalog, NIPP catalogues, new-generation plan model, parcel-matching recipe. Section 3 is implemented as `get_parcel_zoning` and `get-zoning` | prostorni plan, građevinsko područje, namjena, ISPU, MGIPU, GeoServer, WMS, WFS, CQL, EPSG:3765, zoning, T1 T2 T3, PPUO, GUP, UPU, Pravilnik NN 152/2023 |
+| [parcel-locator-specification.md](parcel-locator-specification.md) | research | Finding a parcel by address or by point: DGU INSPIRE Addresses and Cadastral Parcels WFS, cadastral-zoning lookup for the k.o. number, Zagreb ArcGIS DKP layers, lookup recipes, result model, terms of use, implementation plan | address, adresa, kućni broj, point, koordinate, EPSG:3765, WGS84, INSPIRE, ad:AD.Address, cp:CadastralParcel, CadastralZoning, arcportal.zagreb.hr, DKP, RPJ, find_parcel_by_address, find_parcel_by_point |
 | [web-map-exploration.md](web-map-exploration.md) | research | A web page that shows parcels on a map and queries a drawn area: base-map and imagery sources and their licences, map libraries, Google Maps assessment, recommended stack, open items | web map, OpenLayers, MapLibre, Leaflet, OpenFreeMap, Protomaps, OpenStreetMap, ODbL, DGU DOF, ortofoto, satellite, Google Maps, draw area, spatial index, STRtree |
 | [gateway-service.md](gateway-service.md) | draft | Hosted REST plus remote MCP service exposing the SDK: architecture, REST conventions, OAuth, caching, deployment phases | gateway, REST, remote MCP, FastAPI, API keys, OAuth 2.1, cache, deployment |
 | [mcp-server.md](mcp-server.md) | reference | MCP server architecture, tools, resources, prompts, transports, configuration for AI clients | MCP, tools, resources, prompts, stdio, HTTP, Claude Desktop, claude.ai |
@@ -47,7 +48,7 @@ for the record, may be stale).
 - **Spatial plans, building areas, zoning, WMS and WFS services:**
   spatial-planning-api-specification, web-map-exploration
 - **Maps, geometry, imagery, web front end:**
-  web-map-exploration, spatial-planning-api-specification (section 9), croatian-cadastral-api-specification (WFS, ATOM)
+  web-map-exploration, spatial-planning-api-specification (section 9), croatian-cadastral-api-specification (WFS, ATOM), parcel-locator-specification
 - **MCP server and AI clients:** mcp-server, mcp-client-efficiency, gateway-service
 - **Hosting and deployment:** gateway-service
 - **Croatian wording, command and output names:** terminology, i18n-guide

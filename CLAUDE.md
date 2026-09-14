@@ -137,7 +137,7 @@ The API client can be configured via environment variables or a `.env` file:
 **Environment Variables:**
 
 - `CADASTRAL_API_BASE_URL`: API base URL (default: `http://localhost:8000`)
-- `CADASTRAL_API_TIMEOUT`: Request timeout in seconds (default: `10.0`)
+- `CADASTRAL_API_TIMEOUT`: Request timeout in seconds (default: `10.0`); the two whole-record endpoints (`/lr/lr-unit`, `/cad/parcel-info`) wait up to 120 s for the response body (`CadastralAPIClient(long_timeout=...)`), since a large condominium takes the server 20 s or more to assemble
 - `CADASTRAL_API_RATE_LIMIT`: Rate limit between requests in seconds (default: `0.375`)
 - `CADASTRAL_PLANNING_WFS_URLS`: Building-areas WFS endpoint(s) for `get-zoning`, comma-separated mirrors tried in order (default: `<base URL>/planning/wfs`, the mock server)
 - `CADASTRAL_LANG`: Language for CLI output (`hr`, `en`) - Croatian is default
@@ -677,6 +677,7 @@ bad release with a new PATCH release.
 - **[specs/api-coverage-specification.md](specs/api-coverage-specification.md)** - Field inventory of every endpoint and the plan for complete coverage (models, client, CLI, MCP, mock, coverage gate)
 - **[specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)** - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model and the parcel-matching recipe (section 3, the building-areas WFS, is implemented as `get-zoning`)
 - **[specs/web-map-exploration.md](specs/web-map-exploration.md)** - Web map front end exploration: open base-map and imagery sources and licences, map libraries, Google Maps assessment, recommended stack (research, not implemented)
+- **[specs/parcel-locator-specification.md](specs/parcel-locator-specification.md)** - Parcel by address and by point: DGU INSPIRE Addresses and Cadastral Parcels WFS, Zagreb ArcGIS DKP, lookup recipes and terms (research, not implemented)
 - **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
 - **[specs/gateway-service.md](specs/gateway-service.md)** - Hosted REST + remote MCP gateway service (draft)
