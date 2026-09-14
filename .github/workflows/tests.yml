@@ -29,9 +29,12 @@ jobs:
           pip install -e "./api[dev]" -e "./cli[dev]" -e "./mcp[dev]"
           pip install -r mock-server/requirements.txt
 
+      # The SDK keeps its unit tests under tests/ and the fixture-driven suites
+      # (including the API coverage gate over the redacted captures, which the
+      # release process requires) under src/cadastral_api/tests/; run both.
       - name: SDK
         working-directory: api
-        run: pytest tests -q
+        run: pytest tests src/cadastral_api/tests -q
 
       - name: CLI
         working-directory: cli
