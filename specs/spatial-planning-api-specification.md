@@ -748,8 +748,10 @@ WFS 2.0.0, feature types `cp:CadastralParcel` and `cp:CadastralZoning` (INSPIRE 
 schema: `inspireId`, `label`, `nationalCadastralReference`, `areaValue`, `geometry`,
 `referencePoint`, `validFrom`, `validTo`, `zoning`), EPSG:3765, GeoJSON, GML 3.2, KML,
 SHAPE-ZIP, CSV; `CountDefault` 1000; documented limits 1000 parcels and a 2000 m diagonal
-per request. Not verified: every GetFeature request timed out today, so attribute values
-and the `nationalCadastralReference` format were not seen. The path
+per request. GetFeature answers, but slowly (13-15 s for a point query, 36 s for a lookup
+by reference); `nationalCadastralReference` is `<MB>-<parcel number>` and the feature's
+`localId` minus `CP.` is the OSS parcel id. Details and timings in
+`parcel-locator-specification.md` section 4. The path
 `https://geoportal.dgu.hr/services/inspire/cp/wfs` returns 404.
 
 ### 9.3 OSS GeoServer (token-protected)

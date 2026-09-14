@@ -677,6 +677,7 @@ bad release with a new PATCH release.
 - **[specs/api-coverage-specification.md](specs/api-coverage-specification.md)** - Field inventory of every endpoint and the plan for complete coverage (models, client, CLI, MCP, mock, coverage gate)
 - **[specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)** - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model and the parcel-matching recipe (section 3, the building-areas WFS, is implemented as `get-zoning`)
 - **[specs/web-map-exploration.md](specs/web-map-exploration.md)** - Web map front end exploration: open base-map and imagery sources and licences, map libraries, Google Maps assessment, recommended stack (research, not implemented)
+- **[specs/parcel-locator-specification.md](specs/parcel-locator-specification.md)** - Parcel by address and by point: DGU INSPIRE Addresses and Cadastral Parcels WFS, Zagreb ArcGIS DKP, lookup recipes and terms (research, not implemented)
 - **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
 - **[specs/gateway-service.md](specs/gateway-service.md)** - Hosted REST + remote MCP gateway service (draft)
