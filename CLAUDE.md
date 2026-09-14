@@ -671,9 +671,12 @@ bad release with a new PATCH release.
 
 ### Technical Specifications (specs/)
 
+[specs/README.md](specs/README.md) is the index: status and keywords for every document. A new or renamed spec gets a row there in the same commit; `cd cli && pytest tests/test_specs_index.py` enforces it.
+
 - **[specs/croatian-cadastral-api-specification.md](specs/croatian-cadastral-api-specification.md)** - Complete API specification
 - **[specs/api-coverage-specification.md](specs/api-coverage-specification.md)** - Field inventory of every endpoint and the plan for complete coverage (models, client, CLI, MCP, mock, coverage gate)
-- **[specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)** - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model and the parcel-matching recipe (research, not implemented)
+- **[specs/spatial-planning-api-specification.md](specs/spatial-planning-api-specification.md)** - Spatial-plan data sources (ISPU raster WMS, building-areas WFS, regional services, catalogues), the new-generation plan model and the parcel-matching recipe (section 3, the building-areas WFS, is implemented as `get-zoning`)
+- **[specs/web-map-exploration.md](specs/web-map-exploration.md)** - Web map front end exploration: open base-map and imagery sources and licences, map libraries, Google Maps assessment, recommended stack (research, not implemented)
 - **[specs/pydantic-entities-implementation.md](specs/pydantic-entities-implementation.md)** - Pydantic models specification
 - **[specs/mcp-server.md](specs/mcp-server.md)** - MCP server architecture
 - **[specs/gateway-service.md](specs/gateway-service.md)** - Hosted REST + remote MCP gateway service (draft)
