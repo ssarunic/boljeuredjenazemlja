@@ -10,6 +10,16 @@ number and one tag.
 
 ## [Unreleased]
 
+### Fixed
+
+- CLI documentation: the generated pages of 0.2.0 still said `cadastral 0.1.0`
+  in their banner and the `get-zoning` example had been captured from the real
+  building-areas service through a developer's `.env`, so the documentation
+  gate failed on the release commit. The docs build now pins the building-areas
+  endpoint to the mock server whatever `.env` says, and `scripts/release.py`
+  rebuilds the documentation after the version bump and commits it with the
+  release.
+
 ## [0.2.0] - 2026-09-14
 
 ### Added

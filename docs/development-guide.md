@@ -91,7 +91,7 @@ is in [specs/release-process.md](../specs/release-process.md).
 ```bash
 # Describe the change under [Unreleased] in CHANGELOG.md, then:
 scripts/release.py 0.2.0 --dry-run   # preview
-scripts/release.py 0.2.0             # bump versions, date the changelog, commit, tag
+scripts/release.py 0.2.0             # bump versions, date the changelog, rebuild docs, commit, tag
 git push origin main v0.2.0
 ```
 

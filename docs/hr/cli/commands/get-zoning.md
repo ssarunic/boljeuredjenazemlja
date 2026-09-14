@@ -3,7 +3,7 @@
 
 > **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
-> Izrađeno iz `cadastral 0.1.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
+> Izrađeno iz `cadastral 0.2.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
 <!-- END GENERATED: banner -->
 
@@ -56,8 +56,17 @@ gradnje** uvijek kaže da nije utvrđena.
      Čestica              396/1
      Općina               334979
      Površina (GIS)       2077.00 m²
-     Status               Izvan građevinskih područja
+     Status               U izdvojenom građevinskom području izvan naselja
      Mogućnost gradnje    Nije utvrđena (samo provjera)
+     Planovi              PPUO SALI - III. ID
+
+                                                   Zone
+   ┏━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+   ┃ Vrsta     ┃ Šifra ┃ Namjena                       ┃ Zona         ┃ Plan                ┃ Preklop ┃
+   ┡━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+   │ izdvojeno │ T3    │ GOSPODARSKA - UGOSTITELJSKO   │ SAVAR - KAMP │ PPUO SALI - III. ID │ 27%     │
+   │           │       │ TURISTIČKA (KAMP)             │              │                     │         │
+   └───────────┴───────┴───────────────────────────────┴──────────────┴─────────────────────┴─────────┘
 
    Građevinska područja interpretacija su prostornih planova koju su izradili županijski zavodi za
    prostorno uređenje i mogu odstupati od važećih prostornih planova. Ne smiju se koristiti za

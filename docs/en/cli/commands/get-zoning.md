@@ -3,7 +3,7 @@
 
 > **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
-> Generated from `cadastral 0.1.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
+> Generated from `cadastral 0.2.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
 
 # Find out whether a parcel is in a building area
@@ -56,8 +56,17 @@ need for a more detailed plan are not checked by this tool, so the
      Parcel          396/1
      Municipality    334979
      Area (GIS)      2077.00 m²
-     Status          Outside building areas
+     Status          In a detached building area outside a settlement
      Buildability    Not determined (screening only)
+     Plans           PPUO SALI - III. ID
+
+                                                  Zones
+   ┏━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+   ┃ Kind     ┃ Code ┃ Designation                     ┃ Zone         ┃ Plan                ┃ Overlap ┃
+   ┡━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+   │ detached │ T3   │ GOSPODARSKA - UGOSTITELJSKO     │ SAVAR - KAMP │ PPUO SALI - III. ID │ 27%     │
+   │          │      │ TURISTIČKA (KAMP)               │              │                     │         │
+   └──────────┴──────┴─────────────────────────────────┴──────────────┴─────────────────────┴─────────┘
 
    Building areas are an interpretation of the spatial plans by the county spatial-planning institutes
    and may deviate from the plans in force. They must not be used to issue acts for spatial

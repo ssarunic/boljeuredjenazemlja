@@ -191,6 +191,23 @@ def finalize_changelog(version: str, date: str, dry_run: bool) -> bool:
 # --------------------------------------------------------------------------- #
 
 
+#: What scripts/build_docs.py rewrites: the generated pages of both editions
+#: and the documentation catalogs.
+GENERATED_DOC_PATHS = ("docs/en/cli", "docs/hr/cli", "po/docs.pot", "po/docs-hr.po")
+
+
+def rebuild_docs() -> list[str]:
+    """Regenerate the CLI documentation after the version bump.
+
+    Every generated page carries the version in its banner ("Generated from
+    `cadastral X.Y.Z`"), so pages built before the bump fail the documentation
+    gate on the release commit. Returns the generated paths to add.
+    """
+    build = REPO_ROOT / "scripts" / "build_docs.py"
+    subprocess.run([sys.executable, str(build)], check=True, cwd=REPO_ROOT)
+    return list(GENERATED_DOC_PATHS)
+
+
 def git(*args: str, check: bool = True) -> str:
     result = subprocess.run(
         ["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=False
@@ -255,14 +272,16 @@ def cmd_release(version: str, date: str, dry_run: bool, allow_branch: str | None
     if dry_run:
         for rel, _pattern in VERSION_FILES:
             print(f"{prefix}update {rel}")
+        print(f"{prefix}rebuild the generated CLI documentation (scripts/build_docs.py)")
         print(f"{prefix}git commit -m 'Release v{version}'")
         print(f"{prefix}git tag -a v{version}")
         return 0
 
     changed = write_versions(version)
     cmd_check()
+    docs_changed = rebuild_docs()
 
-    git("add", "CHANGELOG.md", *changed)
+    git("add", "CHANGELOG.md", *changed, *docs_changed)
     git("commit", "-m", f"Release v{version}")
     tag_message = f"Release v{version}\n\n{release_notes(version)}\n"
     git("tag", "-a", f"v{version}", "-m", tag_message)

@@ -101,9 +101,12 @@ git show v0.2.0                        # review the release commit and tag messa
 git push origin main v0.2.0            # publish
 ```
 
-The script makes one commit, `Release vX.Y.Z`, that touches only
-`CHANGELOG.md` and the seven version files, and one annotated tag pointing at
-it. It never pushes.
+The script makes one commit, `Release vX.Y.Z`, that touches `CHANGELOG.md`,
+the seven version files and the generated CLI documentation, and one
+annotated tag pointing at it. The documentation is rebuilt by the script
+after the bump (`scripts/build_docs.py`), because every generated page
+carries the version in its banner and pages built before the bump fail the
+documentation gate on the release commit. It never pushes.
 
 Pushing the tag triggers `.github/workflows/release.yml`, which creates a
 GitHub Release named `vX.Y.Z` whose body is the CHANGELOG section (obtained

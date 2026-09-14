@@ -571,6 +571,12 @@ class OutputCapture:
             {
                 "HOME": str(self.home),
                 "CADASTRAL_API_BASE_URL": self.base_url,
+                # Set explicitly, not left to the default derived from the base
+                # URL: the CLI loads a .env file at import, which fills any
+                # CADASTRAL_ variable that is unset, and a developer's .env may
+                # point this one at the real building-areas service. Every
+                # captured example must come from the mock server.
+                "CADASTRAL_PLANNING_WFS_URLS": self.base_url + "/planning/wfs",
                 "CADASTRAL_LANG": lang,
                 "COLUMNS": TERMINAL_COLUMNS,
                 "LINES": "50",
