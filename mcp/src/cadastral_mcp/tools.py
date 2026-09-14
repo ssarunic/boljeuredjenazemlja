@@ -469,6 +469,15 @@ class CadastralTools:
         parcel = self.client.get_parcel_info(parcel_id)
         result_data = parcel.model_dump(mode="json")
 
+        # A parcel whose unit is reachable only through parcel links has a
+        # null ``lr_unit``; put the resolved unit there, as promised, and let
+        # ``lr_reference_shape`` ("linked") say where it came from. The links
+        # themselves stay in the dump.
+        if result_data.get("lr_unit") is None:
+            resolved = parcel.resolved_lr_unit()
+            if resolved is not None:
+                result_data["lr_unit"] = resolved.model_dump(mode="json")
+
         # Possession sheets are CADASTRE data; only include them when
         # cadastre possessors were explicitly requested.
         page: dict[str, Any] | None = None

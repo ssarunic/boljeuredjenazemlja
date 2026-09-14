@@ -481,6 +481,7 @@ def _format_structured_data(
             parcels.append({
                 "parcel_number": parcel.parcel_number,
                 "parcel_id": parcel.parcel_id,
+                "lr_parcel_id": parcel.lr_parcel_id,
                 "area": parcel.area_numeric,
                 "address": parcel.address,
                 "parcel_parts": [

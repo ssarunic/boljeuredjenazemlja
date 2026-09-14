@@ -19,6 +19,7 @@ from cadastral_api.models.entities import (
     ParcelInfo,
     PossessionSheet,
     ShareStatus,
+    SheetAParcelList,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -146,6 +147,93 @@ def test_condominium_sheet_sums_common_share_times_unit_share() -> None:
     assert sheet.model_dump()["is_condominium"] is True
 
 
+def _condo_sheet(possessors: list[dict]) -> PossessionSheet:
+    return PossessionSheet.model_validate(
+        {
+            "possessionSheetId": 1,
+            "possessionSheetNumber": "1",
+            "cadMunicipalityId": 1,
+            "possessors": possessors,
+        }
+    )
+
+
+def test_condominium_co_owners_count_their_unit_once() -> None:
+    # The cadastre records co-owners of one flat without a unit share, or
+    # with "1/1" each; either way the flat is one unit of the building.
+    sheet = _condo_sheet(
+        [
+            {"name": "A", "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "B", "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "C", "ownership": "1/1",
+             "condominiumShareNumber": "2", "condominiumShareOwnership": "1/2"},
+            {"name": "D", "ownership": "1/1",
+             "condominiumShareNumber": "2", "condominiumShareOwnership": "1/2"},
+        ]
+    )
+    assert sheet.total_ownership == 1.0  # not 2.0
+
+
+def test_condominium_partial_unit_shares_stay_partial() -> None:
+    # Only half of flat 2 has a recorded possessor: the total says so.
+    sheet = _condo_sheet(
+        [
+            {"name": "A", "ownership": "1/1",
+             "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "B", "ownership": "1/2",
+             "condominiumShareNumber": "2", "condominiumShareOwnership": "1/2"},
+        ]
+    )
+    assert sheet.total_ownership == 0.75
+
+
+def test_condominium_common_area_units_are_told_apart_by_share() -> None:
+    # Unit "0" (common areas) holds several distinct units with different
+    # common shares; a shared unit number alone does not merge them.
+    sheet = _condo_sheet(
+        [
+            {"name": "A", "ownership": "1/1",
+             "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "B", "ownership": "1/1",
+             "condominiumShareNumber": "0", "condominiumShareOwnership": "1/4"},
+            {"name": "C", "ownership": "1/1",
+             "condominiumShareNumber": "0", "condominiumShareOwnership": "1/8"},
+            {"name": "D", "ownership": "1/1",
+             "condominiumShareNumber": "0", "condominiumShareOwnership": "1/8"},
+        ]
+    )
+    assert sheet.total_ownership == 0.875  # 1/2 + 1/4 + 1/8, the last unit once
+
+
+def test_total_ownership_note_explains_a_sum_other_than_one() -> None:
+    whole = _condo_sheet(
+        [
+            {"name": "A", "ownership": "1/1",
+             "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "B", "ownership": "1/1",
+             "condominiumShareNumber": "2", "condominiumShareOwnership": "1/2"},
+        ]
+    )
+    assert whole.total_ownership == 1.0 and whole.total_ownership_note is None
+    excess = _condo_sheet(
+        [
+            {"name": "A", "ownership": "1/1",
+             "condominiumShareNumber": "1", "condominiumShareOwnership": "1/2"},
+            {"name": "B", "ownership": "1/1",
+             "condominiumShareNumber": "2", "condominiumShareOwnership": "3/4"},
+        ]
+    )
+    assert excess.total_ownership == 1.25
+    assert excess.total_ownership_note is not None
+    assert "5/4" in excess.total_ownership_note and "list B" in excess.total_ownership_note
+    assert "total_ownership_note" in excess.model_dump()
+    plain = PossessionSheet.model_validate(
+        {"possessionSheetId": 1, "possessionSheetNumber": "1", "cadMunicipalityId": 1,
+         "possessors": [{"name": "A", "ownership": "1/2"}]}
+    )
+    assert plain.total_ownership == 0.5 and "1/2" in (plain.total_ownership_note or "")
+
+
 def test_condominium_sheet_without_common_shares_has_no_total() -> None:
     sheet = PossessionSheet.model_validate(
         {
@@ -170,3 +258,26 @@ def test_has_entries_is_the_honest_name() -> None:
     unit = LandRegistryUnitDetailed.model_validate(raw[0])
     assert unit.has_sheet_c_entries() is True
     assert unit.summary()["has_sheet_c_entries"] is True
+
+
+def _sheet_a(key: str) -> SheetAParcelList:
+    return SheetAParcelList.model_validate(
+        {key: [{"parcelId": 36039405, "parcelNumber": "7484/3", "area": "895"}]}
+    )
+
+
+def test_lean_sheet_a_records_keep_the_land_register_id_apart() -> None:
+    # unit 8974 GRAD ZAGREB: 7484/3 id 36039405 is a land-register parcel; the
+    # cadastre knows the land as 4090/1 in k.o. PEŠČENICA (id 21358541).
+    lean = _sheet_a("lrParcels")
+    assert lean.source_key == "lrParcels"
+    parcel = lean.cad_parcels[0]
+    assert parcel.parcel_id is None
+    assert parcel.lr_parcel_id == 36039405
+    assert parcel.parcel_number == "7484/3"
+    assert not parcel.source_fields
+
+    full = _sheet_a("cadParcels")
+    assert full.source_key == "cadParcels"
+    assert full.cad_parcels[0].parcel_id == 36039405
+    assert full.cad_parcels[0].lr_parcel_id is None

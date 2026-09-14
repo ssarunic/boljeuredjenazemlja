@@ -167,7 +167,12 @@ The parcel list of a unit arrives under one of two keys, never both:
 toponym of the old land register, not a location) or `cadParcels` (full cadastre
 records). `unit.sheet_a1_source_key` says which; both populate
 `unit.possessory_sheet_a1.cad_parcels`, with `parcel_parts` typed as `ParcelPart`
-in both shapes.
+in both shapes. A lean record is the parcel as the land register keeps it:
+its `parcel_number` is the land-register number (which differs from the
+cadastre number wherever a new survey renumbered the parcels) and its id is
+`lr_parcel_id`, an id of the land-register parcel table; `parcel_id` is None
+there and must not be passed to `get_parcel_info`. Look the cadastre parcel
+up by number and cadastral municipality instead.
 
 ### Building parcels
 

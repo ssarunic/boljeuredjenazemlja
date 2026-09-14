@@ -43,6 +43,24 @@ number and one tag.
 
 ### Fixed
 
+- MCP: `get_parcel` promised the land-registry reference under `data.lr_unit`
+  but left it null for a parcel whose unit the cadastre reaches only through
+  parcel links; the resolved unit is now placed there and
+  `data.lr_reference_shape` says `linked`.
+- SDK, MCP: a possession sheet whose shares do not sum to 1 carries
+  `total_ownership_note` with the exact fraction and why (the shares are the
+  register's, copied from the unit's list B, not a rounding error).
+- SDK: a cadastre record whose land-register link (`parcelLinks[]`) carries
+  no `area` (parcel 9970 in k.o. SPLIT, id 16901331) failed to parse; the
+  field is now optional.
+- SDK, CLI, MCP: the lean parcel records of list A (`lrParcels`) are the land
+  register's own parcels, not the cadastre's: their id belongs to the
+  land-register parcel table and their number is the land-register number
+  (unit 8974 of GRAD ZAGREB lists 7484/3 with id 36039405 where the cadastre
+  has 4090/1 in k.o. PEŠČENICA with id 21358541). The id used to be exposed
+  as `parcel_id` and, fed to `get_parcel_info`, fetched an unrelated parcel;
+  it is now `lr_parcel_id` (`id_zk_cestice` in Croatian output) and
+  `parcel_id` is null on lean records.
 - SDK: a large condominium's land-registry unit (`get_lr_unit_detailed`,
   thousands of shares) or parcel record (`get_parcel_info`, thousands of
   possessors) failed with a timeout after 10 s, since the server assembles
@@ -53,10 +71,12 @@ number and one tag.
   names the value that applied.
 - SDK: `PossessionSheet.total_ownership` on a condominium sheet summed each
   possessor's share of their own unit ("1/1" of a flat) and reported
-  thousands of percent for a large building; it now sums, per possessor, the
-  unit's common-area share (`condominium_share_ownership`) times the
-  possessor's share of the unit, so two co-owners of one flat count the flat
-  once, and is null when the cadastre gives no common-area shares.
+  thousands of percent for a large building; it now counts each unit once:
+  the unit's common-area share (`condominium_share_ownership`) times its
+  co-owners' shares of the unit added together and capped at 1, so two
+  co-owners of one flat count the flat once whether they are recorded "1/2"
+  each, "1/1" each or without a unit share. Null when the cadastre gives no
+  common-area shares.
 
 - CLI: the hint under a usage error ("Try 'cadastral ... --help' for help.")
   names the help option in the language of the session: `--help` in English,

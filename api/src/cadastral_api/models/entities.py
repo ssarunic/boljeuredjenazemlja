@@ -434,28 +434,77 @@ class PossessionSheet(SourceModel):
         (``is_condominium``) ``ownership`` is each possessor's share of their
         own unit ("1/1" of a flat, "1/2" of a storage room) and
         ``condominium_share_ownership`` the unit's share of the common areas
-        (e.g. "61/4651"); a possessor's share of the parcel is the product of
-        the two, and that is what is summed. Two co-owners of one flat each
-        carry the flat's common share, so summing the common share alone would
-        count that flat twice. A condominium possessor without ``ownership``
-        counts for the whole unit share.
+        (e.g. "61/4651"). The sheet's total is the sum over the *units*, each
+        counted once: the unit's common share times the co-owners' shares of
+        the unit added together and capped at 1. A unit is the records that
+        share a unit number and a common share (the "0" of the common areas
+        holds several units with different shares). Two co-owners recorded
+        "1/2" each therefore count the flat once, and so do two co-owners
+        recorded without a unit share, or "1/1" each, as the cadastre also
+        does; the possessor records themselves are left as they are.
 
         Summed exactly as fractions, then converted once, so thirds and sixths
         add up to 1.0. None when no possessor carries the share in question.
+        A sum other than 1 is what the register records, not a rounding
+        error; ``total_ownership_note`` says so with the exact fraction.
         """
-        fractions: list[Fraction] = []
+        total = self.total_ownership_fraction()
+        return float(total) if total is not None else None
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def total_ownership_note(self) -> str | None:
+        """Why ``total_ownership`` is not 1, when it is not (None otherwise).
+
+        On a condominium the cadastre copies the units' shares from the land
+        register, where they are set per unit (garages and storage rooms
+        renumbered over the years included) and are not recomputed to a
+        whole: unit 8974 of GRAD ZAGREB carries 2551 shares summing to
+        13029/10000 in list B, and its parcel's sheet sums to the same. So
+        the excess is a fact to report, to be checked against the unit's
+        list B, not an error of this sum.
+        """
+        total = self.total_ownership_fraction()
+        if total is None or total == 1:
+            return None
+        kind = (
+            "the units' shares of the parcel" if self.is_condominium else "the possessors' shares"
+        )
+        return (
+            f"The sum of {kind} on this sheet is {total.numerator}/{total.denominator}, "
+            "not 1. That is what the register records (on a condominium the shares "
+            "are copied from the land-registry unit's list B, where they are set per "
+            "unit and not recomputed to a whole), not a rounding error: compare the "
+            "unit's shares before treating it as one."
+        )
+
+    def total_ownership_fraction(self) -> Fraction | None:
+        """The exact sum behind ``total_ownership`` (see there), or None."""
+        if not self.is_condominium:
+            fractions = [
+                Fraction(*pair)
+                for p in self.possessors
+                if (pair := parse_fraction(p.ownership)) is not None
+            ]
+            return sum(fractions, Fraction(0)) if fractions else None
+
+        # unit key -> (common share, shares of the unit its co-owners carry)
+        units: dict[tuple[str | None, tuple[int, int]], list[Fraction]] = {}
         for p in self.possessors:
-            if self.is_condominium:
-                common = parse_fraction(p.condominium_share_ownership)
-                if common is None:
-                    continue
-                unit = parse_fraction(p.ownership) or (1, 1)
-                fractions.append(Fraction(*common) * Fraction(*unit))
-            else:
-                pair = parse_fraction(p.ownership)
-                if pair is not None:
-                    fractions.append(Fraction(*pair))
-        return float(sum(fractions)) if fractions else None
+            common = parse_fraction(p.condominium_share_ownership)
+            if common is None:
+                continue
+            shares = units.setdefault((p.condominium_share_number, common), [])
+            unit_share = parse_fraction(p.ownership)
+            if unit_share is not None:
+                shares.append(Fraction(*unit_share))
+        if not units:
+            return None
+        total = Fraction(0)
+        for (_, common), shares in units.items():
+            held = min(sum(shares, Fraction(0)), Fraction(1)) if shares else Fraction(1)
+            total += Fraction(*common) * held
+        return total
 
 
 class ParcelPart(SourceModel):
@@ -624,7 +673,9 @@ class ParcelLink(SourceModel):
     address: str | None = Field(
         None, description="Culture or toponym as recorded in the land register, not a location"
     )
-    area: str = Field(description="Linked parcel area")
+    area: str | None = Field(
+        default=None, description="Linked parcel area (absent on some live records)"
+    )
     lr_unit: LandRegistryUnit | None = Field(
         default=None, alias="lrUnit", description="Land registry unit information"
     )
@@ -1540,10 +1591,32 @@ class LRUnitParcel(SourceModel):
       ``parcelNumber``, ``address``, ``area``, ``statusInLrUnit``,
       ``parcelParts``), where ``address`` is the old land-register culture or
       toponym ("PAŠNJAK", "ORANICA", "VRT", "ZGRADA"), not a location.
+
+    The lean record describes the parcel as the land register keeps it, not
+    the cadastre: its ``parcelId`` is an id of the land-register parcel table
+    (unit 8974 of GRAD ZAGREB lists 7484/3 with id 36039405, while the
+    cadastre has that land as 4090/1 in k.o. PEŠČENICA with id 21358541),
+    and ``parcelNumber`` is the land-register number, which differs from the
+    cadastre number wherever a new survey renumbered the parcels. So on lean
+    records ``parcel_id`` is None and the server's value is kept as
+    ``lr_parcel_id``; ``get_parcel_info`` must not be called with it. Look
+    the parcel up by number and cadastral municipality instead.
     """
 
-    parcel_id: int = Field(alias="parcelId", description="Parcel identifier")
-    parcel_number: str = Field(alias="parcelNumber", description="Cadastral parcel number")
+    parcel_id: int | None = Field(
+        None,
+        alias="parcelId",
+        description="Cadastre parcel id (cadParcels shape); None on lean records",
+    )
+    lr_parcel_id: int | None = Field(
+        None,
+        alias="lrParcelId",
+        description="Land-register parcel id (lrParcels shape); not a cadastre id",
+    )
+    parcel_number: str = Field(
+        alias="parcelNumber",
+        description="Parcel number (the land-register number on lean records)",
+    )
     # These fields are present on the standalone cadastral-parcel shape but are
     # omitted from the leaner Sheet A1 (lrParcels) shape returned by the LR-unit
     # endpoint, so they must be optional.
@@ -1658,6 +1731,20 @@ class SheetAParcelList(SourceModel):
                 if key in data:
                     return {**data, "source_key": key}
         return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def _lean_ids_are_land_register_ids(cls, data: Any) -> Any:
+        """Move the lean record's ``parcelId`` to ``lrParcelId`` (see LRUnitParcel)."""
+        if not isinstance(data, dict) or "lrParcels" not in data:
+            return data
+        records = []
+        for record in data["lrParcels"] or []:
+            if isinstance(record, dict) and "parcelId" in record and "lrParcelId" not in record:
+                record = {**record, "lrParcelId": record["parcelId"]}
+                del record["parcelId"]
+            records.append(record)
+        return {**data, "lrParcels": records}
 
     def total_area(self) -> int:
         """Total area of the parcels in m² (parcels without a usable area count as 0)."""
