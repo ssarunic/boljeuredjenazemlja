@@ -248,8 +248,8 @@ _SEARCH_POSSESSION_SHEET_HELP = command_help(
     _("""Find a possession sheet (posjedovni list) by number.
 
 Shows the sheet numbers that start with the number you give and the internal
-ID of each sheet. The cadastre has no lookup of a sheet by ID: to see the
-possessors, look up one of the sheet's parcels with get-parcel.
+ID of each sheet. For the sheet itself, with its possessors and parcels, use
+get-possession-sheet with the exact number.
 
 Examples:
   cadastral search-possession-sheet 363 -m SAVAR
@@ -309,8 +309,8 @@ def search_possession_sheet(
                 ]
                 print_output(data, output_format="table")
                 console.print(
-                    f"\n💡 {_('To see the possessors, look up one of the sheet parcels')}: "
-                    f"cadastral get-parcel <{_('PARCEL_NUMBER')}> -m {municipality_code} "
+                    f"\n💡 {_('Possessors and parcels of a sheet')}: "
+                    f"cadastral get-possession-sheet <{_('SHEET_NUMBER')}> -m {municipality_code} "
                     f"--show-owners",
                     style="dim",
                 )

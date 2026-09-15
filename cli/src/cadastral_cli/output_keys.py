@@ -69,6 +69,7 @@ KEYS: dict[str, str] = {
     "last_change_log_number": pgettext("key", "last_change_log_number"),
     "last_change_log_file_num": pgettext("key", "last_change_log_file_num"),
     "possession_sheet_id": pgettext("key", "possession_sheet_id"),
+    "parcels_complete": pgettext("key", "parcels_complete"),
     "lr_reference_shape": pgettext("key", "lr_reference_shape"),
     "reference_shape": pgettext("key", "reference_shape"),
     # Land registry

@@ -38,10 +38,11 @@ Sve naredbe, s poveznicom na stranicu svake od njih. Naredba je ono što upisuje
 
 ## Ostalo
 
+- `uz posjedovni-list`: [Pogledajte posjedovni list s njegovim česticama](commands/get-possession-sheet.md). Dohvati posjedovni list s njegovim česticama.
 - `uz namjena`: [Saznajte je li čestica u građevinskom području](commands/get-zoning.md). Saznajte u kojem je građevinskom području prostornog plana čestica.
 - `uz kpu`: [Popis knjiga položenih ugovora](commands/list-books-of-dc.md). Popis knjiga položenih ugovora (KPU).
 - `uz glavne-knjige`: [Pronađite glavnu knjigu katastarske općine](commands/list-main-books.md). Popis glavnih knjiga zemljišne knjige.
-- `uz posjedovni-list`: [Pronađite posjedovni list po broju](commands/search-possession-sheet.md). Pretraga posjedovnog lista po broju.
+- `uz traži-posjedovni-list`: [Pronađite posjedovni list po broju](commands/search-possession-sheet.md). Pronađi posjedovni list po broju.
 <!-- END GENERATED: reference -->
 
 ## Ostale stranice

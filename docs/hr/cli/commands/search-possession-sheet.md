@@ -30,12 +30,12 @@ otisnuto na izvatku iz posjedovnog lista.
 2. Upišite sljedeći redak i pritisnite Enter:
 
    ```bash
-   uz posjedovni-list 363 -ko SAVAR
+   uz traži-posjedovni-list 363 -ko SAVAR
    ```
 
 3. Vidjet ćete otprilike ovo:
 
-   <!-- BEGIN GENERATED: output uz posjedovni-list 363 -ko SAVAR -->
+   <!-- BEGIN GENERATED: output uz traži-posjedovni-list 363 -ko SAVAR -->
    ```text
    +--------------+------------+
    |   Broj lista |   ID lista |
@@ -43,8 +43,7 @@ otisnuto na izvatku iz posjedovnog lista.
    |          363 |   11731543 |
    +--------------+------------+
 
-   💡 Posjednike vidite tako da pogledate jednu od čestica lista: cadastral get-parcel <BROJ_ČESTICE>
-   -m 334979 --show-owners
+   💡 Posjednici i čestice lista: cadastral get-possession-sheet <BROJ_LISTA> -m 334979 --show-owners
    ```
    <!-- END GENERATED: output -->
 
@@ -53,10 +52,9 @@ otisnuto na izvatku iz posjedovnog lista.
 
 ## Što možete odabrati
 
-Katastar ne izdaje posjedovni list po broju, pa ova naredba staje na potvrdi da
-list postoji. Posjednike vidite tako da jednu od čestica lista pogledate
-naredbom [get-parcel](get-parcel.md) uz `--show-owners`; brojevi čestica nalaze
-se na izvatku.
+Ova naredba samo potvrđuje list. Za sam list, s posjednicima i svim česticama na
+njemu, upotrijebite [get-possession-sheet](get-possession-sheet.md) s točnim
+brojem.
 
 `--format json` uz `--output` sprema rezultat kao datoteku.
 
@@ -73,7 +71,7 @@ se na izvatku.
 
 Ako nijedan list ne počinje brojem koji ste upisali, alat staje s ovim retkom:
 
-<!-- BEGIN GENERATED: output uz posjedovni-list 999 -ko SAVAR -->
+<!-- BEGIN GENERATED: output uz traži-posjedovni-list 999 -ko SAVAR -->
 ```text
 ✗ Greška: Posjedovni list '999' nije pronađen u katastarskoj općini SAVAR
 ```
@@ -84,6 +82,8 @@ objašnjene su na [stranici o greškama](../errors.md).
 
 ## Povezane stranice
 
+- [get-possession-sheet](get-possession-sheet.md) prikazuje list s njegovim
+  posjednicima i česticama.
 - [get-parcel](get-parcel.md) prikazuje posjedovni list čestice s njezinim
   posjednicima.
 - [search](search.md) pronalazi česticu po broju.
@@ -92,21 +92,20 @@ objašnjene su na [stranici o greškama](../errors.md).
 <summary>Tehnički detalji</summary>
 
 <!-- BEGIN GENERATED: synopsis -->
-Ovo ispisuje `uz posjedovni-list --help`:
+Ovo ispisuje `uz traži-posjedovni-list --help`:
 
 ```text
-Uporaba: uz posjedovni-list [OPCIJE] BROJ_POSJEDOVNOG_LISTA
+Uporaba: uz traži-posjedovni-list [OPCIJE] BROJ_POSJEDOVNOG_LISTA
 
-  Pretraga posjedovnog lista po broju.
+  Pronađi posjedovni list po broju.
 
-  Prikazuje brojeve posjedovnih listova koji počinju zadanim brojem i interni
-  identifikator svakog lista. Katastar nema dohvat lista po identifikatoru:
-  posjednike vidite tako da pogledate jednu od čestica lista naredbom uz
-  čestica.
+  Prikazuje brojeve listova koji počinju zadanim brojem i interni ID svakog
+  lista. Za sam list, s posjednicima i česticama, upotrijebite naredbu
+  posjedovni-list s točnim brojem.
 
   Primjeri:
-    uz posjedovni-list 363 -ko SAVAR
-    uz posjedovni-list 36 -ko 334979 --oblik json
+    uz traži-posjedovni-list 363 -ko SAVAR
+    uz traži-posjedovni-list 36 -ko 334979 --oblik json
 
 Opcije:
   -ko, --općina TEKST             Naziv ili šifra općine (npr. SAVAR ili 334979)

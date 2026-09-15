@@ -41,6 +41,7 @@ COMMANDS: dict[str, str] = {
     "search": pgettext("command", "search"),
     "search-municipality": pgettext("command", "search-municipality"),
     "search-possession-sheet": pgettext("command", "search-possession-sheet"),
+    "get-possession-sheet": pgettext("command", "get-possession-sheet"),
     "get-parcel": pgettext("command", "get-parcel"),
     "get-lr-unit": pgettext("command", "get-lr-unit"),
     "get-geometry": pgettext("command", "get-geometry"),
@@ -120,6 +121,9 @@ OPTIONS: dict[str, str] = {
 # shows possessors, on the land registry commands it shows owners.
 OPTION_OVERRIDES: dict[tuple[str, str], str] = {
     ("get-parcel", "--show-owners"): pgettext("option get-parcel", "--show-owners"),
+    ("get-possession-sheet", "--show-owners"): pgettext(
+        "option get-possession-sheet", "--show-owners"
+    ),
     ("download-gis", "--output"): pgettext("option download-gis", "--output"),
     # ``-o`` is --output by default; on these commands it is something else.
     ("get-lr-unit", "-o"): pgettext("option get-lr-unit", "-o"),

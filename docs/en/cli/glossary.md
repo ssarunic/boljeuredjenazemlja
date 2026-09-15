@@ -15,7 +15,7 @@ of them. Croatian terms are given as they appear on official documents.
 |---|---|---|
 | Katastarska čestica (k.č.) | A parcel: one numbered piece of land in the cadastre. | The parcel number you type after `search`, `get-parcel` and `get-geometry`. |
 | Katastarska općina (k.o.) | The cadastral municipality a parcel belongs to. Each has a name and a registration number (matični broj), which the tool prints as its code. | The value after `-m` in most commands. [search-municipality](commands/search-municipality.md) finds the number. |
-| Posjedovni list | The possession sheet of the cadastre: who possesses a parcel according to the cadastre. Not proof of ownership. | [get-parcel](commands/get-parcel.md) with `--show-owners`. |
+| Posjedovni list | The possession sheet of the cadastre: who possesses a parcel according to the cadastre. Not proof of ownership. | [get-possession-sheet](commands/get-possession-sheet.md); [get-parcel](commands/get-parcel.md) with `--show-owners`. |
 | Posjednik | A possessor recorded in the cadastre. | The rows of the possession sheet on [get-parcel](commands/get-parcel.md). |
 | Zemljišnoknjižni uložak (ZK uložak) | The land registry unit: the record of the legal state of a property, kept by the land registry department of the municipal court. | [get-lr-unit](commands/get-lr-unit.md). Its number also appears on [get-parcel](commands/get-parcel.md), for one parcel or a list. |
 | Čestica zgrade (zgr.) | A building parcel: a parcel of the old cadastre that covers a building alone. Written `35/1 ZGR`, `35/1.ZGR` or `zgr. 35/1`; it has no land registry unit of its own. | The parcel number on [get-parcel](commands/get-parcel.md) and [search](commands/search.md), printed as `zgr. 35/1`. |

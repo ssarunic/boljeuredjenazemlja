@@ -83,6 +83,14 @@ number and one tag.
   `lookup_possession_sheet_number` is the reverse lookup;
   `ErrorType.POSSESSION_SHEET_NOT_FOUND`. The mock server serves all four
   routes from its parcel data.
+- CLI: `get-possession-sheet SHEET -m K.O.` (Croatian `posjedovni-list`): the
+  sheet, every parcel on it with area, land use and land-registry unit, and
+  with `--show-owners` (`--posjednici`) its possessors; `--format json`
+  writes the sheet with `parcels`, `total_parcels`, `total_area_m2` and
+  `parcels_complete`, `--format csv` one row per parcel. The Croatian
+  spelling of `search-possession-sheet` is now `traži-posjedovni-list`
+  (it was `posjedovni-list`), in line with `traži-općinu`; both commands'
+  help now point to each other.
 - MCP: `get_possession_sheet(sheet_number, municipality)`: the sheet's
   possessors (paged, filterable by name) and every parcel on it with area,
   land use and land-registry reference, `total_area_m2`, both provenances
