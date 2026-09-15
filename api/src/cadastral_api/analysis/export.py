@@ -56,6 +56,7 @@ MATRIX_COLUMNS = [
     "owner_share",
     "possessor_share",
     "fuzzy",
+    "records",
 ]
 
 

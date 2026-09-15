@@ -381,7 +381,8 @@ well (one WFS lookup per parcel, slower).
   `parcels_with_pending_plombe`, `parcels_in_building_area`.
 
 References that could not be read are listed under `failed` with their
-`error_type`; the analysis covers the rest. `export` adds one table as text
+`error_type`; the analysis covers the rest (`total`, `successful`,
+`units_fetched`, `zoning_requested` and `generated_at` say what it rests on). `export` adds one table as text
 under `export`: `"parcels_csv"`, `"persons_csv"` or `"matrix_csv"` (CSV with
 fixed English columns; the matrix in long form, one row per person and
 parcel) or `"geojson"` (a `FeatureCollection` of the parcels that have an

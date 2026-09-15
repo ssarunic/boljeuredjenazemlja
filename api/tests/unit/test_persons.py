@@ -77,3 +77,16 @@ def test_infer_party_type() -> None:
     assert infer_party_type("").party_type == "unknown"
     inferred = infer_party_type("HRVATSKE ŠUME d.o.o.")
     assert inferred.inferred is True and "doo" in inferred.basis
+
+
+def test_group_by_person_and_group_keys() -> None:
+    from cadastral_api.analysis.persons import group_by_person, group_size, person_group_key
+
+    groups = group_by_person([("A B", None), ("a b", "2"), ("A B", "1"), ("C D", None), ("", "9")])
+    assert groups == {"a b": {"1", "2"}, "c d": set()}
+    assert [group_size(t) for t in groups.values()] == [2, 1]
+    # A record with a tax number keeps it; one without joins the group's first tax number.
+    assert person_group_key("a b", "2", groups) == "a b#2"
+    assert person_group_key("a b", None, groups) == "a b#1"
+    assert person_group_key("c d", None, groups) == "c d"
+    assert person_group_key("x y", None, groups) == "x y"

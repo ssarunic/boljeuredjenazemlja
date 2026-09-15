@@ -102,25 +102,48 @@ def same_person(a: PersonKey, b: PersonKey) -> tuple[bool, bool]:
     return False, False
 
 
-def count_distinct_persons(records: Iterable[tuple[str | None, str | None]]) -> int:
-    """How many different people a list of ``(name, tax_number)`` records names.
+def group_by_person(records: Iterable[tuple[str | None, str | None]]) -> dict[str, set[str]]:
+    """Strict key -> tax numbers seen: the grouping every distinct-person count shares.
 
     Records are grouped by strict key (case, diacritics, spacing, punctuation
     and a share suffix ignored); within a group, records with different tax
     numbers are different people, and records without one join the group.
     The loose key is not used: a count of owners should not merge two people
     on a guess. Two different people with the same name and no tax number
-    count once; that is the register's limitation, not the count's.
+    fall in one group; that is the register's limitation, not the rule's.
+    A record without a name is skipped.
     """
-    tax_numbers_by_name: dict[str, set[str]] = {}
+    groups: dict[str, set[str]] = {}
     for name, tax_number in records:
         key = person_key(name, tax_number)
         if not key.strict:
             continue
-        group = tax_numbers_by_name.setdefault(key.strict, set())
+        group = groups.setdefault(key.strict, set())
         if key.tax_number:
             group.add(key.tax_number)
-    return sum(max(1, len(group)) for group in tax_numbers_by_name.values())
+    return groups
+
+
+def group_size(tax_numbers: set[str]) -> int:
+    """How many people a group of ``group_by_person`` holds: one, or one per tax number."""
+    return max(1, len(tax_numbers))
+
+
+def person_group_key(strict: str, tax_number: str | None, groups: dict[str, set[str]]) -> str:
+    """The key of one record within its group: ``strict#tax`` when a tax number applies.
+
+    A record without a tax number joins the group's (first) tax number, so
+    that it is the same person as the record that carries one; a group with
+    no tax number at all keeps the bare strict key.
+    """
+    taxes = groups.get(strict) or set()
+    tax = tax_number or (min(taxes) if taxes else None)
+    return f"{strict}#{tax}" if tax else strict
+
+
+def count_distinct_persons(records: Iterable[tuple[str | None, str | None]]) -> int:
+    """How many different people ``(name, tax_number)`` records name (see ``group_by_person``)."""
+    return sum(group_size(taxes) for taxes in group_by_person(records).values())
 
 
 # ---------------------------------------------------------------------------

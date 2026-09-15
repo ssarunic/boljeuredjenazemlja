@@ -21,6 +21,7 @@ from cadastral_api.analysis import (
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.gis import IndexedParcel, ParcelIndex
 from cadastral_api.gis.geometry_ops import parse_ring
+from cadastral_api.gis.spatial_index import Relation
 from cadastral_api.models.entities import ParcelInfo
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM, ParcelGeometry
 from cadastral_api.planning import validate_min_overlap
@@ -1743,13 +1744,8 @@ class CadastralTools:
                 continue
             entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
             try:
-                parcel, geometry, _search = await self._load_parcel(ref)
-                unit, unit_error = self._unit_of(parcel, units)
-                comparison = compare_registers(
-                    parcel,
-                    unit,
-                    gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
-                    lr_unit_error=str(unit_error) if unit_error else None,
+                parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
+                    ref, units
                 )
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Register comparison failed for {ref}: {e}")
@@ -1800,6 +1796,24 @@ class CadastralTools:
                 ),
             },
         }
+
+    async def _load_comparison(
+        self, ref: ParcelRef, units: dict[tuple[str, int], Any]
+    ) -> tuple[ParcelInfo, ParcelGeometry | None, Any, Exception | None, Any]:
+        """A parcel, its outline, its unit (read once per call) and the register comparison.
+
+        Shared by compare_registers and build_assembly, which differ only in
+        what they do with the result.
+        """
+        parcel, geometry, _search = await self._load_parcel(ref)
+        unit, unit_error = self._unit_of(parcel, units)
+        comparison = compare_registers(
+            parcel,
+            unit,
+            gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
+            lr_unit_error=str(unit_error) if unit_error else None,
+        )
+        return parcel, geometry, unit, unit_error, comparison
 
     def _unit_of(
         self, parcel: ParcelInfo, units: dict[tuple[str, int], Any]
@@ -1887,7 +1901,7 @@ class CadastralTools:
         failed: list[dict[str, Any]] = []
         units: dict[tuple[str, int], Any] = {}
         geometries: dict[str, ParcelGeometry] = {}
-        notes: list[str] = []
+        zoning_notes: list[str] = []
         for spec in parcels:
             try:
                 ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
@@ -1895,13 +1909,8 @@ class CadastralTools:
                 failed.append({"ref": spec, **error_fields(e)})
                 continue
             try:
-                parcel, geometry, _search = await self._load_parcel(ref)
-                unit, unit_error = self._unit_of(parcel, units)
-                comparison = compare_registers(
-                    parcel,
-                    unit,
-                    gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
-                    lr_unit_error=str(unit_error) if unit_error else None,
+                parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
+                    ref, units
                 )
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Assembly input failed for {ref}: {e}")
@@ -1917,7 +1926,7 @@ class CadastralTools:
                     )
                 except Exception as e:  # noqa: BLE001 - the factor is then not evaluated
                     logger.warning(f"Zoning failed for {parcel.parcel_number}: {e}")
-                    notes.append(
+                    zoning_notes.append(
                         f"zoning of {parcel.parcel_number} not read "
                         f"({error_kind(e)[0]}); its building-area factor is not evaluated"
                     )
@@ -1952,7 +1961,7 @@ class CadastralTools:
             "surname_groups": [g.model_dump(mode="json") for g in analysis.surname_groups],
             "matrix": [c.model_dump(mode="json") for c in analysis.matrix],
             "scores": [s.model_dump(mode="json") for s in analysis.scores],
-            "notes": analysis.notes + notes,
+            "notes": analysis.notes + zoning_notes,
             "total": len(parcels),
             "successful": len(items),
             "failed": failed,
@@ -2121,12 +2130,14 @@ class CadastralTools:
         logger.info(f"Finding parcels in {municipality} by {modes[0]}")
         muni_code, index = await self._parcel_index(municipality)
 
+        wanted_relation: Relation = "within" if relation == "within" else "intersects"
         distances: dict[str, float] = {}
         if bbox is not None:
-            hits = index.in_bbox((*low, *high), relation)  # type: ignore[arg-type]
+            hits = index.in_bbox((*low, *high), wanted_relation)
         elif polygon is not None:
-            hits = index.in_polygon(ring, relation)  # type: ignore[arg-type]
+            hits = index.in_polygon(ring, wanted_relation)
         else:
+            assert radius_m is not None
             radius_hits = index.within_radius(point[0], point[1], float(radius_m))
             hits = [hit.parcel for hit in radius_hits]
             distances = {hit.parcel.parcel_number: hit.distance_m for hit in radius_hits}

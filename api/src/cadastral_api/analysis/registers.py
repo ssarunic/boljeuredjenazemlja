@@ -11,7 +11,7 @@ shared person identity (``persons``) and says which is which.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -21,6 +21,8 @@ from .area_check import AreaCheck, check_area
 from .persons import (
     PartyTypeInference,
     count_distinct_persons,
+    group_by_person,
+    group_size,
     infer_party_type,
     person_key,
     same_person,
@@ -48,7 +50,7 @@ class PersonRecord(BaseModel):
 
     name: str
     register_: Register = Field(alias="register", description="cadastre | land_registry")
-    share: dict | None = Field(
+    share: dict[str, Any] | None = Field(
         default=None, description="{num, den, decimal} when the register gives one"
     )
     tax_number: str | None = None
@@ -80,7 +82,7 @@ class RegisterComparison(BaseModel):
 
     parcel_number: str
     municipality_code: str
-    lr_unit: dict | None = Field(
+    lr_unit: dict[str, Any] | None = Field(
         default=None, description="{lr_unit_number, main_book_id} compared against"
     )
     relationship: Relationship
@@ -109,7 +111,7 @@ class RegisterComparison(BaseModel):
 def _record(
     name: str,
     register: Register,
-    share: dict | None,
+    share: dict[str, Any] | None,
     tax_number: str | None,
     address: str | None,
     condominium_number: str | None = None,
@@ -157,7 +159,7 @@ def owner_records(lr_unit: LandRegistryUnitDetailed) -> list[PersonRecord]:
     ]
 
 
-def _shares_agree(a: dict | None, b: dict | None) -> bool | None:
+def _shares_agree(a: dict[str, Any] | None, b: dict[str, Any] | None) -> bool | None:
     if not a or not b:
         return None
     return abs(float(a["decimal"]) - float(b["decimal"])) < 1e-9
@@ -235,19 +237,12 @@ def _sheet_a_area(
 
 def _party_type_counts(people: list[PersonRecord]) -> dict[str, int]:
     """Inferred party types of the distinct people (grouped as ``count_distinct_persons`` does)."""
-    groups: dict[str, tuple[str, set[str]]] = {}
-    for record in people:
-        key = person_key(record.name, record.tax_number)
-        if not key.strict:
-            continue
-        kind, taxes = groups.setdefault(
-            key.strict, (record.party_type_inferred.party_type, set())
-        )
-        if key.tax_number:
-            taxes.add(key.tax_number)
+    groups = group_by_person((r.name, r.tax_number) for r in people)
+    kind_of = {r.key: r.party_type_inferred.party_type for r in people}
     counts: dict[str, int] = {}
-    for kind, taxes in groups.values():
-        counts[kind] = counts.get(kind, 0) + max(1, len(taxes))
+    for strict, taxes in groups.items():
+        kind = kind_of.get(strict, "unknown")
+        counts[kind] = counts.get(kind, 0) + group_size(taxes)
     return counts
 
 
@@ -325,9 +320,9 @@ def compare_registers(
     if owners and all(o.share for o in owners):
         public_share = round(
             sum(
-                float(o.share["decimal"])  # type: ignore[index]
+                float(o.share["decimal"])
                 for o in owners
-                if o.party_type_inferred.party_type in ("state", "municipality")
+                if o.share and o.party_type_inferred.party_type in ("state", "municipality")
             ),
             6,
         )

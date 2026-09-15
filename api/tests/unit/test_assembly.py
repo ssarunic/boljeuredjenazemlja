@@ -189,7 +189,7 @@ def test_exports(items) -> None:
     matrix = list(csv.DictReader(io.StringIO(matrix_csv(analysis))))
     assert {row["role"] for row in matrix} == {"owner", "possessor", "both"}
     both = next(row for row in matrix if row["role"] == "both")
-    assert both["owner_share"] == "4/8" and both["fuzzy"] == "false"
+    assert both["owner_share"] == "1/2" and both["fuzzy"] == "false"  # 4/8, reduced
 
     geometry = ParcelGeometry(
         cestica_id="1", broj_cestice="1122/1", povrsina_graficka=1600.0, maticni_broj_ko="334979",
@@ -200,3 +200,27 @@ def test_exports(items) -> None:
     assert [f["properties"]["parcel_number"] for f in collection["features"]] == ["1122/1"]
     assert collection["features"][0]["properties"]["score"] == 0.35
     assert collection["skipped"] == ["1139/4", "1139/5"]
+
+
+def test_two_records_of_one_person_on_one_parcel_are_one_cell() -> None:
+    # Unit 449 names "Vlasnik 116" on two quarter shares of 1122/1; make that
+    # person the parcel's only possessor. One record matches the possessor
+    # (role both), the other stays owner-only: the person is both on the
+    # parcel, once, with the shares added.
+    parcel, unit = _parcel("parcel_info_linked.json"), _unit("lr_unit_lrparcels.json")
+    _keep_possessors(parcel, ["Vlasnik 116"])
+    comparison = compare_registers(parcel, unit)
+    assert comparison.relationship == "overlapping"
+    assert "Vlasnik 116" in [o.name for o in comparison.owners_only]
+    analysis = build_assembly([AssemblyInput(parcel, unit, comparison)])
+    cells = [c for c in analysis.matrix if c.person_key.startswith("vlasnik 116")]
+    assert len(cells) == 1
+    cell = cells[0]
+    assert cell.role == "both" and cell.records == 2
+    assert cell.owner_share == {"num": 1, "den": 2, "decimal": 0.5}
+    person = next(p for p in analysis.persons if p.key == cell.person_key)
+    assert person.owner_of == ["1122/1"] and person.possessor_of == ["1122/1"]
+    assert person.owned_area_m2 == 0.5 * 1618
+    assert person.shares_unknown == 0
+    assert len({(c.person_key, c.parcel_number) for c in analysis.matrix}) == len(analysis.matrix)
+    assert any("one cell" in note for note in analysis.notes)

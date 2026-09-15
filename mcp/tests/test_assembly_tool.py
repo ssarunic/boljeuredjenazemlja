@@ -89,7 +89,7 @@ def test_exports_and_paging() -> None:
     assert res["export"]["skipped"] == ["1122/1"]  # no GIS outline from this fake
     res = _run(tools.build_assembly([{"parcel_id": 1}], export="matrix_csv"))
     header = res["export"]["text"].splitlines()[0]
-    assert header == "name,parcel_number,role,owner_share,possessor_share,fuzzy"
+    assert header == "name,parcel_number,role,owner_share,possessor_share,fuzzy,records"
 
 
 @pytest.mark.parametrize(

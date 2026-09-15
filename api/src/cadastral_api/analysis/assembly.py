@@ -17,14 +17,21 @@ parcel.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from fractions import Fraction
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
 from ..models.entities import LandRegistryUnitDetailed, ParcelInfo
 from ..models.planning_entities import ParcelZoning
 from ..models.provenance import now_utc_iso
-from .persons import PartyTypeInference, count_distinct_persons, person_key
+from .persons import (
+    PartyTypeInference,
+    count_distinct_persons,
+    group_by_person,
+    person_group_key,
+    person_key,
+)
 from .registers import PersonRecord, RegisterComparison
 
 #: Default weights of the ease-of-acquisition factors (they sum to 1).
@@ -37,6 +44,10 @@ DEFAULT_WEIGHTS: dict[str, float] = {
 }
 
 Role = Literal["owner", "possessor", "both"]
+#: A share as the registers give it, ``{num, den, decimal}``, or None.
+Share = dict[str, Any] | None
+#: One person on one parcel: record, parcel number, role, fuzzy match, owner share, possessor share.
+_Occurrence = tuple[PersonRecord, str, Role, bool, Share, Share]
 
 
 @dataclass
@@ -71,9 +82,14 @@ class MatrixCell(BaseModel):
     person_key: str
     parcel_number: str
     role: Role
-    owner_share: dict | None = None
-    possessor_share: dict | None = None
-    fuzzy: bool = Field(default=False, description="The owner/possessor match was fuzzy")
+    owner_share: dict[str, Any] | None = Field(
+        default=None, description="The person's registered shares of the parcel, added up"
+    )
+    possessor_share: dict[str, Any] | None = Field(
+        default=None, description="The person's possession shares of the parcel, added up"
+    )
+    fuzzy: bool = Field(default=False, description="An owner/possessor match was fuzzy")
+    records: int = Field(default=1, description="Register records merged into this cell")
 
 
 class PersonHolding(BaseModel):
@@ -88,7 +104,7 @@ class PersonHolding(BaseModel):
     owner_of: list[str]
     possessor_of: list[str]
     owned_area_m2: float = Field(
-        description="Sum of share x cadastre area over the parcels the person owns"
+        description="Sum of (the person's shares added up) x cadastre area over the parcels owned"
     )
     possessed_area_m2: float = Field(
         description="Cadastre area of the parcels the person possesses (shares not applied)"
@@ -117,7 +133,7 @@ class ParcelSummary(BaseModel):
     municipality_code: str
     area_m2: int | None
     land_use: dict[str, int]
-    lr_unit: dict | None
+    lr_unit: dict[str, Any] | None
     relationship: str
     distinct_owners: int
     distinct_possessors: int
@@ -132,7 +148,7 @@ class ParcelSummary(BaseModel):
     area_mismatch: bool
     score: float | None
     map_url: str | None
-    provenance: dict[str, dict | None]
+    provenance: dict[str, dict[str, str] | None]
 
 
 class AssemblyTotals(BaseModel):
@@ -285,24 +301,58 @@ class _Holding:
     fuzzy: int = 0
 
 
+@dataclass
+class _Cell:
+    """One person on one parcel, merged over every register record that names them there."""
+
+    record: PersonRecord
+    role: Role
+    owner_share: Fraction | None = None
+    owner_share_unknown: bool = False
+    possessor_share: Fraction | None = None
+    possessor_share_unknown: bool = False
+    fuzzy: bool = False
+    records: int = 0
+
+    def add(self, role: Role, fuzzy: bool, owner_share: Share, possessor_share: Share) -> None:
+        self.records += 1
+        self.fuzzy = self.fuzzy or fuzzy
+        if self.records > 1 and self.role != role:
+            self.role = "both"
+        if role in ("owner", "both"):
+            self.owner_share, self.owner_share_unknown = _add_share(
+                self.owner_share, self.owner_share_unknown, owner_share
+            )
+        if role in ("possessor", "both"):
+            self.possessor_share, self.possessor_share_unknown = _add_share(
+                self.possessor_share, self.possessor_share_unknown, possessor_share
+            )
+
+
+def _add_share(
+    total: Fraction | None, unknown: bool, share: Share
+) -> tuple[Fraction | None, bool]:
+    """Add one register record's share to a running total; a missing share taints the total."""
+    if not share or share.get("den") in (None, 0) or share.get("num") is None:
+        return total, True
+    part = Fraction(int(share["num"]), int(share["den"]))
+    return (total or Fraction(0)) + part, unknown
+
+
+def _share_dict(total: Fraction | None, unknown: bool) -> Share:
+    """A summed share as ``{num, den, decimal}``; None when a record gave no share."""
+    if total is None or unknown:
+        return None
+    return {"num": total.numerator, "den": total.denominator, "decimal": float(total)}
+
+
 def _person_keys(records: list[PersonRecord]) -> dict[int, str]:
     """A key per record that tells people apart the way ``count_distinct_persons`` does."""
-    taxes_by_name: dict[str, set[str]] = {}
-    keys = [person_key(r.name, r.tax_number) for r in records]
-    for key in keys:
-        taxes_by_name.setdefault(key.strict, set())
-        if key.tax_number:
-            taxes_by_name[key.strict].add(key.tax_number)
-    result: dict[int, str] = {}
-    for index, key in enumerate(keys):
-        taxes = taxes_by_name[key.strict]
-        if key.tax_number:
-            result[index] = f"{key.strict}#{key.tax_number}"
-        elif len(taxes) == 1:
-            result[index] = f"{key.strict}#{next(iter(taxes))}"
-        else:
-            result[index] = key.strict
-    return result
+    groups = group_by_person((r.name, r.tax_number) for r in records)
+    return {
+        index: person_group_key(person_key(r.name, r.tax_number).strict, r.tax_number, groups)
+        for index, r in enumerate(records)
+    }
 
 
 def build_assembly(
@@ -314,7 +364,7 @@ def build_assembly(
     summaries = [_summary(item, score) for item, score in zip(items, scores, strict=True)]
 
     # Every (person, parcel, role) occurrence, then one key per person.
-    occurrences: list[tuple[PersonRecord, str, Role, bool, dict | None, dict | None]] = []
+    occurrences: list[_Occurrence] = []
     for item in items:
         number = item.parcel.parcel_number
         for match in item.comparison.matched:
@@ -328,32 +378,41 @@ def build_assembly(
     keys = _person_keys([occ[0] for occ in occurrences])
     areas = {item.parcel.parcel_number: float(item.parcel.area_numeric or 0) for item in items}
 
-    holdings: dict[str, _Holding] = {}
-    matrix: list[MatrixCell] = []
+    # One cell per person and parcel: a person with two shares of one parcel
+    # (an inherited quarter and a bought quarter) is two register records,
+    # one cell with the shares added; a person matched as owner on one record
+    # and left as owner only on another is still both on that parcel.
+    cells: dict[tuple[str, str], _Cell] = {}
     for index, occurrence in enumerate(occurrences):
         record, number, role, fuzzy, owner_share, possessor_share = occurrence
-        key = keys[index]
-        holding = holdings.setdefault(key, _Holding(record, {}))
-        holding.parcels[number] = role
-        holding.fuzzy += int(fuzzy)
-        if role in ("owner", "both"):
-            if owner_share and owner_share.get("decimal") is not None:
-                holding.owned += float(owner_share["decimal"]) * areas[number]
+        cell = cells.setdefault((keys[index], number), _Cell(record, role))
+        cell.add(role, fuzzy, owner_share, possessor_share)
+
+    holdings: dict[str, _Holding] = {}
+    matrix: list[MatrixCell] = []
+    for (key, number), cell in cells.items():
+        holding = holdings.setdefault(key, _Holding(cell.record, {}))
+        holding.parcels[number] = cell.role
+        holding.fuzzy += int(cell.fuzzy)
+        if cell.role in ("owner", "both"):
+            if cell.owner_share is not None and not cell.owner_share_unknown:
+                holding.owned += float(cell.owner_share) * areas[number]
             else:
                 holding.owned += areas[number]
                 holding.shares_unknown += 1
-        if role in ("possessor", "both"):
+        if cell.role in ("possessor", "both"):
             holding.possessed += areas[number]
-        if role == "possessor":
+        if cell.role == "possessor":
             holding.possessed_only += areas[number]
         matrix.append(
             MatrixCell(
                 person_key=key,
                 parcel_number=number,
-                role=role,
-                owner_share=owner_share,
-                possessor_share=possessor_share,
-                fuzzy=fuzzy,
+                role=cell.role,
+                owner_share=_share_dict(cell.owner_share, cell.owner_share_unknown),
+                possessor_share=_share_dict(cell.possessor_share, cell.possessor_share_unknown),
+                fuzzy=cell.fuzzy,
+                records=cell.records,
             )
         )
 
@@ -404,6 +463,11 @@ def build_assembly(
     notes: list[str] = []
     if any(p.shares_unknown for p in persons):
         notes.append("an owner role without a registered share counts the whole parcel as owned")
+    if any(cell.records > 1 for cell in matrix):
+        notes.append(
+            "a person named by several records of one register on one parcel is one cell, "
+            "shares added"
+        )
     if any(p.fuzzy_matches for p in persons):
         notes.append(
             "some owner/possessor pairs were matched on the name without a relative's name"

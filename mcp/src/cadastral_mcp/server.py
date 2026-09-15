@@ -752,8 +752,10 @@ def create_mcp_server() -> MCPServer:
             party_type_inferred) with ``persons_page``, ``surname_groups``,
             ``matrix`` (person_key, parcel_number, role, shares, fuzzy),
             ``scores`` (factors and notes per parcel), ``weights``,
-            ``notes``, ``failed`` (references that could not be read, with
-            error_type), ``units_fetched`` and ``export`` when asked.
+            ``notes``, ``generated_at``, ``total`` and ``successful``
+            (references given and read), ``failed`` (references that could
+            not be read, with error_type), ``units_fetched``,
+            ``zoning_requested`` and ``export`` when asked.
         """
         logger.info(
             f"Tool invoked: build_assembly({len(parcels)} parcels, zoning={include_zoning}, "
