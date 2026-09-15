@@ -1841,8 +1841,10 @@ class CadastralTools:
         the parcel belongs to are read (a unit shared by several parcels is
         read once) and the two lists of people are matched with the shared
         person identity: exact matches first (tax number, or the folded
-        name), then fuzzy ones (the name without a relative's name), which
-        are flagged. Each entry says whether the registers name the same
+        name), then fuzzy ones (a relative's name written differently or
+        missing on one side, or the words in another order), which are
+        flagged; each pair says how it was found (``via``). Each entry says
+        whether the registers name the same
         people, overlap, or are disjoint, lists who is in one register only,
         infers each person's kind (individual, company, state, municipality;
         always labelled inferred), sums the share registered to public
@@ -1875,6 +1877,7 @@ class CadastralTools:
         )
         possessors: list[tuple[str | None, str | None]] = []
         owners: list[tuple[str | None, str | None]] = []
+        people: list[tuple[str | None, str | None]] = []
         relationships: dict[str, int] = {}
         for spec in parcels:
             try:
@@ -1917,6 +1920,14 @@ class CadastralTools:
             )
             possessors.extend((p.name, p.tax_number) for p in comparison.possessors)
             owners.extend((o.name, o.tax_number) for o in comparison.owners)
+            # A matched pair is one person, counted by the owner record so the
+            # two registers' spellings of one person are not two people.
+            people.extend(
+                (r.name, r.tax_number)
+                for r in [m.owner for m in comparison.matched]
+                + comparison.possessors_only
+                + comparison.owners_only
+            )
 
         successful = sum(1 for r in results if r["status"] == "success")
         return {
@@ -1929,10 +1940,11 @@ class CadastralTools:
             "people": {
                 "distinct_possessors": count_distinct_persons(possessors),
                 "distinct_owners": count_distinct_persons(owners),
-                "distinct_people": count_distinct_persons(possessors + owners),
+                "distinct_people": count_distinct_persons(people),
                 "note": (
                     "Different people by name (and tax number where given) across every "
-                    "successful entry; a person on several parcels counts once."
+                    "successful entry; a person on several parcels counts once, and a "
+                    "person matched across the two registers counts once."
                 ),
             },
         }

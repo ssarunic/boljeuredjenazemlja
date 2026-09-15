@@ -232,7 +232,11 @@ number and one tag.
   as possessor is expected, not a second risk); the fuzzy-match wording says
   which of the two loose rules applied; `plombe_detail_included` is true
   whenever the detail was asked for, and a pending request resolved to a
-  cadastre case is described as one.
+  cadastre case is described as one. `by_tax_number` is derived from `via`,
+  so the two cannot disagree.
+- MCP: the `people` block of `compare_registers` and `totals.distinct_people`
+  of `build_assembly` count a person matched across the two registers once
+  (they added the possessors and the owners, so every match counted twice).
 - MCP: `compare_registers` and `build_assembly` take `include_plombe_detail`
   (the plomba detail fetched once per unit), so a "blocked" parcel says what
   the pending request is.

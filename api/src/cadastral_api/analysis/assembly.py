@@ -625,7 +625,9 @@ def _totals(
         area_by_land_use=by_use,
         area_by_relationship=by_relationship,
         area_by_zoning_status=by_zoning if any_zoning else None,
-        distinct_people=count_distinct_persons(possessors + owners),
+        # A matched pair is one person: the holdings are already one per person
+        # across the set, however differently the two registers spell them.
+        distinct_people=len(persons),
         distinct_owners=count_distinct_persons(owners),
         distinct_possessors=count_distinct_persons(possessors),
         party_types=party_types,

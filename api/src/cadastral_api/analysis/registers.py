@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from ..models.entities import FileStatus, LandRegistryUnitDetailed, ParcelInfo
 from ..models.provenance import Register
@@ -86,7 +86,6 @@ class MatchedPerson(BaseModel):
     fuzzy: bool = Field(
         description="Matched on the name alone: a relative written differently, or another order"
     )
-    by_tax_number: bool = Field(description="Matched on the tax number (OIB)")
     via: MatchVia = Field(
         default="name",
         description=(
@@ -104,6 +103,16 @@ class MatchedPerson(BaseModel):
         default=None,
         description="Whether both registers give the same share; None when one gives none",
     )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def by_tax_number(self) -> bool:
+        """Possessor and owner matched on the tax number (OIB): derived from ``via``.
+
+        An extension to another share of an owner already matched rests on
+        the two owner records' OIB, not on the possessor's, so it is not one.
+        """
+        return self.via == "tax_number"
 
 
 class RegisterComparison(BaseModel):
@@ -379,7 +388,6 @@ def _match(
                 possessor=pair.possessor,
                 owner=owner,
                 fuzzy=pair.fuzzy,
-                by_tax_number=pair.by_tax_number,
                 shares_agree=None,
                 via="tax_number_extension",
                 extended_from=pair.owner.share_order_number,
@@ -390,8 +398,7 @@ def _match(
 
 def _pair(possessor, owner, key_p, key_o, fuzzy: bool) -> MatchedPerson:  # type: ignore[no-untyped-def]
     shares_agree = _shares_agree(possessor.share, owner.share)
-    by_tax_number = bool(key_p.tax_number and key_o.tax_number)
-    via: MatchVia = "tax_number" if by_tax_number else "name"
+    via: MatchVia = "tax_number" if key_p.tax_number and key_o.tax_number else "name"
     if fuzzy:
         via = "name_reordered" if plain_reorder(key_p, key_o) else "name_loose"
     # A name written in another order with no relative on either side agrees
@@ -404,7 +411,6 @@ def _pair(possessor, owner, key_p, key_o, fuzzy: bool) -> MatchedPerson:  # type
         possessor=possessor,
         owner=owner,
         fuzzy=fuzzy,
-        by_tax_number=by_tax_number,
         shares_agree=shares_agree,
         via=via,
     )

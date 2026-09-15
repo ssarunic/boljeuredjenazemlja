@@ -217,3 +217,23 @@ def test_compare_registers_names_the_pending_requests_on_request() -> None:
     assembled = _run(tools.build_assembly([{"parcel_id": 1}], include_plombe_detail=True))
     assert client.status_calls == ["9001", "9001"]
     assert assembled["parcels"][0]["sale_verdict"] == "blocked"
+
+
+def test_the_people_block_counts_a_matched_person_once() -> None:
+    client = _FakeClient()
+    sheet = client.parcel.possession_sheets[0]
+    sheet.possessors = sheet.possessors[:2]
+    for other in client.parcel.possession_sheets[1:]:
+        other.possessors = []
+    # The cadastre spells the owner with the father's name after a comma.
+    sheet.possessors[0].name = "HORVAT IVAN, MARKO"
+    sheet.possessors[1].name = "NOBODY ELSE"
+    res = _run(CadastralTools(client).compare_registers([{"parcel_id": 1}, {"parcel_id": 2}]))
+    data = res["results"][0]["data"]
+    assert data["relationship"] == "overlapping" and data["fuzzy_matches"] == 1
+    assert data["matched"][0]["via"] == "name_loose"
+    assert data["matched"][0]["by_tax_number"] is False
+    people = res["people"]
+    assert people["distinct_possessors"] == 2 and people["distinct_owners"] == 7
+    # 2 + 7 records, one person in both registers, the same parcel twice.
+    assert people["distinct_people"] == 8 == data["distinct_people"]

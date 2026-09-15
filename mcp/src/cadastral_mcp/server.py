@@ -1076,14 +1076,15 @@ def create_mcp_server() -> MCPServer:
         the person I sign with" (posjednik vs vlasnik, usklađenost katastra i
         zemljišne knjige).
 
-        For each reference the cadastre record and the parcel's land-registry
-        unit are read (a unit shared by several parcels once) and the two
-        lists of people are matched by tax number or folded name (case and
-        diacritics ignored); a match that rests on the name without a
-        relative's name ("POK. BOŽE") is flagged ``fuzzy``. Each person gets
-        an inferred kind (individual, company, state, municipality), always
-        labelled ``inferred``: an estimate of how many public bodies and
-        companies are involved, not a fact about any one of them.
+        The cadastre record and the parcel's unit are read (a shared unit
+        once) and the two lists of people matched by tax number or folded
+        name (case and diacritics ignored); a match on the name alone (a
+        relative written differently, "AUGUSTIN, BOŽO" against "AUGUSTIN POK.
+        BOŽE", or the words in another order with nothing corroborating it)
+        is ``fuzzy``. Each pair says how it was found: ``via`` (tax_number,
+        name, name_reordered, name_loose, tax_number_extension: another share
+        of an owner already matched, ``extended_from``). Party types are
+        inferred and labelled so.
 
         Returns:
             ``results`` with one entry per reference: ``status``, ``ref``,
@@ -1092,7 +1093,7 @@ def create_mcp_server() -> MCPServer:
             ``relationship`` (same | overlapping | disjoint | cadastre_only |
             no_owners | no_possessors | land_registry_unavailable),
             ``summary`` (plain language), ``matched`` (pairs with ``fuzzy``,
-            ``by_tax_number``, ``shares_agree``), ``possessors_only``,
+            ``via``, ``extended_from``, ``shares_agree``), ``possessors_only``,
             ``owners_only``, ``possessors`` and ``owners`` (name, share,
             ``party_type_inferred``), ``distinct_possessors``,
             ``distinct_owners``, ``distinct_people``, ``party_types``,
