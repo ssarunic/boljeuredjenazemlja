@@ -141,7 +141,7 @@ msgstr "Da biste uklonili sve, umjesto naziva općine upotrijebite `--sve`:"
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
 #: commands/get-geometry.md:98 commands/get-lr-unit.md:278
-#: commands/get-parcel.md:213 commands/get-possession-sheet.md:106
+#: commands/get-parcel.md:213 commands/get-possession-sheet.md:113
 #: commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
 #: commands/list-municipalities.md:90 commands/list-offices.md:104
@@ -165,7 +165,7 @@ msgstr "Ako ne navedete ni općinu ni `--sve`, vidjet ćete ovo:"
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
 #: commands/get-geometry.md:117 commands/get-lr-unit.md:294
-#: commands/get-parcel.md:265 commands/get-possession-sheet.md:121
+#: commands/get-parcel.md:265 commands/get-possession-sheet.md:128
 #: commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
 #: commands/list-municipalities.md:103 commands/list-offices.md:110
@@ -187,7 +187,7 @@ msgstr "[preuzmi-gis](download-gis.md) ponovno preuzima općinu."
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
 #: commands/get-geometry.md:123 commands/get-lr-unit.md:301
-#: commands/get-parcel.md:272 commands/get-possession-sheet.md:128
+#: commands/get-parcel.md:272 commands/get-possession-sheet.md:135
 #: commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
 #: commands/list-municipalities.md:109 commands/list-offices.md:116
@@ -1171,6 +1171,22 @@ msgstr ""
 
 #: commands/get-possession-sheet.md:87
 msgid ""
+"Some sheets are harmonized with the land registry: for them the cadastre "
+"records no possessors of its own and refers to the land registry unit "
+"instead. The tool then says **in the land registry (harmonized sheet)** on "
+"the **Possessors** line and, with `--show-owners`, lists the registered "
+"owners of that unit under **REGISTERED OWNERS (LAND REGISTRY)**; in JSON "
+"`possessors_in_land_registry` is `true` and the people are under `owners`."
+msgstr ""
+"Neki su listovi usklađeni sa zemljišnom knjigom: za njih katastar ne bilježi "
+"vlastite posjednike, nego upućuje na zemljišnoknjižni uložak. Alat tada u "
+"retku **Posjednici** ispisuje **u zemljišnoj knjizi (usklađeni list)**, a uz "
+"`--show-owners` nabraja upisane vlasnike tog uloška pod **UPISANI VLASNICI "
+"(ZEMLJIŠNA KNJIGA)**; u JSON-u je `posjednici_u_zemljisnoj_knjizi` `true`, a "
+"osobe su pod `vlasnici`."
+
+#: commands/get-possession-sheet.md:94
+msgid ""
 "`--format json` writes the sheet as one document, with `parcels`, "
 "`total_parcels`, `total_area_m2` and `parcels_complete`; `--format csv` "
 "writes one row per parcel. Both go to a file with `--output`."
@@ -1179,7 +1195,7 @@ msgstr ""
 "`broj_cestica`, `ukupna_povrsina_m2` i `popis_cestica_potpun`; `--format csv`"
 " zapisuje jedan redak po čestici. Oboje ide u datoteku uz `--output`."
 
-#: commands/get-possession-sheet.md:91
+#: commands/get-possession-sheet.md:98
 msgid ""
 "The cadastre's parcel search has never been seen to return more than 30 "
 "parcels for one sheet. When a sheet comes back with exactly that many, the "
@@ -1193,7 +1209,7 @@ msgstr ""
 
 # fuzzy match of: If no sheet starts with the number you typed, the tool stops
 # with this line:
-#: commands/get-possession-sheet.md:108
+#: commands/get-possession-sheet.md:115
 msgid ""
 "If there is no sheet with that exact number in the cadastral municipality, "
 "the tool stops with this line:"
@@ -1201,7 +1217,7 @@ msgstr ""
 "Ako u katastarskoj općini nema lista s tim točnim brojem, alat staje s ovim "
 "retkom:"
 
-#: commands/get-possession-sheet.md:117
+#: commands/get-possession-sheet.md:124
 msgid ""
 "Check the number on your document; the number must be complete, so try "
 "[search-possession-sheet](search-possession-sheet.md) if you only know how it"
@@ -1212,7 +1228,7 @@ msgstr ""
 "počinje. Ostale poruke objašnjene su na [stranici o greškama](../errors.md)."
 
 # fuzzy match of: [get-lr-unit](get-lr-unit.md) reads a land registry unit.
-#: commands/get-possession-sheet.md:123
+#: commands/get-possession-sheet.md:130
 msgid ""
 "[get-lr-unit](get-lr-unit.md) shows the registered owners and the charges of "
 "the land registry unit a parcel belongs to."
@@ -1222,7 +1238,7 @@ msgstr ""
 
 # fuzzy match of: [get-parcel](get-parcel.md) shows the cadastral side of the
 # same parcel, including the possessors.
-#: commands/get-possession-sheet.md:124
+#: commands/get-possession-sheet.md:131
 msgid ""
 "[get-parcel](get-parcel.md) shows one parcel in full, with its possession "
 "sheet."
@@ -1230,7 +1246,7 @@ msgstr ""
 "[get-parcel](get-parcel.md) prikazuje jednu česticu u cijelosti, s njezinim "
 "posjedovnim listom."
 
-#: commands/get-possession-sheet.md:125
+#: commands/get-possession-sheet.md:132
 msgid ""
 "[search-possession-sheet](search-possession-sheet.md) finds the sheets whose "
 "number starts with a text."

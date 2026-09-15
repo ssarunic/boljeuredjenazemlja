@@ -66,8 +66,11 @@ item, several for a portfolio) and return one entry per reference, in order.
   `include_zoning` for the building-area factor; `export` for CSV/GeoJSON
   text. Quote the caveats in `notes` (inferred party types, cadastre areas).
 - **Possession sheet by number** (its possessors and its parcels) ->
-  `get_possession_sheet` with the exact number; `find_possession_sheet` lists
-  the sheets whose number begins with a text. **KPU books** ->
+  `get_possession_sheet` with the exact number. A harmonized sheet has no
+  cadastre possessors (`possessors_in_land_registry`); its registered owners
+  come back under `owners`. `find_possession_sheet` lists the sheets whose
+  number begins with a text, at most 50, from an index that lags: an empty
+  answer is not proof the sheet does not exist. **KPU books** ->
   `find_book_of_dc`.
 - **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,
   or `get_file_status` for one file number and the unit's `institution_id`.

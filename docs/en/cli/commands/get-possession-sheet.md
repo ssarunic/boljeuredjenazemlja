@@ -84,6 +84,13 @@ the registered owners; the registered owners are in the land registry unit
 named in the **LR Unit** column, and the last line of the output shows the
 command that reads it.
 
+Some sheets are harmonized with the land registry: for them the cadastre
+records no possessors of its own and refers to the land registry unit
+instead. The tool then says **in the land registry (harmonized sheet)** on
+the **Possessors** line and, with `--show-owners`, lists the registered
+owners of that unit under **REGISTERED OWNERS (LAND REGISTRY)**; in JSON
+`possessors_in_land_registry` is `true` and the people are under `owners`.
+
 `--format json` writes the sheet as one document, with `parcels`,
 `total_parcels`, `total_area_m2` and `parcels_complete`; `--format csv`
 writes one row per parcel. Both go to a file with `--output`.

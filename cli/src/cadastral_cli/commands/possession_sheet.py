@@ -79,7 +79,7 @@ def get_possession_sheet(
 
     sheet, parcels = result.sheet, result.parcels
     if output_format == "table":
-        _print_sheet(sheet, parcels, result.total_area_m2, result.maybe_truncated, show_owners)
+        _print_sheet(result, show_owners)
         return
 
     parcel_rows = [_parcel_row(p) for p in parcels]
@@ -99,11 +99,26 @@ def get_possession_sheet(
         "is_condominium": sheet.is_condominium,
         "total_possessors": len(sheet.possessors),
     }
+    data["possessors_in_land_registry"] = result.possessors_in_land_registry
+    unit = result.lr_unit
+    data["lr_unit_number"] = unit.lr_unit_number if unit else None
+    data["main_book_id"] = unit.main_book_id if unit else None
     if show_owners:
-        data["possessors"] = [
-            {"name": p.name, "ownership": p.ownership, "address": p.address}
-            for p in sheet.possessors
-        ]
+        if result.possessors_in_land_registry:
+            data["owners"] = [
+                {
+                    "name": row["name"],
+                    "share": row.get("share"),
+                    "tax_number": row.get("tax_number"),
+                    "address": row.get("address"),
+                }
+                for row in result.owner_rows()
+            ]
+        else:
+            data["possessors"] = [
+                {"name": p.name, "ownership": p.ownership, "address": p.address}
+                for p in sheet.possessors
+            ]
     data.update(
         {
             "parcels": parcel_rows,
@@ -129,9 +144,9 @@ def _parcel_row(parcel: Any) -> dict[str, Any]:
     }
 
 
-def _print_sheet(
-    sheet: Any, parcels: list, total_area: int, truncated: bool, show_owners: bool
-) -> None:
+def _print_sheet(result: Any, show_owners: bool) -> None:
+    sheet, parcels = result.sheet, result.parcels
+    total_area, truncated = result.total_area_m2, result.maybe_truncated
     header = _("POSSESSION SHEET")
     console.print(f"\n{header}", style="bold cyan")
     console.print("=" * len(header), style="bold cyan")
@@ -139,19 +154,46 @@ def _print_sheet(
     info.add_column(_("Field"), style="bold")
     info.add_column(_("Value"))
     info.add_row(_("Sheet Number"), sheet.possession_sheet_number)
-    info.add_row(_("Sheet ID"), str(sheet.possession_sheet_id))
+    info.add_row(_("Sheet ID"), str(sheet.possession_sheet_id or "-"))
     info.add_row(
         _("Municipality"),
         f"{sheet.cad_municipality_name or ''} ({sheet.cad_municipality_reg_num or ''})".strip(),
     )
-    info.add_row(_("Possessors"), str(len(sheet.possessors)))
+    if result.possessors_in_land_registry:
+        info.add_row(_("Possessors"), _("in the land registry (harmonized sheet)"))
+    else:
+        info.add_row(_("Possessors"), str(len(sheet.possessors)))
     info.add_row(_("Parcels"), str(len(parcels)))
     info.add_row(_("Total area"), f"{total_area:,} m²")
     if sheet.is_condominium:
         info.add_row(_("Condominium"), _("Yes"))
     console.print(info)
 
-    if show_owners:
+    if show_owners and result.possessors_in_land_registry:
+        header = _("REGISTERED OWNERS (LAND REGISTRY)")
+        console.print(f"\n{header}", style="bold cyan")
+        console.print("=" * len(header), style="bold cyan")
+        table = Table(box=None, padding=(0, 2))
+        table.add_column(_("Name"), style="bold")
+        table.add_column(_("Share"), justify="right")
+        table.add_column(_("Address"))
+        for row in result.owner_rows():
+            share = row.get("share") or {}
+            table.add_row(
+                row["name"],
+                f"{share['num']}/{share['den']}" if share else "-",
+                row.get("address") or "-",
+            )
+        console.print(table)
+        console.print(
+            _(
+                "This sheet is harmonized with the land registry: the cadastre records no "
+                "possessors of its own; the registered owners above are read from the land "
+                "registry unit."
+            ),
+            style="dim",
+        )
+    elif show_owners:
         header = _("POSSESSORS")
         console.print(f"\n{header}", style="bold cyan")
         console.print("=" * len(header), style="bold cyan")

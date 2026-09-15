@@ -147,3 +147,38 @@ def test_get_possession_sheet_parcels_bundles_the_three_calls() -> None:
     assert posted[-1]["cadMunicipalityId"] == "2387"
     long_client, _ = _client(records=[NON_HARMONIZED] * 30)
     assert long_client.get_possession_sheet_parcels("877", "SAVAR").maybe_truncated is True
+
+
+HARMONIZED_STUB_BY_NUMBER = {
+    "possessionSheetNumber": "657", "cadMunicipalityId": 2387, "lrUnitId": 13122441,
+    "possessors": [],
+}
+HARMONIZED_STUB_BY_ID = {
+    "possessionSheetId": 14823725, "possessionSheetNumber": "657", "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979", "cadMunicipalityName": "SAVAR", "lrUnitId": 13122441,
+    "possessors": [],
+}
+
+
+def test_harmonized_sheet_stubs_parse_and_point_at_the_unit() -> None:
+    client, _ = _client(records=[HARMONIZED], sheet=HARMONIZED_STUB_BY_NUMBER)
+    sheet = client.get_possession_sheet_by_number("657", 2387)
+    assert sheet.possession_sheet_id is None and sheet.lr_unit_id == 13122441
+    assert sheet.possessors == [] and sheet.possessors_in_land_registry is True
+    client, _ = _client(records=[HARMONIZED], sheet=HARMONIZED_STUB_BY_ID)
+    assert client.get_possession_sheet(14823725).possessors_in_land_registry is True
+    # A sheet with possessors is never "in the land registry".
+    client, _ = _client(records=[NON_HARMONIZED])
+    assert client.get_possession_sheet_parcels("877", "SAVAR").possessors_in_land_registry is False
+
+
+def test_harmonized_sheet_parcels_bring_the_owners_from_the_inline_unit() -> None:
+    client, _ = _client(records=[HARMONIZED, HARMONIZED], sheet=HARMONIZED_STUB_BY_NUMBER)
+    result = client.get_possession_sheet_parcels("657", "SAVAR")
+    assert result.possessors_in_land_registry is True
+    assert result.lr_unit is not None and result.lr_unit.lr_unit_number == "657"
+    # The same unit inlined on two parcels is read once.
+    assert [row["name"] for row in result.owner_rows()] == ["Vlasnik 1"]
+    assert result.owner_rows()[0]["register"] == "land_registry"
+    plain, _ = _client(records=[NON_HARMONIZED])
+    assert plain.get_possession_sheet_parcels("877", "SAVAR").owner_rows() == []

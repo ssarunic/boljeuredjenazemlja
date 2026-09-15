@@ -2399,7 +2399,10 @@ class CadastralTools:
 
         Returns:
             ``sheet`` (id, number, municipality, is_condominium, total ownership),
-            ``possessors`` (a page), ``total_possessors``, ``distinct_possessors``,
+            ``possessors_in_land_registry`` (a harmonized sheet lists no
+            possessors; ``owners`` then carries the unit's registered owners),
+            ``lr_unit``, ``possessors`` (a page), ``total_possessors``,
+            ``distinct_possessors``,
             ``page``, ``parcels`` (number, id, area, land use, building parcel,
             harmonized, land-registry reference, inline owners when harmonized),
             ``parcel_count``, ``total_area_m2``, ``parcels_complete`` (False
@@ -2458,8 +2461,15 @@ class CadastralTools:
             }
             for p in result.parcels
         ]
+        lr_ref = result.lr_unit
         response: dict[str, Any] = {
             "sheet": sheet_dump,
+            "possessors_in_land_registry": result.possessors_in_land_registry,
+            "lr_unit": (
+                {"lr_unit_number": lr_ref.lr_unit_number, "main_book_id": lr_ref.main_book_id}
+                if lr_ref is not None
+                else None
+            ),
             "possessors": window,
             "total_possessors": len(sheet.possessors),
             "distinct_possessors": count_distinct_persons(
@@ -2475,6 +2485,25 @@ class CadastralTools:
                 "parcels": result.parcels_provenance.as_dict(),
             },
         }
+        if result.possessors_in_land_registry:
+            # A harmonized sheet: the cadastre lists nobody and names the unit;
+            # the registered owners are the possessors, and the parcel search
+            # already inlined sheet B, so no unit is read.
+            owners = result.owner_rows()
+            if possessor_filter:
+                owners = [o for o in owners if self._possessor_matches(o, possessor_filter)]
+            response["owners"] = owners
+            response["total_owners"] = len(owners)
+            response["distinct_owners"] = count_distinct_persons(
+                (o.get("name"), o.get("tax_number")) for o in owners
+            )
+            response["owners_note"] = (
+                "This sheet is harmonized with the land registry: the cadastre records no "
+                "possessors of its own and refers to the land-registry unit, whose registered "
+                "owners (register land_registry) are listed under owners, read from sheet B as "
+                "the parcel search inlines it. get_lr_unit gives their entries, shares in full "
+                "and the encumbrances."
+            )
         if possessor_filter:
             response["possessor_filter"] = possessor_filter
             response["matching_possessors"] = len(possessors)

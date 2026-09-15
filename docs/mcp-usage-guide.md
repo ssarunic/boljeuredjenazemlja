@@ -301,7 +301,12 @@ parcels with `parcel_id`, `parcel_number`, `area_m2`, `address`,
 `land_use`, `is_building_parcel`, `is_harmonized`, the land-registry
 reference under `lr_unit` (for `get_lr_unit`) and, on a harmonized parcel,
 `inline_owners` (the cadastre inlines sheet B there); `parcel_count` and
-`total_area_m2` sum them. `provenance` carries the sheet's and the parcel
+`total_area_m2` sum them. A sheet harmonized with the land registry lists no
+possessors of its own: `possessors_in_land_registry` is `true`, `lr_unit`
+names the unit, and `owners` carries its registered owners (register
+`land_registry`, read from the sheet B the parcel search inlines, with
+`total_owners`, `distinct_owners` and an `owners_note`); `possessor_name`
+then filters the owners. `provenance` carries the sheet's and the parcel
 list's URL and time. The parcel search behind the cadastre's web form
 honours no paging and has never been seen to return more than 30 records,
 so a list of that length comes with `parcels_complete: false` and a `note`.
@@ -309,7 +314,10 @@ so a list of that length comes with `parcels_complete: false` and a `note`.
 ### `find_possession_sheet(sheet_number, municipality)`
 
 Cadastre possession sheets whose number begins with the text: the sheet id
-and number of each. For the sheet itself, possessors and parcels, call
+and number of each, at most 50. The search index lags the change log (a
+sheet touched in 2026 was missing from it while `get_possession_sheet` found
+it by number), so an empty answer is a hint, not proof that the sheet does
+not exist. For the sheet itself, possessors and parcels, call
 `get_possession_sheet` with the exact number.
 
 ### `get_file_status(file_number, institution_id)`

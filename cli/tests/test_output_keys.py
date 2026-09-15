@@ -56,6 +56,7 @@ JSON_COMMANDS = [
     "list-books-of-dc --search ZADAR",
     "search-possession-sheet 363 -m SAVAR",
     "get-possession-sheet 363 -m SAVAR --show-owners",
+    "get-possession-sheet 657 -m SAVAR --show-owners",
     "get-lr-unit --unit-number 13998 --main-book 30783 --all",
     "get-parcel 35/1.ZGR -m SAVAR --detail full",
 ]

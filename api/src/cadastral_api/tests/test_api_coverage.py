@@ -45,7 +45,7 @@ ROOTS: list[tuple[str, bool, type[BaseModel]]] = [
     ("file_status_", False, entities.FileStatus),
     # Synthesised from the mock data in the shapes notes/oq4-possession-sheet-capture-2026-09-15.md
     # describes, until a redacted live capture of these two endpoints replaces them.
-    ("sheet_by_id", False, entities.PossessionSheet),
+    ("sheet_by_", False, entities.PossessionSheet),
     ("searched_parcels_", True, entities.SearchedParcel),
 ]
 

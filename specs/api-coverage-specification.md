@@ -138,9 +138,10 @@ attribute names stay.
 
 `GET /search-cad-parcels/possession-sheet-numbers?search=363&municipalityRegNum=334979`
 returns `key1` = `possessionSheetId` (11731543, the same id the parcel-info
-`possessionSheets[]` carry) and `value1` = sheet number. The sheet itself is
-E10/E11 and its parcels E12 (section 7a of the API specification); OQ4 is
-resolved. `find_possession_sheet(sheet_number, municipality_reg_num)` returns
+`possessionSheets[]` carry) and `value1` = sheet number, at most 50 records,
+from an index that lags the change log (sheet 877 absent on 2026-09-15). The
+sheet itself is E10/E11 and its parcels E12 (section 7a of the API
+specification); OQ4 is resolved. `find_possession_sheet(sheet_number, municipality_reg_num)` returns
 the search records, `get_possession_sheet_parcels` the sheet with its parcels.
 
 ### 4.4 E5 and E6 main books and books of deposit companies
@@ -624,6 +625,7 @@ handling is finalised. Until then the behaviour stated is the requirement.
 | OQ4 | Endpoint that returns a possession sheet by `possessionSheetId` | resolved 2026-09-15: E10 and E11 return the sheet, E12 its parcels (`notes/oq4-possession-sheet-capture-2026-09-15.md`) |
 | OQ9 | Whether E12 caps a sheet's parcel list at 30 records (the longest observed) | `get_possession_sheet_parcels` reports `maybe_truncated` at 30; the MCP tool says so |
 | OQ10 | Shape and use of `parcel-basic-info` and `parcel-list-info` (batch lookup, trimmed records) | not covered; `get_parcel_info` remains the record of reference |
+| OQ12 | Whether the harmonized stub of E10/E11 (`lrUnitId`, no possessors, by-number without `possessionSheetId`) ever carries more keys | `PossessionSheet` declares `lr_unit_id`, `possession_sheet_id` optional; fixture `sheet_by_number_harmonized.json` |
 | OQ11 | Full key set of the E10 and E12 records | the fixtures `sheet_by_id.json` and `searched_parcels_*.json` are synthesised from the mock data in the observed shapes; `SearchedParcel` declares the root fields optional and keeps anything else in `source_fields`, to be replaced by a redacted live capture (`scripts/redact_capture.py` maps `possession_sheet` and `search_parcels`) |
 | OQ5 | Whether E8 accepts a book-of-DC id as `mainBookId` | `find_book_of_dc` returns records only |
 | OQ6 | Units of type `ETAŽNI` (simple condominium) and any `lrUnitTypeId` other than 1 and 3 | `LRUnitType.OTHER` |

@@ -34,6 +34,7 @@ from ..models import (
     BookOfDCSearchResult,
     CadastralOffice,
     FileStatus,
+    LandRegistryUnit,
     LandRegistryUnitDetailed,
     MainBookSearchResult,
     MunicipalitySearchResult,
@@ -79,6 +80,39 @@ class PossessionSheetParcels:
     @property
     def total_area_m2(self) -> int:
         return sum(p.area_numeric or 0 for p in self.parcels)
+
+    @property
+    def possessors_in_land_registry(self) -> bool:
+        """A harmonized sheet: the cadastre lists no possessors, the unit's owners are they."""
+        return self.sheet.possessors_in_land_registry
+
+    @property
+    def lr_unit(self) -> LandRegistryUnit | None:
+        """The land-registry unit the sheet's parcels refer to (the first parcel's)."""
+        for parcel in self.parcels:
+            unit = parcel.resolved_lr_unit()
+            if unit is not None:
+                return unit
+        return None
+
+    def owner_rows(self) -> list[dict[str, Any]]:
+        """The registered owners the parcel search inlined (harmonized parcels), unit read once.
+
+        Rows in the canonical owner shape of ``OwnershipSheetB.owner_rows``;
+        empty when no parcel carries an inline unit with sheet B.
+        """
+        seen: set[tuple[str, int]] = set()
+        rows: list[dict[str, Any]] = []
+        for parcel in self.parcels:
+            unit = parcel.lr_unit
+            if unit is None or unit.ownership_sheet_b is None:
+                continue
+            key = (unit.lr_unit_number, unit.main_book_id)
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.extend(unit.owner_rows())
+        return rows
 
 
 class CadastralAPIClient:

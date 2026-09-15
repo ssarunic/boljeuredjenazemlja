@@ -81,6 +81,13 @@ adresama. To su posjednici prema katastru, ne upisani vlasnici; upisani vlasnici
 su u zemljišnoknjižnom ulošku iz stupca **ZK uložak**, a posljednji redak ispisa
 pokazuje naredbu koja ga čita.
 
+Neki su listovi usklađeni sa zemljišnom knjigom: za njih katastar ne bilježi
+vlastite posjednike, nego upućuje na zemljišnoknjižni uložak. Alat tada u retku
+**Posjednici** ispisuje **u zemljišnoj knjizi (usklađeni list)**, a uz
+`--show-owners` nabraja upisane vlasnike tog uloška pod **UPISANI VLASNICI
+(ZEMLJIŠNA KNJIGA)**; u JSON-u je `posjednici_u_zemljisnoj_knjizi` `true`, a
+osobe su pod `vlasnici`.
+
 `--format json` zapisuje list kao jedan dokument, s `cestice`, `broj_cestica`,
 `ukupna_povrsina_m2` i `popis_cestica_potpun`; `--format csv` zapisuje jedan
 redak po čestici. Oboje ide u datoteku uz `--output`.

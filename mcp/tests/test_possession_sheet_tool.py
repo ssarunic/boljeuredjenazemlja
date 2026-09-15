@@ -82,3 +82,48 @@ def test_missing_sheet_is_a_clear_error() -> None:
     assert "999" in str(excinfo.value) and "find_possession_sheet" in str(excinfo.value)
     with pytest.raises(ValueError):
         _run(CadastralTools(_FakeClient()).get_possession_sheet(" ", "SAVAR"))
+
+
+class _HarmonizedClient(_FakeClient):
+    def __init__(self) -> None:
+        super().__init__(parcels=0)
+        self.sheet = PossessionSheet.model_validate(
+            {"possessionSheetNumber": "657", "cadMunicipalityId": 2387, "lrUnitId": 13122441,
+             "possessors": []}
+        )
+        record = {
+            "parcelId": 6564817, "parcelNumber": "103/2", "cadMunicipalityRegNum": "334979",
+            "area": "1200", "isHarmonized": True,
+            "parcelParts": [{"name": "MASLINJAK", "area": "1200", "building": False}],
+            "lrUnit": {"lrUnitId": 13122441, "lrUnitNumber": "657", "mainBookId": 21277,
+                       "status": "A", "verificated": True, "condominiums": False,
+                       "ownershipSheetB": {"lrUnitShares": [
+                           {"lrUnitShareId": 1, "orderNumber": "1", "description": "1/2",
+                            "status": 0, "lrOwners": [{"name": "Vlasnik 1", "taxNumber": "1"}]},
+                           {"lrUnitShareId": 2, "orderNumber": "2", "description": "1/2",
+                            "status": 0, "lrOwners": [{"name": "Vlasnik 2", "taxNumber": None}]},
+                       ], "lrEntries": []}},
+        }
+        self.parcels = [SearchedParcel.model_validate(record)]
+
+
+def test_harmonized_sheet_reports_the_owners_instead_of_possessors() -> None:
+    res = _run(CadastralTools(_HarmonizedClient()).get_possession_sheet("657", "SAVAR"))
+    assert res["possessors_in_land_registry"] is True
+    assert res["sheet"]["possession_sheet_id"] is None and res["sheet"]["lr_unit_id"] == 13122441
+    assert res["possessors"] == [] and res["total_possessors"] == 0
+    assert res["lr_unit"] == {"lr_unit_number": "657", "main_book_id": 21277}
+    assert [o["name"] for o in res["owners"]] == ["Vlasnik 1", "Vlasnik 2"]
+    assert all(o["register"] == "land_registry" for o in res["owners"])
+    assert res["total_owners"] == 2 and res["distinct_owners"] == 2
+    assert "harmonized" in res["owners_note"]
+    assert res["parcels"][0]["inline_owners"] == 2
+    tools = CadastralTools(_HarmonizedClient())
+    filtered = _run(tools.get_possession_sheet("657", "SAVAR", possessor_name="vlasnik 2"))
+    assert [o["name"] for o in filtered["owners"]] == ["Vlasnik 2"]
+
+
+def test_plain_sheet_has_no_owners_block() -> None:
+    res = _run(CadastralTools(_FakeClient()).get_possession_sheet("363", "SAVAR"))
+    assert res["possessors_in_land_registry"] is False and "owners" not in res
+    assert res["lr_unit"] == {"lr_unit_number": "449", "main_book_id": 21277}

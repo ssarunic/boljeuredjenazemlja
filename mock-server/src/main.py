@@ -310,7 +310,7 @@ async def find_possession_sheet_numbers(
         _six_key_record(sheet_id, number)
         for sheet_id, number in sorted(sheets.items(), key=lambda kv: (len(kv[1]), kv[1]))
         if number.startswith(term)
-    ]
+    ][:50]  # the live search stops at 50 records
 
 
 def _filter_books(
@@ -402,8 +402,31 @@ def _unit_record(data: Any) -> dict[str, Any] | None:
     return data if isinstance(data, dict) else None
 
 
-def _sheet_with_municipality(sheet: dict[str, Any], parcel: dict[str, Any]) -> dict[str, Any]:
-    """A parcel's sheet as ``/cad/possession-sheet`` returns it: with the municipality named."""
+def _sheet_with_municipality(
+    sheet: dict[str, Any], parcel: dict[str, Any], by_number: bool = False
+) -> dict[str, Any]:
+    """A parcel's sheet as the sheet endpoints return it.
+
+    A non-harmonized sheet comes with its possessors and the municipality
+    named. A harmonized sheet (``isHarmonized`` with an ``lrUnit``) comes as
+    the stub the live server sends: no possessors and the unit's ``lrUnitId``;
+    the by-number variant drops the id and the municipality name as well.
+    """
+    if parcel.get("isHarmonized") and parcel.get("lrUnit"):
+        stub: dict[str, Any] = {
+            "possessionSheetNumber": str(sheet.get("possessionSheetNumber")),
+            "cadMunicipalityId": parcel.get("cadMunicipalityId"),
+            "lrUnitId": parcel["lrUnit"].get("lrUnitId"),
+            "possessors": [],
+        }
+        if not by_number:
+            stub = {
+                "possessionSheetId": sheet.get("possessionSheetId"),
+                **stub,
+                "cadMunicipalityRegNum": parcel.get("cadMunicipalityRegNum"),
+                "cadMunicipalityName": parcel.get("cadMunicipalityName"),
+            }
+        return stub
     record = dict(sheet)
     record.setdefault("cadMunicipalityId", parcel.get("cadMunicipalityId"))
     record.setdefault("cadMunicipalityRegNum", parcel.get("cadMunicipalityRegNum"))
@@ -479,7 +502,7 @@ async def get_possession_sheet_by_number(
     if found is None:
         return {}
     sheet, parcel = found
-    return _sheet_with_municipality(sheet, parcel)
+    return _sheet_with_municipality(sheet, parcel, by_number=True)
 
 
 @app.get("/cad/cad-parcels-search-data")

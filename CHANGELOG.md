@@ -171,6 +171,15 @@ number and one tag.
 
 ### Fixed
 
+- SDK, CLI, MCP: a possession sheet harmonized with the land registry comes
+  back from the cadastre as a stub without possessors (and, by number,
+  without its id) that names the land-registry unit; the `PossessionSheet`
+  model rejected it. `possession_sheet_id` is optional now, `lr_unit_id` is
+  declared, `possessors_in_land_registry` tells the stub apart, and
+  `get_possession_sheet` (MCP and CLI) lists the unit's registered owners
+  from the sheet B the parcel search inlines, labelled as land-registry
+  owners. The mock server returns the stub for its harmonized sheets and
+  caps the sheet-number search at 50 records, as the live one does.
 - MCP: `distinct_possessors` compared title-cased names, so a possessor
   written "ŠARUNIĆ" on one sheet and "SARUNIC" on another counted twice; it
   now uses the shared person identity (`count_distinct_persons`).

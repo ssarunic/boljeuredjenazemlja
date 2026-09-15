@@ -918,8 +918,12 @@ def create_mcp_server() -> MCPServer:
         (three requests). The number is matched exactly; find_possession_sheet
         lists the sheets whose number begins with a text. Possessors are
         cadastre possessors, not land-registry owners: each parcel row carries
-        the land-registry unit reference for get_lr_unit, and a harmonized
-        parcel also says how many owners the cadastre inlines (``inline_owners``).
+        the land-registry unit reference for get_lr_unit. A sheet harmonized
+        with the land registry lists no possessors of its own
+        (``possessors_in_land_registry`` true): its registered owners come
+        back under ``owners`` (register land_registry, read from the sheet B
+        the parcel search inlines) with ``owners_note``, and ``lr_unit`` names
+        the unit for get_lr_unit.
 
         Returns:
             ``sheet`` (possession_sheet_id, possession_sheet_number,
@@ -966,9 +970,12 @@ def create_mcp_server() -> MCPServer:
         sheet number in a cadastral municipality (katastar, katastarska općina).
 
         The records carry the possession sheet id and the sheet number, for
-        every sheet whose number begins with the text. For a sheet's
-        possessors (posjednici) and parcels call get_possession_sheet with the
-        exact number.
+        every sheet whose number begins with the text, at most 50 of them.
+        The search index lags the change log: a sheet touched recently can be
+        missing here while get_possession_sheet finds it by number, so an
+        empty answer is a hint, not proof that the sheet does not exist. For a
+        sheet's possessors (posjednici) and parcels call get_possession_sheet
+        with the exact number.
 
         Returns:
             Dictionary with ``possession_sheets`` (possession_sheet_id,

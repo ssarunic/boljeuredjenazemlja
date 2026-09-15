@@ -683,8 +683,12 @@ GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=363&municipal
 ```
 
 `key1` is the `possessionSheetId` that parcel-info `possessionSheets[]` carry,
-`value1` the sheet number (prefix match). The sheet itself is read with the
-endpoints of section 7a.
+`value1` the sheet number (prefix match). The answer stops at 50 records
+(`search=8` in k.o. Savar returns exactly 50, ending at 843), and the index
+lags the change log: sheet 877, touched in change log 13/2026, is absent
+(`search=877` is `[]`, `search=87` skips 872, 873 and 877) although the sheet
+endpoints and `search-parcels` find it. An empty search is therefore a hint,
+not proof of absence. The sheet itself is read with the endpoints of section 7a.
 
 ### 7a. Possession Sheet and the Parcels of a Sheet
 
@@ -699,6 +703,23 @@ included, plus `cadMunicipalityId`, `cadMunicipalityRegNum` and
 **`GET /cad/possession-sheet-by-number?possessionSheetNumber=877&cadMunicipalityId=2387`**
 returns the same, by exact number and the *internal* municipality id
 (`key1` of the municipality search, not the registration number).
+
+For a sheet **harmonized** with the land registry both sheet endpoints return
+a stub without possessors that names the unit instead (the web app branches
+on `lrUnitId`):
+
+```json
+possession-sheet-by-number?possessionSheetNumber=657&cadMunicipalityId=2387
+  {"possessionSheetNumber":"657","cadMunicipalityId":2387,"lrUnitId":13122441,"possessors":[]}
+possession-sheet?possessionSheetId=14823725
+  {"possessionSheetId":14823725,"possessionSheetNumber":"657","cadMunicipalityId":2387,
+   "cadMunicipalityRegNum":"334979","cadMunicipalityName":"SAVAR","lrUnitId":13122441,"possessors":[]}
+```
+
+The by-number stub drops `possessionSheetId` and the municipality name, so
+`PossessionSheet.possession_sheet_id` is optional and `lr_unit_id` declared;
+`possessors_in_land_registry` tells the stub apart. The registered owners are
+those of the unit, which `search-parcels` inlines on each harmonized parcel.
 
 **`GET /cad/cad-parcels-search-data?possessionSheetId=16179481`** returns
 `{"possessionSheetNumber":"877","municipalityNumber":"334979"}`.

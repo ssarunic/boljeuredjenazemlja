@@ -384,11 +384,20 @@ class PossessionSheet(SourceModel):
     A parcel can have multiple possession sheets, each with multiple possessors.
     """
 
-    possession_sheet_id: int = Field(
-        alias="possessionSheetId", description="Unique possession sheet identifier"
+    possession_sheet_id: int | None = Field(
+        default=None,
+        alias="possessionSheetId",
+        description="Unique possession sheet identifier (absent on the by-number stub)",
     )
     possession_sheet_number: str = Field(
         alias="possessionSheetNumber", description="Sheet reference number"
+    )
+    # On a harmonized sheet the two sheet endpoints return a stub: no
+    # possessors, and the id of the land-registry unit the possession follows.
+    lr_unit_id: int | None = Field(
+        default=None,
+        alias="lrUnitId",
+        description="Land-registry unit id on a harmonized sheet, whose possessors are its owners",
     )
     cad_municipality_id: int = Field(
         alias="cadMunicipalityId", description="Municipality internal ID"
@@ -412,6 +421,16 @@ class PossessionSheet(SourceModel):
     provenance: Provenance | None = Field(
         default=None, description="Register, URL and time of retrieval (set by the client)"
     )
+
+    @property
+    def possessors_in_land_registry(self) -> bool:
+        """Whether the sheet is a harmonized stub: its possessors are the unit's owners.
+
+        For a harmonized sheet the cadastre's sheet endpoints list no
+        possessors and name the land-registry unit (``lr_unit_id``) instead;
+        the registered owners of that unit are the possessors.
+        """
+        return self.lr_unit_id is not None and not self.possessors
 
     @computed_field  # type: ignore[misc]
     @property
