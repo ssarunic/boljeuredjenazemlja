@@ -75,13 +75,31 @@ class PersonRecord(BaseModel):
         return self.register_
 
 
+MatchVia = Literal["tax_number", "name", "name_reordered", "name_loose", "tax_number_extension"]
+
+
 class MatchedPerson(BaseModel):
     """A person found in both registers."""
 
     possessor: PersonRecord
     owner: PersonRecord
-    fuzzy: bool = Field(description="Matched on the loose key only (a relative's name differs)")
+    fuzzy: bool = Field(
+        description="Matched on the name alone: a relative written differently, or another order"
+    )
     by_tax_number: bool = Field(description="Matched on the tax number (OIB)")
+    via: MatchVia = Field(
+        default="name",
+        description=(
+            "How the pair was found: tax_number, name (the same words in the same order), "
+            "name_reordered (the same words in another order), name_loose (a relative's "
+            "name differs or is missing on one side), tax_number_extension (another share "
+            "of an owner already matched, with the same OIB)"
+        ),
+    )
+    extended_from: str | None = Field(
+        default=None,
+        description="The share order number the match was extended from (tax_number_extension)",
+    )
     shares_agree: bool | None = Field(
         default=None,
         description="Whether both registers give the same share; None when one gives none",
@@ -219,10 +237,22 @@ def _owner_not_possessor(owner: PersonRecord) -> Blocker:
 
 
 def _comparison_blockers(
-    matched: list[MatchedPerson], owners_only: list[PersonRecord], area_check: AreaCheck
+    matched: list[MatchedPerson],
+    owners_only: list[PersonRecord],
+    area_check: AreaCheck,
+    estate_shares: set[str | None],
 ) -> list[Blocker]:
-    """The blockers only a comparison of the two registers can see."""
-    blockers = [_owner_not_possessor(owner) for owner in owners_only]
+    """The blockers only a comparison of the two registers can see.
+
+    An owner whose share is already a ``likely_estate`` blocker gets no
+    ``owner_not_possessor`` row: a deceased owner not appearing as possessor
+    is expected, not a second risk.
+    """
+    blockers = [
+        _owner_not_possessor(owner)
+        for owner in owners_only
+        if owner.share_order_number not in estate_shares
+    ]
     blockers.extend(
         Blocker(
             kind="fuzzy_owner_match",
@@ -233,9 +263,15 @@ def _comparison_blockers(
             source="register_comparison",
             description=(
                 f"owner {pair.owner.name} matched possessor {pair.possessor.name} on the name "
-                f"without the relative's name; confirm it is one person"
+                f"alone: "
+                + (
+                    "the name is written in another order and nothing corroborates it"
+                    if pair.via == "name_reordered"
+                    else "the relative's name is written differently or missing on one side"
+                )
+                + "; confirm it is one person"
             ),
-            basis="the loose person key matched, the strict one did not",
+            basis=f"matched via {pair.via}; the strict person key did not match",
             beneficiary=pair.owner.name,
         )
         for pair in matched
@@ -345,6 +381,8 @@ def _match(
                 fuzzy=pair.fuzzy,
                 by_tax_number=pair.by_tax_number,
                 shares_agree=None,
+                via="tax_number_extension",
+                extended_from=pair.owner.share_order_number,
             )
         )
     return matched, unmatched_p, unmatched_o
@@ -352,9 +390,13 @@ def _match(
 
 def _pair(possessor, owner, key_p, key_o, fuzzy: bool) -> MatchedPerson:  # type: ignore[no-untyped-def]
     shares_agree = _shares_agree(possessor.share, owner.share)
+    by_tax_number = bool(key_p.tax_number and key_o.tax_number)
+    via: MatchVia = "tax_number" if by_tax_number else "name"
+    if fuzzy:
+        via = "name_reordered" if plain_reorder(key_p, key_o) else "name_loose"
     # A name written in another order with no relative on either side agrees
     # in full; when the shares or the addresses agree too it is not a guess.
-    if fuzzy and plain_reorder(key_p, key_o):
+    if via == "name_reordered":
         addresses = fold_text(possessor.address or ""), fold_text(owner.address or "")
         if shares_agree or (all(addresses) and addresses[0] == addresses[1]):
             fuzzy = False
@@ -362,8 +404,9 @@ def _pair(possessor, owner, key_p, key_o, fuzzy: bool) -> MatchedPerson:  # type
         possessor=possessor,
         owner=owner,
         fuzzy=fuzzy,
-        by_tax_number=bool(key_p.tax_number and key_o.tax_number),
+        by_tax_number=by_tax_number,
         shares_agree=shares_agree,
+        via=via,
     )
 
 
@@ -462,7 +505,8 @@ def compare_registers(
             relationship = "disjoint"
     if any(m.fuzzy for m in matched):
         notes.append(
-            "a fuzzy match rests on the name without the relative's name (POK./UD.); confirm it"
+            "a fuzzy match rests on the name alone (a relative's name written differently or "
+            "missing on one side, or the words in another order); confirm it"
         )
 
     # Distinct people across both registers: a matched pair is one person.
@@ -487,9 +531,12 @@ def compare_registers(
     sale_blockers: SaleBlockers | None = None
     flag_counts: dict[str, int] | None = None
     if lr_unit is not None:
+        unit_blockers = detect_blockers(lr_unit, plombe_detail=plombe_detail)
+        estate_shares = {
+            b.share_order_number for b in unit_blockers.blockers if b.kind == "likely_estate"
+        }
         sale_blockers = merge_blockers(
-            detect_blockers(lr_unit, plombe_detail=plombe_detail),
-            _comparison_blockers(matched, only_o, area_check),
+            unit_blockers, _comparison_blockers(matched, only_o, area_check, estate_shares)
         )
         flag_counts = count_owner_flags(o.flags for o in owners)
         if flag_counts["likely_deceased"] or flag_counts["address_abroad"]:
@@ -516,6 +563,11 @@ def compare_registers(
         area_check=area_check,
         sale_blockers=sale_blockers,
         owner_flag_counts=flag_counts,
-        summary=_summary(relationship, len(matched), len(only_p), len(only_o)),
+        summary=_summary(
+            relationship,
+            count_distinct_persons((m.owner.name, m.owner.tax_number) for m in matched),
+            len(only_p),
+            len(only_o),
+        ),
         notes=notes,
     )

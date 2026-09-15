@@ -49,6 +49,7 @@ from .persons import (
 )
 from .registers import (
     MatchedPerson,
+    MatchVia,
     PersonRecord,
     RegisterComparison,
     compare_registers,
@@ -111,6 +112,7 @@ __all__ = [
     "resolve_severities",
     "unit_key",
     "verdict_for",
+    "MatchVia",
     "MatchedPerson",
     "PartyTypeInference",
     "PersonKey",

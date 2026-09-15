@@ -204,6 +204,7 @@ def test_a_cadastre_case_behind_a_plomba_is_named() -> None:
     first = result.blockers[0]
     assert first.file_number == "Z-100/2026"
     assert "cadastre administrative case" in first.basis and "survey" in first.basis
+    assert first.description == "pending request Z-100/2026: cadastre case (UP/I 932)"
     assert result.blockers[1].basis == "a request for registration is pending on the unit"
 
 

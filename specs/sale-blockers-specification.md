@@ -191,8 +191,11 @@ counts never merge on a guess. Matching is per person: an owner on several
 shares is several records, and once one of them matches a possessor the
 others with the same OIB match the same possessor, so a person is never
 both matched and owner only (the assembly counts the possessor's share
-once); the same name without an OIB stays owner only. With `plombe_detail`
-the comparison names the pending requests.
+once); the same name without an OIB stays owner only. Each pair carries
+`via` (how it was found) and, for an extension, `extended_from`, so a reader
+can tell a safe extension from a namesake. An owner whose share is already a
+`likely_estate` blocker gets no `owner_not_possessor` row. With
+`plombe_detail` the comparison names the pending requests.
 
 ## 6. Limits
 

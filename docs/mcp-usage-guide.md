@@ -392,7 +392,8 @@ Each successful entry has `parcel_number`, `municipality_code`, `lr_unit`,
   `land_registry_unavailable` (the unit could not be read; the entry then
   also carries `land_registry_error` with its `error_type`).
 - `summary`: the same in a sentence.
-- `matched` (pairs with `fuzzy`, `by_tax_number`, `shares_agree`),
+- `matched` (pairs with `fuzzy`, `by_tax_number`, `shares_agree`, `via`
+  and `extended_from`: how the pair was found),
   `possessors_only`, `owners_only`, and the full `possessors` and `owners`
   lists; every person carries `name`, `register`, `share`, `tax_number`,
   `address` and `party_type_inferred` (`individual`, `company`, `state`,

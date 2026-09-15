@@ -223,6 +223,16 @@ number and one tag.
   a mismatch only above the 5 % tolerance and above 20 m²
   (`DEFAULT_AREA_MIN_DIFFERENCE_M2`), so digitisation noise on a small
   building parcel is not a finding.
+- SDK: each matched pair says how it was found, `via` (`tax_number`, `name`,
+  `name_reordered`, `name_loose`, `tax_number_extension`) and, for an
+  extension, `extended_from` (the share it was extended from), so a safe
+  extension can be told from a namesake later; the comparison summary counts
+  people, not pairs; an owner whose share is already a `likely_estate`
+  blocker gets no `owner_not_possessor` row (a deceased owner not appearing
+  as possessor is expected, not a second risk); the fuzzy-match wording says
+  which of the two loose rules applied; `plombe_detail_included` is true
+  whenever the detail was asked for, and a pending request resolved to a
+  cadastre case is described as one.
 - MCP: `compare_registers` and `build_assembly` take `include_plombe_detail`
   (the plomba detail fetched once per unit), so a "blocked" parcel says what
   the pending request is.

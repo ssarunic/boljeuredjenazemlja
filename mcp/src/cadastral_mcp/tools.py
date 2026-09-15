@@ -1719,8 +1719,12 @@ class CadastralTools:
                 # The plomba detail is fetched before shaping so the sale
                 # blockers can say what each pending request is.
                 statuses: dict[str, FileStatus] | None = None
-                if include_plombe_detail and lr_unit.has_pending_plombe():
-                    statuses = self.client.get_plombe_details(lr_unit)
+                if include_plombe_detail:
+                    statuses = (
+                        self.client.get_plombe_details(lr_unit)
+                        if lr_unit.has_pending_plombe()
+                        else {}
+                    )
                 data = self._shape_lr_unit(
                     lr_unit,
                     detail,
@@ -1730,7 +1734,7 @@ class CadastralTools:
                     condominium_unit=condominium_unit,
                     plombe_detail=statuses,
                 )
-                if statuses is not None:
+                if statuses:
                     data["plombe_detail"] = self._plombe_detail(statuses)
             except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
                 entry.update(status="error", **error_fields(e))
@@ -1949,10 +1953,14 @@ class CadastralTools:
         parcel, geometry, _search = await self._load_parcel(ref)
         unit, unit_error = self._unit_of(parcel, units)
         detail: dict[str, FileStatus] | None = None
-        if plombe is not None and unit is not None and unit.has_pending_plombe():
+        if plombe is not None and unit is not None:
+            # Asked for: an empty map when the unit has no plomba, so the
+            # answer says the detail was included with nothing to fetch.
             key = (str(unit.lr_unit_number), int(unit.main_book_id))
             if key not in plombe:
-                plombe[key] = self.client.get_plombe_details(unit)
+                plombe[key] = (
+                    self.client.get_plombe_details(unit) if unit.has_pending_plombe() else {}
+                )
             detail = plombe[key]
         comparison = compare_registers(
             parcel,

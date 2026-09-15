@@ -68,9 +68,13 @@ def test_same_people_in_both_registers() -> None:
     assert result.possessors_only == [] and result.owners_only == []
     second = [m for m in result.matched if m.owner.name == "Vlasnik 116"]
     assert len(second) == 2 and second[0].possessor is second[1].possessor
+    assert second[0].via == "name" and second[0].extended_from is None
+    assert second[1].via == "tax_number_extension"
+    assert second[1].extended_from == second[0].owner.share_order_number
     assert second[1].shares_agree is None
     assert result.distinct_people == 3
-    assert "same 4 person(s)" in result.summary
+    # Four pairs, three people: the summary counts people.
+    assert "same 3 person(s)" in result.summary
     assert not any(b.kind == "owner_not_possessor" for b in result.sale_blockers.blockers)
 
 
@@ -247,12 +251,18 @@ def test_the_savar_pattern_of_owners_yields_the_expected_severities() -> None:
     by_kind: dict[str, set[tuple[str | None, str]]] = {}
     for b in result.sale_blockers.blockers:
         by_kind.setdefault(b.kind, set()).add((b.beneficiary, b.severity))
+    # A deceased owner not appearing as possessor is expected: the estate row
+    # stands for that share, without an owner_not_possessor row beside it.
     assert by_kind["owner_not_possessor"] == {
         ("TESTIĆ MILIVOJ", "informational"),
         ("VUKIĆ MILENA", "informational"),
-        ("DRAGIĆ BISERA Ž. MIRA", "conditional"),
     }
     assert by_kind["fuzzy_owner_match"] == {("TESTIĆ AUGUSTIN POK. BOŽE", "informational")}
+    fuzzy = next(b for b in result.sale_blockers.blockers if b.kind == "fuzzy_owner_match")
+    assert "written differently" in fuzzy.description and "name_loose" in fuzzy.basis
+    # Conditional: the two estates and the fixture's own area mismatch.
+    assert result.sale_blockers.counts == {"blocking": 1, "conditional": 3, "informational": 3}
+    assert any(b.kind == "area_mismatch" for b in result.sale_blockers.blockers)
     # The matched legacy half is an estate: a blocker of its own, share scoped.
     assert by_kind["likely_estate"] == {
         ("TESTIĆ AUGUSTIN POK. BOŽE", "conditional"),
@@ -279,19 +289,30 @@ def test_owner_not_possessor_is_informational_for_a_recent_owner_with_an_oib() -
     # Unit 449's owners all carry an OIB and a 2025/2026 entry: the cadastre lags.
     assert kinds and all(severity == "informational" for _, severity in kinds)
     assert result.sale_blockers.verdict == "blocked"  # the plomba, not the owners
-    # Strip one owner's OIB and entry: a legacy record, a possible third party.
+    # Strip one owner's OIB and entry: a legacy record, an estate. The share
+    # gets a likely_estate row and no owner_not_possessor row.
     share = unit.ownership_sheet_b.lr_unit_shares[0]
     share.owners[0].tax_number = None
     share.owners[0].entry = None
     result = compare_registers(parcel, unit)
-    legacy = [
-        b
-        for b in result.sale_blockers.blockers
-        if b.kind == "owner_not_possessor" and b.beneficiary == share.owners[0].name
-    ]
-    assert legacy and legacy[0].severity == "conditional"
+    mine = [b for b in result.sale_blockers.blockers if b.beneficiary == share.owners[0].name]
+    assert [b.kind for b in mine] == ["likely_estate"]
+    assert mine[0].severity == "conditional" and mine[0].share_order_number == share.order_number
     assert "legacy" in result.owners[0].flags.likely_deceased.basis
     assert result.owner_flag_counts["likely_deceased"] == 1
+    # Old-entry owners keep a conditional owner_not_possessor row (no estate row
+    # is raised only for the flagged ones).
+    share.owners[0].tax_number = "00000000010"
+    old_owner = unit.ownership_sheet_b.lr_unit_shares[1].owners[0]
+    old_owner.tax_number = None
+    old_owner.entry = None
+    result = compare_registers(parcel, unit)
+    kinds = {
+        b.beneficiary: b.kind
+        for b in result.sale_blockers.blockers
+        if b.source in ("ownership", "register_comparison") and b.kind != "fuzzy_owner_match"
+    }
+    assert kinds[old_owner.name] == "likely_estate"
 
 
 def test_an_area_mismatch_is_a_conditional_blocker() -> None:
@@ -318,3 +339,7 @@ def test_plombe_detail_reaches_the_comparison_blockers() -> None:
     pending = [b for b in result.sale_blockers.blockers if b.kind == "pending_entry"]
     assert pending[0].request_kind == "Rješenje o nasljeđivanju"
     assert result.sale_blockers.plombe_detail_included is True
+    # Asked for on a unit without plombe: included, with nothing fetched.
+    unit.active_plumbs = []
+    assert compare_registers(parcel, unit, plombe_detail={}).sale_blockers.plombe_detail_included
+    assert compare_registers(parcel, unit).sale_blockers.plombe_detail_included is False

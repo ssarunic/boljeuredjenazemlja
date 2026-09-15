@@ -225,7 +225,10 @@ class SaleBlockers(BaseModel):
     scope_filter: dict[str, str] | None = Field(
         default=None, description="{owner_name} or {condominium_unit} when narrowed"
     )
-    plombe_detail_included: bool = False
+    plombe_detail_included: bool = Field(
+        default=False,
+        description="The plomba detail was asked for (true with nothing to fetch as well)",
+    )
     notes: list[str] = Field(default_factory=list)
 
 
@@ -401,17 +404,17 @@ class _Builder:
                 reference = " ".join(
                     filter(None, [status.registration_number, status.application_content])
                 )
+                kind_text = status.application_content or "kind unknown"
                 if _CADASTRE_CASE_RE.search(reference):
                     fields["basis"] = (
                         "the file is a cadastre administrative case (UP/I 932: survey and "
                         "cadastre), most often a survey being implemented; a parcel's number "
                         "or area may be about to change"
                     )
+                    if status.application_content is None:
+                        kind_text = "cadastre case (UP/I 932)"
                 fields.update(
-                    description=(
-                        f"pending request {plumb.file_number}: "
-                        f"{status.application_content or 'kind unknown'}"
-                    ),
+                    description=f"pending request {plumb.file_number}: {kind_text}",
                     request_kind=status.application_content,
                     status_description=status.status_description,
                     dates={
