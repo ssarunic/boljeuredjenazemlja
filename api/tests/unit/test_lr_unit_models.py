@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import sys
+
 # Sample LR unit response from mock server
 lr_unit_response_data = {
     "lrUnitId": 13122553,
@@ -469,4 +471,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

@@ -1288,8 +1288,10 @@ class CadastralTools:
         sheet, sheet_size = cls._largest_sheet(result)
         options = [
             'detail="ownership" for the owners without the other sheets',
-            'detail="shares", detail="parcels" or detail="encumbrances" for one sheet '
-            "at a time, each paged with offset and limit",
+            (
+                'detail="shares", detail="parcels" or detail="encumbrances" for one sheet '
+                "at a time, each paged with offset and limit"
+            ),
             'detail="summary" for the totals alone',
         ]
         # A share cap only helps while sheet B is what makes the dump large;

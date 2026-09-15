@@ -61,17 +61,14 @@ def test_get_lr_unit_from_parcel_integration_sets_derived_flag(monkeypatch) -> N
     )
     unit = LandRegistryUnitDetailed.model_validate(raw[0] if isinstance(raw, list) else raw)
 
-    client = CadastralAPIClient(base_url="http://localhost:0")
-    monkeypatch.setattr(client, "get_parcel_by_number", lambda pn, muni: parcel)
-    monkeypatch.setattr(
-        client,
-        "get_lr_unit_detailed",
-        lambda lr_unit_number, main_book_id, historical_overview=False: unit,
-    )
-    try:
+    with CadastralAPIClient(base_url="http://localhost:0") as client:
+        monkeypatch.setattr(client, "get_parcel_by_number", lambda pn, muni: parcel)
+        monkeypatch.setattr(
+            client,
+            "get_lr_unit_detailed",
+            lambda lr_unit_number, main_book_id, historical_overview=False: unit,
+        )
         result = client.get_lr_unit_from_parcel("1122/1", "334979")
-    finally:
-        client.close()
 
     assert result.lr_unit_number == "449"
     assert result.lr_unit_derived_from_links is True
