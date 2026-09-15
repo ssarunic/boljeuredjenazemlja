@@ -701,6 +701,75 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
+    async def build_assembly(
+        parcels: list[ParcelRef],
+        include_zoning: bool = False,
+        weights: dict[str, float] | None = None,
+        export: str | None = None,
+        persons_offset: int = 0,
+        persons_limit: int | None = 50,
+    ) -> dict[str, Any]:
+        """
+        Land-assembly analysis (okrupnjavanje zemljišta, due diligence) of a
+        set of parcels: who owns or possesses what (the persons x parcels
+        matrix), the persons ranked by the area they control and grouped by
+        surname, and the parcels ranked by how easy they look to acquire,
+        with the weights shown so the rule can be questioned and changed.
+
+        Reads each parcel's cadastre record, its land-registry unit (shared
+        units once) and the register comparison; with include_zoning also
+        its building-areas screening. At most 50 parcels per call. The score
+        is a weighted share of yes/no factors: single_owner,
+        owner_is_possessor, no_encumbrances, no_pending_plombe,
+        in_building_area (only with include_zoning); a factor that could not
+        be evaluated is left out rather than counted against the parcel, and
+        each parcel's ``factors`` and ``notes`` say which. Party types are
+        inferred from names. Controlled areas use cadastre areas.
+
+        Args:
+            parcels: Up to 50 parcel references (parcel_id, or parcel_number +
+                municipality), as for get_parcel
+            include_zoning: Read each parcel's zoning as well (one WFS lookup
+                per parcel; slower)
+            weights: Override any factor weight, e.g. {"in_building_area": 0.4}
+            export: "parcels_csv" | "persons_csv" | "matrix_csv" (CSV text
+                under export.text) | "geojson" (a FeatureCollection of the
+                parcels with an outline, scores in the properties; parcels
+                without one listed under export.skipped)
+            persons_offset: Skip this many ranked persons
+            persons_limit: Return at most this many (default 50; null for all)
+
+        Returns:
+            ``totals`` (parcel_count, total_area_m2, area_by_land_use,
+            area_by_relationship, area_by_zoning_status, distinct_people,
+            distinct_owners, distinct_possessors, party_types,
+            public_body_parcels, fuzzy_matches, parcels_with_encumbrances,
+            parcels_with_pending_plombe, parcels_in_building_area),
+            ``parcels`` (easiest first: relationship, distinct owners and
+            possessors, encumbrances, plombe, zoning, area_mismatch, score,
+            map_url, provenance), ``persons`` (a page of the ranking:
+            owner_of, possessor_of, owned / possessed / controlled area,
+            party_type_inferred) with ``persons_page``, ``surname_groups``,
+            ``matrix`` (person_key, parcel_number, role, shares, fuzzy),
+            ``scores`` (factors and notes per parcel), ``weights``,
+            ``notes``, ``failed`` (references that could not be read, with
+            error_type), ``units_fetched`` and ``export`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: build_assembly({len(parcels)} parcels, zoning={include_zoning}, "
+            f"export={export})"
+        )
+        return await tools_handler.build_assembly(
+            list(parcels),
+            include_zoning=include_zoning,
+            weights=weights,
+            export=export,
+            persons_offset=persons_offset,
+            persons_limit=persons_limit,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
     async def find_parcels_in_area(
         municipality: str,
         bbox: list[float] | None = None,
@@ -902,7 +971,7 @@ def create_mcp_server() -> MCPServer:
     logger.info(
         "Available tools: find_parcel, get_parcel, resolve_municipality, "
         "list_municipalities, get_parcel_geometry, get_parcel_zoning, "
-        "compare_registers, find_parcels_in_area, find_parcel_neighbours, "
+        "compare_registers, build_assembly, find_parcels_in_area, find_parcel_neighbours, "
         "list_cadastral_offices, get_lr_unit, get_file_status, find_main_book, "
         "find_book_of_dc, find_possession_sheet, download_municipality_gis"
     )

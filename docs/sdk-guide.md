@@ -390,6 +390,39 @@ name and always marked as an inference: enough to estimate how many public
 bodies and companies a set of parcels involves, not to state a fact about
 one owner.
 
+`build_assembly` turns a set of such records into the tables of a land
+assembly: the persons x parcels matrix, the persons ranked by controlled
+area and grouped by surname, and the parcels ranked by a transparent
+ease-of-acquisition score:
+
+```python
+from cadastral_api import AssemblyInput, build_assembly
+from cadastral_api.analysis import DEFAULT_WEIGHTS, parcels_csv, persons_csv
+
+items = []
+for number in ["103/2", "45", "396/1"]:
+    parcel = client.get_parcel_by_number(number, "334979")
+    unit = client.get_lr_unit_from_parcel(number, "334979")   # or None when not in the registry
+    zoning = client.get_parcel_zoning(number, "334979")        # optional
+    items.append(AssemblyInput(parcel, unit, compare_registers(parcel, unit), zoning))
+
+analysis = build_assembly(items, weights={**DEFAULT_WEIGHTS, "in_building_area": 0.3})
+for summary in analysis.parcels:          # easiest to acquire first
+    print(summary.parcel_number, summary.score, summary.relationship)
+for person in analysis.persons[:10]:      # largest controlled area first
+    print(person.name, person.controlled_area_m2, person.owner_of, person.possessor_of)
+analysis.surname_groups, analysis.matrix, analysis.totals, analysis.scores[0].factors
+open("parcels.csv", "w").write(parcels_csv(analysis))
+```
+
+The score is a weighted share of yes/no factors (`single_owner`,
+`owner_is_possessor`, `no_encumbrances`, `no_pending_plombe`,
+`in_building_area`); a factor that cannot be evaluated (no unit, no zoning)
+is left out of the numerator and the denominator, and each `AcquisitionScore`
+lists its `factors`, `weights` and `notes`. Controlled areas use cadastre
+areas and an owner role without a registered share counts the whole parcel;
+`analysis.notes` repeats these caveats for whoever reads the tables.
+
 ## Things to know about the data
 
 - Ownership fractions are optional. Many possessor records have no `ownership`

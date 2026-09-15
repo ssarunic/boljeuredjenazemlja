@@ -99,6 +99,22 @@ number and one tag.
   read, `land_registry_error`; units shared by several parcels are read
   once; `relationships` and `people` (distinct possessors, owners and people
   across the set) summarise the whole set.
+- SDK: `build_assembly(items)` and `acquisition_score(item)` in
+  `cadastral_api.analysis`: the persons x parcels matrix (long form), the
+  persons ranked by controlled area (share x cadastre area, plus the parcels
+  only possessed) and grouped by surname, and an ease-of-acquisition score
+  per parcel as a weighted share of yes/no factors (single owner, owner is
+  possessor, no encumbrances, no pending plombe, in a building area) whose
+  weights are returned and overridable; a factor that cannot be evaluated is
+  left out of the score rather than counted against the parcel. Totals by
+  land use, relationship and zoning status. `parcels_csv`, `persons_csv`,
+  `matrix_csv` and `parcels_geojson` export the tables as text or a
+  FeatureCollection.
+- MCP: `build_assembly(parcels, include_zoning, weights, export,
+  persons_offset, persons_limit)`: the analysis over up to 50 parcels, units
+  read once, zoning optional (a failed zoning lookup is a note, not an
+  error), references that could not be read listed under `failed`, and one
+  export at a time under `export`.
 - MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
   cadastre area against the cadastral map's graphical area and the
   land-register area on the parcel link), every `get_lr_unit` entry

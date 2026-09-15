@@ -6,7 +6,18 @@ import logging
 from typing import Any
 
 from cadastral_api import CadastralAPIClient, GMLParser
-from cadastral_api.analysis import check_area, compare_registers, count_distinct_persons
+from cadastral_api.analysis import (
+    AssemblyInput,
+    build_assembly,
+    check_area,
+    compare_registers,
+    count_distinct_persons,
+    matrix_csv,
+    parcels_csv,
+    parcels_geojson,
+    persons_csv,
+    resolve_weights,
+)
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.gis import IndexedParcel, ParcelIndex
 from cadastral_api.gis.geometry_ops import parse_ring
@@ -1808,6 +1819,162 @@ class CadastralTools:
             return units[ref], None
         except CadastralAPIError as e:
             return None, e
+
+    #: Parcels one assembly analysis may cover: each costs a cadastre record and,
+    #: usually, a land-registry unit (20 s or more for a large condominium).
+    MAX_ASSEMBLY_PARCELS = 50
+
+    #: What ``build_assembly`` can export next to its JSON.
+    VALID_EXPORTS = ("parcels_csv", "persons_csv", "matrix_csv", "geojson")
+
+    async def build_assembly(
+        self,
+        parcels: list[ParcelRef | dict[str, Any]],
+        include_zoning: bool = False,
+        weights: dict[str, float] | None = None,
+        export: str | None = None,
+        persons_offset: int = 0,
+        persons_limit: int | None = 50,
+    ) -> dict[str, Any]:
+        """
+        Land-assembly analysis of a set of parcels: the persons x parcels
+        matrix, the persons ranked by controlled area and grouped by surname,
+        and the parcels ranked by ease of acquisition, with the weights shown.
+
+        For every reference the cadastre record, the land-registry unit (read
+        once per unit) and the register comparison are gathered; with
+        ``include_zoning`` the building-areas screening as well (one WFS
+        lookup per parcel). ``build_assembly`` in the SDK does the rest.
+
+        Args:
+            parcels: Up to ``MAX_ASSEMBLY_PARCELS`` parcel references.
+            include_zoning: Read each parcel's zoning for the building-area factor.
+            weights: Override any of the score's factor weights.
+            export: "parcels_csv" | "persons_csv" | "matrix_csv" | "geojson"
+                to add that table as text (or a FeatureCollection) under
+                ``export``.
+            persons_offset: Skip this many ranked persons.
+            persons_limit: Return at most this many (default 50; None for all).
+
+        Returns:
+            ``totals``, ``parcels`` (easiest first, with ``score``),
+            ``persons`` (a page of the ranking, with ``persons_page``),
+            ``surname_groups``, ``matrix`` (one cell per person and parcel),
+            ``scores`` (the factors behind each score), ``weights``,
+            ``notes``, ``generated_at``, ``failed`` (references that could not
+            be read, with ``error_type``), ``units_fetched`` and ``export``
+            when asked.
+        """
+        if not parcels:
+            raise ValueError("Give at least one parcel reference.")
+        if len(parcels) > self.MAX_ASSEMBLY_PARCELS:
+            raise ValueError(
+                f"An assembly analysis covers at most {self.MAX_ASSEMBLY_PARCELS} parcels per "
+                f"call ({len(parcels)} given): each parcel costs a cadastre record and a "
+                f"land-registry unit. Split the set and merge the persons by name, or use "
+                f"find_parcels_in_area to narrow the area first."
+            )
+        if export is not None and export not in self.VALID_EXPORTS:
+            raise ValueError(f"export must be one of {self.VALID_EXPORTS}, got {export!r}")
+        if persons_limit is not None and persons_limit < 1:
+            raise ValueError(f"persons_limit must be at least 1, got {persons_limit}")
+        if persons_offset < 0:
+            raise ValueError(f"persons_offset must not be negative, got {persons_offset}")
+        used_weights = resolve_weights(weights)
+
+        logger.info(f"Building assembly analysis for {len(parcels)} parcel(s)")
+        items: list[AssemblyInput] = []
+        failed: list[dict[str, Any]] = []
+        units: dict[tuple[str, int], Any] = {}
+        geometries: dict[str, ParcelGeometry] = {}
+        notes: list[str] = []
+        for spec in parcels:
+            try:
+                ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
+            except ValueError as e:
+                failed.append({"ref": spec, **error_fields(e)})
+                continue
+            try:
+                parcel, geometry, _search = await self._load_parcel(ref)
+                unit, unit_error = self._unit_of(parcel, units)
+                comparison = compare_registers(
+                    parcel,
+                    unit,
+                    gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
+                    lr_unit_error=str(unit_error) if unit_error else None,
+                )
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Assembly input failed for {ref}: {e}")
+                failed.append({"ref": ref.model_dump(exclude_none=True), **error_fields(e)})
+                continue
+            zoning = None
+            if include_zoning:
+                try:
+                    zoning = await asyncio.to_thread(
+                        self.client.get_parcel_zoning,
+                        parcel.parcel_number,
+                        parcel.cad_municipality_reg_num,
+                    )
+                except Exception as e:  # noqa: BLE001 - the factor is then not evaluated
+                    logger.warning(f"Zoning failed for {parcel.parcel_number}: {e}")
+                    notes.append(
+                        f"zoning of {parcel.parcel_number} not read "
+                        f"({error_kind(e)[0]}); its building-area factor is not evaluated"
+                    )
+            if geometry is not None:
+                geometries[parcel.parcel_number] = geometry
+            items.append(
+                AssemblyInput(
+                    parcel=parcel,
+                    lr_unit=unit,
+                    comparison=comparison,
+                    zoning=zoning,
+                    map_url=geometry.map_url() if geometry is not None else None,
+                )
+            )
+        if not items:
+            raise ValueError(
+                "None of the parcels could be read: "
+                + "; ".join(f"{f.get('ref')}: {f['error']}" for f in failed)
+            )
+
+        analysis = build_assembly(items, used_weights)
+        persons_window = self._window(analysis.persons, persons_offset, persons_limit)
+        response: dict[str, Any] = {
+            "generated_at": analysis.generated_at,
+            "weights": analysis.weights,
+            "totals": analysis.totals.model_dump(mode="json"),
+            "parcels": [p.model_dump(mode="json") for p in analysis.parcels],
+            "persons": [p.model_dump(mode="json") for p in persons_window],
+            "persons_page": self._page(
+                persons_offset, persons_limit, len(analysis.persons), len(persons_window)
+            ),
+            "surname_groups": [g.model_dump(mode="json") for g in analysis.surname_groups],
+            "matrix": [c.model_dump(mode="json") for c in analysis.matrix],
+            "scores": [s.model_dump(mode="json") for s in analysis.scores],
+            "notes": analysis.notes + notes,
+            "total": len(parcels),
+            "successful": len(items),
+            "failed": failed,
+            "units_fetched": len(units),
+            "zoning_requested": include_zoning,
+        }
+        if export == "parcels_csv":
+            response["export"] = {"format": export, "text": parcels_csv(analysis)}
+        elif export == "persons_csv":
+            response["export"] = {"format": export, "text": persons_csv(analysis)}
+        elif export == "matrix_csv":
+            response["export"] = {"format": export, "text": matrix_csv(analysis)}
+        elif export == "geojson":
+            response["export"] = {"format": export, **parcels_geojson(analysis, geometries)}
+        size = len(json.dumps(response, ensure_ascii=False))
+        if size > self.MAX_PARCEL_RESPONSE_CHARS:
+            raise ResponseTooLargeError(
+                f"The assembly analysis of {len(items)} parcels is {size:,} characters, too "
+                f"large to return in one response. Analyse fewer parcels per call, pass a "
+                f"persons_limit, or ask for one export at a time."
+            )
+        return response
 
     #: Parcel rows the area tools return unless asked otherwise.
     DEFAULT_AREA_LIMIT = 50

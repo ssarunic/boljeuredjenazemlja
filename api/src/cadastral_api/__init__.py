@@ -2,7 +2,10 @@
 
 from .analysis import (
     AreaCheck,
+    AssemblyAnalysis,
+    AssemblyInput,
     RegisterComparison,
+    build_assembly,
     check_area,
     compare_registers,
     count_distinct_persons,
@@ -89,7 +92,10 @@ __all__ = [
     "Provenance",
     # Analysis (pure functions over the models)
     "AreaCheck",
+    "AssemblyAnalysis",
+    "AssemblyInput",
     "RegisterComparison",
+    "build_assembly",
     "check_area",
     "compare_registers",
     "count_distinct_persons",

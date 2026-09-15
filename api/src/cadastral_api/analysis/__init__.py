@@ -7,6 +7,17 @@ owners. Nothing here makes a request.
 """
 
 from .area_check import DEFAULT_AREA_TOLERANCE, AreaCheck, check_area
+from .assembly import (
+    DEFAULT_WEIGHTS,
+    AcquisitionScore,
+    AssemblyAnalysis,
+    AssemblyInput,
+    PersonHolding,
+    acquisition_score,
+    build_assembly,
+    resolve_weights,
+)
+from .export import matrix_csv, parcels_csv, parcels_geojson, persons_csv, rows_to_csv
 from .persons import (
     PartyTypeInference,
     PersonKey,
@@ -25,7 +36,20 @@ from .registers import (
 )
 
 __all__ = [
+    "AcquisitionScore",
     "AreaCheck",
+    "AssemblyAnalysis",
+    "AssemblyInput",
+    "DEFAULT_WEIGHTS",
+    "PersonHolding",
+    "acquisition_score",
+    "build_assembly",
+    "matrix_csv",
+    "parcels_csv",
+    "parcels_geojson",
+    "persons_csv",
+    "resolve_weights",
+    "rows_to_csv",
     "DEFAULT_AREA_TOLERANCE",
     "MatchedPerson",
     "PartyTypeInference",

@@ -345,6 +345,51 @@ every successful entry; a person on several parcels counts once). Use it
 before an acquisition: the possessor is who uses the land, the owner is who
 signs; a `disjoint` parcel needs both at the table.
 
+### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50)`
+
+Land-assembly analysis of a set of up to 50 parcels: the three tables an
+investor needs before talking to anyone. For every reference the cadastre
+record, the land-registry unit (a shared unit once) and the register
+comparison are read; with `include_zoning` the building-areas screening as
+well (one WFS lookup per parcel, slower).
+
+- `parcels`: one row per parcel, easiest to acquire first, with
+  `relationship`, `distinct_owners`, `distinct_possessors`,
+  `has_encumbrances`, `has_pending_plombe` and `pending_plombe`,
+  `public_body_owner_share`, `zoning_status`, `in_building_area`,
+  `designation_code`, `plan_name`, `area_mismatch`, `score`, `map_url` and
+  the `provenance` of both registers.
+- `persons`: the persons ranked by the area they control (a page;
+  `persons_page` says where to continue), each with `owner_of`,
+  `possessor_of`, `owned_area_m2` (share x cadastre area), `possessed_area_m2`,
+  `controlled_area_m2` (owned, plus the parcels only possessed),
+  `shares_unknown`, `fuzzy_matches`, `surname` and `party_type_inferred`.
+  `surname_groups` gathers them by surname (the registers write it first).
+- `matrix`: one cell per person and parcel with `role` (`owner`, `possessor`,
+  `both`), the shares and `fuzzy`.
+- `scores`: the factors behind each parcel's score and `weights`. The score
+  is a weighted share of yes/no factors: `single_owner`,
+  `owner_is_possessor`, `no_encumbrances`, `no_pending_plombe` and
+  `in_building_area` (only with `include_zoning`); a factor that could not
+  be evaluated (no unit, no zoning) is left out of both the numerator and
+  the denominator, and `notes` say which. Pass `weights` to change any of
+  them, e.g. `{"in_building_area": 0.4}`; the weights used come back.
+- `totals`: `parcel_count`, `total_area_m2`, `area_by_land_use`,
+  `area_by_relationship`, `area_by_zoning_status`, `distinct_people`,
+  `distinct_owners`, `distinct_possessors`, `party_types`,
+  `public_body_parcels`, `fuzzy_matches`, `parcels_with_encumbrances`,
+  `parcels_with_pending_plombe`, `parcels_in_building_area`.
+
+References that could not be read are listed under `failed` with their
+`error_type`; the analysis covers the rest. `export` adds one table as text
+under `export`: `"parcels_csv"`, `"persons_csv"` or `"matrix_csv"` (CSV with
+fixed English columns; the matrix in long form, one row per person and
+parcel) or `"geojson"` (a `FeatureCollection` of the parcels that have an
+outline, scores in the properties, the others under `skipped`). Party types
+are inferred from names and controlled areas use cadastre areas; the
+`notes` repeat both caveats. A response too large to return says so and
+names the way out (fewer parcels, a `persons_limit`, one export at a time).
+
 ### `find_parcels_in_area(municipality, bbox=None, polygon=None, center=None, radius_m=None, relation="intersects", offset=0, limit=50, include_geojson=False)`
 
 The parcels of a municipality inside an area, read from the cached cadastral
@@ -421,6 +466,11 @@ this is for fetching ahead of many lookups or refreshing stale data.
   `compare_registers` with the parcel references. It reads both registers
   and says `same`, `overlapping` or `disjoint` per parcel, who is in one
   register only, and how many distinct people the set involves.
+- **Assembling land from a set of parcels** (who to sit down with, where to
+  start): `build_assembly` with the references (from `find_parcels_in_area`
+  or a list), `include_zoning` when the building area matters, `export` for
+  a CSV to paste into an email. Read `scores[].factors` and `weights` before
+  quoting a ranking; the rule is transparent on purpose.
 - **Which parcels are in this area / around this parcel**:
   `find_parcels_in_area` (bounding box, polygon or radius, EPSG:3765 metres)
   and `find_parcel_neighbours` give parcel numbers, graphical areas and

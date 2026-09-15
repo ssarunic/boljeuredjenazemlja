@@ -58,6 +58,13 @@ item, several for a portfolio) and return one entry per reference, in order.
   the match rests on the name without "POK./UD."), who is in one register
   only, `party_type_inferred` (always an inference), distinct people across
   the set. Read both registers through it instead of comparing by hand.
+- **Assembling land, due diligence over a set** -> `build_assembly` with up
+  to 50 parcel references: matrix of persons x parcels, persons ranked by
+  controlled area (grouped by surname), parcels ranked by ease of
+  acquisition with the `weights` and per-parcel `factors` shown (a factor
+  not evaluated is left out, never counted against the parcel);
+  `include_zoning` for the building-area factor; `export` for CSV/GeoJSON
+  text. Quote the caveats in `notes` (inferred party types, cadastre areas).
 - **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
   `find_book_of_dc`.
 - **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,
