@@ -2400,7 +2400,10 @@ class CadastralTools:
         Returns:
             ``sheet`` (id, number, municipality, is_condominium, total ownership),
             ``possessors_in_land_registry`` (a harmonized sheet lists no
-            possessors; ``owners`` then carries the unit's registered owners),
+            possessors; ``owners`` then carries the unit's registered owners,
+            ``possessor_name`` filters them and ``matching_owners`` counts the
+            matches; the sheet's missing id and municipality are filled from
+            the parcel records, ``backfilled_from_parcels`` says which),
             ``lr_unit``, ``possessors`` (a page), ``total_possessors``,
             ``distinct_possessors``,
             ``page``, ``parcels`` (number, id, area, land use, building parcel,
@@ -2438,6 +2441,8 @@ class CadastralTools:
         sheet = result.sheet
         sheet_dump = sheet.model_dump(mode="json")
         sheet_dump.pop("provenance", None)
+        if result.backfilled_from_parcels:
+            sheet_dump["backfilled_from_parcels"] = list(result.backfilled_from_parcels)
         possessors = sheet_dump.pop("possessors") or []
         if possessor_filter:
             possessors = [p for p in possessors if self._possessor_matches(p, possessor_filter)]
@@ -2501,11 +2506,16 @@ class CadastralTools:
                 "This sheet is harmonized with the land registry: the cadastre records no "
                 "possessors of its own and refers to the land-registry unit, whose registered "
                 "owners (register land_registry) are listed under owners, read from sheet B as "
-                "the parcel search inlines it. get_lr_unit gives their entries, shares in full "
-                "and the encumbrances."
+                "the parcel search inlines it, tax numbers (OIB) included where the registry "
+                "has them. get_lr_unit gives their entries, shares in full and the encumbrances."
             )
-        if possessor_filter:
+            if possessor_filter:
+                response["possessor_filter"] = possessor_filter
+                response["filter_applied_to"] = "owners"
+                response["matching_owners"] = len(owners)
+        elif possessor_filter:
             response["possessor_filter"] = possessor_filter
+            response["filter_applied_to"] = "possessors"
             response["matching_possessors"] = len(possessors)
         if result.maybe_truncated:
             response["note"] = (

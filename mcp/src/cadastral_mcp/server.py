@@ -922,8 +922,12 @@ def create_mcp_server() -> MCPServer:
         with the land registry lists no possessors of its own
         (``possessors_in_land_registry`` true): its registered owners come
         back under ``owners`` (register land_registry, read from the sheet B
-        the parcel search inlines) with ``owners_note``, and ``lr_unit`` names
-        the unit for get_lr_unit.
+        the parcel search inlines, OIB included where the registry has it)
+        with ``owners_note``, ``possessor_name`` then filters the owners
+        (``matching_owners``; ``filter_applied_to`` names the list), and
+        ``lr_unit`` names the unit for get_lr_unit. The stub's missing sheet
+        id and municipality are filled from the parcel records
+        (``sheet.backfilled_from_parcels``).
 
         Returns:
             ``sheet`` (possession_sheet_id, possession_sheet_number,

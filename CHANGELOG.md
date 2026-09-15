@@ -178,8 +178,11 @@ number and one tag.
   declared, `possessors_in_land_registry` tells the stub apart, and
   `get_possession_sheet` (MCP and CLI) lists the unit's registered owners
   from the sheet B the parcel search inlines, labelled as land-registry
-  owners. The mock server returns the stub for its harmonized sheets and
-  caps the sheet-number search at 50 records, as the live one does.
+  owners. The stub's missing sheet id and municipality are filled from the
+  parcel records (`backfilled_from_parcels`), `is_condominium` is null on it,
+  and `possessor_name` reports `matching_owners` there. The mock server
+  returns the stub for its harmonized sheets and caps the sheet-number
+  search at 50 records, as the live one does.
 - MCP: `distinct_possessors` compared title-cased names, so a possessor
   written "ŠARUNIĆ" on one sheet and "SARUNIC" on another counted twice; it
   now uses the shared person identity (`count_distinct_persons`).

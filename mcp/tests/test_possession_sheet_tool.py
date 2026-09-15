@@ -73,6 +73,7 @@ def test_possessor_name_filter_and_long_sheet_note() -> None:
     first = client.sheet.possessors[0].name
     res = _run(CadastralTools(client).get_possession_sheet("363", "SAVAR", possessor_name=first))
     assert res["matching_possessors"] >= 1 and res["possessor_filter"] == {"possessor_name": first}
+    assert res["filter_applied_to"] == "possessors" and "matching_owners" not in res
     assert res["parcels_complete"] is False and "cap" in res["note"]
 
 
@@ -110,7 +111,8 @@ class _HarmonizedClient(_FakeClient):
 def test_harmonized_sheet_reports_the_owners_instead_of_possessors() -> None:
     res = _run(CadastralTools(_HarmonizedClient()).get_possession_sheet("657", "SAVAR"))
     assert res["possessors_in_land_registry"] is True
-    assert res["sheet"]["possession_sheet_id"] is None and res["sheet"]["lr_unit_id"] == 13122441
+    assert res["sheet"]["lr_unit_id"] == 13122441
+    assert res["sheet"]["is_condominium"] is None
     assert res["possessors"] == [] and res["total_possessors"] == 0
     assert res["lr_unit"] == {"lr_unit_number": "657", "main_book_id": 21277}
     assert [o["name"] for o in res["owners"]] == ["Vlasnik 1", "Vlasnik 2"]
@@ -121,6 +123,8 @@ def test_harmonized_sheet_reports_the_owners_instead_of_possessors() -> None:
     tools = CadastralTools(_HarmonizedClient())
     filtered = _run(tools.get_possession_sheet("657", "SAVAR", possessor_name="vlasnik 2"))
     assert [o["name"] for o in filtered["owners"]] == ["Vlasnik 2"]
+    assert filtered["matching_owners"] == 1 and filtered["filter_applied_to"] == "owners"
+    assert "matching_possessors" not in filtered
 
 
 def test_plain_sheet_has_no_owners_block() -> None:

@@ -306,7 +306,12 @@ possessors of its own: `possessors_in_land_registry` is `true`, `lr_unit`
 names the unit, and `owners` carries its registered owners (register
 `land_registry`, read from the sheet B the parcel search inlines, with
 `total_owners`, `distinct_owners` and an `owners_note`); `possessor_name`
-then filters the owners. `provenance` carries the sheet's and the parcel
+then filters the owners and `matching_owners` counts the matches
+(`filter_applied_to` names the list the filter ran on). The stub's missing
+sheet id and municipality are filled from the parcel records and
+`sheet.backfilled_from_parcels` says which; `sheet.is_condominium` is `null`
+on such a sheet, having no possessors to judge by. The owners carry the OIB
+where the registry has it; possessor records never do. `provenance` carries the sheet's and the parcel
 list's URL and time. The parcel search behind the cadastre's web form
 honours no paging and has never been seen to return more than 30 records,
 so a list of that length comes with `parcels_complete: false` and a `note`.

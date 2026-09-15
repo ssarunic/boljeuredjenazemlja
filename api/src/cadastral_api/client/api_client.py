@@ -65,6 +65,31 @@ _REPORTED_UNKNOWN_FIELDS: set[str] = set()
 M = TypeVar("M", bound=BaseModel)
 
 
+def _backfill_sheet(sheet: PossessionSheet, parcels: list[SearchedParcel]) -> list[str]:
+    """Fill the fields a harmonized stub lacks from the sheet's parcel records; names them."""
+    filled: list[str] = []
+    if not parcels:
+        return filled
+    if sheet.possession_sheet_id is None:
+        wanted = str(sheet.possession_sheet_number).strip()
+        for parcel in parcels:
+            for part in parcel.parcel_parts:
+                if part.possession_sheet_id and str(part.possession_sheet_number) == wanted:
+                    sheet.possession_sheet_id = part.possession_sheet_id
+                    filled.append("possession_sheet_id")
+                    break
+            if sheet.possession_sheet_id is not None:
+                break
+    first = parcels[0]
+    if sheet.cad_municipality_reg_num is None and first.cad_municipality_reg_num:
+        sheet.cad_municipality_reg_num = first.cad_municipality_reg_num
+        filled.append("cad_municipality_reg_num")
+    if sheet.cad_municipality_name is None and first.cad_municipality_name:
+        sheet.cad_municipality_name = first.cad_municipality_name
+        filled.append("cad_municipality_name")
+    return filled
+
+
 @dataclass(frozen=True)
 class PossessionSheetParcels:
     """A possession sheet and the parcels on it (``get_possession_sheet_parcels``)."""
@@ -76,6 +101,10 @@ class PossessionSheetParcels:
     #: True when the list is as long as the longest ever observed, so a
     #: server-side cap cannot be ruled out.
     maybe_truncated: bool
+    #: Sheet fields the stub of a harmonized sheet lacked and the parcel
+    #: records supplied (``possession_sheet_id``, ``cad_municipality_reg_num``,
+    #: ``cad_municipality_name``); empty for a full sheet.
+    backfilled_from_parcels: tuple[str, ...] = ()
 
     @property
     def total_area_m2(self) -> int:
@@ -945,6 +974,7 @@ class CadastralAPIClient:
             parcels=parcels,
             parcels_provenance=self._provenance("cadastre", "/cad/search-parcels"),
             maybe_truncated=len(parcels) >= self.SEARCH_PARCELS_OBSERVED_MAX,
+            backfilled_from_parcels=tuple(_backfill_sheet(sheet, parcels)),
         )
 
     def get_parcel_by_number(

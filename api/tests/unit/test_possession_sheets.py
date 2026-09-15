@@ -182,3 +182,25 @@ def test_harmonized_sheet_parcels_bring_the_owners_from_the_inline_unit() -> Non
     assert result.owner_rows()[0]["register"] == "land_registry"
     plain, _ = _client(records=[NON_HARMONIZED])
     assert plain.get_possession_sheet_parcels("877", "SAVAR").owner_rows() == []
+
+
+def test_harmonized_stub_is_backfilled_from_the_parcel_records() -> None:
+    record = dict(HARMONIZED)
+    record["cadMunicipalityName"] = "SAVAR"
+    record["parcelParts"] = [
+        {"name": "MASLINJAK", "area": "1200", "building": False,
+         "possessionSheetId": 14823725, "possessionSheetNumber": "657"}
+    ]
+    client, _ = _client(records=[record], sheet=HARMONIZED_STUB_BY_NUMBER)
+    result = client.get_possession_sheet_parcels("657", "SAVAR")
+    sheet = result.sheet
+    assert sheet.possession_sheet_id == 14823725
+    assert sheet.cad_municipality_reg_num == "334979" and sheet.cad_municipality_name == "SAVAR"
+    assert result.backfilled_from_parcels == (
+        "possession_sheet_id", "cad_municipality_reg_num", "cad_municipality_name",
+    )
+    assert sheet.is_condominium is None and sheet.total_ownership is None
+    # A full sheet is left alone.
+    client, _ = _client(records=[NON_HARMONIZED])
+    full = client.get_possession_sheet_parcels("877", "SAVAR")
+    assert full.backfilled_from_parcels == () and full.sheet.is_condominium is False

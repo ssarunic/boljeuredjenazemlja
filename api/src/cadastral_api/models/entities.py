@@ -437,13 +437,16 @@ class PossessionSheet(SourceModel):
 
     @computed_field  # type: ignore[misc]
     @property
-    def is_condominium(self) -> bool:
+    def is_condominium(self) -> bool | None:
         """Whether the sheet records a condominium (etažno vlasništvo).
 
         True when any possessor carries a condominium unit number or a share
         of the common areas; such a possessor's ``ownership`` is the share of
-        their own unit, not of the parcel.
+        their own unit, not of the parcel. None on a harmonized stub, which
+        lists no possessors to judge by.
         """
+        if self.possessors_in_land_registry:
+            return None
         return any(
             p.condominium_share_number or p.condominium_share_ownership
             for p in self.possessors
