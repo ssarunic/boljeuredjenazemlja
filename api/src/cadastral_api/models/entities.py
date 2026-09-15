@@ -397,7 +397,10 @@ class PossessionSheet(SourceModel):
     lr_unit_id: int | None = Field(
         default=None,
         alias="lrUnitId",
-        description="Land-registry unit id on a harmonized sheet, whose possessors are its owners",
+        description=(
+            "Land-registry unit id on a harmonized sheet: the cadastre records no possessors "
+            "of its own and refers to the unit"
+        ),
     )
     cad_municipality_id: int = Field(
         alias="cadMunicipalityId", description="Municipality internal ID"
@@ -424,11 +427,11 @@ class PossessionSheet(SourceModel):
 
     @property
     def possessors_in_land_registry(self) -> bool:
-        """Whether the sheet is a harmonized stub: its possessors are the unit's owners.
+        """Whether the sheet is a harmonized stub that refers to the land-registry unit.
 
         For a harmonized sheet the cadastre's sheet endpoints list no
         possessors and name the land-registry unit (``lr_unit_id``) instead;
-        the registered owners of that unit are the possessors.
+        the people to read are the unit's registered holders of title.
         """
         return self.lr_unit_id is not None and not self.possessors
 
