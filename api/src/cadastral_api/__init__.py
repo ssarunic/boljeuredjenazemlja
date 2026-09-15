@@ -3,7 +3,7 @@
 from .analysis import AreaCheck, check_area, count_distinct_persons, person_key, same_person
 from .client import CadastralAPIClient
 from .exceptions import CadastralAPIError, ErrorType
-from .gis import GISCache, GMLParser
+from .gis import GISCache, GMLParser, ParcelIndex
 from .models import (
     BookOfDCSearchResult,
     CadastralOffice,
@@ -47,6 +47,7 @@ __all__ = [
     # GIS
     "GISCache",
     "GMLParser",
+    "ParcelIndex",
     # Spatial plans
     "PlanningWFSClient",
     "ParcelZoning",

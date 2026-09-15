@@ -306,6 +306,49 @@ land-registry office that holds the unit (`institution_id` of the unit from
 `message` means the register has no such file at that office; it is not an
 error.
 
+### `find_parcels_in_area(municipality, bbox=None, polygon=None, center=None, radius_m=None, relation="intersects", offset=0, limit=50, include_geojson=False)`
+
+The parcels of a municipality inside an area, read from the cached cadastral
+map (downloaded on first use), so that a target area can be defined without
+knowing any parcel number. Give exactly one area, in EPSG:3765 (HTRS96/TM)
+metres, the coordinates `get_parcel_geometry` returns:
+
+```json
+{"municipality": "SAVAR", "bbox": [380590, 4880880, 380680, 4880980]}
+{"municipality": "SAVAR", "polygon": "POLYGON((380590 4880880, 380680 4880880, 380590 4880980, 380590 4880880))"}
+{"municipality": "SAVAR", "center": [380616.77, 4880907.83], "radius_m": 50}
+```
+
+`polygon` is WKT or a list of `[x, y]` vertices. `relation` is `"intersects"`
+(default; the parcel touches the area) or `"within"` (it lies wholly inside,
+its boundary included); a radius query measures the distance from the point
+to each parcel's outline (0 when the point is inside it). Longitude/latitude
+is refused with a hint: the tools do not reproject.
+
+The result is `{municipality_code, query, parcels, total, total_area_m2,
+page, dataset}`: `parcels` are rows with `parcel_number`, `area_m2` (the
+graphical area from the map), `centroid`, `bounds`, `distance_m` (radius
+queries) and `map_url`, paged with `offset` and `limit` (default 50);
+`total` and `total_area_m2` count every match, not only the page. `dataset`
+is the map's provenance: `parcel_count` of the municipality, `crs`, `source`
+server, `downloaded_at` and a note that these are outlines and graphical
+areas from the cadastral map, not a survey. `include_geojson` adds the page
+as a GeoJSON `FeatureCollection` (EPSG:3765). The rows carry no owners or
+land use: pass the numbers to `get_parcel` / `get_lr_unit` for the registers.
+
+### `find_parcel_neighbours(parcel_number, municipality, tolerance_m=0.10, offset=0, limit=50, include_geojson=False)`
+
+The parcels around one parcel, from the cached cadastral map: those sharing a
+boundary with it (`shared_boundary_m`, longest first) and those touching it
+at a corner only (`touches_at_point: true`, `shared_boundary_m: 0`). Two
+outlines within `tolerance_m` of each other count as touching (digitising
+gaps). The result is `{municipality_code, parcel, neighbours, total,
+total_area_m2, tolerance_m, page, dataset}` with the same row shape as
+`find_parcels_in_area`; `parcel` is the seed's row. A parcel that is not in
+the municipality's GIS data is an error naming the municipality code. Use it
+to walk outward from a seed parcel; the numbers go to `get_parcel` /
+`get_lr_unit` for the registers' records.
+
 ### `download_municipality_gis(municipality, force=False)`
 
 Downloads the GIS data of a whole cadastral municipality (the ATOM ZIP with
@@ -335,6 +378,11 @@ this is for fetching ahead of many lookups or refreshing stale data.
   the parcel is not in the land registry rather than inventing an owner.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
+- **Which parcels are in this area / around this parcel**:
+  `find_parcels_in_area` (bounding box, polygon or radius, EPSG:3765 metres)
+  and `find_parcel_neighbours` give parcel numbers, graphical areas and
+  `total_area_m2` from the cached cadastral map, no registers involved; then
+  `get_parcel` / `get_lr_unit` with the numbers for possessors and owners.
 - **A large unit** (a condominium with hundreds of shares, a long list C):
   `get_lr_unit` with `owner_name` when one person is wanted ("is X an owner",
   "which flat does X own"); otherwise `detail="ownership"` and a `limit`, then

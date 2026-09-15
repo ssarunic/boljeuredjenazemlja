@@ -52,6 +52,8 @@ The AI decides when to invoke these based on user queries:
 - **`get_parcel`** - Detailed cadastre record of one or more parcels. Takes a list of references (`parcel_id`, or `parcel_number` + `municipality`) and returns one entry per reference; `source` selects the register (cadastre possessors, land-registry hint, or none); `offset`/`limit` page through the possessor records of each parcel (counted across its possession sheets), `possessor_name`/`condominium_unit` filter them, with a `page` block per entry and a refusal naming a smaller limit when an entry is too large. Each entry carries the land registry unit reference, `provenance` (register, `source_url`, `retrieved_at`) and `area_check` (cadastre, land-register and graphical areas compared); a failed entry carries `error_type` and `error_details`.
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 - **`get_parcel_zoning`** - Screening of a parcel against the spatial plans' building areas
+- **`find_parcels_in_area`** - The parcels of a municipality inside a bounding box, a polygon or a radius around a point (EPSG:3765), from the cached cadastral map: numbers, graphical areas, centroids, map links, `total_area_m2`, paged, optional GeoJSON
+- **`find_parcel_neighbours`** - The parcels sharing a boundary or a corner with one parcel, longest common boundary first, from the cached cadastral map
 - **`download_municipality_gis`** - Download (or refresh) a whole municipality's GIS data into the cache and report what was cached, including `downloaded_at`
 
 **Land Registry Operations:**

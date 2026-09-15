@@ -59,6 +59,11 @@ item, several for a portfolio) and return one entry per reference, in order.
 - **Municipalities of an office** -> `list_municipalities` with the
   `office_id` from `list_cadastral_offices`.
 - **Map / boundaries** -> `get_parcel_geometry`.
+- **Parcels in an area, or around a parcel** -> `find_parcels_in_area` (bbox,
+  polygon or centre + radius, EPSG:3765 metres as `get_parcel_geometry`
+  returns them) and `find_parcel_neighbours` (shared boundary, corner touch).
+  Both read the cached cadastral map and give numbers and graphical areas
+  only; follow with `get_parcel` / `get_lr_unit` for the registers.
 
 ## Response shaping
 

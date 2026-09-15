@@ -8,6 +8,8 @@ from typing import Any
 from cadastral_api import CadastralAPIClient, GMLParser
 from cadastral_api.analysis import check_area, count_distinct_persons
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.gis import IndexedParcel, ParcelIndex
+from cadastral_api.gis.geometry_ops import parse_ring
 from cadastral_api.models.entities import ParcelInfo
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM, ParcelGeometry
 from cadastral_api.planning import validate_min_overlap
@@ -1676,6 +1678,260 @@ class CadastralTools:
             )
         else:
             response["status"] = status.model_dump(mode="json", by_alias=False)
+        return response
+
+    #: Parcel rows the area tools return unless asked otherwise.
+    DEFAULT_AREA_LIMIT = 50
+
+    #: How a parcel relates to the query area.
+    VALID_RELATIONS = ("intersects", "within")
+
+    @staticmethod
+    def _metric_point(value: Any, what: str) -> tuple[float, float]:
+        """An ``[x, y]`` pair in EPSG:3765 metres, refusing longitude/latitude."""
+        try:
+            x, y = float(value[0]), float(value[1])
+        except (TypeError, ValueError, IndexError):
+            raise ValueError(f"{what} must be [x, y] in EPSG:3765 metres, got {value!r}") from None
+        if len(value) != 2:
+            raise ValueError(f"{what} must be [x, y] in EPSG:3765 metres, got {value!r}")
+        if abs(x) <= 180 and abs(y) <= 90:
+            raise ValueError(
+                f"{what} ({x}, {y}) looks like longitude/latitude; the area tools take "
+                f"EPSG:3765 (HTRS96/TM) metres, the coordinates get_parcel_geometry returns "
+                f"(easting about 250000-800000, northing about 4600000-5200000)."
+            )
+        return x, y
+
+    async def _parcel_index(self, municipality: str) -> tuple[str, ParcelIndex]:
+        """The municipality's code and spatial index (built in a worker thread)."""
+        muni_code = self._resolve_municipality(municipality)
+        try:
+            index = await asyncio.to_thread(self.client.get_parcel_index, muni_code)
+        except CadastralAPIError:
+            raise
+        except Exception as e:  # noqa: BLE001 - download, zip and parse errors alike
+            logger.error(f"GIS index failed for {muni_code}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not load the GIS data of municipality '{municipality}' ({muni_code}): {e}"
+            ) from e
+        return muni_code, index
+
+    def _gis_dataset(self, muni_code: str, index: ParcelIndex) -> dict[str, Any]:
+        """Provenance of an answer read from the cached cadastral map."""
+        cache = self.client.gis_cache
+        downloaded_at = cache.downloaded_at(muni_code)
+        return {
+            "municipality_code": muni_code,
+            "parcel_count": len(index),
+            "crs": "EPSG:3765",
+            "source": cache.get_source(muni_code),
+            "downloaded_at": downloaded_at.isoformat() if downloaded_at is not None else None,
+            "note": (
+                "Outlines and graphical areas from the cadastral map (ATOM GML download), "
+                "not a survey; parcel numbers are the cadastre's."
+            ),
+        }
+
+    @staticmethod
+    def _parcel_row(item: IndexedParcel, **extra: Any) -> dict[str, Any]:
+        """A parcel of the index as the agent should see it."""
+        return {
+            "parcel_number": item.parcel_number,
+            "area_m2": item.area_m2,
+            "centroid": [round(item.centroid[0], 2), round(item.centroid[1], 2)],
+            "bounds": [round(v, 2) for v in item.bounds],
+            **extra,
+            "map_url": item.geometry.map_url(),
+        }
+
+    async def find_parcels_in_area(
+        self,
+        municipality: str,
+        bbox: list[float] | None = None,
+        polygon: str | list[list[float]] | None = None,
+        center: list[float] | None = None,
+        radius_m: float | None = None,
+        relation: str = "intersects",
+        offset: int = 0,
+        limit: int | None = DEFAULT_AREA_LIMIT,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        The parcels of a municipality inside an area: a bounding box, a
+        polygon, or a radius around a point (EPSG:3765 metres).
+
+        Read from the cached cadastral map of the municipality (downloaded on
+        first use), so no parcel number is needed to define a target area.
+
+        Args:
+            municipality: Municipality name or registration code.
+            bbox: ``[min_x, min_y, max_x, max_y]``.
+            polygon: WKT ``POLYGON((x y, ...))`` or a list of ``[x, y]`` vertices.
+            center: ``[x, y]`` of the point, with ``radius_m``.
+            radius_m: Radius in metres around ``center``.
+            relation: ``"intersects"`` (default: the parcel touches the area)
+                or ``"within"`` (lies wholly inside it); a radius query always
+                measures the distance from the point to the parcel outline.
+            offset: Skip this many parcels.
+            limit: Return at most this many (default 50; None for all).
+            include_geojson: Add a GeoJSON FeatureCollection of the page.
+
+        Returns:
+            ``municipality_code``, ``query`` (as understood), ``parcels`` (rows
+            with parcel_number, area_m2, centroid, bounds, distance_m for a
+            radius query, map_url), ``total`` and ``total_area_m2`` over
+            every match, ``page``, ``dataset`` (the cached map's provenance)
+            and, when asked, ``geojson``.
+        """
+        modes = [
+            name for name, value in (("bbox", bbox), ("polygon", polygon), ("center", center))
+            if value is not None
+        ]
+        if len(modes) != 1:
+            raise ValueError(
+                "Give exactly one area: bbox, polygon, or center with radius_m "
+                f"(got {', '.join(modes) or 'none'})."
+            )
+        if (center is None) != (radius_m is None):
+            raise ValueError("center and radius_m go together.")
+        if relation not in self.VALID_RELATIONS:
+            raise ValueError(f"relation must be one of {self.VALID_RELATIONS}, got {relation!r}")
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+
+        query: dict[str, Any]
+        if bbox is not None:
+            if len(bbox) != 4:
+                raise ValueError(f"bbox must be [min_x, min_y, max_x, max_y], got {bbox!r}")
+            low = self._metric_point(bbox[:2], "bbox corner")
+            high = self._metric_point(bbox[2:], "bbox corner")
+            if low[0] > high[0] or low[1] > high[1]:
+                raise ValueError("bbox must be [min_x, min_y, max_x, max_y] with min <= max")
+            query = {"bbox": [*low, *high], "relation": relation}
+        elif polygon is not None:
+            ring = parse_ring(polygon)
+            self._metric_point(ring[0], "polygon vertex")
+            query = {"polygon": [list(p) for p in ring], "relation": relation}
+        else:
+            assert center is not None and radius_m is not None
+            point = self._metric_point(center, "center")
+            if radius_m <= 0:
+                raise ValueError(f"radius_m must be positive, got {radius_m}")
+            query = {"center": list(point), "radius_m": float(radius_m)}
+
+        logger.info(f"Finding parcels in {municipality} by {modes[0]}")
+        muni_code, index = await self._parcel_index(municipality)
+
+        distances: dict[str, float] = {}
+        if bbox is not None:
+            hits = index.in_bbox((*low, *high), relation)  # type: ignore[arg-type]
+        elif polygon is not None:
+            hits = index.in_polygon(ring, relation)  # type: ignore[arg-type]
+        else:
+            radius_hits = index.within_radius(point[0], point[1], float(radius_m))
+            hits = [hit.parcel for hit in radius_hits]
+            distances = {hit.parcel.parcel_number: hit.distance_m for hit in radius_hits}
+
+        window = self._window(hits, offset, limit)
+        rows = [
+            self._parcel_row(
+                item, **({"distance_m": distances[item.parcel_number]} if distances else {})
+            )
+            for item in window
+        ]
+        response: dict[str, Any] = {
+            "municipality_code": muni_code,
+            "query": query,
+            "parcels": rows,
+            "total": len(hits),
+            "total_area_m2": ParcelIndex.total_area(hits),
+            "page": self._page(offset, limit, len(hits), len(window)),
+            "dataset": self._gis_dataset(muni_code, index),
+        }
+        if include_geojson:
+            response["geojson"] = self._feature_collection(window)
+        return response
+
+    @staticmethod
+    def _feature_collection(items: list[IndexedParcel]) -> dict[str, Any]:
+        return {
+            "type": "FeatureCollection",
+            "features": [item.geometry.to_geojson() for item in items],
+        }
+
+    async def find_parcel_neighbours(
+        self,
+        parcel_number: str,
+        municipality: str,
+        tolerance_m: float = 0.10,
+        offset: int = 0,
+        limit: int | None = DEFAULT_AREA_LIMIT,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        The parcels around one parcel: those sharing a boundary with it, and
+        those touching it at a corner.
+
+        Read from the cached cadastral map (downloaded on first use). A
+        neighbour with ``touches_at_point`` true meets the parcel at a point
+        only (a street corner, say); the others share ``shared_boundary_m``
+        metres of boundary, longest first.
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "103/2").
+            municipality: Municipality name or registration code.
+            tolerance_m: How far apart two outlines may be and still count as
+                touching (default 0.10 m, for digitising gaps).
+            offset: Skip this many neighbours.
+            limit: Return at most this many (default 50; None for all).
+            include_geojson: Add a GeoJSON FeatureCollection of the page.
+
+        Returns:
+            ``parcel`` (the seed parcel's row), ``neighbours`` (rows with
+            shared_boundary_m and touches_at_point), ``total``,
+            ``total_area_m2`` of every neighbour, ``page``, ``dataset`` and,
+            when asked, ``geojson``.
+        """
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        if tolerance_m < 0:
+            raise ValueError(f"tolerance_m must not be negative, got {tolerance_m}")
+        wanted = normalize_parcel_number(parcel_number)
+        logger.info(f"Finding neighbours of {wanted} in {municipality}")
+        muni_code, index = await self._parcel_index(municipality)
+        seed = index.by_number(wanted)
+        if seed is None:
+            raise ValueError(
+                f"Parcel '{parcel_number}' has no geometry in the GIS data for municipality "
+                f"'{municipality}' ({muni_code}). Check the parcel number; if the cached GIS "
+                f"data may be stale, refresh it with download_municipality_gis(force=true)."
+            )
+        neighbours = index.neighbours(wanted, tolerance_m)
+        window = self._window(neighbours, offset, limit)
+        response: dict[str, Any] = {
+            "municipality_code": muni_code,
+            "parcel": self._parcel_row(seed),
+            "neighbours": [
+                self._parcel_row(
+                    n.parcel,
+                    shared_boundary_m=n.shared_boundary_m,
+                    touches_at_point=n.touches_at_point,
+                )
+                for n in window
+            ],
+            "total": len(neighbours),
+            "total_area_m2": ParcelIndex.total_area(n.parcel for n in neighbours),
+            "tolerance_m": tolerance_m,
+            "page": self._page(offset, limit, len(neighbours), len(window)),
+            "dataset": self._gis_dataset(muni_code, index),
+        }
+        if include_geojson:
+            response["geojson"] = self._feature_collection([seed, *(n.parcel for n in window)])
         return response
 
     async def download_municipality_gis(

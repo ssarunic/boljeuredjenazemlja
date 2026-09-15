@@ -28,7 +28,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
 
 from ..exceptions import CadastralAPIError, ErrorType
-from ..gis import GISCache, GMLParser
+from ..gis import GISCache, GMLParser, ParcelIndex
 from ..models import (
     BookOfDCSearchResult,
     CadastralOffice,
@@ -142,6 +142,7 @@ class CadastralAPIClient:
         self.unknown_fields: UnknownFieldsPolicy = policy  # type: ignore[assignment]
         self._last_request_time: float = 0.0
         self._gml_parsers: dict[Path, tuple[int, GMLParser]] = {}
+        self._parcel_indexes: dict[Path, tuple[int, ParcelIndex]] = {}
 
         self.headers = {
             "Accept": "application/json, text/plain, */*",
@@ -804,6 +805,27 @@ class CadastralAPIClient:
         cached = self._gml_parsers.get(gml_path)
         if cached is None or cached[0] != mtime:
             cached = self._gml_parsers[gml_path] = (mtime, GMLParser(gml_path))
+        return cached[1]
+
+    def get_parcel_index(self, municipality_reg_num: str) -> ParcelIndex:
+        """The spatial index of a municipality's parcels, built once per client.
+
+        Downloads and caches the municipality's GIS data if needed (like
+        ``get_parcel_geometry``), then loads every parcel outline into a
+        ``ParcelIndex`` for area, radius and neighbour queries. The index is
+        kept per GML file and rebuilt when the file changes (a new download).
+
+        Example:
+            index = client.get_parcel_index("334979")
+            inside = index.in_polygon([(x1, y1), (x2, y2), (x3, y3)])
+            around = index.neighbours("103/2")
+        """
+        gml_path = self.gis_cache.get_parcel_data(municipality_reg_num, auto_download=True)
+        mtime = gml_path.stat().st_mtime_ns
+        cached = self._parcel_indexes.get(gml_path)
+        if cached is None or cached[0] != mtime:
+            parcels = self._gml_parser(gml_path).get_all_parcels()
+            cached = self._parcel_indexes[gml_path] = (mtime, ParcelIndex(parcels))
         return cached[1]
 
     def get_parcel_zoning(

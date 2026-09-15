@@ -656,6 +656,116 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
+    async def find_parcels_in_area(
+        municipality: str,
+        bbox: list[float] | None = None,
+        polygon: str | list[list[float]] | None = None,
+        center: list[float] | None = None,
+        radius_m: float | None = None,
+        relation: str = "intersects",
+        offset: int = 0,
+        limit: int | None = 50,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        Find the parcels (čestice) of a cadastral municipality inside an area:
+        a bounding box, a polygon, or a radius around a point, so that a
+        target area can be defined without knowing any parcel number
+        (čestice unutar područja, u krugu od N metara).
+
+        Reads the cached cadastral map of the municipality (downloaded on
+        first use, refreshed with download_municipality_gis). Coordinates are
+        EPSG:3765 (HTRS96/TM) metres, the system get_parcel_geometry returns;
+        longitude/latitude is refused with a hint. Gives parcel numbers,
+        graphical areas, centroids and map links; use get_parcel /
+        get_lr_unit on the numbers for the registers' records.
+
+        Args:
+            municipality: Municipality name (e.g., "SAVAR") or registration code
+            bbox: [min_x, min_y, max_x, max_y] in EPSG:3765 metres
+            polygon: WKT "POLYGON((x y, x y, ...))" or a list of [x, y] vertices
+            center: [x, y] of a point, with radius_m
+            radius_m: Radius in metres around center
+            relation: "intersects" (default; the parcel touches the area) or
+                "within" (the parcel lies wholly inside it)
+            offset: Skip this many parcels
+            limit: Return at most this many (default 50; null for all)
+            include_geojson: Also return the page as a GeoJSON FeatureCollection
+
+        Returns:
+            ``municipality_code``, ``query`` (as understood), ``parcels`` (each
+            with parcel_number, area_m2, centroid, bounds, distance_m for a
+            radius query, map_url), ``total`` and ``total_area_m2`` over every
+            match, a ``page`` block (offset, limit, total, returned, truncated,
+            next_offset), ``dataset`` (parcel_count of the municipality, crs,
+            source, downloaded_at, note) and ``geojson`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: find_parcels_in_area({municipality}, bbox={bbox}, "
+            f"polygon={'yes' if polygon else None}, center={center}, radius_m={radius_m})"
+        )
+        return await tools_handler.find_parcels_in_area(
+            municipality,
+            bbox=bbox,
+            polygon=polygon,
+            center=center,
+            radius_m=radius_m,
+            relation=relation,
+            offset=offset,
+            limit=limit,
+            include_geojson=include_geojson,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
+    async def find_parcel_neighbours(
+        parcel_number: str,
+        municipality: str,
+        tolerance_m: float = 0.10,
+        offset: int = 0,
+        limit: int | None = 50,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        The neighbours of a parcel (susjedne čestice): the parcels sharing a
+        boundary with it, longest common boundary first, and those touching
+        it at a corner only (``touches_at_point``). For walking outward from
+        a seed parcel when assembling land.
+
+        Reads the cached cadastral map of the municipality (downloaded on
+        first use). Two outlines within ``tolerance_m`` of each other count
+        as touching. Gives parcel numbers, graphical areas and map links; use
+        get_parcel / get_lr_unit on the numbers for the registers' records.
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "103/2")
+            municipality: Municipality name or registration code
+            tolerance_m: Gap two outlines may have and still touch (default 0.10)
+            offset: Skip this many neighbours
+            limit: Return at most this many (default 50; null for all)
+            include_geojson: Also return the seed and the page as GeoJSON
+
+        Returns:
+            ``parcel`` (the seed's row), ``neighbours`` (rows with
+            shared_boundary_m and touches_at_point), ``total``,
+            ``total_area_m2`` of every neighbour, ``page``, ``dataset`` and
+            ``geojson`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: find_parcel_neighbours({parcel_number}, {municipality}, "
+            f"tolerance_m={tolerance_m})"
+        )
+        return await tools_handler.find_parcel_neighbours(
+            parcel_number,
+            municipality,
+            tolerance_m=tolerance_m,
+            offset=offset,
+            limit=limit,
+            include_geojson=include_geojson,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
     async def download_municipality_gis(
         municipality: str, force: bool = False
     ) -> dict[str, Any]:
@@ -747,6 +857,7 @@ def create_mcp_server() -> MCPServer:
     logger.info(
         "Available tools: find_parcel, get_parcel, resolve_municipality, "
         "list_municipalities, get_parcel_geometry, get_parcel_zoning, "
+        "find_parcels_in_area, find_parcel_neighbours, "
         "list_cadastral_offices, get_lr_unit, get_file_status, find_main_book, "
         "find_book_of_dc, find_possession_sheet, download_municipality_gis"
     )

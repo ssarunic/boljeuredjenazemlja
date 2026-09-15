@@ -10,6 +10,7 @@ drawn at 1:5000.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 
 Point = tuple[float, float]
@@ -205,3 +206,137 @@ def overlap_fraction(
                 inside += 1
                 break
     return inside / len(points)
+
+
+# ---------------------------------------------------------------------------
+# Distances and shared boundaries (for the spatial index)
+# ---------------------------------------------------------------------------
+
+
+def point_segment_distance(p: Point, a: Point, b: Point) -> float:
+    """Distance from point ``p`` to the segment ``a``-``b``."""
+    ax, ay = a
+    bx, by = b
+    px, py = p
+    dx, dy = bx - ax, by - ay
+    length_sq = dx * dx + dy * dy
+    if length_sq == 0.0:
+        return math.hypot(px - ax, py - ay)
+    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / length_sq))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def segment_distance(p1: Point, p2: Point, p3: Point, p4: Point) -> float:
+    """Distance between segments p1-p2 and p3-p4 (0 when they touch or cross)."""
+    if segments_intersect(p1, p2, p3, p4):
+        return 0.0
+    return min(
+        point_segment_distance(p1, p3, p4),
+        point_segment_distance(p2, p3, p4),
+        point_segment_distance(p3, p1, p2),
+        point_segment_distance(p4, p1, p2),
+    )
+
+
+def point_ring_distance(x: float, y: float, ring: Ring) -> float:
+    """Distance from a point to a ring's area: 0 inside, else to the nearest edge."""
+    if len(ring) < 3:
+        return math.inf
+    if point_in_ring(x, y, ring):
+        return 0.0
+    return min(point_segment_distance((x, y), a, b) for a, b in _edges(ring))
+
+
+def ring_distance(a: Ring, b: Ring) -> float:
+    """Distance between two rings' areas: 0 when they touch, cross or nest."""
+    if len(a) < 3 or len(b) < 3:
+        return math.inf
+    if rings_intersect(a, b):
+        return 0.0
+    return min(segment_distance(e1[0], e1[1], e2[0], e2[1]) for e1 in _edges(a) for e2 in _edges(b))
+
+
+def ring_centroid(ring: Ring) -> Point:
+    """Area-weighted centroid of a ring (its bounding-box centre when degenerate)."""
+    if len(ring) < 3:
+        xs = [p[0] for p in ring] or [0.0]
+        ys = [p[1] for p in ring] or [0.0]
+        return (sum(xs) / len(xs), sum(ys) / len(ys))
+    twice_area = 0.0
+    cx = 0.0
+    cy = 0.0
+    for (x1, y1), (x2, y2) in _edges(ring):
+        cross = x1 * y2 - x2 * y1
+        twice_area += cross
+        cx += (x1 + x2) * cross
+        cy += (y1 + y2) * cross
+    if abs(twice_area) < 1e-9:
+        min_x, min_y, max_x, max_y = ring_bounds(ring)
+        return ((min_x + max_x) / 2, (min_y + max_y) / 2)
+    return (cx / (3 * twice_area), cy / (3 * twice_area))
+
+
+def shared_boundary_length(a: Ring, b: Ring, tolerance: float = 0.10) -> float:
+    """Length of the boundary two rings share, in the rings' units (metres).
+
+    Two edges share boundary where they are collinear within ``tolerance``
+    (both endpoints of one within that distance of the other's line) and
+    overlap along that line; the overlaps are summed over every edge pair.
+    Adjoining cadastral parcels are digitised with common vertices, so their
+    common edges coincide exactly; the tolerance absorbs rounding. Two
+    parcels that merely touch at a corner share no length.
+    """
+    total = 0.0
+    for (ax, ay), (bx, by) in _edges(a):
+        dx, dy = bx - ax, by - ay
+        length = math.hypot(dx, dy)
+        if length == 0.0:
+            continue
+        ux, uy = dx / length, dy / length
+        for p, q in _edges(b):
+            # Perpendicular distance of both endpoints of the other edge to this edge's line.
+            if abs((p[0] - ax) * uy - (p[1] - ay) * ux) > tolerance:
+                continue
+            if abs((q[0] - ax) * uy - (q[1] - ay) * ux) > tolerance:
+                continue
+            t1 = (p[0] - ax) * ux + (p[1] - ay) * uy
+            t2 = (q[0] - ax) * ux + (q[1] - ay) * uy
+            overlap = min(length, max(t1, t2)) - max(0.0, min(t1, t2))
+            if overlap > 0.0:
+                total += overlap
+    return total
+
+
+def parse_ring(polygon: str | Sequence[Sequence[float]]) -> list[Point]:
+    """A ring from WKT (``POLYGON((x y, x y, ...))``) or a list of ``[x, y]`` pairs.
+
+    The outer ring only; a closing vertex equal to the first is dropped.
+
+    Raises:
+        ValueError: fewer than three distinct vertices, or unreadable input
+    """
+    points: list[Point] = []
+    if isinstance(polygon, str):
+        text = polygon.strip()
+        upper = text.upper()
+        if not upper.startswith("POLYGON"):
+            raise ValueError(
+                "a polygon must be WKT 'POLYGON((x y, ...))' or a list of [x, y] pairs"
+            )
+        inner = text[text.find("((") + 2 :]
+        outer = inner.split(")")[0]
+        for pair in outer.split(","):
+            parts = pair.split()
+            if len(parts) != 2:
+                raise ValueError(f"cannot read the WKT vertex {pair.strip()!r}")
+            points.append((float(parts[0]), float(parts[1])))
+    else:
+        for vertex in polygon:
+            if len(vertex) != 2:
+                raise ValueError(f"a vertex is [x, y], got {list(vertex)!r}")
+            points.append((float(vertex[0]), float(vertex[1])))
+    if len(points) > 1 and points[0] == points[-1]:
+        points.pop()
+    if len(points) < 3:
+        raise ValueError("a polygon needs at least three distinct vertices")
+    return points

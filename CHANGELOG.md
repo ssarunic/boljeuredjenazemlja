@@ -69,6 +69,21 @@ number and one tag.
   tax numbers decisive when both records have one) and `check_area` /
   `AreaCheck` (cadastre, land-register and graphical areas compared, a
   difference above 5 % flagged).
+- SDK: `ParcelIndex` (`cadastral_api.gis`), a spatial index over the parcels
+  of one municipality's cached GML: `in_bbox`, `in_polygon` (touching, or
+  wholly within, boundary included), `within_radius` (distance from a point
+  to each outline, nearest first), `neighbours` (shared boundary length in
+  metres, corner touches told apart) and `total_area`; pure Python with a
+  grid prefilter. `CadastralAPIClient.get_parcel_index(code)` builds it once
+  per GML file. `geometry_ops` gains point, segment and ring distances,
+  `shared_boundary_length`, `ring_centroid` and `parse_ring` (WKT or
+  vertex lists); `ParcelGeometry.ring` gives the outline as tuples.
+- MCP: `find_parcels_in_area` (bounding box, polygon or radius around a
+  point, EPSG:3765 metres; `relation` intersects or within; paged rows with
+  graphical area, centroid, bounds, distance and map link; `total_area_m2`
+  over every match; optional GeoJSON; the map's provenance under `dataset`)
+  and `find_parcel_neighbours` (parcels sharing a boundary or a corner with
+  one parcel). Longitude/latitude input is refused with a hint.
 - MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
   cadastre area against the cadastral map's graphical area and the
   land-register area on the parcel link), every `get_lr_unit` entry
