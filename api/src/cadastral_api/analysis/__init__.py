@@ -2,11 +2,17 @@
 
 The client fetches records; this package reads across them: whether two
 person records are the same person, whether the areas the registers give a
-parcel agree, and whether the cadastre possessors are the land-registry
-owners. Nothing here makes a request.
+parcel agree, whether the cadastre possessors are the land-registry owners,
+what is registered against a unit that bears on a sale, and which owners are
+likely estates, abroad or public bodies. Nothing here makes a request.
 """
 
-from .area_check import DEFAULT_AREA_TOLERANCE, AreaCheck, check_area
+from .area_check import (
+    DEFAULT_AREA_MIN_DIFFERENCE_M2,
+    DEFAULT_AREA_TOLERANCE,
+    AreaCheck,
+    check_area,
+)
 from .assembly import (
     DEFAULT_WEIGHTS,
     AcquisitionScore,
@@ -18,21 +24,52 @@ from .assembly import (
     resolve_weights,
 )
 from .export import matrix_csv, parcels_csv, parcels_geojson, persons_csv, rows_to_csv
+from .owner_flags import (
+    DEFAULT_DECEASED_THRESHOLD_YEARS,
+    AddressAbroadInference,
+    DeceasedInference,
+    OwnerFlags,
+    OwnerFlagsRow,
+    count_owner_flags,
+    infer_address_abroad,
+    infer_deceased,
+    owner_flags,
+    owner_flags_for_unit,
+)
 from .persons import (
     PartyTypeInference,
     PersonKey,
     count_distinct_persons,
     infer_party_type,
+    name_tokens,
     person_key,
+    plain_reorder,
     same_person,
+    surname_of,
 )
 from .registers import (
     MatchedPerson,
+    MatchVia,
     PersonRecord,
     RegisterComparison,
     compare_registers,
     owner_records,
     possessor_records,
+)
+from .sale_blockers import (
+    DEFAULT_SEVERITY,
+    ENCUMBRANCE_KINDS,
+    VERDICT_RULE,
+    Blocker,
+    SaleBlockers,
+    blocker_identity,
+    classify_entry_text,
+    counts_for,
+    detect_blockers,
+    merge_blockers,
+    resolve_severities,
+    unit_key,
+    verdict_for,
 )
 
 __all__ = [
@@ -50,7 +87,32 @@ __all__ = [
     "persons_csv",
     "resolve_weights",
     "rows_to_csv",
+    "DEFAULT_AREA_MIN_DIFFERENCE_M2",
     "DEFAULT_AREA_TOLERANCE",
+    "DEFAULT_DECEASED_THRESHOLD_YEARS",
+    "DEFAULT_SEVERITY",
+    "ENCUMBRANCE_KINDS",
+    "VERDICT_RULE",
+    "AddressAbroadInference",
+    "Blocker",
+    "DeceasedInference",
+    "OwnerFlags",
+    "OwnerFlagsRow",
+    "SaleBlockers",
+    "blocker_identity",
+    "classify_entry_text",
+    "count_owner_flags",
+    "counts_for",
+    "detect_blockers",
+    "infer_address_abroad",
+    "infer_deceased",
+    "merge_blockers",
+    "owner_flags",
+    "owner_flags_for_unit",
+    "resolve_severities",
+    "unit_key",
+    "verdict_for",
+    "MatchVia",
     "MatchedPerson",
     "PartyTypeInference",
     "PersonKey",
@@ -60,8 +122,11 @@ __all__ = [
     "compare_registers",
     "count_distinct_persons",
     "infer_party_type",
+    "name_tokens",
     "owner_records",
     "person_key",
+    "plain_reorder",
     "possessor_records",
     "same_person",
+    "surname_of",
 ]

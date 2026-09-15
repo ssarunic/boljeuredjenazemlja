@@ -32,6 +32,8 @@ PARCEL_COLUMNS = [
     "designation_code",
     "plan_name",
     "area_mismatch",
+    "sale_verdict",
+    "blocker_kinds",
     "score",
     "map_url",
 ]
@@ -48,6 +50,8 @@ PERSON_COLUMNS = [
     "controlled_area_m2",
     "shares_unknown",
     "fuzzy_matches",
+    "likely_deceased",
+    "address_abroad",
 ]
 MATRIX_COLUMNS = [
     "name",

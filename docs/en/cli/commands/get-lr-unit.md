@@ -147,6 +147,92 @@ old land register, not a location.
 ```
 <!-- END GENERATED: output -->
 
+To see at a glance whether anything registered against the unit stands in
+the way of a sale, add `--blockers`. The tool reads the pending entries,
+list C, the notes on the shares and the owners, names each finding by kind
+(a mortgage, a dispute, an enforcement, a pre-emption right, a servitude, a
+public body as co-owner) with the share or flat it applies to, and prints a
+verdict: **No blockers**, **Conditional** or **Blocked**. Under the table it
+lists the owners it flags as likely deceased, living abroad or a public body,
+with the reason for each flag. Both are read from the register's text by a
+fixed rule, which is printed under the table: treat them as a screening to
+check against the sheets, not as a legal opinion. Add `--plombe-detail` as
+well and each pending entry is named by the request it is.
+
+```bash
+cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR --blockers
+```
+
+<!-- BEGIN GENERATED: output cadastral get-lr-unit --unit-number 769 --main-book-name SAVAR --blockers -->
+```text
+               LAND REGISTRY UNIT
+ Unit Number        769
+ Main Book          SAVAR
+ Institution        Zemljišnoknjižni odjel Zadar
+ Status             Aktivan
+ Unit Type          VLASNIČKI
+ Last Diary Number  Z-27986/2025
+
+Sale screening: Blocked
+                                           SALE BLOCKERS
+ Kind                             Severity     Applies to  Description                       Amount
+ Social-assistance claim          blocking     share 1     Zaprimljeno 05.05.2016.g. pod          -
+                                                           brojem Z-9139/2016 ZABILJEŽBA,
+                                                           TRAŽBINA SOCIJALNE POMOĆI,
+                                                           RJEŠENJE CENTRA ZA SOCIJALNU
+                                                           SKRB ZADAR KLASA:
+                                                           UP/I-551-04/16-02/29, UR…
+ Likely estate (owner probably    conditional  share 1     Vlasnik 117 holds 4/8 and is           -
+ deceased)                                                 likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+ Likely estate (owner probably    conditional  share 3     Vlasnik 119 holds 1/8 and is           -
+ deceased)                                                 likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+ Likely estate (owner probably    conditional  share 4     Vlasnik 326 holds 1/8 and is           -
+ deceased)                                                 likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+Rule: blocked when any counted blocker is blocking, conditional when any is conditional, otherwise
+no blockers; deleted entries are not counted. A screening of the register's text, not a legal
+opinion.
+
+                                       OWNER FLAGS (INFERRED)
+ Owner        Share  Likely deceased  Address abroad  Public body  Basis
+ Vlasnik 117  1      Yes              -               No           carried over from an earlier
+                                                                   unit; the original entry is
+                                                                   older
+ Vlasnik 119  3      Yes              -               No           carried over from an earlier
+                                                                   unit; the original entry is
+                                                                   older
+ Vlasnik 326  4      Yes              -               No           carried over from an earlier
+                                                                   unit; the original entry is
+                                                                   older
+Flags are inferred from the entry age, the name and the address; confirm them.
+
+          SUMMARY
+ Total Parcels     7
+ Total Area        4369 m²
+ Number of Owners  7
+ Sheet C entries   Yes
+
+💡 Use --show-owners to see ownership details
+💡 Use --show-parcels to see all parcels
+💡 Use --show-encumbrances to see encumbrances
+```
+<!-- END GENERATED: output -->
+
+The first table is the unit header as before. **Sale screening** gives the
+verdict, and **SALE BLOCKERS** lists one row per finding: its **Kind**, its
+**Severity** (blocking, conditional or informational), what it **Applies
+to** (the whole unit, or one share or flat), the text of the entry and the
+amount when there is one. A pending entry counts as blocking until it is
+decided. **OWNER FLAGS (INFERRED)** lists only the owners with a flag and
+the **Basis** of each one; an owner carried over from an earlier unit, or
+registered decades ago, is flagged as likely deceased because such an entry
+usually belongs to an estate, not because the register says so.
+
 To name the unit directly instead of starting from a parcel, use
 `--unit-number` and `--main-book` together, as in the example above. If you
 know the name of the main book (glavna knjiga, normally the cadastral
@@ -268,6 +354,7 @@ instead. For a long list, keep the result as a file with `--format json` and
 | `--show-parcels`, `-P` | Display all parcels in unit (Sheet A) | Not switched on |
 | `--show-encumbrances`, `-e` | Display encumbrances (Sheet C) | Not switched on |
 | `--plombe-detail`, `-D` | Resolve detail of pending entries (plombe) - one extra request per plomba | Not switched on |
+| `--blockers` | Show what is registered against the unit that bears on a sale (plombe, mortgages, disputes...) and the inferred owner flags | Not switched on |
 | `--all`, `-a` | Show all sheets | Not switched on |
 | `--input`, `-i` `PATH` | File (CSV or JSON) with the units to read, or a get-parcel list result | Not used |
 | `--format`, `-f` | Output format (`table`, `json`, `csv`) | `table` is used |
@@ -296,6 +383,7 @@ messages are explained on the [errors page](../errors.md).
 - [get-parcel](get-parcel.md) shows the cadastral side of the same parcel, including the possessors.
 - [get-parcel](get-parcel.md) with `--detail registry` lists the units of many parcels, ready for `--input`.
 - [Glossary](../glossary.md) explains list A, B and C and the plomba.
+- [get-parcel](get-parcel.md) with `--show-owners` shows the possessors, to compare with the owners a blocker names.
 
 <details>
 <summary>Technical details</summary>
@@ -332,6 +420,9 @@ Usage: cadastral get-lr-unit [OPTIONS]
     # Show all sheets
     cadastral get-lr-unit -p 279/6 -m SAVAR --all
 
+    # What is registered against the unit that bears on a sale, and the owner flags
+    cadastral get-lr-unit -u 769 -n SAVAR --blockers
+
     # Export to JSON
     cadastral get-lr-unit -u 769 -b 21277 --format json --output lr-unit.json
 
@@ -358,6 +449,9 @@ Options:
   -e, --show-encumbrances         Display encumbrances (Sheet C)
   -D, --plombe-detail             Resolve detail of pending entries (plombe) -
                                   one extra request per plomba
+  --blockers                      Show what is registered against the unit that
+                                  bears on a sale (plombe, mortgages,
+                                  disputes...) and the inferred owner flags
   -a, --all                       Show all sheets
   -i, --input PATH                File (CSV or JSON) with the units to read, or
                                   a get-parcel list result

@@ -4,12 +4,17 @@ The registers write a person as free text: surname first, in capitals, often
 with a relative's name after a marker ("ŠARUNIĆ AUGUSTIN POK. BOŽE": Augustin
 Šarunić, son of the late Božo; "TEST OSOBA UD. BOŽE": widow of Božo), and on
 sheet C sometimes with the share of the right ("... ZA 2/6"). The cadastre
-writes the same person without the relative. Two records are compared here
+writes the same person without the relative, or with the father's name after
+a comma ("ŠARUNIĆ AUGUSTIN, BOŽO", "ŠARUNIĆ ANTE, P. BOŽE") and sometimes
+with the given name first ("AUGUSTIN ŠARUNIĆ"). Two records are compared here
 by a key that ignores case, diacritics, spacing and punctuation, with the
-share suffix removed, and a second, looser key that also drops the relative:
-a match on the looser key alone is reported as fuzzy, never merged silently.
-The tax number (OIB) is the only identifier the registers carry; when both
-records have one it decides.
+share suffix removed, and a second, looser key that also drops the relative
+(after a marker, or after the first comma); the loose keys are also compared
+with the words in any order. A match on the looser key alone, or on the
+words out of order, is reported as fuzzy, never merged silently; the
+register comparison lifts the flag on a reordered name when the shares or
+the addresses corroborate it. The tax number (OIB) is the only identifier
+the registers carry; when both records have one it decides.
 """
 
 from __future__ import annotations
@@ -59,9 +64,22 @@ class PersonKey:
     tax_number: str | None = None
 
 
-def _tokens(name: str) -> list[str]:
+def name_tokens(name: str) -> list[str]:
+    """The folded words of a register name, the share suffix and punctuation removed."""
     bare = split_name_share(name)[0]
     return fold_text(bare.replace(".", " ").replace(",", " ")).split()
+
+
+def _own_name(name: str) -> str:
+    """The part of a name before the first comma: what follows names a relative.
+
+    The cadastre writes "ŠARUNIĆ AUGUSTIN, BOŽO" (Augustin, son of Božo) and
+    "IVIĆ MARKO, SIN PETRA"; the part after the comma is dropped from the
+    loose key. A comma inside a legal person's name ("X d.o.o., Zagreb") is
+    cut the same way, which loses only the seat.
+    """
+    bare = split_name_share(name)[0]
+    return bare.split(",", 1)[0] if "," in bare else bare
 
 
 def _without_relatives(tokens: list[str]) -> list[str]:
@@ -78,11 +96,25 @@ def _without_relatives(tokens: list[str]) -> list[str]:
     return kept or tokens
 
 
+#: Nominative death markers: they describe the person named, wherever they
+#: stand ("POKOJNI HORVAT MARKO"), and are no part of the name.
+DECEASED_NOMINATIVE = frozenset({"pokojni", "pokojna", "pokojnik", "pokojnica"})
+
+
+def surname_of(name: str | None) -> str:
+    """The surname as the registers write it: the first word that is not a marker."""
+    for token in name_tokens(name or ""):
+        if token not in _RELATION_MARKERS and token not in DECEASED_NOMINATIVE:
+            return token
+    return ""
+
+
 def person_key(name: str | None, tax_number: str | None = None) -> PersonKey:
     """The key of one person record (see the module docstring)."""
-    tokens = _tokens(name or "")
+    tokens = name_tokens(name or "")
+    loose = _without_relatives(name_tokens(_own_name(name or "")))
     tax = (tax_number or "").strip() or None
-    return PersonKey(" ".join(tokens), " ".join(_without_relatives(tokens)), tax)
+    return PersonKey(" ".join(tokens), " ".join(loose or tokens), tax)
 
 
 def same_person(a: PersonKey, b: PersonKey) -> tuple[bool, bool]:
@@ -90,8 +122,9 @@ def same_person(a: PersonKey, b: PersonKey) -> tuple[bool, bool]:
 
     Returns ``(match, fuzzy)``. Two tax numbers decide outright. Otherwise
     equal strict keys are a match; equal fuzzy keys alone (one record names
-    a relative, the other does not, or names a different one) are a match
-    reported as fuzzy; anything else is not a match.
+    a relative, the other does not, or names a different one), or fuzzy keys
+    of the same words in another order ("AUGUSTIN ŠARUNIĆ" against "ŠARUNIĆ
+    AUGUSTIN"), are a match reported as fuzzy; anything else is not a match.
     """
     if a.tax_number and b.tax_number:
         return a.tax_number == b.tax_number, False
@@ -99,7 +132,23 @@ def same_person(a: PersonKey, b: PersonKey) -> tuple[bool, bool]:
         return True, False
     if a.fuzzy and a.fuzzy == b.fuzzy:
         return True, True
+    if plain_reorder(a, b):
+        return True, True
     return False, False
+
+
+def plain_reorder(a: PersonKey, b: PersonKey) -> bool:
+    """Whether two keys are the same words in another order, with no relative on either side.
+
+    "AUGUSTIN ŠARUNIĆ" against "ŠARUNIĆ AUGUSTIN": the names agree in full
+    and only the order differs, which is how the cadastre writes people. A
+    namesake (a grandson written like the grandfather) looks the same, so a
+    caller treats it as fuzzy unless something else corroborates it (the
+    shares agree, or the addresses do).
+    """
+    words_a, words_b = sorted(a.fuzzy.split()), sorted(b.fuzzy.split())
+    plain = a.strict == a.fuzzy and b.strict == b.fuzzy
+    return len(words_a) > 1 and words_a == words_b and plain
 
 
 def group_by_person(records: Iterable[tuple[str | None, str | None]]) -> dict[str, set[str]]:

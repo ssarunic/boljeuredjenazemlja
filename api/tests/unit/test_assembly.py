@@ -204,23 +204,59 @@ def test_exports(items) -> None:
 
 def test_two_records_of_one_person_on_one_parcel_are_one_cell() -> None:
     # Unit 449 names "Vlasnik 116" on two quarter shares of 1122/1; make that
-    # person the parcel's only possessor. One record matches the possessor
-    # (role both), the other stays owner-only: the person is both on the
-    # parcel, once, with the shares added.
+    # person the parcel's only possessor. Both records match the one possessor
+    # (the person is matched once found): the person is both on the parcel,
+    # once, with the owner shares added and the possession share counted once.
     parcel, unit = _parcel("parcel_info_linked.json"), _unit("lr_unit_lrparcels.json")
     _keep_possessors(parcel, ["Vlasnik 116"])
     comparison = compare_registers(parcel, unit)
-    assert comparison.relationship == "overlapping"
-    assert "Vlasnik 116" in [o.name for o in comparison.owners_only]
+    assert comparison.relationship == "overlapping"  # the other owners are owner only
+    assert "Vlasnik 116" not in [o.name for o in comparison.owners_only]
     analysis = build_assembly([AssemblyInput(parcel, unit, comparison)])
     cells = [c for c in analysis.matrix if c.person_key.startswith("vlasnik 116")]
     assert len(cells) == 1
     cell = cells[0]
     assert cell.role == "both" and cell.records == 2
     assert cell.owner_share == {"num": 1, "den": 2, "decimal": 0.5}
+    assert cell.possessor_share == comparison.possessors[0].share
     person = next(p for p in analysis.persons if p.key == cell.person_key)
     assert person.owner_of == ["1122/1"] and person.possessor_of == ["1122/1"]
     assert person.owned_area_m2 == 0.5 * 1618
     assert person.shares_unknown == 0
     assert len({(c.person_key, c.parcel_number) for c in analysis.matrix}) == len(analysis.matrix)
     assert any("one cell" in note for note in analysis.notes)
+
+
+def test_namesakes_on_two_parcels_stay_two_people_in_the_totals() -> None:
+    # The same name on two parcels of a set: a legacy record without an OIB on
+    # one (flagged likely deceased) and a digitally registered person with an
+    # OIB and a 2025 entry on the other. Their keys differ, so the set total is
+    # the sum of the two parcels' people; a looser fold at set level would
+    # merge a grandfather and a grandson silently.
+    from cadastral_api.models.entities import LREntry
+
+    a_parcel, a_unit = _parcel("parcel_info_linked.json"), _unit("lr_unit_lrparcels.json")
+    b_parcel, b_unit = _parcel("parcel_info_direct.json"), _unit("lr_unit_cadparcels.json")
+    _keep_possessors(a_parcel, ["POSJEDNIK JEDAN"])
+    _keep_possessors(b_parcel, ["POSJEDNIK DVA"])
+    legacy = a_unit.ownership_sheet_b.lr_unit_shares[0].owners[0]
+    legacy.name, legacy.tax_number, legacy.entry = "ŠARUNIĆ AUGUSTIN POK. BOŽE", None, None
+    living = b_unit.ownership_sheet_b.lr_unit_shares[0].owners[0]
+    living.name, living.tax_number = "ŠARUNIĆ AUGUSTIN", "63061048570"
+    living.entry = LREntry.model_validate(
+        {
+            "orderNumber": "1.1",
+            "description": "Zaprimljeno 29.09.2025.g. pod brojem Z-31325/2025 UKNJIŽBA, PRAVO "
+            "VLASNIŠTVA, RJEŠENJE Rz-597/2025",
+        }
+    )
+    a = compare_registers(a_parcel, a_unit)
+    b = compare_registers(b_parcel, b_unit)
+    analysis = build_assembly(
+        [AssemblyInput(a_parcel, a_unit, a), AssemblyInput(b_parcel, b_unit, b)]
+    )
+    assert analysis.totals.distinct_people == a.distinct_people + b.distinct_people
+    augustins = [p for p in analysis.persons if p.surname == "sarunic"]
+    assert len(augustins) == 2
+    assert {p.likely_deceased for p in augustins} == {True, False}
+    assert {p.parcels[0] for p in augustins} == {"1122/1", "1139/4"}

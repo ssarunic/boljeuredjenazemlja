@@ -1330,15 +1330,20 @@ class LRShare(SourceModel):
             all_owners.extend(sub.get_all_owners())
         return all_owners
 
-    def owner_rows(self, condominium_number: str | None = None) -> list[dict]:
+    def owner_rows(
+        self, condominium_number: str | None = None, share_order_number: str | None = None
+    ) -> list[dict]:
         """Flatten this share (and its sub-shares) into per-owner dicts.
 
         Direct owners carry this share's fraction; co-owners of a sub-share carry
-        that sub-share's own fraction. The condominium number propagates from the
-        parent apartment share. ``entry`` is the owner's registration entry
-        (``entry_row``), or None on older shares.
+        that sub-share's own fraction. The condominium number and the top-level
+        share's order number (``share_order_number``, the number sheet C refers
+        to with "Na suvlasnički dio: 88") propagate from the parent apartment
+        share. ``entry`` is the owner's registration entry (``entry_row``), or
+        None on older shares.
         """
         cn = self.condominium_number or condominium_number
+        top = share_order_number or self.order_number
         rows = [
             {
                 "name": owner.name,
@@ -1348,13 +1353,14 @@ class LRShare(SourceModel):
                 "register": owner.register,
                 "share": self.share_fraction,
                 "share_description": self.description,
+                "share_order_number": top,
                 "condominium_number": cn,
                 "entry": entry_row(owner.entry),
             }
             for owner in self.owners
         ]
         for sub in self.sub_shares:
-            rows.extend(sub.owner_rows(condominium_number=cn))
+            rows.extend(sub.owner_rows(condominium_number=cn, share_order_number=top))
         return rows
 
     def share_entry_rows(self) -> list[dict]:

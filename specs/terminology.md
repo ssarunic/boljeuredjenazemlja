@@ -42,6 +42,9 @@ documentation guides point here.
 | Sheet C | teretovnica (list C) | Založna prava (hipoteke), služnosti, stvarni tereti, zabilježbe. |
 | Encumbrance | teret | Plural "tereti". "Hipoteka" is acceptable alongside "založno pravo". |
 | Pending entry | plomba | A mark that a prijedlog za upis has been received and not yet decided. |
+| Sale blocker | zapreka prodaji | Anything registered against a unit that bears on a sale (a plomba, a teret, a zabilježba, a public body as co-owner). Not "smetnja", which belongs to "smetanje posjeda". |
+| Sale screening verdict | ocjena: bez zapreka / uvjetno / zapriječeno | The CLI's `--blockers` screening (`--zapreke`). A screening of the register's text with its rule shown, never "pravno mišljenje". |
+| Owner flag (inferred) | oznaka vlasnika (izvedena) | vjerojatno pokojan, adresa u inozemstvu, javno tijelo. Always "izvedeno", never stated as a fact. |
 | Request (for registration) | prijedlog za upis, prijedlog | The party files a prijedlog; the court decides by rješenje. |
 | Diary, file number | dnevnik, poslovni broj Z (Z-broj) | |
 | Condominium ownership | etažno vlasništvo, vlasništvo posebnog dijela nekretnine | A flat or business premises as a special part, tied to a co-ownership share. |

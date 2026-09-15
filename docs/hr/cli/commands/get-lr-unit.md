@@ -147,6 +147,91 @@ knjige, a ne lokacija.
 ```
 <!-- END GENERATED: output -->
 
+Kako biste na prvi pogled vidjeli stoji li išta upisano na uložak na putu
+prodaji, dodajte `--zapreke`. Alat čita plombe, list C, zabilježbe na udjelima i
+vlasnike, svaki nalaz imenuje po vrsti (založno pravo, spor, ovrha, pravo
+prvokupa, služnost, javno tijelo kao suvlasnik) s udjelom ili posebnim dijelom
+na koji se odnosi i ispisuje ocjenu: **Bez zapreka**, **Uvjetno** ili
+**Zapriječeno**. Ispod tablice navodi vlasnike koje označava kao vjerojatno
+pokojne, s adresom u inozemstvu ili kao javno tijelo, s razlogom svake oznake.
+Oboje se čita iz teksta zemljišne knjige prema fiksnom pravilu koje se ispisuje
+ispod tablice: shvatite ih kao provjeru koju treba usporediti s listovima, a ne
+kao pravno mišljenje. Dodajte i `--plombe` pa se svaka plomba imenuje
+prijedlogom koji predstavlja.
+
+```bash
+uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR --zapreke
+```
+
+<!-- BEGIN GENERATED: output uz uložak --broj-uloška 769 --naziv-glavne-knjige SAVAR --zapreke -->
+```text
+              ZEMLJIŠNOKNJIŽNI ULOŽAK
+ Broj uloška           769
+ Glavna knjiga         SAVAR
+ Institucija           Zemljišnoknjižni odjel Zadar
+ Status                Aktivan
+ Tip uloška            VLASNIČKI
+ Zadnji broj dnevnika  Z-27986/2025
+
+Provjera zapreka prodaji: Zapriječeno
+                                          ZAPREKE PRODAJI
+ Vrsta                              Težina   Odnosi se na  Opis                               Iznos
+ Tražbina socijalne pomoći          zapreka  udio 1        Zaprimljeno 05.05.2016.g. pod          -
+                                                           brojem Z-9139/2016 ZABILJEŽBA,
+                                                           TRAŽBINA SOCIJALNE POMOĆI,
+                                                           RJEŠENJE CENTRA ZA SOCIJALNU SKRB
+                                                           ZADAR KLASA:
+                                                           UP/I-551-04/16-02/29, UR…
+ Vjerojatna ostavina (vlasnik       uvjetno  udio 1        Vlasnik 117 holds 4/8 and is           -
+ vjerojatno pokojan)                                       likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+ Vjerojatna ostavina (vlasnik       uvjetno  udio 3        Vlasnik 119 holds 1/8 and is           -
+ vjerojatno pokojan)                                       likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+ Vjerojatna ostavina (vlasnik       uvjetno  udio 4        Vlasnik 326 holds 1/8 and is           -
+ vjerojatno pokojan)                                       likely deceased: the share sits
+                                                           in an estate until the heirs are
+                                                           registered (ostavina)
+Pravilo: zapriječeno kad je ijedna brojena zapreka zapreka, uvjetno kad je ijedna uvjetna, inače bez
+zapreka; izbrisani upisi ne broje se. Provjera teksta zemljišne knjige, a ne pravno mišljenje.
+
+                                     OZNAKE VLASNIKA (IZVEDENE)
+ Vlasnik      Udio  Vjerojatno pokojan  Adresa u inozemstvu  Javno tijelo  Temelj
+ Vlasnik 117  1     Da                  -                    Ne            prenesen iz ranijeg
+                                                                           uloška; izvorni je upis
+                                                                           stariji
+ Vlasnik 119  3     Da                  -                    Ne            prenesen iz ranijeg
+                                                                           uloška; izvorni je upis
+                                                                           stariji
+ Vlasnik 326  4     Da                  -                    Ne            prenesen iz ranijeg
+                                                                           uloška; izvorni je upis
+                                                                           stariji
+Oznake su izvedene iz starosti upisa, imena i adrese; provjerite ih.
+
+           SAŽETAK
+ Ukupno čestica       7
+ Ukupna površina      4369 m²
+ Broj vlasnika        7
+ Upisi u teretovnici  Da
+
+💡 Koristite --show-owners za prikaz vlasnika
+💡 Koristite --show-parcels za prikaz svih čestica
+💡 Koristite --show-encumbrances za prikaz tereta
+```
+<!-- END GENERATED: output -->
+
+Prva je tablica zaglavlje uloška kao i prije. **Provjera zapreka prodaji** daje
+ocjenu, a **ZAPREKE PRODAJI** navodi jedan redak po nalazu: stupac **Vrsta**,
+stupac **Težina** (zapreka, uvjetno ili informativno), stupac **Odnosi se na**
+(cijeli uložak, ili jedan udio ili posebni dio), tekst upisa i iznos kada ga
+ima. Plomba se broji kao zapreka dok se o prijedlogu ne odluči. **OZNAKE
+VLASNIKA (IZVEDENE)** navodi samo vlasnike s oznakom i **Temelj** svake; vlasnik
+prenesen iz ranijeg uloška ili upisan prije više desetljeća označava se kao
+vjerojatno pokojan jer takav upis obično pripada ostavini, a ne zato što to
+zemljišna knjiga kaže.
+
 Da biste uložak zadali izravno umjesto od čestice, upotrijebite zajedno
 `--unit-number` i `--main-book`, kao u gornjem primjeru. Ako znate naziv glavne
 knjige (u pravilu naziv katastarske općine), ali ne i njezin broj, zadajte naziv
@@ -265,6 +350,7 @@ rezultat kao datoteku pomoću `--oblik json` i `--datoteka`.
 | `--čestice`, `-ce` | Prikaži sve čestice u ulošku (list A) | Nije uključeno |
 | `--tereti`, `-te` | Prikaži terete (list C) | Nije uključeno |
 | `--plombe`, `-pl` | Razriješi detalje plombi - jedan dodatni zahtjev po plombi | Nije uključeno |
+| `--zapreke` | Prikaži što je upisano na uložak, a utječe na prodaju (plombe, založna prava, sporovi...) i izvedene oznake vlasnika | Nije uključeno |
 | `--sve`, `-sv` | Prikaži sve listove | Nije uključeno |
 | `--ulaz`, `-ul` `PUTANJA` | Datoteka (CSV ili JSON) s ulošcima za čitanje, ili rezultat naredbe čestica za popis čestica | Ne koristi se |
 | `--oblik`, `-ob` | Format izlaza (`tablica`, `json`, `csv`) | Koristi se `tablica` |
@@ -295,6 +381,8 @@ poruke objašnjene su na [stranici o greškama](../errors.md).
 - [čestica](get-parcel.md) uz `--detalji registry` ispisuje uloške više čestica,
   spremne za `--ulaz`.
 - [Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu.
+- [get-parcel](get-parcel.md) s `--posjednici` prikazuje posjednike, za
+  usporedbu s vlasnicima koje zapreka imenuje.
 
 <details>
 <summary>Tehnički detalji</summary>
@@ -330,6 +418,9 @@ Uporaba: uz uložak [OPCIJE]
     # Svi listovi
     uz uložak -oc 279/6 -ko SAVAR --sve
 
+    # Što je upisano na uložak, a utječe na prodaju, i oznake vlasnika
+    uz uložak -bu 769 --naziv-glavne-knjige SAVAR --zapreke
+
     # Izvoz u JSON
     uz uložak -bu 769 -gk 21277 --oblik json --datoteka lr-unit.json
 
@@ -359,6 +450,9 @@ Opcije:
   -te, --tereti                   Prikaži terete (list C)
   -pl, --plombe                   Razriješi detalje plombi - jedan dodatni
                                   zahtjev po plombi
+  --zapreke                       Prikaži što je upisano na uložak, a utječe na
+                                  prodaju (plombe, založna prava, sporovi...) i
+                                  izvedene oznake vlasnika
   -sv, --sve                      Prikaži sve listove
   -ul, --ulaz PUTANJA             Datoteka (CSV ili JSON) s ulošcima za čitanje,
                                   ili rezultat naredbe čestica za popis čestica

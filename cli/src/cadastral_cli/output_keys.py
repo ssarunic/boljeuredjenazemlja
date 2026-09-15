@@ -204,6 +204,47 @@ KEYS: dict[str, str] = {
     "state_note": pgettext("key", "state_note"),
     "retrieved_at": pgettext("key", "retrieved_at"),
     "match": pgettext("key", "match"),
+    # Sale blockers and owner flags (get-lr-unit --blockers)
+    "sale_blockers": pgettext("key", "sale_blockers"),
+    "sale_verdict": pgettext("key", "sale_verdict"),
+    "verdict": pgettext("key", "verdict"),
+    "rule": pgettext("key", "rule"),
+    "counts": pgettext("key", "counts"),
+    "blockers": pgettext("key", "blockers"),
+    "blockers_cancelled": pgettext("key", "blockers_cancelled"),
+    "scope_filter": pgettext("key", "scope_filter"),
+    "owner_name": pgettext("key", "owner_name"),
+    "condominium_unit": pgettext("key", "condominium_unit"),
+    "plombe_detail_included": pgettext("key", "plombe_detail_included"),
+    "notes": pgettext("key", "notes"),
+    "kind": pgettext("key", "kind"),
+    "severity": pgettext("key", "severity"),
+    "scope": pgettext("key", "scope"),
+    "source": pgettext("key", "source"),
+    "basis": pgettext("key", "basis"),
+    "beneficiary": pgettext("key", "beneficiary"),
+    "request_kind": pgettext("key", "request_kind"),
+    "dates": pgettext("key", "dates"),
+    "received": pgettext("key", "received"),
+    "solved": pgettext("key", "solved"),
+    "executed": pgettext("key", "executed"),
+    "cancelled_by": pgettext("key", "cancelled_by"),
+    "likely_lapsed": pgettext("key", "likely_lapsed"),
+    "owner_flags": pgettext("key", "owner_flags"),
+    "flags": pgettext("key", "flags"),
+    "likely_deceased": pgettext("key", "likely_deceased"),
+    "inferred": pgettext("key", "inferred"),
+    "signals": pgettext("key", "signals"),
+    "marker": pgettext("key", "marker"),
+    "entry_age_years": pgettext("key", "entry_age_years"),
+    "matched": pgettext("key", "matched"),
+    "address_abroad": pgettext("key", "address_abroad"),
+    "abroad": pgettext("key", "abroad"),
+    "country": pgettext("key", "country"),
+    "confidence": pgettext("key", "confidence"),
+    "public_body": pgettext("key", "public_body"),
+    "party_type_inferred": pgettext("key", "party_type_inferred"),
+    "party_type": pgettext("key", "party_type"),
     # Municipalities and offices
     "code": pgettext("key", "code"),
     "display_name": pgettext("key", "display_name"),
@@ -220,7 +261,7 @@ KEY_OVERRIDES: dict[tuple[str, str], str] = {
 }
 
 # Dicts whose keys are data, not field names.
-DATA_KEYED = frozenset({"land_use", "plombe_detail", "source_fields"})
+DATA_KEYED = frozenset({"land_use", "plombe_detail", "source_fields", "counts"})
 
 
 def _context(parent: str | None, key: str) -> str:
