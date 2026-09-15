@@ -22,7 +22,7 @@ import cadastral_mcp.server as server_module
 class _FakeClient:
     gis_cache = None
 
-    def find_municipality(self, *args, **kwargs):
+    def resolve_municipality_reg_num(self, name_or_code):
         raise ValueError("Municipality 'NOWHERE' not found")
 
     def list_cadastral_offices(self):

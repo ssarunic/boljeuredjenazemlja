@@ -11,7 +11,7 @@ from cadastral_api.models.entities import (
     LRShare,
     Party,
 )
-from cadastral_api.utils import parse_fraction
+from cadastral_api.utils import parse_fraction, strip_html
 from rich.console import Console
 from rich.table import Table
 
@@ -48,39 +48,6 @@ def _entry_text(entry: LREntry | None) -> str:
 
 def _shorten(text: str, max_length: int = 160) -> str:
     return text if len(text) <= max_length else text[: max_length - 1] + "…"
-
-
-def clean_html(text: str) -> str:
-    """Remove HTML tags and convert to plain text with basic markdown.
-
-    Args:
-        text: Text potentially containing HTML tags
-
-    Returns:
-        Cleaned text with HTML removed and basic markdown formatting
-    """
-    if not text:
-        return text
-
-    # Replace <br> and <br/> with newlines
-    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
-
-    # Replace <span> tags with their content (remove span styling)
-    text = re.sub(r'<span[^>]*>(.*?)</span>', r'\1', text, flags=re.IGNORECASE | re.DOTALL)
-
-    # Remove any remaining HTML tags
-    text = re.sub(r'<[^>]+>', '', text)
-
-    # Clean up multiple newlines
-    text = re.sub(r'\n{3,}', '\n\n', text)
-
-    # Decode HTML entities
-    text = text.replace('&nbsp;', ' ')
-    text = text.replace('&lt;', '<')
-    text = text.replace('&gt;', '>')
-    text = text.replace('&amp;', '&')
-
-    return text.strip()
 
 
 def print_lr_unit_basic_info(lr_unit: LandRegistryUnitDetailed) -> None:
@@ -349,7 +316,9 @@ def print_lr_unit_encumbrance_sheet(lr_unit: LandRegistryUnitDetailed) -> None:
             lines: list[str] = []
             for entry in group.lr_entries:
                 lines.append(
-                    _format_encumbrance_entry(entry.order_number, clean_html(entry.description))
+                    _format_encumbrance_entry(
+                        entry.order_number, strip_html(entry.description, keep_breaks=True)
+                    )
                 )
                 if entry.amount:
                     lines.append(f"  {_('Amount')}: {entry.amount}")

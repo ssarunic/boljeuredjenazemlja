@@ -222,6 +222,11 @@ Ako općina nije prepoznata, alat to kaže i staje:
 <!-- BEGIN GENERATED: output uz čestica 103/2 -ko NOWHERE -->
 ```text
 ✗ Greška: Općina 'NOWHERE' nije pronađena
+
+Prijedlozi:
+  • Pretražite općine: cadastral search-municipality NOWHERE
+  • Ispišite sve općine: cadastral list-municipalities
+  • Koristite šifru općine izravno: --municipality 334979
 ```
 <!-- END GENERATED: output -->
 

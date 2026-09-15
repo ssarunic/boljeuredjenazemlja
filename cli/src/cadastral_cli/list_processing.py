@@ -19,12 +19,14 @@ from cadastral_api.i18n import _
 from cadastral_api.models.entities import LandRegistryUnitDetailed, ParcelInfo
 from rich.console import Console
 from rich.progress import BarColumn, Progress, SpinnerColumn, TaskProgressColumn, TextColumn
+from rich.table import Table
 
-from cadastral_cli.formatters import describe_error
+from cadastral_cli.formatters import describe_error, error_type_value_label, print_success
 from cadastral_cli.input_parsers import LRUnitInput, ParcelInput
 
 # Progress goes to stderr so that ``--format json`` on stdout stays parseable.
 progress_console = Console(stderr=True)
+console = Console()
 
 In = TypeVar("In")
 D = TypeVar("D")
@@ -172,21 +174,6 @@ def process_list(
 # ---------------------------------------------------------------------------
 
 
-def resolve_municipality(client: CadastralAPIClient, municipality: str) -> str:
-    """Municipality name or registration number -> registration number."""
-    if municipality.isdigit() and len(municipality) == 6:
-        return municipality
-    results = client.find_municipality(search_term=municipality)
-    if not results:
-        raise CadastralAPIError(
-            ErrorType.MUNICIPALITY_NOT_FOUND, details={"search_term": municipality}
-        )
-    for result in results:
-        if result.municipality_name.upper() == municipality.upper():
-            return str(result.municipality_reg_num)
-    return str(results[0].municipality_reg_num)
-
-
 def process_parcel_list(
     client: CadastralAPIClient,
     inputs: list[ParcelInput],
@@ -194,12 +181,18 @@ def process_parcel_list(
     show_progress: bool = True,
 ) -> ListSummary[ParcelInput, ParcelInfo]:
     """Look up every parcel of ``inputs`` (by number and municipality, or by id)."""
+    # A list usually names one municipality: resolve each name once, not per item.
+    codes: dict[str, str] = {}
 
     def fetch(item: ParcelInput) -> ParcelInfo | None:
         if item.parcel_id:
             return client.get_parcel_info(item.parcel_id)
         assert item.parcel_number is not None and item.municipality is not None
-        code = resolve_municipality(client, item.municipality)
+        code = codes.get(item.municipality)
+        if code is None:
+            code = codes[item.municipality] = client.resolve_municipality_reg_num(
+                item.municipality
+            )
         return client.get_parcel_by_number(item.parcel_number, code, exact_match=True)
 
     return process_list(
@@ -292,3 +285,62 @@ def lr_unit_row(result: ItemResult[LRUnitInput, LandRegistryUnitDetailed]) -> di
         row["error_type"] = result.error_type
         row["error_message"] = result.error_message
     return row
+
+
+# ---------------------------------------------------------------------------
+# Terminal summary shared by the two list commands
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class ListWording:
+    """The item-specific words of the list summary printed after a table.
+
+    The plural forms are callables so that every ``ngettext`` call keeps its
+    literal strings (the translation gate extracts them from the source).
+    """
+
+    item_label: str  # column header of the error table
+    processed: Callable[[int], str]  # n -> "Successfully processed all {total} parcels"
+    processed_partly: str  # "Processed {successful}/{total} parcels ({rate}% success rate)"
+    failed: Callable[[int], str]  # n -> "{count} parcels failed - see output for details"
+
+
+def print_list_errors(
+    summary: ListSummary[In, D], describe: Callable[[In], str], wording: ListWording
+) -> None:
+    """The failed items of a list as a table, after the results table."""
+    if summary.failed == 0:
+        return
+    header = _("ERRORS")
+    console.print(f"\n{header}", style="bold red")
+    console.print("=" * len(header), style="bold red")
+    table = Table(show_header=True, box=None, padding=(0, 2))
+    table.add_column("#", justify="right", style="dim")
+    table.add_column(wording.item_label, style="bold")
+    table.add_column(_("Error Type"))
+    table.add_column(_("Error Message"))
+    for index, result in enumerate(summary.results, 1):
+        if result.status == "error":
+            table.add_row(
+                str(index),
+                describe(result.input),
+                error_type_value_label(result.error_type),
+                result.error_message or _("No error message"),
+            )
+    console.print(table)
+
+
+def print_list_footer(summary: ListSummary[In, D], wording: ListWording) -> None:
+    """The success count of a list lookup, coloured by outcome."""
+    console.print()
+    if summary.failed == 0:
+        print_success(wording.processed(summary.total).format(total=summary.total))
+        return
+    console.print(
+        wording.processed_partly.format(
+            successful=summary.successful, total=summary.total, rate=f"{summary.success_rate:.1f}"
+        ),
+        style="yellow",
+    )
+    console.print(wording.failed(summary.failed).format(count=summary.failed), style="yellow")

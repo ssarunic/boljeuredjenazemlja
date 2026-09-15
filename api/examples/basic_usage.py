@@ -71,9 +71,10 @@ def print_parcel_summary(parcel_number: str, municipality_code: str) -> None:
                     print(f"     • {possessor.name}{ownership_str}")
                     print(f"       Address: {possessor.address}")
 
-            # Map URL
-            map_url = client.get_map_url(parcel_info.parcel_id)
-            print(f"\n🗺️  View on map: {map_url}")
+            # Map URL (from the parcel outline in the cached GIS data)
+            geometry = client.get_parcel_geometry(parcel_info.parcel_number, municipality_code)
+            if geometry:
+                print(f"\n🗺️  View on map: {geometry.map_url()}")
 
         except CadastralAPIError as e:
             if e.error_type == ErrorType.PARCEL_NOT_FOUND:

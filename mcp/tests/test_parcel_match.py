@@ -35,6 +35,9 @@ class _FakeClient:
         self.results = [ParcelSearchResult.model_validate(item) for item in raw]
         self.searched: str | None = None
 
+    def resolve_municipality_reg_num(self, name_or_code: str) -> str:
+        return str(name_or_code)
+
     def find_parcel(self, parcel_number: str, municipality_reg_num: str):
         self.searched = parcel_number
         return self.results

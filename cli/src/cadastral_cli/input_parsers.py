@@ -16,41 +16,34 @@ from cadastral_api.utils import normalize_parcel_number
 from cadastral_cli.output_keys import canonical_key, canonical_keys
 
 
+@dataclass(frozen=True, repr=False)
 class ParcelInput:
-    """Represents a single parcel input specification."""
+    """One parcel to look up: by number and municipality, or by parcel id.
 
-    def __init__(
-        self,
-        parcel_number: str | None = None,
-        parcel_id: str | None = None,
-        municipality: str | None = None,
-    ):
-        """Initialize parcel input.
+    ``parcel_number`` is normalised on construction, so building parcels in
+    any spelling ("35/1.ZGR", "zgr. 35/1") become "*35/1".
 
-        Args:
-            parcel_number: Parcel number (e.g., "103/2")
-            parcel_id: Direct parcel ID (e.g., "12345678")
-            municipality: Municipality code or name (required if parcel_number provided)
+    Raises:
+        ValueError: neither or both of ``parcel_number`` and ``parcel_id`` are
+            given, or a parcel number comes without a municipality
+    """
 
-        Raises:
-            ValueError: If neither or both parcel_number and parcel_id are provided
-        """
-        if parcel_number and parcel_id:
-            msg = "Cannot specify both parcel_number and parcel_id"
-            raise ValueError(msg)
+    parcel_number: str | None = None
+    parcel_id: str | None = None
+    municipality: str | None = None
 
-        if not parcel_number and not parcel_id:
-            msg = "Must specify either parcel_number or parcel_id"
-            raise ValueError(msg)
-
-        if parcel_number and not municipality:
-            msg = "Municipality required when using parcel_number"
-            raise ValueError(msg)
-
-        # Building parcels in any spelling ("35/1.ZGR", "zgr. 35/1") -> "*35/1"
-        self.parcel_number = normalize_parcel_number(parcel_number) if parcel_number else None
-        self.parcel_id = parcel_id
-        self.municipality = municipality
+    def __post_init__(self) -> None:
+        if self.parcel_number and self.parcel_id:
+            raise ValueError("Cannot specify both parcel_number and parcel_id")
+        if not self.parcel_number and not self.parcel_id:
+            raise ValueError("Must specify either parcel_number or parcel_id")
+        if self.parcel_number and not self.municipality:
+            raise ValueError("Municipality required when using parcel_number")
+        object.__setattr__(
+            self,
+            "parcel_number",
+            normalize_parcel_number(self.parcel_number) if self.parcel_number else None,
+        )
 
     @property
     def is_direct_id(self) -> bool:

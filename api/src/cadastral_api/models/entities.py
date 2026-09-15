@@ -13,6 +13,7 @@ Purpose: Demonstrating how LLMs could be connected to land books in a safe,
 educational context using a mock server that closely mimics production behavior.
 """
 
+from collections import defaultdict
 from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
@@ -20,6 +21,7 @@ from fractions import Fraction
 from typing import Annotated, Any, Literal
 
 from pydantic import (
+    AfterValidator,
     AliasChoices,
     BaseModel,
     ConfigDict,
@@ -370,13 +372,8 @@ class Possessor(SourceModel):
             "1/4" -> 0.25
             "3/8" -> 0.375
         """
-        if not self.ownership:
-            return None
-        try:
-            frac = Fraction(self.ownership)
-            return float(frac)
-        except (ValueError, ZeroDivisionError):
-            return None
+        fraction = self.ownership_fraction
+        return fraction["decimal"] if fraction else None
 
 
 class PossessionSheet(SourceModel):
@@ -507,6 +504,30 @@ class PossessionSheet(SourceModel):
         return total
 
 
+def _validate_area_text(value: str) -> str:
+    """Validate that an area is a non-negative whole number of square metres."""
+    try:
+        if int(value) < 0:
+            raise ValueError("Area must be positive")
+    except ValueError as e:
+        raise ValueError(f"Invalid area value: {value}") from e
+    return value
+
+
+#: Area in m² as the server sends it: a string holding a non-negative integer.
+AreaText = Annotated[str, AfterValidator(_validate_area_text)]
+
+
+def area_to_int(text: str | None) -> int | None:
+    """An area string as an integer; None when the server sent no usable area."""
+    if text is None:
+        return None
+    try:
+        return int(text)
+    except ValueError:
+        return None
+
+
 class ParcelPart(SourceModel):
     """
     Land use classification for a part of the parcel.
@@ -524,7 +545,7 @@ class ParcelPart(SourceModel):
         default=None, alias="parcelPartId", description="Unique parcel part identifier"
     )
     name: str = Field(description="Land use type (e.g., 'PAŠNJAK', 'MASLINJAK', 'ŠUMA')")
-    area: str = Field(description="Area in square meters (string format)")
+    area: AreaText = Field(description="Area in square meters (string format)")
     possession_sheet_id: int | None = Field(
         default=None, alias="possessionSheetId", description="Link to possession sheet"
     )
@@ -557,23 +578,8 @@ class ParcelPart(SourceModel):
     @computed_field  # type: ignore[misc]
     @property
     def area_numeric(self) -> int:
-        """Convert string area to integer."""
-        try:
-            return int(self.area)
-        except ValueError:
-            return 0
-
-    @field_validator("area")
-    @classmethod
-    def validate_area(cls, v: str) -> str:
-        """Validate that area is a positive number string."""
-        try:
-            area_int = int(v)
-            if area_int < 0:
-                raise ValueError("Area must be positive")
-        except ValueError as e:
-            raise ValueError(f"Invalid area value: {v}") from e
-        return v
+        """The area as an integer (0 when it is not a number)."""
+        return area_to_int(self.area) or 0
 
 
 class LandRegistryUnit(SourceModel):
@@ -713,7 +719,7 @@ class ParcelInfo(SourceModel):
         alias="institutionId", description="Cadastral institution/office ID"
     )
     address: str = Field(description="Parcel location/address")
-    area: str = Field(description="Total parcel area in m² (string format)")
+    area: AreaText = Field(description="Total parcel area in m² (string format)")
 
     # Building and status information
     building_remark: int = Field(
@@ -764,11 +770,8 @@ class ParcelInfo(SourceModel):
     @computed_field  # type: ignore[misc]
     @property
     def area_numeric(self) -> int:
-        """Convert string area to integer."""
-        try:
-            return int(self.area)
-        except ValueError:
-            return 0
+        """The area as an integer (0 when it is not a number)."""
+        return area_to_int(self.area) or 0
 
     @computed_field  # type: ignore[misc]
     @property
@@ -785,14 +788,10 @@ class ParcelInfo(SourceModel):
         Returns:
             Dictionary mapping land use type to total area in m²
         """
-        summary: dict[str, int] = {}
+        summary: dict[str, int] = defaultdict(int)
         for part in self.parcel_parts:
-            area = part.area_numeric
-            if part.name in summary:
-                summary[part.name] += area
-            else:
-                summary[part.name] = area
-        return summary
+            summary[part.name] += part.area_numeric
+        return dict(summary)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -860,31 +859,12 @@ class ParcelInfo(SourceModel):
         None only when the parcel is genuinely not in the land registry. A null
         direct ``lr_unit`` does NOT mean "no land registry data".
         """
-        if self.lr_unit is not None:
-            return self.lr_unit
-        for unit in self.lr_units_from_parcel_links or []:
-            return unit
-        for link in self.parcel_links or []:
-            if link.lr_unit is not None:
-                return link.lr_unit
-        return None
+        return next(iter(self.lr_unit_candidates()), None)
 
     @property
     def lr_unit_from_links(self) -> bool:
         """True if the LR unit is reachable only via parcel links (no direct lr_unit)."""
         return self.lr_unit is None and self.resolved_lr_unit() is not None
-
-    @field_validator("area")
-    @classmethod
-    def validate_area(cls, v: str) -> str:
-        """Validate that area is a positive number string."""
-        try:
-            area_int = int(v)
-            if area_int < 0:
-                raise ValueError("Area must be positive")
-        except ValueError as e:
-            raise ValueError(f"Invalid area value: {v}") from e
-        return v
 
 
 # ============================================================================
@@ -1085,16 +1065,11 @@ class LREntry(SourceModel):
         parsed = parse_lr_entry(self.description)
         if self.action_type is None and parsed["action_type"]:
             self.action_type = ActionType(parsed["action_type"])
-        if self.diary_number is None:
-            self.diary_number = parsed["diary_number"]  # type: ignore[assignment]
-        if self.entry_date is None:
-            self.entry_date = parsed["entry_date"]  # type: ignore[assignment]
-        if self.basis_document is None:
-            self.basis_document = parsed["basis_document"]  # type: ignore[assignment]
+        for name in ("diary_number", "entry_date", "basis_document", "priority_diary_number"):
+            if getattr(self, name) is None:
+                setattr(self, name, parsed[name])
         if self.basis_date is None and self.basis_document:
             self.basis_date = first_date(self.basis_document)
-        if self.priority_diary_number is None:
-            self.priority_diary_number = parsed["priority_diary_number"]  # type: ignore[assignment]
         if "transferred_from_unit" not in self.model_fields_set:
             self.transferred_from_unit = bool(parsed["transferred_from_unit"])
         if "deletes_prior_entry" not in self.model_fields_set:
@@ -1689,12 +1664,7 @@ class LRUnitParcel(SourceModel):
     @property
     def area_numeric(self) -> int | None:
         """Area as an integer; None when the server sent no usable area."""
-        if self.area is None:
-            return None
-        try:
-            return int(self.area)
-        except ValueError:
-            return None
+        return area_to_int(self.area)
 
 
 class SheetAParcelList(SourceModel):

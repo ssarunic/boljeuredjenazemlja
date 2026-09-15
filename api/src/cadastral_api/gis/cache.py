@@ -2,9 +2,30 @@
 
 import shutil
 import zipfile
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 import httpx
+
+#: Name of a municipality's cache directory and ZIP: ``ko-<registration number>``.
+MUNICIPALITY_PREFIX = "ko-"
+
+
+def _tree_size(path: Path) -> int:
+    """Total size in bytes of the files under ``path``."""
+    return sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
+
+
+@dataclass(frozen=True)
+class CachedMunicipality:
+    """One municipality's entry in the GIS cache."""
+
+    municipality_reg_num: str
+    path: Path
+    size_bytes: int
+    #: When the ZIP was downloaded (None when only extracted files remain).
+    downloaded_at: datetime | None
 
 
 class GISCache:
@@ -16,6 +37,7 @@ class GISCache:
     """
 
     DEFAULT_BASE_URL = "http://localhost:8000"
+    DEFAULT_CACHE_DIR = Path.home() / ".cadastral_api_cache"
 
     #: Marker written next to each ZIP with the base URL it was downloaded from.
     #: A ZIP whose marker does not match the configured base URL is never
@@ -36,7 +58,7 @@ class GISCache:
                 no download ever reaches a production system by accident.
         """
         if cache_dir is None:
-            cache_dir = Path.home() / ".cadastral_api_cache"
+            cache_dir = self.DEFAULT_CACHE_DIR
         self.cache_dir = Path(cache_dir)
         self.base_url = (base_url or self.DEFAULT_BASE_URL).rstrip("/")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -51,7 +73,7 @@ class GISCache:
         Returns:
             Path to municipality cache directory
         """
-        muni_dir = self.cache_dir / f"ko-{municipality_reg_num}"
+        muni_dir = self.cache_dir / f"{MUNICIPALITY_PREFIX}{municipality_reg_num}"
         muni_dir.mkdir(exist_ok=True)
         return muni_dir
 
@@ -66,7 +88,7 @@ class GISCache:
             Path to ZIP file
         """
         muni_dir = self.get_municipality_dir(municipality_reg_num)
-        return muni_dir / f"ko-{municipality_reg_num}.zip"
+        return muni_dir / f"{MUNICIPALITY_PREFIX}{municipality_reg_num}.zip"
 
     def get_gml_path(self, municipality_reg_num: str, filename: str) -> Path:
         """
@@ -228,6 +250,32 @@ class GISCache:
             self.download_municipality(municipality_reg_num)
 
         return self.extract_gml(municipality_reg_num, "katastarske_cestice.gml")
+
+    def cached_municipalities(self) -> list[CachedMunicipality]:
+        """Every municipality with a cache directory, with its size on disk.
+
+        Reads the directory only; nothing is created.
+        """
+        if not self.cache_dir.exists():
+            return []
+        entries: list[CachedMunicipality] = []
+        for item in sorted(self.cache_dir.iterdir()):
+            if not item.is_dir() or not item.name.startswith(MUNICIPALITY_PREFIX):
+                continue
+            code = item.name[len(MUNICIPALITY_PREFIX):]
+            zip_path = item / f"{item.name}.zip"
+            downloaded_at = (
+                datetime.fromtimestamp(zip_path.stat().st_mtime) if zip_path.exists() else None
+            )
+            entries.append(CachedMunicipality(code, item, _tree_size(item), downloaded_at))
+        return entries
+
+    def size_bytes(self, municipality_reg_num: str | None = None) -> int:
+        """Bytes on disk of one municipality's cache, or of the whole cache."""
+        path = self.cache_dir
+        if municipality_reg_num is not None:
+            path = self.cache_dir / f"{MUNICIPALITY_PREFIX}{municipality_reg_num}"
+        return _tree_size(path) if path.exists() else 0
 
     def clear_municipality(self, municipality_reg_num: str) -> None:
         """

@@ -17,10 +17,16 @@ from cadastral_cli.formatters import (
     error_type_value_label,
     print_error,
     print_output,
-    print_success,
 )
 from cadastral_cli.input_parsers import ParcelInput, parse_cli_list, parse_input_file
-from cadastral_cli.list_processing import ListSummary, parcel_row, process_parcel_list
+from cadastral_cli.list_processing import (
+    ListSummary,
+    ListWording,
+    parcel_row,
+    print_list_errors,
+    print_list_footer,
+    process_parcel_list,
+)
 
 from .search import _resolve_municipality
 
@@ -247,7 +253,7 @@ def _get_parcel_list(
         else:
             print_output(_list_csv_rows(summary, show_owners), output_format="csv", file=output)
 
-        _print_list_footer(summary)
+        print_list_footer(summary, _list_wording())
         if summary.failed > 0:
             raise SystemExit(1)
 
@@ -368,55 +374,24 @@ def _print_list_overview(summary: ListSummary[ParcelInput, ParcelInfo], show_own
                 row.append("-")
         table.add_row(*row)
     console.print(table)
-    _print_list_errors(summary)
+    print_list_errors(summary, _describe_input, _list_wording())
 
 
-def _print_list_errors(summary: ListSummary[ParcelInput, ParcelInfo]) -> None:
-    if summary.failed == 0:
-        return
-    header = _("ERRORS")
-    console.print(f"\n{header}", style="bold red")
-    console.print("=" * len(header), style="bold red")
-    table = Table(show_header=True, box=None, padding=(0, 2))
-    table.add_column("#", justify="right", style="dim")
-    table.add_column(_("Parcel"), style="bold")
-    table.add_column(_("Error Type"))
-    table.add_column(_("Error Message"))
-    for index, result in enumerate(summary.results, 1):
-        if result.status == "error":
-            table.add_row(
-                str(index),
-                _describe_input(result.input),
-                error_type_value_label(result.error_type),
-                result.error_message or _("No error message"),
-            )
-    console.print(table)
-
-
-def _print_list_footer(summary: ListSummary[ParcelInput, ParcelInfo]) -> None:
-    console.print()
-    if summary.failed == 0:
-        print_success(
-            ngettext(
-                "Successfully processed {total} parcel",
-                "Successfully processed all {total} parcels",
-                summary.total,
-            ).format(total=summary.total)
-        )
-        return
-    console.print(
-        _("⚠️  Processed {successful}/{total} parcels ({rate}% success rate)").format(
-            successful=summary.successful, total=summary.total, rate=f"{summary.success_rate:.1f}"
+def _list_wording() -> ListWording:
+    """Words of the list summary, translated in the active language."""
+    return ListWording(
+        item_label=_("Parcel"),
+        processed=lambda n: ngettext(
+            "Successfully processed {total} parcel",
+            "Successfully processed all {total} parcels",
+            n,
         ),
-        style="yellow",
-    )
-    console.print(
-        ngettext(
+        processed_partly=_("⚠️  Processed {successful}/{total} parcels ({rate}% success rate)"),
+        failed=lambda n: ngettext(
             "   {count} parcel failed - see output for details",
             "   {count} parcels failed - see output for details",
-            summary.failed,
-        ).format(count=summary.failed),
-        style="yellow",
+            n,
+        ),
     )
 
 

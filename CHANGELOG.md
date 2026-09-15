@@ -12,6 +12,19 @@ number and one tag.
 
 ### Added
 
+- SDK: `CadastralAPIClient.resolve_municipality_reg_num(name_or_code)` turns a
+  municipality name into its registration number the same way everywhere: a
+  number passes through, an exact name wins, a single match is taken, and an
+  ambiguous name raises `MUNICIPALITY_NOT_FOUND` with reason
+  `municipality_ambiguous` and the candidates. The CLI (single and list
+  lookups), the MCP tools and `get_lr_unit_from_parcel` all use it; the list
+  path and the MCP used to take the first of several matches silently, and
+  the CLI list resolved the same name once per parcel instead of once.
+- SDK: `GISCache.cached_municipalities()` and `GISCache.size_bytes()` list
+  what the GIS cache holds; `strip_html(keep_breaks=True)` and `fold_text()`
+  in `cadastral_api.utils` are the one HTML stripper and one diacritic fold
+  the CLI and the MCP share.
+
 - MCP: `get_parcel` pages through the possessors of a parcel with `offset` and
   `limit`, counted across its possession sheets in sheet order, and every
   cadastre entry carries `total_possessors`, `possessors_truncated` and a
@@ -42,6 +55,22 @@ number and one tag.
   condominium unit number or a common-area share.
 
 ### Fixed
+
+- CLI: `get-geometry --format wkt` printed the polygon through the terminal
+  renderer, which wrapped it at 80 columns even when piped; it is printed as
+  one line now. An unknown municipality in `get-parcel` and the other
+  commands now prints the suggestions (search, list, use the code) that were
+  written for it but never reached.
+- SDK: the parser of a municipality's GML file is kept per client, so a list
+  of parcels in one municipality parses the file once instead of once per
+  parcel; the zoning overlap estimate tests each sample only against the
+  zone edges near the parcel, which cuts the cost on settlement polygons of
+  thousands of vertices. The MCP `get_parcel` also stops computing the map
+  link twice for a parcel given by number.
+- MCP: `get_parcel`'s land-registry hint now uses the same resolution as
+  `data.lr_unit` (direct unit, then the units of parcel links, then the
+  links themselves), so the two no longer disagree for a parcel reachable
+  only through `parcel_links`.
 
 - MCP: `get_parcel` promised the land-registry reference under `data.lr_unit`
   but left it null for a parcel whose unit the cadastre reaches only through
@@ -89,6 +118,13 @@ number and one tag.
   endpoint to the mock server whatever `.env` says, and `scripts/release.py`
   rebuilds the documentation after the version bump and commits it with the
   release.
+
+### Removed
+
+- SDK: `CadastralAPIClient.get_map_url()` (it built the old
+  `?cad_parcel_id=` link; use `ParcelGeometry.map_url()` or
+  `build_map_url()`) and `get_municipality_gis_download_url()` (it named the
+  production host; `GISCache` downloads from the configured base URL).
 
 ## [0.2.0] - 2026-09-14
 

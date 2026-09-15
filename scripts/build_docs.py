@@ -334,11 +334,11 @@ def _dump_tree(lang: str) -> dict:
         "program": program,
         "commands": commands,
         "errors": errors,
-        "error_prefix": _error_prefix(lang),
+        "error_prefix": _error_prefix(),
     }
 
 
-def _error_prefix(lang: str) -> str:
+def _error_prefix() -> str:
     from cadastral_api.i18n import _
 
     return _("\n✗ Error: {error}").strip().split("{error}")[0].strip()

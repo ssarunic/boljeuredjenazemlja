@@ -24,7 +24,7 @@ def _tools(tmp_path: Path, cached: bool):
     client.gis_cache = cache
     tools = CadastralTools(client)
 
-    async def resolve(name_or_code: str) -> str:
+    def resolve(name_or_code: str) -> str:
         return "334979"
 
     tools._resolve_municipality = resolve  # type: ignore[method-assign]

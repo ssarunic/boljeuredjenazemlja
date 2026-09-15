@@ -3,10 +3,12 @@
 import pytest
 
 from cadastral_api.utils import (
+    fold_text,
     normalize_name,
     normalize_parcel_number,
     parse_beneficiary_name,
     parse_fraction,
+    strip_html,
 )
 
 
@@ -101,3 +103,21 @@ def test_parse_beneficiary_name(text, expected) -> None:
 )
 def test_normalize_parcel_number(written, expected) -> None:
     assert normalize_parcel_number(written) == expected
+
+
+def test_strip_html_keeps_line_breaks_on_request() -> None:
+    text = "<span class='lr-entry-black'>Zaprimljeno &amp; upisano<br/>pod   brojem<br>Z-1/2016"
+    assert strip_html(text) == "Zaprimljeno & upisano pod brojem Z-1/2016"
+    assert strip_html(text, keep_breaks=True) == "Zaprimljeno & upisano\npod brojem\nZ-1/2016"
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Anđelić  Šarunić", "andelic sarunic"),
+        ("ŁUKA Straße", "luka strasse"),
+        ("  Ivić\tMarko ", "ivic marko"),
+    ],
+)
+def test_fold_text(text, expected) -> None:
+    assert fold_text(text) == expected

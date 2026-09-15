@@ -227,9 +227,6 @@ This document specifies the implementation of Pydantic V2 business entities for 
    - Combines search + detail retrieval
    - Optional exact matching
 
-4. **`get_map_url(parcel_id) -> str`**
-   - Generate interactive map URL
-
 **Error Handling:**
 - `ParcelNotFoundError` - Parcel doesn't exist
 - `APIConnectionError` - Network issues

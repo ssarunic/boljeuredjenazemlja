@@ -11,11 +11,11 @@ government systems. See docs/legal.md before using the client with any other ser
 import json
 import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import Body, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -40,6 +40,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 _offices: list[dict[str, Any]] = []
 _municipalities: list[dict[str, Any]] = []
 _parcels: dict[str, list[dict[str, Any]]] = {}  # municipality_code -> parcels
+_parcel_by_id: dict[int, dict[str, Any]] = {}  # parcelId -> parcel (built at startup)
 _lr_units: dict[str, dict[str, Any]] = {}  # "mainBookId-lrUnitNumber" -> lr_unit_data
 _file_status: dict[str, dict[str, Any]] = {}  # "institutionId-code-order-year" -> file status
 _main_books: list[dict[str, Any]] = []  # six-key search records (E5)
@@ -99,6 +100,9 @@ async def load_data():
             municipality_code = parcel_file.stem
             parcels_data = load_json(parcel_file)
             _parcels[municipality_code] = parcels_data
+            _parcel_by_id.update(
+                (p["parcelId"], p) for p in parcels_data if p.get("parcelId") is not None
+            )
             print(f"✓ Loaded {len(parcels_data)} parcels for municipality {municipality_code}")
             # Possession sheets are searchable by number (E4); derive them from the parcels.
             sheets: dict[int, str] = {}
@@ -193,11 +197,11 @@ async def list_offices():
 
 @app.get("/search-cad-parcels/municipalities")
 async def find_municipalities(
-    search: Optional[str] = Query(None, description="Municipality name or code to search"),
-    office_id: Optional[str] = Query(
+    search: str | None = Query(None, description="Municipality name or code to search"),
+    office_id: str | None = Query(
         None, alias="officeId", description="Filter by cadastral office ID"
     ),
-    department_id: Optional[str] = Query(
+    department_id: str | None = Query(
         None, alias="departmentId", description="Filter by department ID"
     ),
 ):
@@ -311,9 +315,9 @@ async def find_possession_sheet_numbers(
 
 def _filter_books(
     books: list[dict[str, Any]],
-    search: Optional[str],
-    office_id: Optional[str],
-    institution_name: Optional[str],
+    search: str | None,
+    office_id: str | None,
+    institution_name: str | None,
 ) -> list[dict[str, Any]]:
     results = books
     if search:
@@ -329,9 +333,9 @@ def _filter_books(
 
 @app.get("/search-lr-parcels/main-books")
 async def find_main_books(
-    search: Optional[str] = Query(None, description="Main book name to search"),
-    office_id: Optional[str] = Query(None, alias="officeId", description="Land-registry office id"),
-    institution_name: Optional[str] = Query(
+    search: str | None = Query(None, description="Main book name to search"),
+    office_id: str | None = Query(None, alias="officeId", description="Land-registry office id"),
+    institution_name: str | None = Query(
         None, alias="institutionName", description="Institution name filter"
     ),
 ):
@@ -347,9 +351,9 @@ async def find_main_books(
 
 @app.get("/search-lr-parcels/books-of-dc")
 async def find_books_of_dc(
-    search: Optional[str] = Query(None, description="Book name to search"),
-    office_id: Optional[str] = Query(None, alias="officeId", description="Land-registry office id"),
-    institution_name: Optional[str] = Query(
+    search: str | None = Query(None, description="Book name to search"),
+    office_id: str | None = Query(None, alias="officeId", description="Land-registry office id"),
+    institution_name: str | None = Query(
         None, alias="institutionName", description="Institution name filter"
     ),
 ):
@@ -375,13 +379,9 @@ async def get_parcel_info(
     Returns:
         Complete parcel information including ownership, land use, and registry data.
     """
-    parcel_id_int = int(parcel_id)
-
-    # Search for parcel across all municipalities
-    for municipality_code, parcels in _parcels.items():
-        for parcel in parcels:
-            if parcel.get("parcelId") == parcel_id_int:
-                return parcel
+    parcel = _parcel_by_id.get(int(parcel_id))
+    if parcel is not None:
+        return parcel
 
     # Parcel not found
     return JSONResponse(
@@ -536,7 +536,6 @@ def _wfs_exception(code: str, locator: str, text: str) -> Any:
         f'<ows:Exception exceptionCode="{code}" locator="{locator}">'
         f"<ows:ExceptionText>{text}</ows:ExceptionText></ows:Exception></ows:ExceptionReport>"
     )
-    from fastapi.responses import Response
 
     return Response(content=body, status_code=400, media_type="application/xml")
 
@@ -601,18 +600,17 @@ def _feature_bbox(feature: dict[str, Any]) -> tuple[float, float, float, float]:
 
 @app.get("/planning/wfs")
 async def planning_wfs(
-    request: Optional[str] = Query(None),
-    type_names: Optional[str] = Query(None, alias="typeNames"),
-    type_name_11: Optional[str] = Query(None, alias="typeName"),
-    cql_filter: Optional[str] = Query(None),
-    bbox: Optional[str] = Query(None),
-    count: Optional[int] = Query(None),
+    request: str | None = Query(None),
+    type_names: str | None = Query(None, alias="typeNames"),
+    type_name_11: str | None = Query(None, alias="typeName"),
+    cql_filter: str | None = Query(None),
+    bbox: str | None = Query(None),
+    count: int | None = Query(None),
     start_index: int = Query(0, alias="startIndex"),
-    result_type: Optional[str] = Query(None, alias="resultType"),
-    property_name: Optional[str] = Query(None, alias="propertyName"),
+    result_type: str | None = Query(None, alias="resultType"),
+    property_name: str | None = Query(None, alias="propertyName"),
 ):
     """Imitation of the building-areas WFS (GetCapabilities and GetFeature)."""
-    from fastapi.responses import Response
 
     op = (request or "").lower()
     if op == "getcapabilities":

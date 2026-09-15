@@ -137,3 +137,23 @@ def test_failed_download_keeps_previous_files_but_serves_nothing(
     assert GISCache(tmp_path, base_url=MOCK_URL).is_cached("334979")
     # ...and still not considered cached for the other one.
     assert not other.is_cached("334979")
+
+
+def test_cached_municipalities_lists_size_and_download_time(tmp_path: Path) -> None:
+    cache = GISCache(tmp_path, base_url=MOCK_URL)
+    assert cache.cached_municipalities() == []
+    (tmp_path / "ko-334979").mkdir()
+    (tmp_path / "ko-334979" / "ko-334979.zip").write_bytes(b"x" * 10)
+    (tmp_path / "ko-334979" / "katastarske_cestice.gml").write_bytes(b"y" * 5)
+    (tmp_path / "ko-335533").mkdir()  # extracted files only, no ZIP
+    (tmp_path / "ko-335533" / "katastarske_cestice.gml").write_bytes(b"z" * 7)
+    (tmp_path / "unrelated").mkdir()
+
+    entries = cache.cached_municipalities()
+    assert [e.municipality_reg_num for e in entries] == ["334979", "335533"]
+    assert [e.size_bytes for e in entries] == [15, 7]
+    assert entries[0].downloaded_at is not None and entries[1].downloaded_at is None
+    assert cache.size_bytes() == 22
+    assert cache.size_bytes("335533") == 7
+    assert cache.size_bytes("999999") == 0
+    assert not (tmp_path / "ko-999999").exists()  # listing creates nothing

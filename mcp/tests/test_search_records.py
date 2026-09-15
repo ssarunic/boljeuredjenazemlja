@@ -45,6 +45,9 @@ class _FakeClient:
             )
         ]
 
+    def resolve_municipality_reg_num(self, name_or_code):
+        return str(name_or_code)
+
     def find_possession_sheet(self, sheet_number, municipality_reg_num):
         return [PossessionSheetSearchResult.model_validate({"key1": "14823725", "value1": "657"})]
 
