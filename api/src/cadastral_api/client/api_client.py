@@ -42,6 +42,7 @@ from ..models import (
 )
 from ..models.gis_entities import ParcelGeometry
 from ..models.planning_entities import ParcelZoning
+from ..models.provenance import Provenance, Register, now_utc_iso
 from ..planning import PlanningWFSClient, validate_min_overlap
 from ..utils import is_building_parcel_number, normalize_parcel_number, parse_file_number
 
@@ -268,8 +269,23 @@ class CadastralAPIClient:
                     },
                 )
 
-            # Raise for other error codes
-            response.raise_for_status()
+            # The server refused: the data needs an authorisation this client
+            # does not have. Named apart from transport failures so that a
+            # refusal is never read as an empty parcel or a network problem.
+            if response.status_code in (401, 403):
+                raise CadastralAPIError(
+                    error_type=ErrorType.ACCESS_DENIED,
+                    details={"endpoint": endpoint, "status_code": response.status_code},
+                )
+            if response.status_code >= 400:
+                raise CadastralAPIError(
+                    error_type=ErrorType.HTTP_ERROR,
+                    details={
+                        "endpoint": endpoint,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500],
+                    },
+                )
 
             return response.json()
 
@@ -300,6 +316,11 @@ class CadastralAPIClient:
                 details={"endpoint": endpoint},
                 cause=e,
             ) from e
+
+    def _provenance(self, register: Register, endpoint: str, params: dict[str, str]) -> Provenance:
+        """The provenance of a record just fetched: its register, the exact URL, the time."""
+        url = self.client.build_request("GET", endpoint, params=params).url
+        return Provenance(register=register, source_url=str(url), retrieved_at=now_utc_iso())
 
     # ------------------------------------------------------------------
     # Response validation
@@ -680,7 +701,9 @@ class CadastralAPIClient:
                 },
             )
 
-        return self._parse(ParcelInfo, response_data, endpoint, {"parcel_id": str(parcel_id)})
+        parcel = self._parse(ParcelInfo, response_data, endpoint, {"parcel_id": str(parcel_id)})
+        parcel.provenance = self._provenance("cadastre", endpoint, params)
+        return parcel
 
     def get_parcel_by_number(
         self, parcel_number: str, municipality_reg_num: str, exact_match: bool = True
@@ -927,12 +950,14 @@ class CadastralAPIClient:
         if isinstance(response_data, list):
             response_data = response_data[0]
 
-        return self._parse(
+        lr_unit = self._parse(
             LandRegistryUnitDetailed,
             response_data,
             endpoint,
             {"lr_unit_number": lr_unit_number, "main_book_id": main_book_id},
         )
+        lr_unit.provenance = self._provenance("land_registry", endpoint, params)
+        return lr_unit
 
     def get_lr_unit_from_parcel(
         self,

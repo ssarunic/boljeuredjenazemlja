@@ -157,3 +157,17 @@ def test_cached_municipalities_lists_size_and_download_time(tmp_path: Path) -> N
     assert cache.size_bytes("335533") == 7
     assert cache.size_bytes("999999") == 0
     assert not (tmp_path / "ko-999999").exists()  # listing creates nothing
+
+
+def test_downloaded_at_is_the_zip_time_in_utc_and_creates_nothing(tmp_path: Path) -> None:
+    from datetime import timezone
+
+    cache = GISCache(tmp_path, base_url=MOCK_URL)
+    assert cache.downloaded_at("334979") is None
+    assert not (tmp_path / "ko-334979").exists()
+    (tmp_path / "ko-334979").mkdir()
+    zip_path = tmp_path / "ko-334979" / "ko-334979.zip"
+    zip_path.write_bytes(b"x")
+    downloaded = cache.downloaded_at("334979")
+    assert downloaded is not None and downloaded.tzinfo is timezone.utc
+    assert downloaded.timestamp() == pytest.approx(zip_path.stat().st_mtime)

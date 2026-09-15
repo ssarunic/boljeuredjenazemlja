@@ -47,6 +47,7 @@ from ..utils import (
     split_name_share,
     strip_html,
 )
+from .provenance import Provenance
 
 
 class SourceModel(BaseModel):
@@ -766,6 +767,12 @@ class ParcelInfo(SourceModel):
     status: int = Field(description="Parcel status code")
     resource_code: int = Field(alias="resourceCode", description="Resource code")
     is_harmonized: bool = Field(alias="isHarmonized", description="Data harmonization status")
+
+    # Retrieval provenance (not from the API): stamped by the client on the
+    # record it fetched; None on a record built from a file or a fixture.
+    provenance: Provenance | None = Field(
+        default=None, description="Register, URL and time of retrieval (set by the client)"
+    )
 
     @computed_field  # type: ignore[misc]
     @property
@@ -1923,6 +1930,10 @@ class LandRegistryUnitDetailed(SourceModel):
     # None when fetched directly by unit number (no parcel context).
     cadastre_harmonized: bool | None = Field(
         None, description="Source parcel's cadastre/LR harmonization status, if known"
+    )
+    # Retrieval provenance (not from the API): stamped by get_lr_unit_detailed.
+    provenance: Provenance | None = Field(
+        default=None, description="Register, URL and time of retrieval (set by the client)"
     )
 
     @computed_field  # type: ignore[misc]

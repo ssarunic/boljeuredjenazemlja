@@ -75,6 +75,24 @@ or `none`) and `map_url` when available. A failed parcel does
 not stop the others. An entry resolved from a fallback match carries
 `exact_match: false` and `match_note`, as `find_parcel` does.
 
+Every successful entry carries `provenance`: `register` (`cadastre`),
+`source_url` (the request that answered) and `retrieved_at` (UTC). Pass it on
+with any fact you forward, so that nothing is mistaken for an official
+extract; it is `null` only for a record that was not fetched from a server.
+The entry also carries `area_check`, which compares the cadastre area with
+the graphical area of the cadastral map (`gis_m2`, when the municipality's GIS
+data is available) and with the land register's area when the cadastre record
+carries it on the parcel link (`land_registry_m2`; otherwise `note` says that
+`get_lr_unit` with `detail="parcels"` reads it from sheet A). `compared` lists
+the areas that were available, `max_difference_fraction` the spread relative
+to the largest, and `mismatch` is true above 5 % (`tolerance_fraction`). A
+failed entry carries `error_type` and, when the server said more,
+`error_details`: `parcel_not_found`, `municipality_not_found`,
+`lr_unit_not_found`, `access_denied` (HTTP 401/403), `rate_limit`, `timeout`,
+`http_error`, `response_too_large`, `invalid_request` (a bad reference or
+option) or `internal_error`. Read it before concluding anything from an empty
+answer: "not found", "refused" and "throttled" are different facts.
+
 With `source="cadastre"`, `offset` and `limit` page through the possessor
 records of each parcel, counted across its possession sheets in sheet order
 (a parcel under a condominium keeps hundreds of possessors on one sheet, so
@@ -146,7 +164,14 @@ duplicates = total`; `successful` alone equals `unique`, the units fetched.
 
 `detail` shapes `data` for every unit. Every level names the unit
 (`lr_unit_number`, `main_book_id`, `main_book_name`, `institution_id`,
-`institution_name`):
+`institution_name`) and carries `provenance` (`register: "land_registry"`,
+`source_url`, `retrieved_at`), and every level but `parcels` and
+`encumbrances` carries `distinct_owners`, the number of different people
+among the owner records (case, diacritics and spacing ignored; two records
+with different tax numbers are two people): one person on two shares is two
+records and one owner, so compare it with `total_owners` to judge
+fragmentation before reading names. A failed entry carries `error_type` and
+`error_details` as in `get_parcel`.
 
 - `"ownership"` (default): owners with structured shares
   (`share = {num, den, decimal}`), each with `entry` (the registration entry
@@ -286,9 +311,11 @@ error.
 Downloads the GIS data of a whole cadastral municipality (the ATOM ZIP with
 the parcel boundaries in GML) into the local cache that `get_parcel_geometry`
 and `get_parcel_zoning` read, or refreshes it with `force=true`. Returns the
-`download_url`, whether it was `already_cached`, the cached `zip_path` and
-`gml_path`, the ZIP size, the `parcel_count` of the municipality and the
-`source` server the cache came from. The two geometry tools download on demand;
+`download_url`, whether it was `already_cached`, `downloaded_at` (when the
+cached ZIP was downloaded, UTC: the age of the data every geometry, map link,
+zoning answer and `area_check` for this municipality rests on), the cached
+`zip_path` and `gml_path`, the ZIP size, the `parcel_count` of the
+municipality and the `source` server the cache came from. The two geometry tools download on demand;
 this is for fetching ahead of many lookups or refreshing stale data.
 
 ## Playbook
@@ -347,6 +374,13 @@ record (possessors, not land-registry owners).
 
 ## Troubleshooting
 
+- **`error_type`**: every failed entry of `get_parcel` and `get_lr_unit`
+  carries one, and every tool error message ends with `[error_type=...]`.
+  `access_denied` means the server refused (HTTP 401/403), `rate_limit` that
+  it throttled, `*_not_found` that nothing exists under that reference,
+  `response_too_large` that the entry must be paged, `invalid_request` that
+  the reference or an option was wrong. Only `*_not_found` means "no such
+  record".
 - **Municipality not found**: check the spelling or use the registration code
   from `resolve_municipality`.
 - **No parcels found**: check the number format ("103/2", not "103-2") and the

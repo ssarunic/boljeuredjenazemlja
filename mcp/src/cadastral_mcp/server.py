@@ -15,7 +15,7 @@ from mcp.server.mcpserver.exceptions import ResourceError, ToolError
 from .config import config
 from .prompts import CadastralPrompts
 from .resources import CadastralResources
-from .tools import CadastralTools, LRUnitRef, ParcelRef
+from .tools import CadastralTools, LRUnitRef, ParcelRef, error_kind
 
 # Configure logging to stderr (CRITICAL: never log to stdout in MCP servers)
 logging.basicConfig(
@@ -38,6 +38,11 @@ def _anticipated(error_class: type[Exception]) -> Callable[[Handler], Handler]:
     ``ToolError`` / ``ResourceError`` as a crash and withholds its message from
     the client, so the agent saw only "Error executing tool <name>". Wrapping
     the handlers hands the message over as the SDK expects.
+
+    The SDK's error carries text only, so the machine-readable kind of the
+    failure (``error_kind``: parcel_not_found, access_denied, rate_limit,
+    invalid_request ...) is appended to the message as ``[error_type=...]``;
+    the list tools put the same kind in each failed entry's ``error_type``.
     """
 
     def decorate(func: Handler) -> Handler:
@@ -46,7 +51,8 @@ def _anticipated(error_class: type[Exception]) -> Callable[[Handler], Handler]:
             try:
                 return await func(*args, **kwargs)
             except (ValueError, CadastralAPIError) as e:
-                raise error_class(str(e)) from e
+                kind, _details = error_kind(e)
+                raise error_class(f"{e} [error_type={kind}]") from e
 
         return wrapper
 
@@ -245,6 +251,17 @@ def create_mcp_server() -> MCPServer:
             the cadastre linked it directly ("direct") or only through parcel
             links ("linked", the unit is then promoted from
             ``lr_units_from_parcel_links``), or not at all ("none").
+
+            Every successful entry carries ``provenance`` (``register``,
+            ``source_url``, ``retrieved_at`` in UTC: which register answered,
+            from where and when; pass it on with any fact you forward) and
+            ``area_check``, which compares the cadastre area with the
+            graphical area of the cadastral map and, when the cadastre record
+            carries it, the land register's area, flagging ``mismatch`` above
+            5 %. A failed entry carries ``error_type`` (parcel_not_found,
+            municipality_not_found, access_denied, rate_limit, timeout,
+            response_too_large, invalid_request ...) and ``error_details``, so
+            an empty answer is never read as an empty parcel.
         """
         logger.info(
             f"Tool invoked: get_parcel({len(parcels)} parcels, source={source}, "
@@ -510,7 +527,14 @@ def create_mcp_server() -> MCPServer:
             = total; do not expect successful + failed alone to add up when
             references share a unit. ``data`` is shaped per ``detail``; owners
             carry a structured ``share`` ({num, den, decimal}) and a
-            ``register`` tag.
+            ``register`` tag. Every level names the unit and carries
+            ``provenance`` (register, ``source_url``, ``retrieved_at``);
+            "summary", "ownership", "shares" and "full" also carry
+            ``distinct_owners``, the number of different people among the
+            owner records (one person on two shares is two records and one
+            owner), for judging fragmentation before reading names. A failed
+            entry carries ``error_type`` and ``error_details`` (see
+            get_parcel).
         """
         logger.info(
             f"Tool invoked: get_lr_unit({len(units)} refs, detail={detail}, "
@@ -650,8 +674,11 @@ def create_mcp_server() -> MCPServer:
 
         Returns:
             Dictionary with ``municipality_code``, ``download_url``,
-            ``already_cached``, ``zip_path``, ``zip_size_bytes``, ``gml_path``,
-            ``parcel_count`` and ``source`` (the server the cache came from).
+            ``already_cached``, ``downloaded_at`` (when the cached ZIP was
+            downloaded, ISO 8601 UTC: the age of the data every geometry and
+            zoning answer for this municipality rests on), ``zip_path``,
+            ``zip_size_bytes``, ``gml_path``, ``parcel_count`` and ``source``
+            (the server the cache came from).
         """
         logger.info(f"Tool invoked: download_municipality_gis({municipality}, force={force})")
         return await tools_handler.download_municipality_gis(municipality, force)

@@ -53,8 +53,36 @@ number and one tag.
   totals, and 0 matches is an answer, not an error.
 - SDK: `PossessionSheet.is_condominium`, true when a possessor carries a
   condominium unit number or a common-area share.
+- SDK: `ErrorType.ACCESS_DENIED` for HTTP 401 and 403 and `ErrorType.HTTP_ERROR`
+  for any other 4xx, both with `status_code` in the details. A refusal used to
+  fall through as `connection`, indistinguishable from a network failure. The
+  CLI labels them "Access denied" / "Pristup odbijen" and "HTTP error".
+- SDK: every record from `get_parcel_info` and `get_lr_unit_detailed` carries
+  `provenance` (`register`, `source_url`, `retrieved_at` in UTC), stamped by
+  the client after the fetch; a record built from a file has none.
+  `GISCache.downloaded_at(code)` gives the download time of a cached
+  municipality.
+- SDK: `cadastral_api.analysis`, pure functions over the models: `person_key`,
+  `same_person` and `count_distinct_persons` (one person identity for both
+  registers: case, diacritics, spacing, punctuation and a share suffix
+  ignored, a relative's name ("POK. BOŽE", "UD. IVE") only in the loose key,
+  tax numbers decisive when both records have one) and `check_area` /
+  `AreaCheck` (cadastre, land-register and graphical areas compared, a
+  difference above 5 % flagged).
+- MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
+  cadastre area against the cadastral map's graphical area and the
+  land-register area on the parcel link), every `get_lr_unit` entry
+  `provenance` and, on the owner levels, `distinct_owners`; a failed entry of
+  either tool carries `error_type` (`parcel_not_found`, `access_denied`,
+  `rate_limit`, `response_too_large`, `invalid_request` ...) and
+  `error_details`, and every tool error message ends with `[error_type=...]`.
+  `download_municipality_gis` returns `downloaded_at`.
 
 ### Fixed
+
+- MCP: `distinct_possessors` compared title-cased names, so a possessor
+  written "ŠARUNIĆ" on one sheet and "SARUNIC" on another counted twice; it
+  now uses the shared person identity (`count_distinct_persons`).
 
 - CLI: `get-geometry --format wkt` printed the polygon through the terminal
   renderer, which wrapped it at 80 columns even when piped; it is printed as

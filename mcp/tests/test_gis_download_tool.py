@@ -1,6 +1,7 @@
 """download_municipality_gis fills the cache and reports what it cached."""
 
 import asyncio
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -20,6 +21,7 @@ def _tools(tmp_path: Path, cached: bool):
     cache.download_municipality.return_value = zip_path
     cache.get_parcel_data.return_value = gml_path
     cache.get_source.return_value = "http://localhost:8000"
+    cache.downloaded_at.return_value = datetime(2026, 9, 15, 12, 0, tzinfo=timezone.utc)
     client = MagicMock()
     client.gis_cache = cache
     tools = CadastralTools(client)
@@ -42,6 +44,7 @@ def test_download_reports_the_cached_files(tmp_path: Path) -> None:
     assert result["zip_size_bytes"] == 1234
     assert result["parcel_count"] == 1523
     assert result["source"] == "http://localhost:8000"
+    assert result["downloaded_at"] == "2026-09-15T12:00:00+00:00"
     cache.download_municipality.assert_called_once_with("334979", False)
 
 

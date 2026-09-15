@@ -109,7 +109,7 @@ msgstr "Alat potvrđuje što je uklonio i koliko je prostora oslobodio."
 
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
-#: commands/get-geometry.md:75 commands/get-lr-unit.md:99
+#: commands/get-geometry.md:74 commands/get-lr-unit.md:99
 #: commands/get-parcel.md:102 commands/get-zoning.md:90 commands/info.md:65
 #: commands/list-books-of-dc.md:53 commands/list-main-books.md:53
 #: commands/list-municipalities.md:66 commands/list-offices.md:89
@@ -134,7 +134,7 @@ msgstr "Da biste uklonili sve, umjesto naziva općine upotrijebite `--sve`:"
 
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:99 commands/get-lr-unit.md:278
+#: commands/get-geometry.md:98 commands/get-lr-unit.md:278
 #: commands/get-parcel.md:213 commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
 #: commands/list-municipalities.md:90 commands/list-offices.md:104
@@ -157,8 +157,8 @@ msgstr "Ako ne navedete ni općinu ni `--sve`, vidjet ćete ovo:"
 
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:118 commands/get-lr-unit.md:294
-#: commands/get-parcel.md:260 commands/get-zoning.md:141 commands/info.md:80
+#: commands/get-geometry.md:117 commands/get-lr-unit.md:294
+#: commands/get-parcel.md:265 commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
 #: commands/list-municipalities.md:103 commands/list-offices.md:110
 #: commands/search-municipality.md:89 commands/search-possession-sheet.md:86
@@ -178,8 +178,8 @@ msgstr "[preuzmi-gis](download-gis.md) ponovno preuzima općinu."
 
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:124 commands/get-lr-unit.md:301
-#: commands/get-parcel.md:267 commands/get-zoning.md:147 commands/info.md:86
+#: commands/get-geometry.md:123 commands/get-lr-unit.md:301
+#: commands/get-parcel.md:272 commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
 #: commands/list-municipalities.md:109 commands/list-offices.md:116
 #: commands/search-municipality.md:96 commands/search-possession-sheet.md:92
@@ -457,7 +457,7 @@ msgstr ""
 # and the smallest rectangle that contains the parcel (**Bounding Box**). The
 # last block is the boundary itself, written as a polygon in a standard text
 # form. Each pair of numbers is one corner point.
-#: commands/get-geometry.md:68
+#: commands/get-geometry.md:67
 msgid ""
 "**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
 "(**Vertices**), the area computed from them (**Area (GIS)**), the smallest "
@@ -477,7 +477,7 @@ msgstr ""
 # standard text form shown above. `geojson` is the form most web maps read.
 # `csv` gives one corner point per line for a spreadsheet. `json` gives the
 # same data for other programs.
-#: commands/get-geometry.md:77
+#: commands/get-geometry.md:76
 msgid ""
 "`--format` chooses the form of the boundary. `wkt` is the standard text form "
 "shown above. `geojson` is the form most web maps read. `csv` gives one corner"
@@ -490,7 +490,7 @@ msgstr ""
 " `geojson` i `json` sadrže i poveznicu na kartu (`map_url`; u obliku `json` "
 "ključ je `url_karte`)."
 
-#: commands/get-geometry.md:82
+#: commands/get-geometry.md:81
 msgid ""
 "To hand the boundary to someone, write it to a file with `--output`. A "
 "GeoJSON file can be dragged onto many online map viewers:"
@@ -498,13 +498,13 @@ msgstr ""
 "Da biste granicu nekome predali, zapišite je u datoteku pomoću `--datoteka`. "
 "GeoJSON datoteku možete povući na mnoge mrežne preglednike karata:"
 
-#: commands/get-geometry.md:101 commands/get-zoning.md:124
+#: commands/get-geometry.md:100 commands/get-zoning.md:124
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr "Ako čestice nema u podacima o granicama općine, vidjet ćete ovo:"
 
-#: commands/get-geometry.md:111 commands/get-zoning.md:134
+#: commands/get-geometry.md:110 commands/get-zoning.md:134
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
@@ -512,7 +512,7 @@ msgstr ""
 "Podaci o granicama i katastar nisu uvijek usklađeni; prvo provjerite česticu "
 "naredbom [pretraži](search.md)."
 
-#: commands/get-geometry.md:114
+#: commands/get-geometry.md:113
 msgid ""
 "If the boundary data of the municipality cannot be downloaded, ask the person"
 " who installed the tool whether the practice server is running. Other "
@@ -522,14 +522,14 @@ msgstr ""
 "instalirala alat je li probni poslužitelj pokrenut. Ostale poruke objašnjene "
 "su na [stranici o greškama](../errors.md)."
 
-#: commands/get-geometry.md:120
+#: commands/get-geometry.md:119
 msgid ""
 "[download-gis](download-gis.md) downloads the boundary data of a whole "
 "municipality."
 msgstr ""
 "[preuzmi-gis](download-gis.md) preuzima podatke o granicama cijele općine."
 
-#: commands/get-geometry.md:121
+#: commands/get-geometry.md:120
 msgid ""
 "[cache-list](cache-list.md) shows which municipalities are already on your "
 "computer."
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid "If the municipality is not recognised, the tool says so and stops:"
 msgstr "Ako općina nije prepoznata, alat to kaže i staje:"
 
-#: commands/get-parcel.md:223
+#: commands/get-parcel.md:228
 msgid ""
 "Check the spelling, or use the registration number instead of the name. You "
 "can find it with [search-municipality](search-municipality.md)."
@@ -1025,7 +1025,7 @@ msgstr ""
 "Provjerite pravopis ili umjesto naziva upotrijebite šifru. Možete je pronaći "
 "naredbom [traži-općinu](search-municipality.md)."
 
-#: commands/get-parcel.md:226
+#: commands/get-parcel.md:231
 msgid ""
 "If the parcel is not found, check the number on your document, including any "
 "part after the slash. Other messages are explained on the [errors "
@@ -1039,7 +1039,7 @@ msgstr ""
 # a
 # cross in the **Status** column and an explanation in an **ERRORS** table at
 # the end:
-#: commands/get-parcel.md:230
+#: commands/get-parcel.md:235
 msgid ""
 "A parcel that does not exist does not stop a list. It gets a cross in the "
 "**Status** column and an explanation in an **ERRORS** table at the end:"
@@ -1047,7 +1047,7 @@ msgstr ""
 "Čestica koja ne postoji ne prekida popis. Dobiva križić u stupcu **Status** i"
 " objašnjenje u tablici **GREŠKE** na kraju:"
 
-#: commands/get-parcel.md:255
+#: commands/get-parcel.md:260
 msgid ""
 "Correct the number and run the command again for that parcel alone. If you "
 "would rather stop at the first problem, add `--stop-on-error`. If the tool "
@@ -1059,7 +1059,7 @@ msgstr ""
 "može pronaći datoteku koju ste naveli uz `--ulaz`, provjerite je li Terminal "
 "u mapi u kojoj je datoteka, ili upišite njezinu punu putanju."
 
-#: commands/get-parcel.md:262
+#: commands/get-parcel.md:267
 msgid ""
 "[get-lr-unit](get-lr-unit.md) reads the land registry unit whose number "
 "appears under the land registry heading."
@@ -1067,11 +1067,11 @@ msgstr ""
 "[uložak](get-lr-unit.md) čita zemljišnoknjižni uložak čiji se broj pojavljuje"
 " pod naslovom zemljišne knjige."
 
-#: commands/get-parcel.md:263
+#: commands/get-parcel.md:268
 msgid "[search](search.md) is the short form of this command."
 msgstr "[pretraži](search.md) je kraći oblik ove naredbe."
 
-#: commands/get-parcel.md:264
+#: commands/get-parcel.md:269
 msgid ""
 "[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
 msgstr "[granica](get-geometry.md) daje granicu čestice za kartu."
@@ -1990,11 +1990,11 @@ msgstr ""
 "Kada nešto ne uspije, alat staje i ispisuje jedan redak crvenom bojom. Ova "
 "stranica ispisuje te poruke i kaže što učiniti kod svake."
 
-#: errors.md:33
+#: errors.md:35
 msgid "Messages about what you typed"
 msgstr "Poruke o onome što ste upisali"
 
-#: errors.md:35
+#: errors.md:37
 msgid ""
 "**Parcel not found** means the parcel number does not exist in the "
 "municipality you named. Check the number on your document, including the part"
@@ -2004,7 +2004,7 @@ msgstr ""
 " naveli. Provjerite broj na svom dokumentu, uključujući dio iza kose crte, i "
 "provjerite jeste li naveli pravu općinu."
 
-#: errors.md:39
+#: errors.md:41
 msgid ""
 "**Municipality not found** means the name or number after `-m` is not known. "
 "Check the spelling, or find the registration number with [search-"
@@ -2014,7 +2014,7 @@ msgstr ""
 "Provjerite pravopis ili pronađite šifru naredbom [traži-"
 "općinu](commands/search-municipality.md) i upotrijebite nju."
 
-#: errors.md:43
+#: errors.md:45
 msgid ""
 "**Land registry unit not found** means the unit number and main book you gave"
 " do not match a unit. Check both numbers. If you started from a parcel, the "
@@ -2025,11 +2025,11 @@ msgstr ""
 "Ako ste krenuli od čestice, čestica možda još nije upisana u zemljišnu "
 "knjigu."
 
-#: errors.md:47
+#: errors.md:49
 msgid "Messages about the connection"
 msgstr "Poruke o vezi"
 
-#: errors.md:49
+#: errors.md:51
 msgid ""
 "**Connection error** means the tool could not reach the server. For practice "
 "use, the practice server on your computer is not running. Ask the person who "
@@ -2039,7 +2039,7 @@ msgstr ""
 "znači da probni poslužitelj na vašem računalu nije pokrenut. Zamolite osobu "
 "koja je instalirala alat da ga pokrene, pa ponovno pokrenite naredbu."
 
-#: errors.md:53
+#: errors.md:55
 msgid ""
 "**Request timed out** means the server did not answer in time. Wait a moment "
 "and run the command again."
@@ -2047,7 +2047,7 @@ msgstr ""
 "**Isteklo je vrijeme zahtjeva** znači da poslužitelj nije odgovorio na "
 "vrijeme. Pričekajte trenutak i ponovno pokrenite naredbu."
 
-#: errors.md:56
+#: errors.md:58
 msgid ""
 "**Rate limit exceeded** means requests were sent too quickly. The tool "
 "already spaces its requests; wait a minute and try again."
@@ -2056,7 +2056,7 @@ msgstr ""
 "prebrzo. Alat već razmiče svoje zahtjeve; pričekajte minutu i pokušajte "
 "ponovno."
 
-#: errors.md:59
+#: errors.md:61
 msgid ""
 "**Server error** and **Invalid response from server** mean the server "
 "answered but not in the expected way. Try again later. If it keeps happening,"
@@ -2066,11 +2066,11 @@ msgstr ""
 "poslužitelj odgovorio, ali ne na očekivani način. Pokušajte kasnije. Ako se "
 "ponavlja, recite osobi koja je instalirala alat."
 
-#: errors.md:63
+#: errors.md:65
 msgid "Messages from Terminal itself"
 msgstr "Poruke samog Terminala"
 
-#: errors.md:65
+#: errors.md:67
 msgid ""
 "If Terminal answers `command not found`, the tool is not installed for your "
 "account or Terminal was opened before the installation finished. Close "
@@ -2082,7 +2082,7 @@ msgstr ""
 "Terminal, otvorite ga ponovno i pokušajte opet. Ako i dalje ne radi, obratite"
 " se osobi koja je instalirala alat."
 
-#: errors.md:70
+#: errors.md:72
 msgid ""
 "If the tool prints `Missing option` or `No such option`, part of the command "
 "is misspelt. Compare your line with the example on the command's page."

@@ -17,6 +17,11 @@ class ErrorType(str, Enum):
     MUNICIPALITY_NOT_FOUND = "municipality_not_found"
     LR_UNIT_NOT_FOUND = "lr_unit_not_found"
     SERVER_ERROR = "server_error"
+    #: The server refused the request (HTTP 401 or 403): the data needs an
+    #: authorisation this client does not have. Not a transport failure.
+    ACCESS_DENIED = "access_denied"
+    #: Any other HTTP 4xx; ``details["status_code"]`` says which.
+    HTTP_ERROR = "http_error"
 
 
 class CadastralAPIError(Exception):

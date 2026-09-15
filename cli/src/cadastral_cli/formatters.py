@@ -130,6 +130,8 @@ def error_type_label(error_type: ErrorType) -> str:
         ErrorType.MUNICIPALITY_NOT_FOUND: _("Municipality not found"),
         ErrorType.LR_UNIT_NOT_FOUND: _("Land registry unit not found"),
         ErrorType.SERVER_ERROR: _("Server error"),
+        ErrorType.ACCESS_DENIED: _("Access denied"),
+        ErrorType.HTTP_ERROR: _("HTTP error"),
     }
     return labels.get(error_type, str(error_type.value))
 

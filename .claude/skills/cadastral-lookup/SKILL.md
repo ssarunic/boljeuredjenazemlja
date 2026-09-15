@@ -76,10 +76,21 @@ item, several for a portfolio) and return one entry per reference, in order.
   options named; use a per-sheet level with a limit instead of retrying `full`.
 - `historical_overview=true` adds deleted entries and non-active shares.
 - Every entry has a `status` (`success`, `error`, `duplicate`); read the
-  `error` of a failed reference instead of retrying blindly.
+  `error` and `error_type` of a failed reference instead of retrying blindly:
+  `*_not_found` means no such record, `access_denied` that the server refused,
+  `rate_limit` that it throttled, `response_too_large` that the entry must be
+  paged (`limit`, `offset`), `invalid_request` that the reference was wrong.
+  Tool-level errors end with `[error_type=...]` for the same reason.
 
 ## Notes
 
+- Every successful entry carries `provenance` (`register`, `source_url`,
+  `retrieved_at`): quote it with any fact you forward, so the answer is never
+  taken for an official extract. `get_parcel` entries also carry `area_check`
+  (cadastre area against the cadastral map's graphical area and, when known,
+  the land register's; `mismatch` above 5 %). `get_lr_unit` entries carry
+  `distinct_owners` next to `total_owners` (one person on two shares is two
+  records, one owner) for judging fragmentation.
 - A parcel with `in_land_registry: false` (or the
   `parcel_not_in_land_registry` error) is cadastre-only - report it as such
   rather than inventing an owner.

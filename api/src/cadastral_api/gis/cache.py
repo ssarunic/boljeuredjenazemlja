@@ -3,7 +3,7 @@
 import shutil
 import zipfile
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
@@ -131,6 +131,17 @@ class GISCache:
         if not source_path.exists():
             return None
         return source_path.read_text(encoding="utf-8").strip() or None
+
+    def downloaded_at(self, municipality_reg_num: str) -> datetime | None:
+        """When the municipality's ZIP was downloaded (aware, UTC), or None without a ZIP.
+
+        Reads the file's modification time; creates nothing.
+        """
+        name = f"{MUNICIPALITY_PREFIX}{municipality_reg_num}"
+        zip_path = self.cache_dir / name / f"{name}.zip"
+        if not zip_path.exists():
+            return None
+        return datetime.fromtimestamp(zip_path.stat().st_mtime, tz=timezone.utc)
 
     def is_cached(self, municipality_reg_num: str) -> bool:
         """

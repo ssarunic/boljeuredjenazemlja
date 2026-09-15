@@ -354,3 +354,85 @@ def test_filters_need_the_cadastre_source_and_a_value(tools) -> None:
         _run(tools.get_parcel([{"parcel_id": "1"}], possessor_name="   "))
     with pytest.raises(ValueError):
         _run(tools.get_parcel([{"parcel_id": "1"}], condominium_unit=""))
+
+
+# ---------------------------------------------------------------------------
+# Provenance, area check and typed errors (foundation increment)
+# ---------------------------------------------------------------------------
+
+
+def test_entry_carries_provenance_next_to_register(tools) -> None:
+    entry = _run(tools.get_parcel([{"parcel_id": "6564741"}]))["results"][0]
+    # A fixture record was never fetched, so its provenance is null, but the
+    # key is always there; it is not repeated inside the record.
+    assert "provenance" in entry and entry["provenance"] is None
+    assert "provenance" not in entry["data"]
+
+
+def test_entry_carries_an_area_check_without_gis(tools) -> None:
+    entry = _run(tools.get_parcel([{"parcel_id": "6564741"}]))["results"][0]
+    check = entry["area_check"]
+    assert check["cadastre_m2"] == int(float(entry["data"]["area"]))
+    assert check["gis_m2"] is None
+    assert "cadastre" in check["compared"] and "gis" not in check["compared"]
+    assert check["mismatch"] is False or check["max_difference_fraction"] > 0.05
+    assert check["tolerance_fraction"] == 0.05
+
+
+def test_area_check_flags_a_graphical_area_that_disagrees() -> None:
+    client = _FakeClientWithGis()  # graphical area 1.0 m2 against a real cadastre area
+    entry = _run(CadastralTools(client).get_parcel([{"parcel_id": "6564741"}]))["results"][0]
+    check = entry["area_check"]
+    assert check["gis_m2"] == 1.0
+    assert "gis" in check["compared"]
+    assert check["mismatch"] is True
+    assert entry["map_url"]
+    # The outline is looked up once and serves both the map link and the check.
+    assert client.geometry_calls == [("1122/1", "334979")]
+
+
+def test_a_bad_reference_is_an_invalid_request(tools) -> None:
+    res = _run(tools.get_parcel([{"parcel_number": "1"}]))
+    entry = res["results"][0]
+    assert entry["status"] == "error"
+    assert entry["error_type"] == "invalid_request"
+    assert "error_details" not in entry
+
+
+class _FakeClientRefusing(_FakeClient):
+    def get_parcel_info(self, parcel_id: str) -> ParcelInfo:
+        from cadastral_api.exceptions import CadastralAPIError, ErrorType
+
+        if str(parcel_id) == "403":
+            raise CadastralAPIError(
+                ErrorType.ACCESS_DENIED,
+                details={"endpoint": "/cad/parcel-info", "status_code": 403},
+            )
+        if str(parcel_id) == "0":
+            raise CadastralAPIError(ErrorType.PARCEL_NOT_FOUND, details={"parcel_id": "0"})
+        return super().get_parcel_info(parcel_id)
+
+
+def test_sdk_errors_keep_their_type_and_details() -> None:
+    res = _run(
+        CadastralTools(_FakeClientRefusing()).get_parcel(
+            [{"parcel_id": "403"}, {"parcel_id": "0"}, {"parcel_id": "6564741"}]
+        )
+    )
+    denied, missing, found = res["results"]
+    assert denied["status"] == "error"
+    assert denied["error_type"] == "access_denied"
+    assert denied["error_details"] == {"endpoint": "/cad/parcel-info", "status_code": 403}
+    assert missing["error_type"] == "parcel_not_found"
+    assert missing["error_details"] == {"parcel_id": "0"}
+    assert found["status"] == "success"
+    assert res["successful"] == 1 and res["failed"] == 2
+
+
+def test_a_too_large_entry_is_response_too_large(monkeypatch) -> None:
+    tools = CadastralTools(_FakeClient())
+    monkeypatch.setattr(CadastralTools, "MAX_PARCEL_RESPONSE_CHARS", 10)  # every entry is too large
+    entry = _run(tools.get_parcel([{"parcel_id": "6564741"}]))["results"][0]
+    assert entry["status"] == "error"
+    assert entry["error_type"] == "response_too_large"
+    assert "limit=" in entry["error"]

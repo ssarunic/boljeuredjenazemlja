@@ -29,6 +29,8 @@ Svaka greška počinje ovom oznakom i jednom od poruka u nastavku:
 | **Općina nije pronađena** | `municipality_not_found` |
 | **Zemljišnoknjižni uložak nije pronađen** | `lr_unit_not_found` |
 | **Greška poslužitelja** | `server_error` |
+| **Pristup odbijen** | `access_denied` |
+| **HTTP greška** | `http_error` |
 <!-- END GENERATED: errors -->
 
 ## Poruke o onome što ste upisali
