@@ -35,6 +35,7 @@ app.add_middleware(
 
 # Data directory
 DATA_DIR = Path(__file__).parent.parent / "data"
+GEOMETRY_DIR = DATA_DIR / "geometry"
 
 # In-memory data storage (loaded at startup)
 _offices: list[dict[str, Any]] = []
@@ -683,13 +684,20 @@ async def download_gis_data(municipality_code: str):
     Returns:
         ZIP file containing GML data (if available).
     """
-    zip_file = DATA_DIR / "geometry" / f"{municipality_code}.zip"
+    # The path is never built from the request: the code is matched against the
+    # ZIP files that exist under data/geometry, so "../" and friends cannot
+    # escape the directory. Registration numbers are digits only.
+    zip_file = None
+    if municipality_code.isdigit():
+        zip_file = next(
+            (p for p in GEOMETRY_DIR.glob("*.zip") if p.stem == municipality_code), None
+        )
 
-    if zip_file.exists():
+    if zip_file is not None:
         return FileResponse(
             path=zip_file,
             media_type="application/zip",
-            filename=f"ko-{municipality_code}.zip",
+            filename=f"ko-{zip_file.stem}.zip",
         )
 
     # Return 404 if ZIP doesn't exist
@@ -711,8 +719,13 @@ _WFS_TYPES = (
     "GradjPodrucje_MGIPU_Public:Gradj_podrucje_naselje",
     "GradjPodrucje_MGIPU_Public:Gradj_podrucje_izvan_naselja",
 )
+# The ring bodies are matched with [^()]* rather than .*? so that no part of the
+# pattern can consume another INTERSECTS( prefix: every position is scanned once
+# (linear time) whatever the filter contains.
 _INTERSECTS_RE = re.compile(
-    r"INTERSECTS\s*\(\s*geom\s*,\s*(?P<wkt>POLYGON\s*\(\(.*?\)\))\s*\)", re.I | re.S
+    r"INTERSECTS\s*\(\s*geom\s*,\s*"
+    r"(?P<wkt>POLYGON\s*\(\([^()]*(?:\)\s*,\s*\([^()]*)*\)\))\s*\)",
+    re.I,
 )
 _CLAUSE_RE = re.compile(r"^\s*(?P<attr>[a-z_0-9]+)\s*=\s*'(?P<value>(?:[^']|'')*)'\s*$", re.I)
 

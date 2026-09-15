@@ -78,6 +78,8 @@ def test_tagged_version_is_not_reused_for_new_work(release: ModuleType) -> None:
     try:
         tags = release.git("tag", "-l", tag)
     except release.ReleaseError:
+        tags = None
+    if tags is None:
         pytest.skip("not inside a git checkout")
     if not tags:
         pytest.skip(f"tag {tag} not created yet")

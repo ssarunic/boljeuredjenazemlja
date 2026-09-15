@@ -67,6 +67,8 @@ def get_system_locale() -> str:
             if lang_code in SUPPORTED_LANGUAGES:
                 return lang_code
     except Exception:
+        # locale.getlocale() raises on an unparsable LANG/LC_* value; the
+        # environment variables below are then read directly.
         pass
 
     # Check environment variables (in order of precedence)

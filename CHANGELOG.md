@@ -10,6 +10,16 @@ number and one tag.
 
 ## [Unreleased]
 
+### Security
+
+- Mock server: the ATOM download route (`/atom/ko-<code>.zip`) no longer builds
+  a file path from the request; the municipality code is matched against the
+  ZIP files under `data/geometry`, so anything but a registration number is
+  a 404. The building-areas WFS parses the `INTERSECTS` clause of `cql_filter`
+  in linear time (the old pattern was quadratic on hostile input).
+- MCP: the HTTP transport logs only the JSON-RPC method name of an SSE
+  request, with line breaks stripped, instead of the whole request body.
+
 ### Added
 
 - SDK: `CadastralAPIClient.resolve_municipality_reg_num(name_or_code)` turns a

@@ -106,7 +106,13 @@ def create_http_app(mcp_server: MCPServer) -> FastAPI:
 
         # Get request body
         body = await request.json()
-        logger.debug(f"SSE request: {body}")
+        # Only the JSON-RPC method name is logged, with line breaks stripped so a
+        # client cannot forge log lines; the parameters may hold personal data.
+        method = body.get("method") if isinstance(body, dict) else None
+        logger.debug(
+            "SSE request: method=%s",
+            str(method).replace("\r\n", "").replace("\n", "").replace("\r", "")[:100],
+        )
 
         # Process MCP request through MCPServer
         # Note: MCPServer's SSE handling will be implemented here
