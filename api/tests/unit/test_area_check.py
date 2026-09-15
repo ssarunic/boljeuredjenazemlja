@@ -46,3 +46,17 @@ def test_non_positive_areas_count_as_unknown() -> None:
     check = check_area(cadastre_m2=0, land_registry_m2=-5, gis_m2=1200.0)
     assert check.compared == ["gis"]
     assert check.cadastre_m2 is None and check.land_registry_m2 is None
+
+
+def test_small_absolute_differences_are_noise_not_mismatches() -> None:
+    from cadastral_api.analysis import DEFAULT_AREA_MIN_DIFFERENCE_M2, check_area
+
+    # 5 % of a 60 m2 building parcel is 3 m2: digitisation noise, not a finding.
+    small = check_area(cadastre_m2=60, gis_m2=56.0)
+    assert small.max_difference_fraction > small.tolerance_fraction
+    assert small.min_difference_m2 == DEFAULT_AREA_MIN_DIFFERENCE_M2 == 20.0
+    assert small.mismatch is False
+    # The same share of a large parcel is a real difference.
+    large = check_area(cadastre_m2=6000, gis_m2=5600.0)
+    assert large.mismatch is True
+    assert check_area(cadastre_m2=60, gis_m2=56.0, min_difference_m2=0).mismatch is True

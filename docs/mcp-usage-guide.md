@@ -132,7 +132,7 @@ set per unit and not recomputed to a whole (unit 8974 of GRAD ZAGREB sums to
 13029/10000 on both sides), so report the excess and check it against the
 unit's shares rather than treating it as an error of the sum.
 
-### `get_lr_unit(units, detail="ownership", limit=None, offset=0, owner_name=None, include_plombe_detail=False, historical_overview=False)`
+### `get_lr_unit(units, detail="ownership", limit=None, offset=0, owner_name=None, condominium_unit=None, include_plombe_detail=False, historical_overview=False)`
 
 One or more land registry units: registered owners with shares (list B),
 parcels (list A), encumbrances (list C), pending entries (plombe). `units` is a
@@ -227,6 +227,40 @@ whole sheet; the result carries `owner_name` back. `summary`, `parcels` and
 `include_plombe_detail` resolves what each pending plomba is (request type,
 status, dates) into `plombe_detail` per unit, at one extra request per plomba.
 `get_file_status` does the same for one file number you already hold.
+
+Every level carries `sale_blockers`: what is registered against the unit
+that bears on a sale, read from the pending plombe, list C, the notes on
+the shares, the sheet-level entries and the owners. Each blocker has a
+`kind` (`pending_entry`, `mortgage`, `lien`, `enforcement`, `dispute`,
+`transfer_prohibition`, `preemption`, `social_claim`, `personal_servitude`,
+`easement`, `fiduciary_transfer`, `rejected_request`, `public_body_share`,
+`other_annotation`), a `severity` (`blocking`, `conditional`,
+`informational`), a `scope` (`unit`, or `share` with `share_order_number`
+and `condominium_unit`, because a mortgage on flat 88 does not block flat
+40), the `entry` it comes from, `amount` and `beneficiary` when the text
+gives them, and `basis`, the pattern the classification rests on; a personal
+servitude registered decades ago is marked `likely_lapsed` (the holder's death
+ends it; the basis says so). `verdict`
+(`clear`, `conditional`, `blocked`) follows the `rule` returned next to it
+and is a screening of the register's text, not a legal opinion: an entry the
+table does not recognise stays in the list as `other_annotation` for you to
+read, and an entry a later entry deleted is listed under
+`blockers_cancelled` and not counted. `ownership` and `encumbrances` carry
+the blockers themselves; `summary`, `shares`, `full` and `parcels` carry the
+verdict, the counts, the kinds and the rule (a large condominium's list runs
+to tens of kilobytes). `condominium_unit` ("E-16" or "16") narrows the
+blockers to one flat and `owner_name` to one owner's shares; unit-wide
+blockers still count. With `include_plombe_detail` each pending blocker
+names its request (`request_kind`, `status_description`, `dates`).
+
+Each `ownership` row carries `flags`, inferred with their `basis`:
+`likely_deceased` (the registration entry is 40 years old or more, the owner
+was carried over from an earlier unit so the true date is older, or the
+owner's own name carries a death marker), `address_abroad` (a country named
+in the address, or a foreign postcode as a weak signal; `null` without an
+address) and `public_body`. `owner_flags_summary` counts them over the whole
+sheet. Report them as estimates of the estates and foreign counterparties
+behind a unit, never as facts about one person.
 
 `historical_overview` asks the register for the historical overview (povijesni
 pregled) as well: deleted entries and shares whose status is not active. Off by
@@ -336,7 +370,7 @@ land-registry office that holds the unit (`institution_id` of the unit from
 `message` means the register has no such file at that office; it is not an
 error.
 
-### `compare_registers(parcels)`
+### `compare_registers(parcels, include_plombe_detail=False)`
 
 Are the cadastre possessors of a parcel its registered owners? `parcels` is a
 list of references as for `get_parcel`. For each one the cadastre record and
@@ -345,7 +379,9 @@ several parcels is read once) and the two lists of people are matched: by
 tax number when both records carry one, otherwise by name with case,
 diacritics, spacing, punctuation and a share suffix ignored; a match that
 rests on the name without a relative's name ("ŠARUNIĆ AUGUSTIN POK. BOŽE"
-against "Šarunić Augustin") is `fuzzy` and noted.
+against "Šarunić Augustin", or against the cadastre's "ŠARUNIĆ AUGUSTIN,
+BOŽO"), or on the same words in another order ("Augustin Šarunić"), is
+`fuzzy` and noted.
 
 Each successful entry has `parcel_number`, `municipality_code`, `lr_unit`,
 `provenance` for both registers, `map_url` and `data`:
@@ -368,6 +404,22 @@ Each successful entry has `parcel_number`, `municipality_code`, `lr_unit`,
   or a municipality, when the shares are given).
 - `area_check`: the cadastre area against the land register's (sheet A of
   the unit) and the map's graphical area, `mismatch` above 5 %.
+- `sale_blockers`: the unit's blockers as `get_lr_unit` returns them, plus
+  `owner_not_possessor` (a registered owner on no possession sheet:
+  informational when the entry is recent and carries an OIB, since the
+  cadastre lags the register; conditional when the record is old or has no
+  OIB, since the possessor may be a genuine third party),
+  `fuzzy_owner_match` (informational) and `area_mismatch` (conditional, when
+  the areas differ by more than 5 %), with the verdict recomputed; with
+  `include_plombe_detail` the pending blockers name their request (fetched
+  once per unit). `owner_flag_counts` counts the owners flagged
+  `likely_deceased` (an old, migrated or legacy record, or a death marker),
+  `address_abroad` and `public_body`, and every owner carries `flags`.
+  `null` without a unit. A share whose owner is flagged likely deceased is a
+  `likely_estate` blocker (conditional) whether or not the cadastre lists
+  the same person. Matching is per person: an owner on several shares is
+  matched once found by OIB, never both matched and owner only; a name in
+  another order is fuzzy unless the shares or addresses corroborate it.
 
 The response also carries `units_fetched`, `relationships` (a count per
 relationship) and `people` (distinct possessors, owners and people across
@@ -375,7 +427,7 @@ every successful entry; a person on several parcels counts once). Use it
 before an acquisition: the possessor is who uses the land, the owner is who
 signs; a `disjoint` parcel needs both at the table.
 
-### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50)`
+### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50, include_plombe_detail=False)`
 
 Land-assembly analysis of a set of up to 50 parcels: the three tables an
 investor needs before talking to anyone. For every reference the cadastre
@@ -387,14 +439,20 @@ well (one WFS lookup per parcel, slower).
   `relationship`, `distinct_owners`, `distinct_possessors`,
   `has_encumbrances`, `has_pending_plombe` and `pending_plombe`,
   `public_body_owner_share`, `zoning_status`, `in_building_area`,
-  `designation_code`, `plan_name`, `area_mismatch`, `score`, `map_url` and
-  the `provenance` of both registers.
+  `designation_code`, `plan_name`, `area_mismatch`, `sale_verdict`,
+  `blocker_counts`, `blocker_kinds` (from the unit's sale blockers; call
+  `get_lr_unit` for the blockers themselves), `score`, `map_url` and the
+  `provenance` of both registers.
 - `persons`: the persons ranked by the area they control (a page;
   `persons_page` says where to continue), each with `owner_of`,
   `possessor_of`, `owned_area_m2` (share x cadastre area), `possessed_area_m2`,
   `controlled_area_m2` (owned, plus the parcels only possessed),
-  `shares_unknown`, `fuzzy_matches`, `surname` and `party_type_inferred`.
-  `surname_groups` gathers them by surname (the registers write it first).
+  `shares_unknown`, `fuzzy_matches`, `surname`, `party_type_inferred`, and
+  `likely_deceased` and `address_abroad` (inferred from any of the person's
+  owner records; `null` for a possessor only). `surname_groups` gathers them
+  by surname (the registers write it first) with `likely_deceased_count`
+  and `address_abroad_count`: the estates and the foreign counterparties to
+  expect per family, as an estimate.
 - `matrix`: one cell per person and parcel with `role` (`owner`, `possessor`,
   `both`), the shares and `fuzzy`.
 - `scores`: the factors behind each parcel's score and `weights`. The score
@@ -402,13 +460,17 @@ well (one WFS lookup per parcel, slower).
   `owner_is_possessor`, `no_encumbrances`, `no_pending_plombe` and
   `in_building_area` (only with `include_zoning`); a factor that could not
   be evaluated (no unit, no zoning) is left out of both the numerator and
-  the denominator, and `notes` say which. Pass `weights` to change any of
-  them, e.g. `{"in_building_area": 0.4}`; the weights used come back.
+  the denominator, and `notes` say which. `no_encumbrances` and
+  `no_pending_plombe` are read from the sale blockers: an informational
+  note or a cancelled entry does not count against the parcel. Pass
+  `weights` to change any of them, e.g. `{"in_building_area": 0.4}`; the
+  weights used come back.
 - `totals`: `parcel_count`, `total_area_m2`, `area_by_land_use`,
   `area_by_relationship`, `area_by_zoning_status`, `distinct_people`,
   `distinct_owners`, `distinct_possessors`, `party_types`,
   `public_body_parcels`, `fuzzy_matches`, `parcels_with_encumbrances`,
-  `parcels_with_pending_plombe`, `parcels_in_building_area`.
+  `parcels_with_pending_plombe`, `parcels_in_building_area`,
+  `parcels_by_verdict`, `persons_likely_deceased`, `persons_address_abroad`.
 
 References that could not be read are listed under `failed` with their
 `error_type`; the analysis covers the rest (`total`, `successful`,

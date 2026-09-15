@@ -59,11 +59,15 @@ JSON_COMMANDS = [
     "get-possession-sheet 657 -m SAVAR --show-owners",
     "get-lr-unit --unit-number 13998 --main-book 30783 --all",
     "get-parcel 35/1.ZGR -m SAVAR --detail full",
+    "get-lr-unit -u 769 -n SAVAR --blockers",
+    "get-lr-unit -u 449 -b 21277 --blockers --plombe-detail",
+    "get-lr-unit --input lr_units.csv --blockers",
 ]
 CSV_COMMANDS = [
     "search 103/2 -m SAVAR",
     "get-parcel 103/2,45,999 -m SAVAR --show-owners",
     "get-lr-unit --input lr_units.csv --show-owners",
+    "get-lr-unit --input lr_units.csv --blockers",
     "get-geometry 103/2 -m SAVAR",
     "get-zoning 45 -m SAVAR",
     "get-possession-sheet 363 -m SAVAR",

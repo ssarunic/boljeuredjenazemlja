@@ -4,6 +4,12 @@ from typing import Any
 
 import click
 from cadastral_api import CadastralAPIClient
+from cadastral_api.analysis import (
+    OwnerFlagsRow,
+    SaleBlockers,
+    detect_blockers,
+    owner_flags_for_unit,
+)
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.i18n import _, ngettext
 from cadastral_api.models.entities import FileStatus, LandRegistryUnitDetailed
@@ -56,6 +62,9 @@ Examples:
   # Show all sheets
   cadastral get-lr-unit -p 279/6 -m SAVAR --all
 
+  # What is registered against the unit that bears on a sale, and the owner flags
+  cadastral get-lr-unit -u 769 -n SAVAR --blockers
+
   # Export to JSON
   cadastral get-lr-unit -u 769 -b 21277 --format json --output lr-unit.json
 
@@ -88,6 +97,14 @@ your rights to use it; use at your own risk"""))
     "-D",
     is_flag=True,
     help=_("Resolve detail of pending entries (plombe) - one extra request per plomba"),
+)
+@click.option(
+    "--blockers",
+    is_flag=True,
+    help=_(
+        "Show what is registered against the unit that bears on a sale (plombe, mortgages, "
+        "disputes...) and the inferred owner flags"
+    ),
 )
 @click.option("--all", "-a", "show_all", is_flag=True, help=_("Show all sheets"))
 @click.option(
@@ -123,6 +140,7 @@ def get_lr_unit(
     show_parcels: bool,
     show_encumbrances: bool,
     plombe_detail: bool,
+    blockers: bool,
     show_all: bool,
     input_file: str | None,
     output_format: str,
@@ -144,6 +162,7 @@ def get_lr_unit(
             show_parcels,
             show_encumbrances,
             plombe_detail,
+            blockers,
             show_all,
             output_format,
             output,
@@ -186,18 +205,33 @@ def get_lr_unit(
             if plombe_detail and lr_unit.has_pending_plombe():
                 with console.status(_("Resolving pending entries (plombe) detail...")):
                     plombe_details = client.get_plombe_details(lr_unit)
+            sale_blockers, flags = _screen(lr_unit, blockers, plombe_details)
 
             # Format output
             if output_format != "table":
                 # Structured output
                 data = _format_structured_data(
-                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                    lr_unit,
+                    show_owners,
+                    show_parcels,
+                    show_encumbrances,
+                    show_all,
+                    plombe_details,
+                    sale_blockers,
+                    flags,
                 )
                 print_output(data, output_format=output_format, file=output)
             else:
                 # Rich table output
                 print_lr_unit_full(
-                    lr_unit, show_owners, show_parcels, show_encumbrances, show_all, plombe_details
+                    lr_unit,
+                    show_owners,
+                    show_parcels,
+                    show_encumbrances,
+                    show_all,
+                    plombe_details,
+                    sale_blockers=sale_blockers,
+                    owner_flags=flags,
                 )
 
                 # Disclose cadastre/ZK divergence and offer the cadastre drill-down
@@ -276,6 +310,7 @@ def _get_lr_unit_list(
     show_parcels: bool,
     show_encumbrances: bool,
     plombe_detail: bool,
+    blockers: bool,
     show_all: bool,
     output_format: str,
     output: str | None,
@@ -303,8 +338,9 @@ def _get_lr_unit_list(
                 style="dim",
             )
 
-        with_sheets = show_owners or show_parcels or show_encumbrances or show_all
+        with_sheets = show_owners or show_parcels or show_encumbrances or show_all or blockers
         plombe: dict[int, dict[str, FileStatus]] = {}
+        screening: dict[int, tuple[SaleBlockers | None, list[OwnerFlagsRow] | None]] = {}
         with CadastralAPIClient() as client:
             summary = process_lr_unit_list(
                 client, inputs, continue_on_error=continue_on_error, show_progress=True
@@ -313,6 +349,9 @@ def _get_lr_unit_list(
                 for result in summary.results:
                     if result.ok and result.data is not None and result.data.has_pending_plombe():
                         plombe[id(result)] = client.get_plombe_details(result.data)
+        for result in summary.results:
+            if result.ok and result.data is not None:
+                screening[id(result)] = _screen(result.data, blockers, plombe.get(id(result)))
 
         if output_format == "table":
             printed = 0
@@ -321,6 +360,7 @@ def _get_lr_unit_list(
                     continue
                 if printed:
                     console.print("\n---\n")
+                sale_blockers, flags = screening[id(result)]
                 print_lr_unit_full(
                     result.data,
                     show_owners,
@@ -328,6 +368,8 @@ def _get_lr_unit_list(
                     show_encumbrances,
                     show_all,
                     plombe.get(id(result)),
+                    sale_blockers=sale_blockers,
+                    owner_flags=flags,
                 )
                 printed += 1
             if summary.failed and printed:
@@ -338,6 +380,7 @@ def _get_lr_unit_list(
             for result in summary.results:
                 row = lr_unit_row(result)
                 if result.ok and result.data is not None and with_sheets:
+                    sale_blockers, flags = screening[id(result)]
                     row["full_data"] = _format_structured_data(
                         result.data,
                         show_owners,
@@ -345,6 +388,8 @@ def _get_lr_unit_list(
                         show_encumbrances,
                         show_all,
                         plombe.get(id(result)),
+                        sale_blockers,
+                        flags,
                     )
                 rows.append(row)
             print_output(summary.envelope(rows), output_format="json", file=output)
@@ -361,6 +406,13 @@ def _get_lr_unit_list(
                         )
                         owners.append(f"{owner['name']} ({share})")
                     row["owners"] = "; ".join(owners)
+                if blockers and result.ok and result.data is not None:
+                    sale_blockers, _flags = screening[id(result)]
+                    if sale_blockers is not None:
+                        row["sale_verdict"] = sale_blockers.verdict
+                        row["blockers"] = "; ".join(
+                            f"{b.kind} ({b.severity})" for b in sale_blockers.blockers
+                        )
                 rows.append(row)
             print_output(rows, output_format="csv", file=output)
 
@@ -404,6 +456,17 @@ def _describe_input(item: LRUnitInput) -> str:
     return f"{item.lr_unit_number} ({_('Main Book')} {item.main_book_id})"
 
 
+def _screen(
+    lr_unit: LandRegistryUnitDetailed,
+    blockers: bool,
+    plombe_details: dict[str, FileStatus] | None,
+) -> tuple[SaleBlockers | None, list[OwnerFlagsRow] | None]:
+    """The sale blockers and owner flags of a unit when ``--blockers`` asked for them."""
+    if not blockers:
+        return None, None
+    return detect_blockers(lr_unit, plombe_detail=plombe_details), owner_flags_for_unit(lr_unit)
+
+
 # ---------------------------------------------------------------------------
 # One unit
 # ---------------------------------------------------------------------------
@@ -416,6 +479,8 @@ def _format_structured_data(
     show_encumbrances: bool,
     show_all: bool,
     plombe_details: dict[str, FileStatus] | None = None,
+    sale_blockers: SaleBlockers | None = None,
+    owner_flags: list[OwnerFlagsRow] | None = None,
 ) -> dict[str, Any]:
     """Format LR unit data for JSON/CSV output."""
     data = {
@@ -438,6 +503,13 @@ def _format_structured_data(
             file_number: status.model_dump(mode="json", by_alias=False)
             for file_number, status in plombe_details.items()
         }
+
+    # Sale screening (only with --blockers): what is registered against the
+    # unit that bears on a sale, and the inferred flags of every owner.
+    if sale_blockers is not None:
+        data["sale_blockers"] = sale_blockers.model_dump(mode="json")
+    if owner_flags is not None:
+        data["owner_flags"] = [row.model_dump(mode="json") for row in owner_flags]
 
     # Add summary
     summary = lr_unit.summary()

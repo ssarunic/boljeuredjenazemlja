@@ -12,17 +12,21 @@ from cadastral_api.analysis import (
     check_area,
     compare_registers,
     count_distinct_persons,
+    count_owner_flags,
+    detect_blockers,
     matrix_csv,
+    owner_flags_for_unit,
     parcels_csv,
     parcels_geojson,
     persons_csv,
     resolve_weights,
+    unit_key,
 )
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.gis import IndexedParcel, ParcelIndex
 from cadastral_api.gis.geometry_ops import parse_ring
 from cadastral_api.gis.spatial_index import Relation
-from cadastral_api.models.entities import ParcelInfo
+from cadastral_api.models.entities import FileStatus, ParcelInfo
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM, ParcelGeometry
 from cadastral_api.planning import validate_min_overlap
 from cadastral_api.utils import fold_text, is_building_parcel_number, normalize_parcel_number
@@ -680,15 +684,10 @@ class CadastralTools:
         """Text for matching: lower case, no diacritics, single spaces."""
         return fold_text(text)
 
-    @classmethod
-    def _unit_key(cls, unit: str) -> str:
+    @staticmethod
+    def _unit_key(unit: str) -> str:
         """A condominium unit number for comparison: "E-16", "E16" and "16" agree."""
-        key = cls._fold(unit).replace(" ", "")
-        if key.startswith("e-"):
-            key = key[2:]
-        elif key.startswith("e") and key[1:2].isdigit():
-            key = key[1:]
-        return key
+        return unit_key(unit)
 
     @classmethod
     def _possessor_filter(
@@ -1169,16 +1168,25 @@ class CadastralTools:
 
     @classmethod
     def _ownership_rows(
-        cls, lr_unit: Any, offset: int, limit: int | None, owner_name: str | None = None
+        cls,
+        lr_unit: Any,
+        offset: int,
+        limit: int | None,
+        owner_name: str | None = None,
+        flag_rows: list[Any] | None = None,
     ) -> tuple[list[dict[str, Any]], int, int, bool]:
         """Owner rows for an LR unit, filtered by name and windowed at offset/limit.
 
         Returns (rows, total_owners, matching_owners, truncated); the window
         and ``truncated`` walk the matching rows (all of them without a
         filter). The canonical row shape comes from
-        OwnershipSheetB.owner_rows() (shared with the CLI).
+        OwnershipSheetB.owner_rows() (shared with the CLI); ``flag_rows``
+        (``owner_flags_for_unit``, in the same order) puts each owner's
+        inferred ``flags`` on the row.
         """
         rows = lr_unit.ownership_sheet_b.owner_rows()
+        for row, flagged in zip(rows, flag_rows or [], strict=bool(flag_rows)):
+            row["flags"] = flagged.flags.model_dump(mode="json")
         total = len(rows)
         if owner_name is not None:
             rows = [row for row in rows if cls._name_matches(row.get("name"), owner_name)]
@@ -1298,6 +1306,8 @@ class CadastralTools:
         limit: int | None = None,
         offset: int = 0,
         owner_name: str | None = None,
+        condominium_unit: str | None = None,
+        plombe_detail: dict[str, FileStatus] | None = None,
     ) -> dict[str, Any]:
         """Shape an LR unit for output at the requested detail level.
 
@@ -1324,12 +1334,36 @@ class CadastralTools:
         walks the matches, ``matching_owners`` / ``matching_shares`` count
         them and the totals still describe the whole sheet. The other levels
         return no owners and refuse it.
+
+        Every level carries ``sale_blockers``: what is registered against
+        the unit that bears on a sale, narrowed by ``owner_name`` or
+        ``condominium_unit`` to one owner's shares or one flat, enriched with
+        ``plombe_detail`` when the caller fetched it. "ownership" and
+        "encumbrances" carry the blockers themselves; the other levels the
+        verdict, the counts and the rule (a large condominium's list runs to
+        tens of kilobytes, too much for every page of the raw sheets).
+        Every level but "parcels" and "encumbrances" carries
+        ``owner_flags_summary``; "ownership" puts each owner's ``flags`` on
+        the row.
         """
         if detail not in cls.VALID_DETAIL:
             raise ValueError(
                 f"Invalid detail '{detail}'. Expected one of {cls.VALID_DETAIL}."
             )
         owner_name = cls._owner_name_filter(owner_name, detail)
+        blockers = detect_blockers(
+            lr_unit,
+            owner_name=owner_name,
+            condominium_unit=condominium_unit,
+            plombe_detail=plombe_detail,
+        ).model_dump(mode="json", exclude_none=True)
+        brief = cls._blockers_brief(blockers)
+        # The owner flags are read once per call, and only on the levels that
+        # show them ("parcels" and "encumbrances" carry no owners).
+        flag_rows = (
+            owner_flags_for_unit(lr_unit) if detail not in ("parcels", "encumbrances") else []
+        )
+        flags_summary = count_owner_flags(row.flags for row in flag_rows)
         summary = lr_unit.summary()
         is_condo = lr_unit.is_condominium()
         # Different people among the owner records, whatever the window or
@@ -1349,6 +1383,8 @@ class CadastralTools:
                 **cls._identity(lr_unit),
                 "distinct_owners": distinct_owners,
                 "summary": summary,
+                "sale_blockers": brief,
+                "owner_flags_summary": flags_summary,
                 **condo_fields,
             }
 
@@ -1379,6 +1415,8 @@ class CadastralTools:
                 result["shares_omitted"] = omitted
             result["page"] = cls._page(offset, limit, matching, returned)
             result["summary"] = summary
+            result["sale_blockers"] = brief
+            result["owner_flags_summary"] = flags_summary
             result.update(condo_fields)
             cls._check_size(result, lr_unit, detail, limit)
             return result
@@ -1398,6 +1436,7 @@ class CadastralTools:
                 ],
                 "page": cls._page(offset, limit, len(sheet.cad_parcels), len(window)),
                 "summary": summary,
+                "sale_blockers": brief,
                 **condo_fields,
             }
             cls._check_size(result, lr_unit, detail, limit)
@@ -1412,6 +1451,7 @@ class CadastralTools:
                 "total_entry_groups": len(groups),
                 "page": cls._page(offset, limit, len(groups), len(window)),
                 "summary": summary,
+                "sale_blockers": blockers,
                 **condo_fields,
             }
             cls._check_size(result, lr_unit, detail, limit)
@@ -1422,7 +1462,7 @@ class CadastralTools:
         # receipt date, diary number, action type); ``share_entries`` are the
         # annotations (ZABILJEŽBA) registered on individual shares.
         owners, total, matching, truncated = cls._ownership_rows(
-            lr_unit, offset, limit, owner_name
+            lr_unit, offset, limit, owner_name, flag_rows
         )
         result = {
             **cls._identity(lr_unit),
@@ -1441,8 +1481,26 @@ class CadastralTools:
             "page": cls._page(offset, limit, matching, len(owners)),
             "share_entries": lr_unit.ownership_sheet_b.share_entry_rows(),
             "summary": summary,
+            "sale_blockers": blockers,
+            "owner_flags_summary": flags_summary,
         })
+        cls._check_size(result, lr_unit, detail, limit)
         return result
+
+    @staticmethod
+    def _blockers_brief(blockers: dict[str, Any]) -> dict[str, Any]:
+        """The verdict and counts of a sale-blockers dump, without the list."""
+        return {
+            "verdict": blockers["verdict"],
+            "counts": blockers["counts"],
+            "blocker_count": len(blockers["blockers"]),
+            "blocker_kinds": sorted({b["kind"] for b in blockers["blockers"]}),
+            "cancelled_count": len(blockers.get("blockers_cancelled") or []),
+            "scope_filter": blockers.get("scope_filter"),
+            "rule": blockers["rule"],
+            "notes": blockers.get("notes") or [],
+            "detail_note": 'the blockers themselves come with detail="ownership" or "encumbrances"',
+        }
 
     @classmethod
     def _check_size(
@@ -1462,12 +1520,19 @@ class CadastralTools:
         returned = page.get("returned") or 0
         smaller = max(1, returned // 4) if returned else 10
         if detail != "full":
+            blockers = (result.get("sale_blockers") or {}).get("blockers") or []
+            narrow = (
+                f" The unit has {len(blockers)} sale blockers; owner_name or condominium_unit "
+                f"narrows them to one owner or one flat."
+                if len(blockers) > 10
+                else ""
+            )
             raise ResponseTooLargeError(
                 f"The {detail} of land-registry unit {lr_unit.lr_unit_number} are "
                 f"{size:,} characters ({returned} {cls.PAGED_LIST[detail]} in this window), "
                 f"too large to return in one response. Pass a smaller limit (e.g. "
                 f"limit={smaller}) and page through with offset (the page block says "
-                f"where to continue)."
+                f"where to continue).{narrow}"
             )
         total_owners = result.get("total_owners") or 0
         sheet, sheet_size = cls._largest_sheet(result)
@@ -1504,17 +1569,18 @@ class CadastralTools:
             return "the unit", 0
         return max(sizes.items(), key=lambda item: item[1])
 
-    def _plombe_detail(self, lr_unit: Any) -> dict[str, Any]:
-        """Resolve pending-plomba detail for a unit, shaped for JSON output.
+    @staticmethod
+    def _plombe_detail(statuses: dict[str, FileStatus]) -> dict[str, Any]:
+        """Pending-plomba detail shaped for JSON output.
 
-        Returns a map of file_number -> status detail for the land-registry
-        plombe that resolved (cadastre/unresolvable plombe are omitted, but they
-        remain visible in the unit's summary ``pending_plombe`` list).
+        ``statuses`` is what ``client.get_plombe_details`` returned: a map of
+        file_number -> status for the land-registry plombe that resolved
+        (cadastre/unresolvable plombe are omitted, but they remain visible in
+        the unit's summary ``pending_plombe`` list).
         """
-        details = self.client.get_plombe_details(lr_unit)
         return {
             file_number: status.model_dump(mode="json", by_alias=False)
-            for file_number, status in details.items()
+            for file_number, status in statuses.items()
         }
 
     async def get_lr_unit(
@@ -1527,6 +1593,7 @@ class CadastralTools:
         offset: int = 0,
         limit: int | None = None,
         owner_name: str | None = None,
+        condominium_unit: str | None = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak).
@@ -1566,6 +1633,9 @@ class CadastralTools:
                 ``matching_shares`` count them and the totals still describe
                 the whole sheet, so one person is found in a condominium of
                 hundreds of shares without paging through it.
+            condominium_unit: Narrow ``sale_blockers`` to one condominium
+                unit ("E-16", "E16" or "16"): unit-wide blockers still count,
+                share-scoped ones only on that flat.
 
         Returns:
             Dictionary with ``results`` (one entry per reference, in order:
@@ -1574,7 +1644,10 @@ class CadastralTools:
             ``duplicates`` and ``condominiums_found``. Every reference has
             exactly one of the three statuses, so
             ``successful + failed + duplicates == total``; ``successful`` counts
-            fetched units, i.e. equals ``unique``.
+            fetched units, i.e. equals ``unique``. Every level of ``data``
+            carries ``sale_blockers`` (``verdict``, ``counts``, ``rule``; the
+            ``blockers`` themselves in "ownership" and "encumbrances") and
+            ``owner_flags_summary``; "ownership" rows carry ``flags``.
         """
         if detail not in self.VALID_DETAIL:
             raise ValueError(
@@ -1643,9 +1716,22 @@ class CadastralTools:
                 continue
 
             try:
-                data = self._shape_lr_unit(lr_unit, detail, limit, offset, owner_name)
+                # The plomba detail is fetched before shaping so the sale
+                # blockers can say what each pending request is.
+                statuses: dict[str, FileStatus] | None = None
                 if include_plombe_detail and lr_unit.has_pending_plombe():
-                    data["plombe_detail"] = self._plombe_detail(lr_unit)
+                    statuses = self.client.get_plombe_details(lr_unit)
+                data = self._shape_lr_unit(
+                    lr_unit,
+                    detail,
+                    limit,
+                    offset,
+                    owner_name,
+                    condominium_unit=condominium_unit,
+                    plombe_detail=statuses,
+                )
+                if statuses is not None:
+                    data["plombe_detail"] = self._plombe_detail(statuses)
             except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
                 entry.update(status="error", **error_fields(e))
                 results.append(entry)
@@ -1676,6 +1762,8 @@ class CadastralTools:
         }
         if owner_name is not None:
             response["owner_name"] = owner_name
+        if condominium_unit is not None:
+            response["condominium_unit"] = condominium_unit
         return response
 
     def _fetch_lr_unit(self, ref: LRUnitRef, historical_overview: bool = False) -> Any:
@@ -1739,7 +1827,9 @@ class CadastralTools:
             response["status"] = status.model_dump(mode="json", by_alias=False)
         return response
 
-    async def compare_registers(self, parcels: list[ParcelRef | dict[str, Any]]) -> dict[str, Any]:
+    async def compare_registers(
+        self, parcels: list[ParcelRef | dict[str, Any]], include_plombe_detail: bool = False
+    ) -> dict[str, Any]:
         """
         Are the cadastre possessors of each parcel its registered owners?
 
@@ -1757,6 +1847,9 @@ class CadastralTools:
         Args:
             parcels: One or more parcel references (parcel_id, or
                 parcel_number + municipality).
+            include_plombe_detail: Resolve what each pending plomba is (one
+                request per plomba, once per unit) so the pending blockers
+                name their request.
 
         Returns:
             ``results`` (one entry per reference: status, ref, parcel_number,
@@ -1764,13 +1857,18 @@ class CadastralTools:
             map_url), ``total``, ``successful``, ``failed``, ``units_fetched``,
             ``relationships`` (count per relationship) and ``people``
             (distinct possessors, owners and people across every successful
-            entry).
+            entry). ``data`` carries ``sale_blockers`` (the unit's blockers
+            plus owner_not_possessor and fuzzy_owner_match, with a verdict)
+            and ``owner_flag_counts``; each owner carries ``flags``.
         """
         if not parcels:
             raise ValueError("Give at least one parcel reference.")
         logger.info(f"Comparing registers for {len(parcels)} parcel(s)")
         results: list[dict[str, Any]] = []
         units: dict[tuple[str, int], Any] = {}
+        plombe: dict[tuple[str, int], dict[str, FileStatus]] | None = (
+            {} if include_plombe_detail else None
+        )
         possessors: list[tuple[str | None, str | None]] = []
         owners: list[tuple[str | None, str | None]] = []
         relationships: dict[str, int] = {}
@@ -1783,7 +1881,7 @@ class CadastralTools:
             entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
             try:
                 parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
-                    ref, units
+                    ref, units, plombe
                 )
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Register comparison failed for {ref}: {e}")
@@ -1836,20 +1934,32 @@ class CadastralTools:
         }
 
     async def _load_comparison(
-        self, ref: ParcelRef, units: dict[tuple[str, int], Any]
+        self,
+        ref: ParcelRef,
+        units: dict[tuple[str, int], Any],
+        plombe: dict[tuple[str, int], dict[str, FileStatus]] | None = None,
     ) -> tuple[ParcelInfo, ParcelGeometry | None, Any, Exception | None, Any]:
         """A parcel, its outline, its unit (read once per call) and the register comparison.
 
         Shared by compare_registers and build_assembly, which differ only in
-        what they do with the result.
+        what they do with the result. ``plombe`` (a per-call cache keyed like
+        ``units``) asks for the plomba detail of each unit, fetched once per
+        unit, so the pending requests among the sale blockers are named.
         """
         parcel, geometry, _search = await self._load_parcel(ref)
         unit, unit_error = self._unit_of(parcel, units)
+        detail: dict[str, FileStatus] | None = None
+        if plombe is not None and unit is not None and unit.has_pending_plombe():
+            key = (str(unit.lr_unit_number), int(unit.main_book_id))
+            if key not in plombe:
+                plombe[key] = self.client.get_plombe_details(unit)
+            detail = plombe[key]
         comparison = compare_registers(
             parcel,
             unit,
             gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
             lr_unit_error=str(unit_error) if unit_error else None,
+            plombe_detail=detail,
         )
         return parcel, geometry, unit, unit_error, comparison
 
@@ -1887,6 +1997,7 @@ class CadastralTools:
         export: str | None = None,
         persons_offset: int = 0,
         persons_limit: int | None = 50,
+        include_plombe_detail: bool = False,
     ) -> dict[str, Any]:
         """
         Land-assembly analysis of a set of parcels: the persons x parcels
@@ -1907,15 +2018,19 @@ class CadastralTools:
                 ``export``.
             persons_offset: Skip this many ranked persons.
             persons_limit: Return at most this many (default 50; None for all).
+            include_plombe_detail: Name each pending request among the sale
+                blockers (one request per plomba, once per unit).
 
         Returns:
-            ``totals``, ``parcels`` (easiest first, with ``score``),
-            ``persons`` (a page of the ranking, with ``persons_page``),
-            ``surname_groups``, ``matrix`` (one cell per person and parcel),
-            ``scores`` (the factors behind each score), ``weights``,
-            ``notes``, ``generated_at``, ``failed`` (references that could not
-            be read, with ``error_type``), ``units_fetched`` and ``export``
-            when asked.
+            ``totals``, ``parcels`` (easiest first, with ``score``,
+            ``sale_verdict``, ``blocker_counts`` and ``blocker_kinds``),
+            ``persons`` (a page of the ranking, with ``persons_page``; each
+            with ``likely_deceased`` and ``address_abroad``, inferred),
+            ``surname_groups`` (with the counts of those flags), ``matrix``
+            (one cell per person and parcel), ``scores`` (the factors behind
+            each score), ``weights``, ``notes``, ``generated_at``, ``failed``
+            (references that could not be read, with ``error_type``),
+            ``units_fetched`` and ``export`` when asked.
         """
         if not parcels:
             raise ValueError("Give at least one parcel reference.")
@@ -1938,6 +2053,9 @@ class CadastralTools:
         items: list[AssemblyInput] = []
         failed: list[dict[str, Any]] = []
         units: dict[tuple[str, int], Any] = {}
+        plombe: dict[tuple[str, int], dict[str, FileStatus]] | None = (
+            {} if include_plombe_detail else None
+        )
         geometries: dict[str, ParcelGeometry] = {}
         zoning_notes: list[str] = []
         for spec in parcels:
@@ -1948,7 +2066,7 @@ class CadastralTools:
                 continue
             try:
                 parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
-                    ref, units
+                    ref, units, plombe
                 )
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Assembly input failed for {ref}: {e}")

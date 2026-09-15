@@ -15,9 +15,11 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from ..models.entities import LandRegistryUnitDetailed, ParcelInfo
+from ..models.entities import FileStatus, LandRegistryUnitDetailed, ParcelInfo
 from ..models.provenance import Register
+from ..utils import fold_text
 from .area_check import AreaCheck, check_area
+from .owner_flags import OwnerFlags, count_owner_flags, owner_flags
 from .persons import (
     PartyTypeInference,
     count_distinct_persons,
@@ -25,8 +27,10 @@ from .persons import (
     group_size,
     infer_party_type,
     person_key,
+    plain_reorder,
     same_person,
 )
+from .sale_blockers import Blocker, SaleBlockers, detect_blockers, merge_blockers
 
 Relationship = Literal[
     "same",
@@ -56,7 +60,14 @@ class PersonRecord(BaseModel):
     tax_number: str | None = None
     address: str | None = None
     condominium_number: str | None = None
+    share_order_number: str | None = Field(
+        default=None, description="The top-level share an owner sits on (land registry only)"
+    )
     party_type_inferred: PartyTypeInference
+    flags: OwnerFlags | None = Field(
+        default=None,
+        description="likely_deceased, address_abroad, public_body (owners only; inferred)",
+    )
     key: str = Field(description="Strict person key (see persons.person_key)")
 
     @property
@@ -104,6 +115,17 @@ class RegisterComparison(BaseModel):
         ),
     )
     area_check: AreaCheck
+    sale_blockers: SaleBlockers | None = Field(
+        default=None,
+        description=(
+            "What is registered against the unit that bears on a sale, plus owner_not_possessor "
+            "and fuzzy_owner_match from this comparison; None without a unit"
+        ),
+    )
+    owner_flag_counts: dict[str, int] | None = Field(
+        default=None,
+        description="Owner records flagged likely_deceased, address_abroad, public_body (inferred)",
+    )
     summary: str
     notes: list[str]
 
@@ -115,6 +137,8 @@ def _record(
     tax_number: str | None,
     address: str | None,
     condominium_number: str | None = None,
+    share_order_number: str | None = None,
+    flags: OwnerFlags | None = None,
 ) -> PersonRecord:
     return PersonRecord(
         name=name,
@@ -123,7 +147,9 @@ def _record(
         tax_number=tax_number,
         address=address,
         condominium_number=condominium_number,
-        party_type_inferred=infer_party_type(name),
+        share_order_number=share_order_number,
+        party_type_inferred=flags.party_type_inferred if flags else infer_party_type(name),
+        flags=flags,
         key=person_key(name, tax_number).strict,
     )
 
@@ -145,7 +171,7 @@ def possessor_records(parcel: ParcelInfo) -> list[PersonRecord]:
 
 
 def owner_records(lr_unit: LandRegistryUnitDetailed) -> list[PersonRecord]:
-    """The current owners of a unit (sheet B rows) as person records."""
+    """The current owners of a unit (sheet B rows) as person records, with their flags."""
     return [
         _record(
             row["name"],
@@ -154,9 +180,97 @@ def owner_records(lr_unit: LandRegistryUnitDetailed) -> list[PersonRecord]:
             row.get("tax_number"),
             row.get("address"),
             row.get("condominium_number"),
+            row.get("share_order_number"),
+            owner_flags(
+                row["name"], row.get("address"), row.get("entry"), tax_number=row.get("tax_number")
+            ),
         )
         for row in lr_unit.ownership_sheet_b.owner_rows()
     ]
+
+
+def _owner_not_possessor(owner: PersonRecord) -> Blocker:
+    """An owner the cadastre does not list.
+
+    Across Dalmatia the cadastre lags the register by years, so an owner
+    whose entry is recent and carries an OIB is the normal state and only
+    informational; an owner with an old or legacy record, or without an
+    OIB, may face a possessor who is a genuine third party: conditional.
+    """
+    deceased = owner.flags.likely_deceased if owner.flags is not None else None
+    recent = bool(owner.tax_number) and deceased is not None and not deceased.likely_deceased
+    return Blocker(
+        kind="owner_not_possessor",
+        severity="informational" if recent else "conditional",
+        scope="share" if owner.share_order_number else "unit",
+        share_order_number=owner.share_order_number,
+        condominium_unit=owner.condominium_number,
+        source="register_comparison",
+        description=f"registered owner {owner.name} is not a cadastre possessor of the parcel",
+        basis=(
+            "the name is on sheet B and on no possession sheet; the entry is recent and "
+            "carries an OIB, so the cadastre has not caught up with the register"
+            if recent
+            else "the name is on sheet B and on no possession sheet; the record is old or "
+            "carries no OIB, so the possessor may be a genuine third party"
+        ),
+        beneficiary=owner.name,
+    )
+
+
+def _comparison_blockers(
+    matched: list[MatchedPerson], owners_only: list[PersonRecord], area_check: AreaCheck
+) -> list[Blocker]:
+    """The blockers only a comparison of the two registers can see."""
+    blockers = [_owner_not_possessor(owner) for owner in owners_only]
+    blockers.extend(
+        Blocker(
+            kind="fuzzy_owner_match",
+            severity="informational",
+            scope="share" if pair.owner.share_order_number else "unit",
+            share_order_number=pair.owner.share_order_number,
+            condominium_unit=pair.owner.condominium_number,
+            source="register_comparison",
+            description=(
+                f"owner {pair.owner.name} matched possessor {pair.possessor.name} on the name "
+                f"without the relative's name; confirm it is one person"
+            ),
+            basis="the loose person key matched, the strict one did not",
+            beneficiary=pair.owner.name,
+        )
+        for pair in matched
+        if pair.fuzzy
+    )
+    if area_check.mismatch:
+        figures = ", ".join(
+            f"{label} {value:,.0f} m²"
+            for label, value in (
+                ("cadastre", area_check.cadastre_m2),
+                ("land register", area_check.land_registry_m2),
+                ("map", area_check.gis_m2),
+            )
+            if value is not None
+        )
+        fraction = area_check.max_difference_fraction or 0.0
+        blockers.append(
+            Blocker(
+                kind="area_mismatch",
+                severity="conditional",
+                scope="unit",
+                source="register_comparison",
+                description=(
+                    f"the areas the registers give the parcel differ by {fraction:.0%}: "
+                    f"{figures}; a sale or a mortgage needs the area settled by a survey"
+                ),
+                basis=(
+                    f"area_check: the largest difference is {fraction:.0%}, above the "
+                    f"{area_check.tolerance_fraction:.0%} tolerance"
+                ),
+            )
+        )
+    return blockers
+
+
 
 
 def _shares_agree(a: dict[str, Any] | None, b: dict[str, Any] | None) -> bool | None:
@@ -203,17 +317,53 @@ def _match(
             continue
         taken.add(hit)
         matched.append(_pair(possessor, owners[hit], keys_p[i], keys_o[hit], fuzzy=True))
-    unmatched_o = [o for j, o in enumerate(owners) if j not in taken]
+    # A person on several shares is several owner records. Once one of them
+    # matched a possessor, the others with the same tax number are the same
+    # person and match the same possessor, so that the person is never both
+    # matched and "owner only". Only the OIB extends a match: the same name
+    # on another share may be a namesake (a grandson written like the
+    # grandfather), and that record stays owner only.
+    unmatched_o: list[PersonRecord] = []
+    for j, owner in enumerate(owners):
+        if j in taken:
+            continue
+        pair = next(
+            (
+                m
+                for m in matched
+                if keys_o[j].tax_number and m.owner.tax_number == keys_o[j].tax_number
+            ),
+            None,
+        )
+        if pair is None:
+            unmatched_o.append(owner)
+            continue
+        matched.append(
+            MatchedPerson(
+                possessor=pair.possessor,
+                owner=owner,
+                fuzzy=pair.fuzzy,
+                by_tax_number=pair.by_tax_number,
+                shares_agree=None,
+            )
+        )
     return matched, unmatched_p, unmatched_o
 
 
 def _pair(possessor, owner, key_p, key_o, fuzzy: bool) -> MatchedPerson:  # type: ignore[no-untyped-def]
+    shares_agree = _shares_agree(possessor.share, owner.share)
+    # A name written in another order with no relative on either side agrees
+    # in full; when the shares or the addresses agree too it is not a guess.
+    if fuzzy and plain_reorder(key_p, key_o):
+        addresses = fold_text(possessor.address or ""), fold_text(owner.address or "")
+        if shares_agree or (all(addresses) and addresses[0] == addresses[1]):
+            fuzzy = False
     return MatchedPerson(
         possessor=possessor,
         owner=owner,
         fuzzy=fuzzy,
         by_tax_number=bool(key_p.tax_number and key_o.tax_number),
-        shares_agree=_shares_agree(possessor.share, owner.share),
+        shares_agree=shares_agree,
     )
 
 
@@ -270,13 +420,15 @@ def compare_registers(
     lr_unit: LandRegistryUnitDetailed | None,
     gis_area_m2: float | None = None,
     lr_unit_error: str | None = None,
+    plombe_detail: dict[str, FileStatus] | None = None,
 ) -> RegisterComparison:
     """Match a parcel's possessors against its unit's owners (pure; nothing is fetched).
 
     ``lr_unit`` is the unit the parcel belongs to, or None when the parcel is
     not in the land registry; ``lr_unit_error`` says why a unit that should
     exist could not be read. ``gis_area_m2`` (the graphical area of the
-    outline) joins the area check when known.
+    outline) joins the area check when known. ``plombe_detail`` (file number
+    -> ``FileStatus``) names the pending requests among the sale blockers.
     """
     possessors = possessor_records(parcel)
     owners = owner_records(lr_unit) if lr_unit is not None else []
@@ -332,6 +484,19 @@ def compare_registers(
         land_registry_m2=lr_area,
         gis_m2=gis_area_m2,
     )
+    sale_blockers: SaleBlockers | None = None
+    flag_counts: dict[str, int] | None = None
+    if lr_unit is not None:
+        sale_blockers = merge_blockers(
+            detect_blockers(lr_unit, plombe_detail=plombe_detail),
+            _comparison_blockers(matched, only_o, area_check),
+        )
+        flag_counts = count_owner_flags(o.flags for o in owners)
+        if flag_counts["likely_deceased"] or flag_counts["address_abroad"]:
+            notes.append(
+                "owner flags (likely deceased, address abroad) are inferred from the entry age, "
+                "the name and the address; confirm them before relying on a count"
+            )
     return RegisterComparison(
         parcel_number=parcel.parcel_number,
         municipality_code=parcel.cad_municipality_reg_num,
@@ -349,6 +514,8 @@ def compare_registers(
         party_types=party_types,
         public_body_owner_share=public_share,
         area_check=area_check,
+        sale_blockers=sale_blockers,
+        owner_flag_counts=flag_counts,
         summary=_summary(relationship, len(matched), len(only_p), len(only_o)),
         notes=notes,
     )

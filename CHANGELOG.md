@@ -153,6 +153,95 @@ number and one tag.
   read once, zoning optional (a failed zoning lookup is a note, not an
   error), references that could not be read listed under `failed`, and one
   export at a time under `export`.
+- SDK: `cadastral_api.analysis.sale_blockers`: `detect_blockers(unit)` reads
+  what is registered against a land-registry unit that bears on a sale into
+  a list of `Blocker`s, each with a kind (pending_entry, mortgage, lien,
+  enforcement, dispute, transfer_prohibition, preemption, social_claim,
+  personal_servitude, easement, fiduciary_transfer, rejected_request,
+  public_body_share, other_annotation), a severity (blocking, conditional,
+  informational; defaults overridable), the share or condominium unit it
+  attaches to (a mortgage on flat 88 does not block flat 40), the entry it
+  comes from, the amount and the beneficiary, and the pattern the
+  classification rests on; a `verdict` (clear, conditional, blocked) follows
+  the rule returned next to it and is a screening of the register's text,
+  not a legal opinion. An entry the table does not recognise stays in the
+  list as `other_annotation`; an entry a later entry deletes goes to
+  `blockers_cancelled`. `owner_name` or `condominium_unit` narrow the answer
+  to one owner's shares or one flat; a plomba detail map turns a bare plomba
+  into the request it is. `cadastral_api.analysis.owner_flags`: per owner,
+  `likely_deceased` (registration entry older than 40 years, owner carried
+  over from an earlier unit, or a death marker on the owner's own name),
+  `address_abroad` (a country named in the address, or a foreign postcode as
+  a weak signal; unknown without an address) and `public_body`, every one
+  marked inferred with its basis. `owner_rows()` carries
+  `share_order_number` (the top-level share, as sheet C refers to it).
+  `compare_registers` adds `sale_blockers` (the unit's blockers plus
+  `owner_not_possessor` and `fuzzy_owner_match`) and `owner_flag_counts`,
+  and every owner record its `flags`; `build_assembly` derives the
+  `no_encumbrances` and `no_pending_plombe` factors from the blockers (an
+  informational note or a cancelled entry no longer counts against the
+  parcel), gives each parcel `sale_verdict`, `blocker_counts` and
+  `blocker_kinds`, each person `likely_deceased` and `address_abroad`, each
+  surname group the counts of both, and the totals `parcels_by_verdict`,
+  `persons_likely_deceased` and `persons_address_abroad`; the CSV exports
+  carry the new columns. `surname_of` skips markers, so "POKOJNI HORVAT
+  MARKO" groups under Horvat.
+- SDK: the person identity matches a cadastre possessor written with the
+  father's name after a comma ("ŠARUNIĆ AUGUSTIN, BOŽO") to the owner
+  written with the marker ("ŠARUNIĆ AUGUSTIN POK. BOŽE"), and a name written
+  given name first ("AUGUSTIN ŠARUNIĆ") to the register's surname-first form;
+  both are reported as fuzzy matches, never merged silently, and the distinct
+  counts still use the strict key. A personal servitude (habitation,
+  usufruct, maintenance) registered 40 years ago or more is a blocker marked
+  `likely_lapsed` with the reason in its basis (the holder's death ends it;
+  deletion needs the death certificate); a plomba whose resolved file is a
+  cadastre administrative case (UP/I 932) says so in its basis. The CLI
+  prints the lapsed count under the blockers table.
+- SDK: `compare_registers` matches per person, not per share record: once
+  one record of an owner on several shares matches a possessor, the others
+  match the same possessor instead of landing in `owners_only` and raising an
+  `owner_not_possessor` blocker (the assembly counts that possessor's share
+  once). The same words in another order with no relative on either side
+  ("AUGUSTIN ŠARUNIĆ" against "ŠARUNIĆ AUGUSTIN") are an exact match, not a
+  fuzzy one; only a relative written differently ("AUGUSTIN, BOŽO" against
+  "AUGUSTIN POK. BOŽE") is fuzzy. `likely_deceased` has a fourth signal,
+  `legacy_record`: a record with neither an OIB nor a registration entry was
+  carried from the paper register and is usually an estate. An
+  `area_mismatch` above the 5 % tolerance is a conditional blocker of the
+  comparison. `owner_not_possessor` is informational when the owner's entry
+  is recent and carries an OIB (the cadastre lags the register, the normal
+  state) and conditional otherwise (an old or legacy record, so the possessor
+  may be a genuine third party). `compare_registers(plombe_detail=...)` names
+  the pending requests among the blockers.
+- SDK: a share registered to an owner likely deceased is a `likely_estate`
+  blocker of its own (conditional, scoped to the share, on every surface),
+  whether or not the cadastre lists the same person: an unprobated estate
+  blocks that share even when the usufructs around it are deleted. A match
+  extends to a person's other shares by OIB only (the same name on another
+  share may be a namesake); a name written in another order is fuzzy unless
+  the shares or the addresses corroborate it. An area difference counts as
+  a mismatch only above the 5 % tolerance and above 20 m²
+  (`DEFAULT_AREA_MIN_DIFFERENCE_M2`), so digitisation noise on a small
+  building parcel is not a finding.
+- MCP: `compare_registers` and `build_assembly` take `include_plombe_detail`
+  (the plomba detail fetched once per unit), so a "blocked" parcel says what
+  the pending request is.
+- MCP: every `get_lr_unit` entry carries `sale_blockers` at every detail
+  level (the blockers themselves in "ownership" and "encumbrances"; the
+  verdict, counts and rule elsewhere, since a large condominium's list runs
+  to tens of kilobytes) and `owner_flags_summary`; each "ownership" row
+  carries `flags`. `condominium_unit` narrows the blockers to one flat;
+  `include_plombe_detail` also names the pending requests among them, from
+  one fetch. `compare_registers` and `build_assembly` carry the same
+  through the SDK models. The size ceiling names the narrowing options when
+  the blockers are many.
+- CLI: `get-lr-unit --blockers` (Croatian `--zapreke`) prints the sale
+  screening (verdict, one row per blocker with kind, severity, the share or
+  flat it applies to, description and amount, the cancelled count and the
+  rule) and the owners flagged likely deceased, abroad or a public body with
+  the basis of each flag; `--format json` writes `sale_blockers` and
+  `owner_flags`, the list CSV gets `sale_verdict` and `blockers` columns.
+  With `--plombe-detail` the pending requests are named.
 - MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
   cadastre area against the cadastral map's graphical area and the
   land-register area on the parcel link), every `get_lr_unit` entry

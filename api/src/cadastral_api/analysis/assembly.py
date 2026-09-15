@@ -16,7 +16,7 @@ parcel.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from fractions import Fraction
 from typing import Any, Literal
 
@@ -31,8 +31,10 @@ from .persons import (
     group_by_person,
     person_group_key,
     person_key,
+    surname_of,
 )
 from .registers import PersonRecord, RegisterComparison
+from .sale_blockers import ENCUMBRANCE_KINDS
 
 #: Default weights of the ease-of-acquisition factors (they sum to 1).
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -46,8 +48,9 @@ DEFAULT_WEIGHTS: dict[str, float] = {
 Role = Literal["owner", "possessor", "both"]
 #: A share as the registers give it, ``{num, den, decimal}``, or None.
 Share = dict[str, Any] | None
-#: One person on one parcel: record, parcel number, role, fuzzy match, owner share, possessor share.
-_Occurrence = tuple[PersonRecord, str, Role, bool, Share, Share]
+#: One person on one parcel: record, parcel number, role, fuzzy match, owner
+#: share, possessor share, and the id of the possessor record the share is from.
+_Occurrence = tuple[PersonRecord, str, Role, bool, Share, Share, int | None]
 
 
 @dataclass
@@ -97,7 +100,9 @@ class PersonHolding(BaseModel):
 
     key: str
     name: str
-    surname: str = Field(description="First word of the folded name (the registers write it first)")
+    surname: str = Field(
+        description="First word of the folded name that is no marker (the registers write it first)"
+    )
     tax_number: str | None
     party_type_inferred: PartyTypeInference
     parcels: list[str]
@@ -114,6 +119,13 @@ class PersonHolding(BaseModel):
     )
     shares_unknown: int = Field(description="Owner roles without a share; counted as the whole")
     fuzzy_matches: int
+    likely_deceased: bool | None = Field(
+        default=None,
+        description="Inferred from any of the person's owner records; None for a possessor only",
+    )
+    address_abroad: bool | None = Field(
+        default=None, description="Inferred from any owner record's address; None when unknown"
+    )
 
 
 class SurnameGroup(BaseModel):
@@ -124,6 +136,12 @@ class SurnameGroup(BaseModel):
     person_count: int
     parcel_count: int
     controlled_area_m2: float
+    likely_deceased_count: int = Field(
+        default=0, description="Persons flagged likely deceased (inferred): estates to expect"
+    )
+    address_abroad_count: int = Field(
+        default=0, description="Persons with an address abroad (inferred)"
+    )
 
 
 class ParcelSummary(BaseModel):
@@ -146,6 +164,15 @@ class ParcelSummary(BaseModel):
     designation_code: str | None
     plan_name: str | None
     area_mismatch: bool
+    sale_verdict: str | None = Field(
+        default=None, description="clear | conditional | blocked from the unit's sale blockers"
+    )
+    blocker_counts: dict[str, int] | None = Field(
+        default=None, description="Counted blockers per severity"
+    )
+    blocker_kinds: list[str] = Field(
+        default_factory=list, description="The kinds of blocker present, each once"
+    )
     score: float | None
     map_url: str | None
     provenance: dict[str, dict[str, str] | None]
@@ -166,6 +193,15 @@ class AssemblyTotals(BaseModel):
     parcels_with_encumbrances: int | None
     parcels_with_pending_plombe: int | None
     parcels_in_building_area: int | None
+    parcels_by_verdict: dict[str, int] | None = Field(
+        default=None, description="Parcels per sale verdict; None when no unit was read"
+    )
+    persons_likely_deceased: int = Field(
+        default=0, description="Persons flagged likely deceased (inferred)"
+    )
+    persons_address_abroad: int = Field(
+        default=0, description="Persons with an address abroad (inferred)"
+    )
 
 
 class AssemblyAnalysis(BaseModel):
@@ -209,6 +245,14 @@ def acquisition_score(
     used = resolve_weights(weights)
     comparison, unit, zoning = item.comparison, item.lr_unit, item.zoning
     notes: list[str] = []
+    blockers = comparison.sale_blockers.blockers if comparison.sale_blockers else []
+    # A charge is what the register holds against the unit (sheet C, share
+    # and sheet notes) at blocking or conditional severity: an informational
+    # note (a rejected request, an unrecognised annotation) does not count
+    # against the parcel, and a cancelled entry is not in the list at all.
+    charges = [
+        b for b in blockers if b.kind in ENCUMBRANCE_KINDS and b.severity != "informational"
+    ]
     factors: dict[str, bool | None] = {
         "single_owner": comparison.distinct_owners == 1 if unit is not None else None,
         "owner_is_possessor": (
@@ -216,8 +260,10 @@ def acquisition_score(
             if unit is not None and comparison.possessors and comparison.owners
             else None
         ),
-        "no_encumbrances": not unit.has_sheet_c_entries() if unit is not None else None,
-        "no_pending_plombe": not unit.has_pending_plombe() if unit is not None else None,
+        "no_encumbrances": not charges if unit is not None else None,
+        "no_pending_plombe": (
+            not any(b.kind == "pending_entry" for b in blockers) if unit is not None else None
+        ),
         "in_building_area": zoning.in_building_area if zoning is not None else None,
     }
     if unit is None:
@@ -279,6 +325,13 @@ def _summary(item: AssemblyInput, score: AcquisitionScore) -> ParcelSummary:
         designation_code=code,
         plan_name=plan,
         area_mismatch=comparison.area_check.mismatch,
+        sale_verdict=comparison.sale_blockers.verdict if comparison.sale_blockers else None,
+        blocker_counts=comparison.sale_blockers.counts if comparison.sale_blockers else None,
+        blocker_kinds=(
+            sorted({b.kind for b in comparison.sale_blockers.blockers})
+            if comparison.sale_blockers
+            else []
+        ),
         score=score.score,
         map_url=item.map_url,
         provenance={
@@ -299,6 +352,20 @@ class _Holding:
     possessed: float = 0.0
     shares_unknown: int = 0
     fuzzy: int = 0
+    likely_deceased: bool | None = None
+    address_abroad: bool | None = None
+
+    def add_flags(self, record: PersonRecord) -> None:
+        """Fold one owner record's flags in: any flagged record flags the person."""
+        flags = record.flags
+        if flags is None:
+            return
+        if flags.likely_deceased is not None:
+            self.likely_deceased = (
+                bool(self.likely_deceased) or flags.likely_deceased.likely_deceased
+            )
+        if flags.address_abroad.abroad is not None:
+            self.address_abroad = bool(self.address_abroad) or flags.address_abroad.abroad
 
 
 @dataclass
@@ -313,9 +380,21 @@ class _Cell:
     possessor_share_unknown: bool = False
     fuzzy: bool = False
     records: int = 0
+    flagged: list[PersonRecord] = field(default_factory=list)
+    possessors_seen: set[int] = field(default_factory=set)
 
-    def add(self, role: Role, fuzzy: bool, owner_share: Share, possessor_share: Share) -> None:
+    def add(
+        self,
+        role: Role,
+        fuzzy: bool,
+        owner_share: Share,
+        possessor_share: Share,
+        record: PersonRecord | None = None,
+        possessor_id: int | None = None,
+    ) -> None:
         self.records += 1
+        if record is not None and record.flags is not None:
+            self.flagged.append(record)
         self.fuzzy = self.fuzzy or fuzzy
         if self.records > 1 and self.role != role:
             self.role = "both"
@@ -323,7 +402,11 @@ class _Cell:
             self.owner_share, self.owner_share_unknown = _add_share(
                 self.owner_share, self.owner_share_unknown, owner_share
             )
-        if role in ("possessor", "both"):
+        # One possessor record matched by two owner records (a person on two
+        # shares) is one possession share, added once.
+        if role in ("possessor", "both") and possessor_id not in self.possessors_seen:
+            if possessor_id is not None:
+                self.possessors_seen.add(possessor_id)
             self.possessor_share, self.possessor_share_unknown = _add_share(
                 self.possessor_share, self.possessor_share_unknown, possessor_share
             )
@@ -369,12 +452,22 @@ def build_assembly(
         number = item.parcel.parcel_number
         for match in item.comparison.matched:
             occurrences.append(
-                (match.owner, number, "both", match.fuzzy, match.owner.share, match.possessor.share)
+                (
+                    match.owner,
+                    number,
+                    "both",
+                    match.fuzzy,
+                    match.owner.share,
+                    match.possessor.share,
+                    id(match.possessor),
+                )
             )
         for owner in item.comparison.owners_only:
-            occurrences.append((owner, number, "owner", False, owner.share, None))
+            occurrences.append((owner, number, "owner", False, owner.share, None, None))
         for possessor in item.comparison.possessors_only:
-            occurrences.append((possessor, number, "possessor", False, None, possessor.share))
+            occurrences.append(
+                (possessor, number, "possessor", False, None, possessor.share, None)
+            )
     keys = _person_keys([occ[0] for occ in occurrences])
     areas = {item.parcel.parcel_number: float(item.parcel.area_numeric or 0) for item in items}
 
@@ -384,9 +477,9 @@ def build_assembly(
     # and left as owner only on another is still both on that parcel.
     cells: dict[tuple[str, str], _Cell] = {}
     for index, occurrence in enumerate(occurrences):
-        record, number, role, fuzzy, owner_share, possessor_share = occurrence
+        record, number, role, fuzzy, owner_share, possessor_share, possessor_id = occurrence
         cell = cells.setdefault((keys[index], number), _Cell(record, role))
-        cell.add(role, fuzzy, owner_share, possessor_share)
+        cell.add(role, fuzzy, owner_share, possessor_share, record, possessor_id)
 
     holdings: dict[str, _Holding] = {}
     matrix: list[MatrixCell] = []
@@ -394,6 +487,8 @@ def build_assembly(
         holding = holdings.setdefault(key, _Holding(cell.record, {}))
         holding.parcels[number] = cell.role
         holding.fuzzy += int(cell.fuzzy)
+        for flagged in cell.flagged:
+            holding.add_flags(flagged)
         if cell.role in ("owner", "both"):
             if cell.owner_share is not None and not cell.owner_share_unknown:
                 holding.owned += float(cell.owner_share) * areas[number]
@@ -420,7 +515,7 @@ def build_assembly(
         PersonHolding(
             key=key,
             name=h.record.name,
-            surname=(person_key(h.record.name).strict.split() or [""])[0],
+            surname=surname_of(h.record.name),
             tax_number=h.record.tax_number,
             party_type_inferred=h.record.party_type_inferred,
             parcels=sorted(h.parcels),
@@ -431,6 +526,8 @@ def build_assembly(
             controlled_area_m2=round(h.owned + h.possessed_only, 1),
             shares_unknown=h.shares_unknown,
             fuzzy_matches=h.fuzzy,
+            likely_deceased=h.likely_deceased,
+            address_abroad=h.address_abroad,
         )
         for key, h in holdings.items()
     ]
@@ -446,6 +543,8 @@ def build_assembly(
             person_count=len(members),
             parcel_count=len({n for p in members for n in p.parcels}),
             controlled_area_m2=round(sum(p.controlled_area_m2 for p in members), 1),
+            likely_deceased_count=sum(1 for p in members if p.likely_deceased),
+            address_abroad_count=sum(1 for p in members if p.address_abroad),
         )
         for surname, members in groups.items()
     ]
@@ -474,6 +573,11 @@ def build_assembly(
         )
     if all(item.zoning is None for item in items):
         notes.append("zoning was not read: the building-area factor is left out of every score")
+    if any(p.likely_deceased or p.address_abroad for p in persons):
+        notes.append(
+            "likely_deceased and address_abroad are inferred from the entry age, the name and "
+            "the address; confirm before counting estates or foreign counterparties"
+        )
     notes.append("party types are inferred from names; the controlled area uses cadastre areas")
     return AssemblyAnalysis(
         generated_at=now_utc_iso(),
@@ -511,6 +615,10 @@ def _totals(
     for person in persons:
         kind = person.party_type_inferred.party_type
         party_types[kind] = party_types.get(kind, 0) + 1
+    by_verdict: dict[str, int] = {}
+    for summary in summaries:
+        if summary.sale_verdict is not None:
+            by_verdict[summary.sale_verdict] = by_verdict.get(summary.sale_verdict, 0) + 1
     return AssemblyTotals(
         parcel_count=len(items),
         total_area_m2=sum(s.area_m2 or 0 for s in summaries),
@@ -532,4 +640,7 @@ def _totals(
         parcels_in_building_area=(
             sum(1 for s in summaries if s.in_building_area) if any_zoning else None
         ),
+        parcels_by_verdict=by_verdict if any_unit else None,
+        persons_likely_deceased=sum(1 for p in persons if p.likely_deceased),
+        persons_address_abroad=sum(1 for p in persons if p.address_abroad),
     )

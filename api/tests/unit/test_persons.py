@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cadastral_api.analysis import count_distinct_persons, person_key, same_person
+from cadastral_api.analysis import count_distinct_persons, person_key, plain_reorder, same_person
 
 
 def test_key_folds_case_diacritics_punctuation_and_the_share_suffix() -> None:
@@ -90,3 +90,27 @@ def test_group_by_person_and_group_keys() -> None:
     assert person_group_key("a b", None, groups) == "a b#1"
     assert person_group_key("c d", None, groups) == "c d"
     assert person_group_key("x y", None, groups) == "x y"
+
+
+def test_a_relative_after_a_comma_and_a_reversed_name_match_loosely() -> None:
+    # The cadastre writes the father's name after a comma, the register after "pok.".
+    register = person_key("ŠARUNIĆ AUGUSTIN POK. BOŽE")
+    cadastre = person_key("ŠARUNIĆ AUGUSTIN, BOŽO")
+    assert cadastre.fuzzy == "sarunic augustin"
+    assert person_key("ŠARUNIĆ ANTE, P. BOŽE").fuzzy == "sarunic ante"
+    assert person_key("IVIĆ MARKO, SIN PETRA").fuzzy == "ivic marko"
+    assert same_person(register, cadastre) == (True, True)
+    # The cadastre sometimes writes the given name first: a match, fuzzy until
+    # the register comparison corroborates it (a namesake looks the same).
+    reversed_a, reversed_b = person_key("AUGUSTIN ŠARUNIĆ"), person_key("ŠARUNIĆ AUGUSTIN")
+    assert same_person(reversed_a, reversed_b) == (True, True)
+    assert plain_reorder(reversed_a, reversed_b) is True
+    # Out of order and with a relative on one side is two deviations at once:
+    # not matched (a namesake is as likely), and not a plain reorder.
+    assert same_person(reversed_a, register) == (False, False)
+    assert plain_reorder(reversed_a, register) is False
+    assert same_person(person_key("Fjordana Šarunić"), register) == (False, False)
+    # A single word is never matched out of order (it is the strict match or nothing).
+    assert same_person(person_key("ŠARUNIĆ"), person_key("ŠARUNIĆ")) == (True, False)
+    # The strict key keeps the comma part: distinct counts do not merge on a guess.
+    assert cadastre.strict == "sarunic augustin bozo"

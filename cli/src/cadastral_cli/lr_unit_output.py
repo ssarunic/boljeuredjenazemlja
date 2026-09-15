@@ -3,6 +3,7 @@
 import re
 from datetime import datetime
 
+from cadastral_api.analysis import OwnerFlagsRow, SaleBlockers
 from cadastral_api.i18n import _
 from cadastral_api.models.entities import (
     FileStatus,
@@ -124,6 +125,184 @@ def print_lr_unit_plombe_detail(
             table.add_row(plumb.file_number, f"[dim]{note}[/dim]", "-", "-", "-")
 
     console.print(table)
+
+
+def _kind_labels() -> dict[str, str]:
+    """Display names of the blocker kinds (looked up at call time so --lang applies)."""
+    return {
+        "pending_entry": _("Pending request (plomba)"),
+        "mortgage": _("Mortgage (založno pravo)"),
+        "lien": _("Claim (tražbina)"),
+        "enforcement": _("Enforcement (ovrha)"),
+        "dispute": _("Dispute (spor)"),
+        "transfer_prohibition": _("Prohibition on transfer or encumbrance"),
+        "preemption": _("Pre-emption right (prvokup)"),
+        "social_claim": _("Social-assistance claim"),
+        "personal_servitude": _("Personal servitude (habitation, usufruct, maintenance)"),
+        "easement": _("Easement (služnost)"),
+        "fiduciary_transfer": _("Transfer as security (fiducija)"),
+        "rejected_request": _("Rejected request"),
+        "public_body_share": _("Public body as co-owner"),
+        "likely_estate": _("Likely estate (owner probably deceased)"),
+        "owner_not_possessor": _("Owner is not the possessor"),
+        "fuzzy_owner_match": _("Fuzzy owner match"),
+        "area_mismatch": _("Area mismatch between the registers"),
+        "other_annotation": _("Other note (read the text)"),
+    }
+
+
+def _severity_labels() -> dict[str, str]:
+    return {
+        "blocking": _("blocking"),
+        "conditional": _("conditional"),
+        "informational": _("informational"),
+    }
+
+
+def _verdict_labels() -> dict[str, str]:
+    return {
+        "clear": _("No blockers"),
+        "conditional": _("Conditional"),
+        "blocked": _("Blocked"),
+    }
+
+
+def _applies_to(scope: str, share_order_number: str | None, condominium_unit: str | None) -> str:
+    if scope == "unit":
+        return _("whole unit")
+    if condominium_unit:
+        return condominium_unit
+    if share_order_number:
+        return _("share {number}").format(number=share_order_number)
+    return _("one share")
+
+
+def print_lr_unit_sale_blockers(blockers: SaleBlockers) -> None:
+    """Print the sale screening: verdict, the blockers and the cancelled entries.
+
+    The verdict is a screening of the register's text with the rule shown,
+    not a legal opinion; the reader is told so under the table.
+    """
+    style = {"clear": "green", "conditional": "yellow", "blocked": "red"}[blockers.verdict]
+    console.print(
+        f"[bold {style}]{_('Sale screening')}: {_verdict_labels()[blockers.verdict]}"
+        f"[/bold {style}]"
+    )
+    if blockers.scope_filter:
+        narrowed = ", ".join(f"{key}={value}" for key, value in blockers.scope_filter.items())
+        console.print(_("Narrowed to: {filter}").format(filter=narrowed), style="dim")
+
+    table = Table(title=_("SALE BLOCKERS"), box=None)
+    table.add_column(_("Kind"), style="bold")
+    table.add_column(_("Severity"))
+    table.add_column(_("Applies to"), style="cyan")
+    table.add_column(_("Description"), max_width=70)
+    table.add_column(_("Amount"), justify="right")
+    kinds, severities = _kind_labels(), _severity_labels()
+    severity_style = {"blocking": "red", "conditional": "yellow", "informational": "dim"}
+    if not blockers.blockers:
+        table.add_row(f"[green]{_('No blockers found')}[/green]", "", "", "", "")
+    for blocker in blockers.blockers:
+        colour = severity_style[blocker.severity]
+        table.add_row(
+            kinds.get(blocker.kind, blocker.kind),
+            f"[{colour}]{severities[blocker.severity]}[/{colour}]",
+            _applies_to(blocker.scope, blocker.share_order_number, blocker.condominium_unit),
+            _shorten(blocker.description),
+            blocker.amount or "-",
+        )
+    console.print(table)
+
+    if blockers.blockers_cancelled:
+        console.print(
+            _("{count} entries deleted by later entries are listed in the structured output "
+              "and not counted.").format(count=len(blockers.blockers_cancelled)),
+            style="dim",
+        )
+    lapsed = sum(1 for b in blockers.blockers if b.likely_lapsed)
+    if lapsed:
+        console.print(
+            _("{count} personal servitudes were registered decades ago and are likely lapsed "
+              "(the holder's death ends them); deleting them needs the holder's death "
+              "certificate. They count until deleted.").format(count=lapsed),
+            style="dim",
+        )
+    if any(b.kind == "other_annotation" for b in blockers.blockers):
+        console.print(_("Notes marked as other were not recognised; read their text."), style="dim")
+    console.print(
+        _("Rule: blocked when any counted blocker is blocking, conditional when any is "
+          "conditional, otherwise no blockers; deleted entries are not counted. A screening "
+          "of the register's text, not a legal opinion."),
+        style="dim",
+    )
+
+
+def print_lr_unit_owner_flags(rows: list[OwnerFlagsRow]) -> None:
+    """Print the inferred flags of the owners that carry one."""
+    flagged = [
+        row
+        for row in rows
+        if (row.flags.likely_deceased and row.flags.likely_deceased.likely_deceased)
+        or row.flags.address_abroad.abroad
+        or row.flags.public_body
+    ]
+    if not flagged:
+        console.print(
+            _("No owner is flagged as likely deceased, abroad or a public body (inferred)."),
+            style="dim",
+        )
+        return
+    table = Table(title=_("OWNER FLAGS (INFERRED)"), box=None)
+    table.add_column(_("Owner"), style="bold")
+    table.add_column(_("Share"), style="cyan")
+    table.add_column(_("Likely deceased"))
+    table.add_column(_("Address abroad"))
+    table.add_column(_("Public body"))
+    table.add_column(_("Basis"), style="dim", max_width=60)
+    yes, no = _("Yes"), _("No")
+    for row in flagged:
+        flags = row.flags
+        deceased = flags.likely_deceased
+        basis: list[str] = []
+        if deceased and deceased.likely_deceased:
+            if "name_marker" in deceased.signals:
+                basis.append(
+                    _("death marker in the name ({marker})").format(marker=deceased.marker)
+                )
+            if "transferred_from_unit" in deceased.signals:
+                basis.append(_("carried over from an earlier unit; the original entry is older"))
+            if "entry_age" in deceased.signals:
+                basis.append(
+                    _("entry of {date}, {years} years old").format(
+                        date=deceased.entry_date, years=deceased.entry_age_years
+                    )
+                )
+        if flags.address_abroad.abroad:
+            if flags.address_abroad.confidence == "keyword":
+                basis.append(
+                    _("the address names {country}").format(country=flags.address_abroad.matched)
+                )
+            else:
+                basis.append(
+                    _("foreign postcode {code} (weak signal)").format(
+                        code=flags.address_abroad.matched
+                    )
+                )
+        if flags.public_body:
+            basis.append(_("the name is that of the state or a local self-government"))
+        table.add_row(
+            row.name,
+            row.condominium_number or row.share_order_number or "-",
+            (yes if deceased.likely_deceased else no) if deceased else "-",
+            {True: yes, False: no}.get(flags.address_abroad.abroad, "-"),  # type: ignore[arg-type]
+            yes if flags.public_body else no,
+            _shorten("; ".join(basis), 200),
+        )
+    console.print(table)
+    console.print(
+        _("Flags are inferred from the entry age, the name and the address; confirm them."),
+        style="dim",
+    )
 
 
 def print_lr_unit_summary(lr_unit: LandRegistryUnitDetailed) -> None:
@@ -360,6 +539,8 @@ def print_lr_unit_full(
     show_encumbrances: bool = False,
     show_all: bool = False,
     plombe_details: dict[str, FileStatus] | None = None,
+    sale_blockers: SaleBlockers | None = None,
+    owner_flags: list[OwnerFlagsRow] | None = None,
 ) -> None:
     """Print complete LR unit information.
 
@@ -372,6 +553,10 @@ def print_lr_unit_full(
         plombe_details: Resolved plomba detail (file_number -> FileStatus). When
             provided and the unit has pending plombe, a detail table is printed
             right after the basic info.
+        sale_blockers: The sale screening (``--blockers``), printed after the
+            plomba detail.
+        owner_flags: The owners' inferred flags (``--blockers``), printed
+            after the screening.
     """
     # Print basic info
     print_lr_unit_basic_info(lr_unit)
@@ -380,6 +565,14 @@ def print_lr_unit_full(
     if plombe_details is not None and lr_unit.has_pending_plombe():
         console.print()
         print_lr_unit_plombe_detail(lr_unit, plombe_details)
+
+    # The sale screening and the owner flags (--blockers)
+    if sale_blockers is not None:
+        console.print()
+        print_lr_unit_sale_blockers(sale_blockers)
+    if owner_flags is not None:
+        console.print()
+        print_lr_unit_owner_flags(owner_flags)
 
     # Print parcels if requested (Sheet A)
     if show_parcels or show_all:

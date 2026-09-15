@@ -140,7 +140,7 @@ msgstr "Da biste uklonili sve, umjesto naziva općine upotrijebite `--sve`:"
 
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:98 commands/get-lr-unit.md:278
+#: commands/get-geometry.md:98 commands/get-lr-unit.md:351
 #: commands/get-parcel.md:213 commands/get-possession-sheet.md:113
 #: commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
@@ -164,7 +164,7 @@ msgstr "Ako ne navedete ni općinu ni `--sve`, vidjet ćete ovo:"
 
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:117 commands/get-lr-unit.md:294
+#: commands/get-geometry.md:117 commands/get-lr-unit.md:367
 #: commands/get-parcel.md:265 commands/get-possession-sheet.md:128
 #: commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
@@ -186,7 +186,7 @@ msgstr "[preuzmi-gis](download-gis.md) ponovno preuzima općinu."
 
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:123 commands/get-lr-unit.md:301
+#: commands/get-geometry.md:123 commands/get-lr-unit.md:375
 #: commands/get-parcel.md:272 commands/get-possession-sheet.md:135
 #: commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
@@ -690,6 +690,54 @@ msgstr ""
 
 #: commands/get-lr-unit.md:150
 msgid ""
+"To see at a glance whether anything registered against the unit stands in the"
+" way of a sale, add `--blockers`. The tool reads the pending entries, list C,"
+" the notes on the shares and the owners, names each finding by kind (a "
+"mortgage, a dispute, an enforcement, a pre-emption right, a servitude, a "
+"public body as co-owner) with the share or flat it applies to, and prints a "
+"verdict: **No blockers**, **Conditional** or **Blocked**. Under the table it "
+"lists the owners it flags as likely deceased, living abroad or a public body,"
+" with the reason for each flag. Both are read from the register's text by a "
+"fixed rule, which is printed under the table: treat them as a screening to "
+"check against the sheets, not as a legal opinion. Add `--plombe-detail` as "
+"well and each pending entry is named by the request it is."
+msgstr ""
+"Kako biste na prvi pogled vidjeli stoji li išta upisano na uložak na putu "
+"prodaji, dodajte `--zapreke`. Alat čita plombe, list C, zabilježbe na "
+"udjelima i vlasnike, svaki nalaz imenuje po vrsti (založno pravo, spor, "
+"ovrha, pravo prvokupa, služnost, javno tijelo kao suvlasnik) s udjelom ili "
+"posebnim dijelom na koji se odnosi i ispisuje ocjenu: **Bez zapreka**, "
+"**Uvjetno** ili **Zapriječeno**. Ispod tablice navodi vlasnike koje označava "
+"kao vjerojatno pokojne, s adresom u inozemstvu ili kao javno tijelo, s "
+"razlogom svake oznake. Oboje se čita iz teksta zemljišne knjige prema fiksnom"
+" pravilu koje se ispisuje ispod tablice: shvatite ih kao provjeru koju treba "
+"usporediti s listovima, a ne kao pravno mišljenje. Dodajte i `--plombe` pa se"
+" svaka plomba imenuje prijedlogom koji predstavlja."
+
+#: commands/get-lr-unit.md:212
+msgid ""
+"The first table is the unit header as before. **Sale screening** gives the "
+"verdict, and **SALE BLOCKERS** lists one row per finding: its **Kind**, its "
+"**Severity** (blocking, conditional or informational), what it **Applies to**"
+" (the whole unit, or one share or flat), the text of the entry and the amount"
+" when there is one. A pending entry counts as blocking until it is decided. "
+"**OWNER FLAGS (INFERRED)** lists only the owners with a flag and the "
+"**Basis** of each one; an owner carried over from an earlier unit, or "
+"registered decades ago, is flagged as likely deceased because such an entry "
+"usually belongs to an estate, not because the register says so."
+msgstr ""
+"Prva je tablica zaglavlje uloška kao i prije. **Provjera zapreka prodaji** "
+"daje ocjenu, a **ZAPREKE PRODAJI** navodi jedan redak po nalazu: stupac "
+"**Vrsta**, stupac **Težina** (zapreka, uvjetno ili informativno), stupac "
+"**Odnosi se na** (cijeli uložak, ili jedan udio ili posebni dio), tekst upisa"
+" i iznos kada ga ima. Plomba se broji kao zapreka dok se o prijedlogu ne "
+"odluči. **OZNAKE VLASNIKA (IZVEDENE)** navodi samo vlasnike s oznakom i "
+"**Temelj** svake; vlasnik prenesen iz ranijeg uloška ili upisan prije više "
+"desetljeća označava se kao vjerojatno pokojan jer takav upis obično pripada "
+"ostavini, a ne zato što to zemljišna knjiga kaže."
+
+#: commands/get-lr-unit.md:222
+msgid ""
 "To name the unit directly instead of starting from a parcel, use `--unit-"
 "number` and `--main-book` together, as in the example above. If you know the "
 "name of the main book (glavna knjiga, normally the cadastral municipality) "
@@ -701,7 +749,7 @@ msgstr ""
 "glavne knjige (u pravilu naziv katastarske općine), ali ne i njezin broj, "
 "zadajte naziv opcijom `--main-book-name` i alat će broj pronaći za vas:"
 
-#: commands/get-lr-unit.md:160
+#: commands/get-lr-unit.md:232
 msgid ""
 "The last column of the ownership sheet, **Entry**, tells you how each owner "
 "got there: the order number of the registration entry (upis), the date the "
@@ -714,7 +762,7 @@ msgstr ""
 "(Z-broj). Uz `--all` alat ispod udjela ispisuje i zabilježbe upisane samo na "
 "tom udjelu, na primjer ugovor o doživotnom uzdržavanju ili spor."
 
-#: commands/get-lr-unit.md:166
+#: commands/get-lr-unit.md:238
 msgid ""
 "To keep the result as a file, add `--format json` and `--output` with a file "
 "name."
@@ -722,7 +770,7 @@ msgstr ""
 "Da biste rezultat spremili kao datoteku, dodajte `--format json` i `--output`"
 " s nazivom datoteke."
 
-#: commands/get-lr-unit.md:169
+#: commands/get-lr-unit.md:241
 msgid ""
 "To read several units in one go, put them in a file and name it with "
 "`--input`. The easiest file is the JSON that [get-parcel](get-parcel.md) "
@@ -739,11 +787,11 @@ msgstr ""
 "[lr_units.csv](../examples/lr_units.csv):"
 
 # fuzzy match of: Open Terminal in the folder where your file is.
-#: commands/get-lr-unit.md:185
+#: commands/get-lr-unit.md:257
 msgid "Open Terminal in the folder where the file is and type:"
 msgstr "Otvorite Terminal u mapi u kojoj je datoteka i upišite:"
 
-#: commands/get-lr-unit.md:252
+#: commands/get-lr-unit.md:324
 msgid ""
 "The units are printed one after another, separated by a line of dashes, each "
 "laid out as above. The sheet choices apply to every unit. When one unit "
@@ -759,17 +807,17 @@ msgstr ""
 "dugačak popis spremite rezultat kao datoteku pomoću `--oblik json` i "
 "`--datoteka`."
 
-#: commands/get-lr-unit.md:280
+#: commands/get-lr-unit.md:353
 msgid ""
 "If you give a parcel but forget the municipality, the tool stops and asks for"
 " it:"
 msgstr "Ako zadate česticu, a zaboravite općinu, alat staje i traži je:"
 
-#: commands/get-lr-unit.md:288
+#: commands/get-lr-unit.md:361
 msgid "Add `-m` and the municipality name or number."
 msgstr "Dodajte `-ko` i naziv ili šifru općine."
 
-#: commands/get-lr-unit.md:290
+#: commands/get-lr-unit.md:363
 msgid ""
 "If the unit number does not exist in that main book, the tool reports an "
 "error that ends with `404 Not Found`. Check both numbers against your "
@@ -779,7 +827,7 @@ msgstr ""
 "završava s `404 Not Found`. Provjerite oba broja na svom dokumentu. Ostale "
 "poruke objašnjene su na [stranici o greškama](../errors.md)."
 
-#: commands/get-lr-unit.md:296
+#: commands/get-lr-unit.md:369
 msgid ""
 "[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
 "including the possessors."
@@ -787,7 +835,7 @@ msgstr ""
 "[čestica](get-parcel.md) prikazuje katastarsku stranu iste čestice, "
 "uključujući posjednike."
 
-#: commands/get-lr-unit.md:297
+#: commands/get-lr-unit.md:370
 msgid ""
 "[get-parcel](get-parcel.md) with `--detail registry` lists the units of many "
 "parcels, ready for `--input`."
@@ -795,9 +843,19 @@ msgstr ""
 "[čestica](get-parcel.md) uz `--detalji registry` ispisuje uloške više "
 "čestica, spremne za `--ulaz`."
 
-#: commands/get-lr-unit.md:298
+#: commands/get-lr-unit.md:371
 msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
 msgstr "[Pojmovnik](../glossary.md) objašnjava listove A, B i C te plombu."
+
+# fuzzy match of: [get-parcel](get-parcel.md) shows the possession sheet of a
+# parcel with its possessors.
+#: commands/get-lr-unit.md:372
+msgid ""
+"[get-parcel](get-parcel.md) with `--show-owners` shows the possessors, to "
+"compare with the owners a blocker names."
+msgstr ""
+"[get-parcel](get-parcel.md) s `--posjednici` prikazuje posjednike, za "
+"usporedbu s vlasnicima koje zapreka imenuje."
 
 #: commands/get-parcel.md:9
 msgid "See everything the cadastre holds about a parcel"
@@ -2316,8 +2374,10 @@ msgstr ""
 "`-ko` u većini naredbi. [traži-općinu](commands/search-municipality.md) "
 "pronalazi matični broj. |"
 
-# fuzzy match of: | Posjedovni list | The possession sheet of the cadastre: who
-# possesses a parcel according to the cadastre. Not proof of ownership. | [get-
+# fuzzy match of: | Posjedovni list | The possession sheet of the cadastre:
+# who
+# possesses a parcel according to the cadastre. Not proof of ownership. |
+# [get-
 # parcel](commands/get-parcel.md) with `--show-owners`. |
 #: glossary.md:18
 msgid ""

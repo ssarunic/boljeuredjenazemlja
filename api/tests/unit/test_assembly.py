@@ -204,20 +204,21 @@ def test_exports(items) -> None:
 
 def test_two_records_of_one_person_on_one_parcel_are_one_cell() -> None:
     # Unit 449 names "Vlasnik 116" on two quarter shares of 1122/1; make that
-    # person the parcel's only possessor. One record matches the possessor
-    # (role both), the other stays owner-only: the person is both on the
-    # parcel, once, with the shares added.
+    # person the parcel's only possessor. Both records match the one possessor
+    # (the person is matched once found): the person is both on the parcel,
+    # once, with the owner shares added and the possession share counted once.
     parcel, unit = _parcel("parcel_info_linked.json"), _unit("lr_unit_lrparcels.json")
     _keep_possessors(parcel, ["Vlasnik 116"])
     comparison = compare_registers(parcel, unit)
-    assert comparison.relationship == "overlapping"
-    assert "Vlasnik 116" in [o.name for o in comparison.owners_only]
+    assert comparison.relationship == "overlapping"  # the other owners are owner only
+    assert "Vlasnik 116" not in [o.name for o in comparison.owners_only]
     analysis = build_assembly([AssemblyInput(parcel, unit, comparison)])
     cells = [c for c in analysis.matrix if c.person_key.startswith("vlasnik 116")]
     assert len(cells) == 1
     cell = cells[0]
     assert cell.role == "both" and cell.records == 2
     assert cell.owner_share == {"num": 1, "den": 2, "decimal": 0.5}
+    assert cell.possessor_share == comparison.possessors[0].share
     person = next(p for p in analysis.persons if p.key == cell.person_key)
     assert person.owner_of == ["1122/1"] and person.possessor_of == ["1122/1"]
     assert person.owned_area_m2 == 0.5 * 1618

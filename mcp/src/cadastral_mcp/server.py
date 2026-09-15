@@ -51,7 +51,11 @@ name. Building parcels are written "35/1.ZGR". Lists are paged with offset
 and limit (`page.truncated`, `page.next_offset`); pass a limit for large
 condominiums. Every record carries `provenance` (register, source_url,
 retrieved_at); pass it on with any fact you forward, and treat area_check
-mismatches and `exact_match: false` as findings, not hits.
+mismatches and `exact_match: false` as findings, not hits. Every unit carries
+`sale_blockers` (what is registered against it that bears on a sale, with a
+verdict that is a screening of the register's text, not a legal opinion) and
+its owners carry `flags` (likely_deceased, address_abroad, public_body), all
+marked inferred: report them as estimates.
 """
 
 
@@ -711,19 +715,25 @@ def create_mcp_server() -> MCPServer:
                 )
             ),
         ] = None,
+        condominium_unit: Annotated[
+            str | None,
+            Field(
+                description=(
+                    'Narrow `sale_blockers` to one condominium unit ("E-16" or "16"); unit-wide '
+                    "blockers still count. Owner rows are not filtered by it (use owner_name)"
+                )
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak, zemljišne
         knjige, ZK, gruntovnica): registered owners (vlasnici) and their shares.
 
-        A land registry unit contains:
-        - Sheet A (Posjedovnica): All parcels in the unit
-        - Sheet B (Vlastovnica): Ownership (vlasnici) with shares
-        - Sheet C (Teretovnica): Encumbrances (mortgages, liens, easements)
-
-        Use this for "vlasnik" / "tko je vlasnik" / "prema zemljišnim knjigama"
-        questions: it returns registered owners (vlastovnica / B-list), not
-        cadastre possessors. Each reference names a unit in one of three ways:
+        Sheet A (posjedovnica) lists the parcels, sheet B (vlastovnica) the
+        owners with shares, sheet C (teretovnica) the encumbrances. Use this
+        for "vlasnik" / "tko je vlasnik" / "prema zemljišnim knjigama"
+        questions: it returns registered owners, not cadastre possessors.
+        Each reference names a unit in one of three ways:
         - ``{"parcel_number": "279/6", "municipality": "SAVAR"}``: the unit the
           parcel belongs to, resolved through parcel links when the parcel has
           no direct unit (the entry reports ``lr_unit_derived_from_links``);
@@ -732,22 +742,30 @@ def create_mcp_server() -> MCPServer:
         - ``{"lr_unit_number": "769", "main_book_name": "SAVAR"}``: with the
           main book (glavna knjiga) name instead of its id.
 
-        Pass one reference for a single unit, several for a portfolio. The
-        result has one entry per reference, in order; a unit that several
+        The result has one entry per reference, in order; a unit that several
         references resolve to is fetched once (the later entries say
         ``duplicate`` and point at the entry with the data), and a failed
         reference does not stop the others.
 
         Each owner row carries ``entry``, the registration entry (upis) that put
-        the owner on the share: order number, receipt date, diary number (Z-broj),
-        action type. ``share_entries`` lists the annotations (zabilježbe) on
-        individual shares.
+        the owner on the share (order number, receipt date, Z-broj, action
+        type); ``share_entries`` lists the annotations (zabilježbe) on
+        individual shares. To find one person ("is X an owner", "which flat
+        does X own") pass ``owner_name``: only the matching owners (or the
+        shares holding one) come back in one call; ``matching_owners`` is 0
+        when the name is not on the sheet.
 
-        To find one person in a unit ("is X an owner", "which flat does X
-        own") pass ``owner_name``: only the matching owners (or, in "shares"
-        and "full", the shares holding one) come back, in one call, however
-        many co-owners the unit has; ``matching_owners`` is 0 when the name is
-        not on the sheet.
+        Every unit carries ``sale_blockers``: what is registered against it
+        that bears on a sale (plombe, mortgages, enforcement, disputes,
+        prohibitions, pre-emption, servitudes, public bodies as co-owners),
+        each with a kind, a severity, the share or flat it attaches to and
+        its basis; ``verdict`` (clear | conditional | blocked) follows the
+        ``rule`` shown and is a screening of the register's text, not a
+        legal opinion; read ``other_annotation`` entries yourself. The
+        blockers themselves come with "ownership" and "encumbrances", the
+        other levels carry the verdict and counts. Each "ownership" row
+        carries inferred ``flags`` (likely_deceased, address_abroad,
+        public_body) with their basis.
 
         Returns:
             Dictionary with ``results`` (status, ref, lr_unit_number,
@@ -780,6 +798,7 @@ def create_mcp_server() -> MCPServer:
             offset=offset,
             limit=limit,
             owner_name=owner_name,
+            condominium_unit=condominium_unit,
         )
 
     @mcp.tool()
@@ -1040,6 +1059,15 @@ def create_mcp_server() -> MCPServer:
                 )
             ),
         ],
+        include_plombe_detail: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Name each pending plomba among the sale blockers (one request per plomba,"
+                    " once per unit)"
+                )
+            ),
+        ] = False,
     ) -> dict[str, Any]:
         """
         Are the cadastre possessors (posjednici, posjedovni list) of a parcel
@@ -1069,7 +1097,11 @@ def create_mcp_server() -> MCPServer:
             ``party_type_inferred``), ``distinct_possessors``,
             ``distinct_owners``, ``distinct_people``, ``party_types``,
             ``public_body_owner_share``, ``area_check`` (cadastre, sheet A and
-            graphical areas) and ``notes``. Then ``total``, ``successful``,
+            graphical areas), ``sale_blockers`` (the unit's blockers plus
+            ``owner_not_possessor`` and ``fuzzy_owner_match``, with a
+            verdict; see get_lr_unit), ``owner_flag_counts`` (owners flagged
+            likely_deceased, address_abroad, public_body; each owner carries
+            ``flags``) and ``notes``. Then ``total``, ``successful``,
             ``failed``, ``units_fetched``, ``relationships`` (count per
             relationship) and ``people`` (distinct possessors, owners and
             people across the whole set). A failed entry carries
@@ -1077,7 +1109,9 @@ def create_mcp_server() -> MCPServer:
             ``land_registry_error`` and still lists the possessors.
         """
         logger.info(f"Tool invoked: compare_registers({len(parcels)} parcels)")
-        return await tools_handler.compare_registers(list(parcels))
+        return await tools_handler.compare_registers(
+            list(parcels), include_plombe_detail=include_plombe_detail
+        )
 
     @mcp.tool()
     @anticipated_tool
@@ -1136,6 +1170,12 @@ def create_mcp_server() -> MCPServer:
                 )
             ),
         ] = 50,
+        include_plombe_detail: Annotated[
+            bool,
+            Field(
+                description="Name each pending plomba among the sale blockers (one request each)"
+            ),
+        ] = False,
     ) -> dict[str, Any]:
         """
         Land-assembly analysis (okrupnjavanje zemljišta, due diligence) of a
@@ -1159,12 +1199,18 @@ def create_mcp_server() -> MCPServer:
             area_by_relationship, area_by_zoning_status, distinct_people,
             distinct_owners, distinct_possessors, party_types,
             public_body_parcels, fuzzy_matches, parcels_with_encumbrances,
-            parcels_with_pending_plombe, parcels_in_building_area),
+            parcels_with_pending_plombe, parcels_in_building_area,
+            parcels_by_verdict, persons_likely_deceased,
+            persons_address_abroad),
             ``parcels`` (easiest first: relationship, distinct owners and
-            possessors, encumbrances, plombe, zoning, area_mismatch, score,
-            map_url, provenance), ``persons`` (a page of the ranking:
-            owner_of, possessor_of, owned / possessed / controlled area,
-            party_type_inferred) with ``persons_page``, ``surname_groups``,
+            possessors, encumbrances, plombe, zoning, area_mismatch,
+            sale_verdict, blocker_counts, blocker_kinds, score, map_url,
+            provenance), ``persons`` (a page of the ranking: owner_of,
+            possessor_of, owned / possessed / controlled area,
+            party_type_inferred, likely_deceased, address_abroad) with
+            ``persons_page``, ``surname_groups`` (with likely_deceased_count
+            and address_abroad_count: the estates and foreign counterparties
+            to expect per family, inferred),
             ``matrix`` (person_key, parcel_number, role, shares, fuzzy),
             ``scores`` (factors and notes per parcel), ``weights``,
             ``notes``, ``generated_at``, ``total`` and ``successful``
@@ -1183,6 +1229,7 @@ def create_mcp_server() -> MCPServer:
             export=export,
             persons_offset=persons_offset,
             persons_limit=persons_limit,
+            include_plombe_detail=include_plombe_detail,
         )
 
     @mcp.tool()

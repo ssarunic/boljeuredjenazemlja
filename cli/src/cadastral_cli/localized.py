@@ -86,6 +86,7 @@ OPTIONS: dict[str, str] = {
     "--show-parcels": pgettext("option", "--show-parcels"),
     "--show-encumbrances": pgettext("option", "--show-encumbrances"),
     "--plombe-detail": pgettext("option", "--plombe-detail"),
+    "--blockers": pgettext("option", "--blockers"),
     "--all": pgettext("option", "--all"),
     "--input": pgettext("option", "--input"),
     "--continue-on-error": pgettext("option", "--continue-on-error"),
