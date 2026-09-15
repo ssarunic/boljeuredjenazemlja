@@ -11,6 +11,7 @@ the packages under test are installed (``pip install -e``).
 
 from __future__ import annotations
 
+import importlib
 import sys
 from pathlib import Path
 
@@ -29,6 +30,6 @@ if _shadow is not None and getattr(_shadow, "__file__", None) is None:
 # package ``mcp`` for the directory. Importing the real SDK first pins the
 # name to the installed package; the test modules then hang off it harmlessly.
 try:
-    import mcp  # noqa: F401
+    importlib.import_module("mcp")
 except ImportError:  # the MCP SDK is not installed in this environment
     pass

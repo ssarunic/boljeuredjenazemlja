@@ -200,6 +200,8 @@ def download_gis(
                             _("\nTotal parcels: {count}").format(count=count), style="bold green"
                         )
                 except Exception:
+                    # The count is a courtesy: a GML the parser cannot read must
+                    # not fail a download that has already succeeded.
                     pass
             else:
                 # Just copy ZIP file
