@@ -116,6 +116,31 @@ reliable than the upstream `condominiums` flag; individual apartments appear as
 shares in `unit.ownership_sheet_b.lr_unit_shares`. `unit.lr_unit_type` is the same
 information as an enum (`LRUnitType.OWNERSHIP`, `CONDOMINIUM_DEFINED_SHARES`, `OTHER`).
 
+### Possession sheets and their parcels
+
+The cadastre's web form reads a possession sheet (posjedovni list) through
+endpoints its own search does not expose; the client covers them:
+
+```python
+result = client.get_possession_sheet_parcels("363", "SAVAR")   # three requests
+sheet = result.sheet                       # PossessionSheet with possessors and provenance
+for parcel in result.parcels:              # SearchedParcel records, sorted by number
+    print(parcel.parcel_number, parcel.area_numeric, parcel.land_use_summary)
+    unit = parcel.resolved_lr_unit()        # inline on a harmonized parcel, via the link otherwise
+result.total_area_m2, result.maybe_truncated   # True at 30 parcels: a server cap is not ruled out
+
+client.get_possession_sheet(16179481)                  # by the id the searches carry
+client.get_possession_sheet_by_number("877", 2387)     # by number and internal municipality id
+client.resolve_municipality_id("SAVAR")                # 2387, the id these endpoints take
+client.search_parcels(cad_municipality_id=2387, parcel_number="103/2")   # exact match
+client.lookup_possession_sheet_number(16179481)        # -> number and registration number
+```
+
+A harmonized parcel's record carries an inline `lr_unit` with sheet B
+(`parcel.lr_unit.owner_rows()`) and no possession sheet; a non-harmonized one
+carries `possession_sheet` and `parcel_links`. A sheet that does not exist
+raises `POSSESSION_SHEET_NOT_FOUND`.
+
 ### Finding the main book
 
 The unit endpoint wants a main book id. When you only know the name (normally the

@@ -26,7 +26,7 @@ from cadastral_api.models.entities import ParcelInfo
 from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM, ParcelGeometry
 from cadastral_api.planning import validate_min_overlap
 from cadastral_api.utils import fold_text, is_building_parcel_number, normalize_parcel_number
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -104,9 +104,18 @@ class ParcelRef(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # Parcel ids are integers everywhere in the SDK; a numeric string is accepted too.
-    parcel_id: int | None = None
-    parcel_number: str | None = None
-    municipality: str | None = None
+    parcel_id: int | None = Field(
+        default=None,
+        description="Parcel id as find_parcel returns it (`parcel_id`); alone it names the parcel",
+    )
+    parcel_number: str | None = Field(
+        default=None,
+        description='Cadastral parcel number, e.g. "103/2" or "35/1.ZGR"; needs municipality',
+    )
+    municipality: str | None = Field(
+        default=None,
+        description='Cadastral municipality (k.o.) name, e.g. "SAVAR", or code, e.g. "334979"',
+    )
 
     @model_validator(mode="after")
     def _complete(self) -> "ParcelRef":
@@ -130,11 +139,38 @@ class LRUnitRef(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # Unit numbers are strings ("769", "374/A") but are often typed as numbers.
-    lr_unit_number: str | int | None = None
-    main_book_id: int | None = None
-    main_book_name: str | None = None
-    parcel_number: str | None = None
-    municipality: str | None = None
+    lr_unit_number: str | int | None = Field(
+        default=None,
+        description=(
+            'Land-registry unit number (broj uloška), e.g. "769" or "374/A"; needs '
+            "main_book_id or main_book_name"
+        ),
+    )
+    main_book_id: int | None = Field(
+        default=None,
+        description=(
+            "Main book (glavna knjiga) id, as get_parcel returns under data.lr_unit or "
+            "find_main_book gives"
+        ),
+    )
+    main_book_name: str | None = Field(
+        default=None,
+        description=(
+            'Main book name, e.g. "SAVAR", resolved through the main-book search instead of'
+            " main_book_id"
+        ),
+    )
+    parcel_number: str | None = Field(
+        default=None,
+        description=(
+            'Cadastral parcel number, e.g. "279/6", to fetch the unit the parcel belongs '
+            "to; needs municipality"
+        ),
+    )
+    municipality: str | None = Field(
+        default=None,
+        description='Cadastral municipality (k.o.) name, e.g. "SAVAR", or code, e.g. "334979"',
+    )
 
     @model_validator(mode="after")
     def _complete(self) -> "LRUnitRef":
@@ -2336,6 +2372,127 @@ class CadastralTools:
         except CadastralAPIError as e:
             logger.error(f"Books-of-DC search failed: {e}", exc_info=True)
             raise ValueError("Could not search books of deposited contracts.") from e
+
+    async def get_possession_sheet(
+        self,
+        sheet_number: str,
+        municipality: str,
+        offset: int = 0,
+        limit: int | None = None,
+        possessor_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        A possession sheet (posjedovni list) by number: its possessors and
+        every parcel on it.
+
+        Three requests: the municipality's internal id, the sheet with its
+        possessors, and the parcel search that lists the sheet's parcels.
+        Possessors are paged like get_parcel's; the parcels come whole.
+
+        Args:
+            sheet_number: Possession sheet number (exact).
+            municipality: Municipality name or registration code.
+            offset: Skip this many possessor records.
+            limit: Return at most this many (None for all).
+            possessor_name: Keep only the possessors whose name contains every
+                word of this text (case and diacritics ignored).
+
+        Returns:
+            ``sheet`` (id, number, municipality, is_condominium, total ownership),
+            ``possessors`` (a page), ``total_possessors``, ``distinct_possessors``,
+            ``page``, ``parcels`` (number, id, area, land use, building parcel,
+            harmonized, land-registry reference, inline owners when harmonized),
+            ``parcel_count``, ``total_area_m2``, ``parcels_complete`` (False
+            when the list is as long as the longest ever observed, so a
+            server cap cannot be ruled out) and ``provenance`` of both calls.
+        """
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        possessor_filter = self._possessor_filter(possessor_name, None)
+        number = str(sheet_number).strip()
+        if not number:
+            raise ValueError("sheet_number must not be blank")
+        logger.info(f"Reading possession sheet {number} in {municipality}")
+        try:
+            result = await asyncio.to_thread(
+                self.client.get_possession_sheet_parcels, number, municipality
+            )
+        except CadastralAPIError as e:
+            if e.error_type is ErrorType.POSSESSION_SHEET_NOT_FOUND:
+                raise ValueError(
+                    f"No possession sheet numbered '{number}' in municipality "
+                    f"'{municipality}'. The number is matched exactly; find_possession_sheet "
+                    f"lists the sheets whose number begins with it."
+                ) from e
+            if e.error_type is ErrorType.MUNICIPALITY_NOT_FOUND:
+                raise ValueError(f"Municipality '{municipality}' not found") from e
+            raise ValueError(
+                f"Could not read possession sheet '{number}' in {municipality}: {e}"
+            ) from e
+
+        sheet = result.sheet
+        sheet_dump = sheet.model_dump(mode="json")
+        sheet_dump.pop("provenance", None)
+        possessors = sheet_dump.pop("possessors") or []
+        if possessor_filter:
+            possessors = [p for p in possessors if self._possessor_matches(p, possessor_filter)]
+        window = self._window(possessors, offset, limit)
+        parcels = [
+            {
+                "parcel_id": p.parcel_id,
+                "parcel_number": p.parcel_number,
+                "parcel_number_display": p.parcel_number_display,
+                "area_m2": p.area_numeric,
+                "address": p.address,
+                "land_use": p.land_use_summary,
+                "is_building_parcel": p.is_building_parcel,
+                "is_harmonized": p.is_harmonized,
+                "lr_unit": (
+                    {"lr_unit_number": u.lr_unit_number, "main_book_id": u.main_book_id}
+                    if (u := p.resolved_lr_unit()) is not None
+                    else None
+                ),
+                "inline_owners": len(p.lr_unit.owner_rows()) if p.lr_unit is not None else None,
+            }
+            for p in result.parcels
+        ]
+        response: dict[str, Any] = {
+            "sheet": sheet_dump,
+            "possessors": window,
+            "total_possessors": len(sheet.possessors),
+            "distinct_possessors": count_distinct_persons(
+                (p.name, None) for p in sheet.possessors
+            ),
+            "page": self._page(offset, limit, len(possessors), len(window)),
+            "parcels": parcels,
+            "parcel_count": len(parcels),
+            "total_area_m2": result.total_area_m2,
+            "parcels_complete": not result.maybe_truncated,
+            "provenance": {
+                "sheet": sheet.provenance.as_dict() if sheet.provenance else None,
+                "parcels": result.parcels_provenance.as_dict(),
+            },
+        }
+        if possessor_filter:
+            response["possessor_filter"] = possessor_filter
+            response["matching_possessors"] = len(possessors)
+        if result.maybe_truncated:
+            response["note"] = (
+                f"{len(parcels)} parcels is the most the parcel search has ever returned for "
+                f"one sheet; a server-side cap of that size is not ruled out, so the list may "
+                f"be incomplete."
+            )
+        size = len(json.dumps(response, ensure_ascii=False))
+        if size > self.MAX_PARCEL_RESPONSE_CHARS:
+            raise ResponseTooLargeError(
+                f"Possession sheet {number} is {size:,} characters ({len(window)} of "
+                f"{len(possessors)} possessor records, {len(parcels)} parcels), too large to "
+                f"return in one response. Pass a smaller limit and page with offset, or "
+                f"possessor_name to pick the records you need."
+            )
+        return response
 
     async def find_possession_sheet(self, sheet_number: str, municipality: str) -> dict[str, Any]:
         """

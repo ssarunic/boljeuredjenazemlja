@@ -381,6 +381,12 @@ def select_fixtures(capture: dict[str, dict[str, Any]]) -> dict[str, Any]:
         out["possession_sheet_search.json"] = next(iter(capture["possession_sheets"].values()))
     for label, data in capture.get("main_books", {}).items():
         out[f"main_books_{label.lower()}.json"] = data
+    # OQ4 endpoints (notes/oq4-possession-sheet-capture-2026-09-15.md): a sheet by id and
+    # the parcel search by sheet number, by exact number or by id.
+    if capture.get("possession_sheet"):
+        out["sheet_by_id.json"] = next(iter(capture["possession_sheet"].values()))
+    for label, data in capture.get("search_parcels", {}).items():
+        out[f"searched_parcels_{label.lower()}.json"] = data
     for label, data in capture.get("books_of_dc", {}).items():
         out[f"books_of_dc_{label.lower()}.json"] = data
 

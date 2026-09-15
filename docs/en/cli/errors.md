@@ -27,6 +27,7 @@ Every error starts with this mark and one of the messages below:
 | **Parcel not found** | `parcel_not_found` |
 | **Municipality not found** | `municipality_not_found` |
 | **Land registry unit not found** | `lr_unit_not_found` |
+| **Possession sheet not found** | `possession_sheet_not_found` |
 | **Server error** | `server_error` |
 | **Access denied** | `access_denied` |
 | **HTTP error** | `http_error` |

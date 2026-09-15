@@ -157,6 +157,9 @@ def _run(server, lang: str, cmdline: str, fmt: str, tmp_path: Path) -> str:
     env.update(
         {
             "CADASTRAL_API_BASE_URL": server.base_url,
+            # The mock's imitation of the building-areas WFS, whatever .env says:
+            # the gate must not depend on the government mirrors being up.
+            "CADASTRAL_PLANNING_WFS_URLS": f"{server.base_url}/planning/wfs",
             "CADASTRAL_API_RATE_LIMIT": "0",
             "HOME": str(tmp_path),
             "PYTHONIOENCODING": "utf-8",

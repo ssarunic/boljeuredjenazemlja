@@ -289,11 +289,28 @@ Zadar court.
 Books of deposited contracts (knjige položenih ugovora, KPU): flats sold before
 their building had a land registry unit. Returns the search records only.
 
+### `get_possession_sheet(sheet_number, municipality, offset=0, limit=None, possessor_name=None)`
+
+A possession sheet (posjedovni list) by exact number: its possessors and
+every parcel on it, in one call. `sheet` names the sheet (id, number,
+municipality, `is_condominium`, `total_ownership`); `possessors` is a page
+of the cadastre possessors (paged with `offset` and `limit`, filtered with
+`possessor_name` as in `get_parcel`, with `total_possessors`,
+`distinct_possessors` and a `page` block); `parcels` lists the sheet's
+parcels with `parcel_id`, `parcel_number`, `area_m2`, `address`,
+`land_use`, `is_building_parcel`, `is_harmonized`, the land-registry
+reference under `lr_unit` (for `get_lr_unit`) and, on a harmonized parcel,
+`inline_owners` (the cadastre inlines sheet B there); `parcel_count` and
+`total_area_m2` sum them. `provenance` carries the sheet's and the parcel
+list's URL and time. The parcel search behind the cadastre's web form
+honours no paging and has never been seen to return more than 30 records,
+so a list of that length comes with `parcels_complete: false` and a `note`.
+
 ### `find_possession_sheet(sheet_number, municipality)`
 
-Cadastre possession sheets by number (prefix match). The cadastre has no lookup
-by sheet id; to see a sheet's possessors, call `get_parcel` on one of its
-parcels.
+Cadastre possession sheets whose number begins with the text: the sheet id
+and number of each. For the sheet itself, possessors and parcels, call
+`get_possession_sheet` with the exact number.
 
 ### `get_file_status(file_number, institution_id)`
 
@@ -463,6 +480,9 @@ this is for fetching ahead of many lookups or refreshing stale data.
   the parcel is not in the land registry rather than inventing an owner.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
+- **Parcels of a posjedovni list, and who is on it**: `get_possession_sheet`
+  with the exact sheet number; `find_possession_sheet` when only the start
+  of the number is known.
 - **Is the possessor the owner** (posjednik vs vlasnik, one parcel or a set):
   `compare_registers` with the parcel references. It reads both registers
   and says `same`, `overlapping` or `disjoint` per parcel, who is in one
@@ -513,6 +533,11 @@ Resources: `cadastral://parcel/{parcel_id}` (the parcel record),
 `compare_parcels(parcel_ids)`, `land_use_summary(parcel_id)`; all four take
 the numeric `parcel_id` that `find_parcel` returns and read the cadastre
 record (possessors, not land-registry owners).
+
+The server also sends a short `instructions` text when the client connects
+(the two registers, which tool to start with, paging, provenance). Clients
+that support it put it in the model's system prompt; the tool descriptions
+carry the same rules per tool, so nothing is lost with a client that does not.
 
 ## Troubleshooting
 

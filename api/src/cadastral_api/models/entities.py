@@ -407,6 +407,11 @@ class PossessionSheet(SourceModel):
     possessors: list[Possessor] = Field(
         default_factory=list, description="Possessors recorded on the sheet"
     )
+    # Retrieval provenance (not from the API): stamped by get_possession_sheet;
+    # None on a sheet nested in a parcel record or built from a file.
+    provenance: Provenance | None = Field(
+        default=None, description="Register, URL and time of retrieval (set by the client)"
+    )
 
     @computed_field  # type: ignore[misc]
     @property
@@ -2013,9 +2018,146 @@ class LandRegistryUnitDetailed(SourceModel):
         return result
 
 
+class InlineLRUnit(LandRegistryUnit):
+    """A land-registry unit as ``/cad/search-parcels`` inlines it on a harmonized parcel.
+
+    The link-shaped reference plus sheet B (``ownershipSheetB``) with the
+    registered owners, so a harmonized parcel's owners come with the search
+    record; the other sheets are not inlined (read the unit for them).
+    """
+
+    ownership_sheet_b: OwnershipSheetB | None = Field(
+        default=None, alias="ownershipSheetB", description="Sheet B with the registered owners"
+    )
+
+    def owner_rows(self) -> list[dict]:
+        """The inlined owners as the canonical owner rows (empty without sheet B)."""
+        return self.ownership_sheet_b.owner_rows() if self.ownership_sheet_b else []
+
+
+class SearchedParcel(SourceModel):
+    """A parcel record of ``POST /cad/search-parcels`` (the parcels of a possession sheet).
+
+    The record carries the parcel-info root fields and one of two register
+    shapes, told apart by ``isHarmonized``: a non-harmonized parcel carries
+    ``possessionSheet`` (one sheet, possessors included) and ``parcelLinks``;
+    a harmonized one carries no sheet and no links but an inline ``lrUnit``
+    with sheet B (its possessors are read from ``/cad/possession-sheet`` or
+    ``/cad/parcel-info``). Fields the parcel-info root always has are
+    optional here because the record was captured only in outline.
+    """
+
+    parcel_id: int = Field(alias="parcelId", description="Unique parcel identifier")
+    parcel_number: str = Field(alias="parcelNumber", description="Cadastral parcel number")
+    cad_municipality_id: int | None = Field(
+        default=None, alias="cadMunicipalityId", description="Municipality internal ID"
+    )
+    cad_municipality_reg_num: str | None = Field(
+        default=None, alias="cadMunicipalityRegNum", description="Municipality registration number"
+    )
+    cad_municipality_name: str | None = Field(
+        default=None, alias="cadMunicipalityName", description="Municipality name"
+    )
+    institution_id: int | None = Field(
+        default=None, alias="institutionId", description="Cadastral office ID"
+    )
+    address: str | None = Field(default=None, description="Parcel location/address")
+    area: str | None = Field(default=None, description="Total parcel area in m² (string)")
+    building_remark: int | None = Field(
+        default=None, alias="buildingRemark", description="1 on every building parcel"
+    )
+    detail_sheet_number: str | None = Field(
+        default=None, alias="detailSheetNumber", description="Detail sheet number"
+    )
+    has_building_right: bool | None = Field(
+        default=None, alias="hasBuildingRight", description="Whether building is permitted"
+    )
+    parcel_parts: list[ParcelPart] = Field(
+        default_factory=list, alias="parcelParts", description="Land use classifications"
+    )
+    possession_sheet: PossessionSheet | None = Field(
+        default=None,
+        alias="possessionSheet",
+        description="The possession sheet with its possessors (non-harmonized parcels)",
+    )
+    parcel_links: list[ParcelLink] | None = Field(
+        default=None, alias="parcelLinks", description="Land-register links (non-harmonized)"
+    )
+    lr_unit: InlineLRUnit | None = Field(
+        default=None,
+        alias="lrUnit",
+        description="Inline land-registry unit with sheet B (harmonized parcels)",
+    )
+    is_additional_data_set: bool | None = Field(default=None, alias="isAdditionalDataSet")
+    legal_regime: bool | None = Field(default=None, alias="legalRegime")
+    graphic: bool | None = Field(default=None)
+    alpha_numeric: bool | None = Field(default=None, alias="alphaNumeric")
+    status: int | None = Field(default=None, description="Parcel status code")
+    resource_code: int | None = Field(default=None, alias="resourceCode")
+    is_harmonized: bool | None = Field(
+        default=None, alias="isHarmonized", description="Cadastre and land registry agree"
+    )
+    last_change_log: str | None = Field(
+        default=None, alias="lastChangeLog", description="Last change log entry of the parcel"
+    )
+    last_change_log_file_num: str | None = Field(
+        default=None, alias="lastChangeLogFileNum", description="File of the last change"
+    )
+    last_elaborate_number: str | None = Field(
+        default=None, alias="lastElaborateNumber", description="Number of the last survey"
+    )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def area_numeric(self) -> int | None:
+        """Area as an integer; None when the server sent no usable area."""
+        return area_to_int(self.area)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def is_building_parcel(self) -> bool:
+        """Building parcel: number starts with ``*`` or ``buildingRemark`` is 1."""
+        return is_building_parcel_number(self.parcel_number) or self.building_remark == 1
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def parcel_number_display(self) -> str:
+        """Croatian display form: ``"*35/1"`` renders as ``"zgr. 35/1"``."""
+        return display_parcel_number(self.parcel_number)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def land_use_summary(self) -> dict[str, int]:
+        """Land use type -> total area in m²."""
+        summary: dict[str, int] = defaultdict(int)
+        for part in self.parcel_parts:
+            summary[part.name] += part.area_numeric
+        return dict(summary)
+
+    def resolved_lr_unit(self) -> LandRegistryUnit | None:
+        """The unit reference the record carries: inline, or through the first parcel link."""
+        if self.lr_unit is not None:
+            return self.lr_unit
+        for link in self.parcel_links or []:
+            if link.lr_unit is not None:
+                return link.lr_unit
+        return None
+
+
+class PossessionSheetSearchData(SourceModel):
+    """``GET /cad/cad-parcels-search-data``: a sheet id resolved to its number and municipality."""
+
+    possession_sheet_number: str = Field(alias="possessionSheetNumber")
+    municipality_number: str = Field(
+        alias="municipalityNumber", description="Municipality registration number"
+    )
+
+
 # Party -> LREntry -> Party and LRShare -> SubShareOrEntry -> LRShare are
 # mutually recursive; resolve the string annotations now that all are defined.
 Party.model_rebuild()
 LREntry.model_rebuild()
 LRShare.model_rebuild()
 LandRegistryUnit.model_rebuild()
+InlineLRUnit.model_rebuild()
+SearchedParcel.model_rebuild()

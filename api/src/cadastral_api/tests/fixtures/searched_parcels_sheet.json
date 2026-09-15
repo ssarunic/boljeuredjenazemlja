@@ -1,0 +1,2510 @@
+[
+  {
+    "parcelId": 6564766,
+    "parcelNumber": "70",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "STARI VONJ",
+    "area": "824",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9278882,
+        "name": "MASLINJAK",
+        "area": "275",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9278883,
+        "name": "MASLINJAK",
+        "area": "274",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9278884,
+        "name": "MASLINJAK",
+        "area": "275",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660481,
+        "parcelNumber": "70",
+        "address": "VRT",
+        "area": "824",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565137,
+    "parcelNumber": "353",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SA ZENOVCA VOLUNJKA",
+    "area": "2902",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9279371,
+        "name": "MASLINJAK",
+        "area": "967",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279372,
+        "name": "MASLINJAK",
+        "area": "367",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279373,
+        "name": "MASLINJAK",
+        "area": "968",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279374,
+        "name": "PAŠNJAK",
+        "area": "600",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660482,
+        "parcelNumber": "353",
+        "address": "VRT",
+        "area": "2902",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565154,
+    "parcelNumber": "373/18",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ILO",
+    "area": "1634",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613408,
+        "name": "ŠUMA",
+        "area": "273",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279408,
+        "name": "ŠUMA",
+        "area": "545",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279409,
+        "name": "ŠUMA",
+        "area": "544",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279410,
+        "name": "ŠUMA",
+        "area": "272",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660447,
+        "parcelNumber": "373/18",
+        "address": "PAŠNJAK",
+        "area": "1634",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565216,
+    "parcelNumber": "411/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ARNJIĆ",
+    "area": "4380",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9279511,
+        "name": "PAŠNJAK",
+        "area": "1460",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279512,
+        "name": "PAŠNJAK",
+        "area": "1460",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279513,
+        "name": "PAŠNJAK",
+        "area": "1460",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660448,
+        "parcelNumber": "411/1",
+        "address": "VRT",
+        "area": "4380",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565229,
+    "parcelNumber": "427/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "VOLUJAK",
+    "area": "663",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9279536,
+        "name": "PAŠNJAK",
+        "area": "221",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279537,
+        "name": "MASLINJAK",
+        "area": "221",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279538,
+        "name": "MASLINJAK",
+        "area": "221",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660449,
+        "parcelNumber": "427/1",
+        "address": "VRT",
+        "area": "663",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565230,
+    "parcelNumber": "427/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "VOLUJAK",
+    "area": "565",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9279539,
+        "name": "MASLINJAK",
+        "area": "188",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279540,
+        "name": "MASLINJAK",
+        "area": "188",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279541,
+        "name": "PAŠNJAK",
+        "area": "189",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660450,
+        "parcelNumber": "427/2",
+        "address": "VRT",
+        "area": "565",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565275,
+    "parcelNumber": "469/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "BANIŠINE",
+    "area": "644",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613410,
+        "name": "PAŠNJAK",
+        "area": "107",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279614,
+        "name": "ORANICA",
+        "area": "215",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279615,
+        "name": "ORANICA",
+        "area": "214",
+        "possessionSheetId": 2654971,
+        "possessionSheetNumber": "147",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279617,
+        "name": "PAŠNJAK",
+        "area": "108",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5859380,
+        "parcelNumber": "469/1",
+        "address": "VRT",
+        "area": "644",
+        "lrUnit": {
+          "lrUnitId": 2690773,
+          "lrUnitNumber": "289",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565278,
+    "parcelNumber": "469/4",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "BANIŠINE",
+    "area": "76",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613411,
+        "name": "PAŠNJAK",
+        "area": "13",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279621,
+        "name": "ORANICA",
+        "area": "25",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279622,
+        "name": "ORANICA",
+        "area": "25",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279624,
+        "name": "PAŠNJAK",
+        "area": "13",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660453,
+        "parcelNumber": "469/4",
+        "address": "VRT",
+        "area": "76",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565286,
+    "parcelNumber": "474",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "BANIŠINE",
+    "area": "58",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613412,
+        "name": "PAŠNJAK",
+        "area": "10",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279632,
+        "name": "ORANICA",
+        "area": "20",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279633,
+        "name": "ORANICA",
+        "area": "19",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279635,
+        "name": "PAŠNJAK",
+        "area": "9",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660454,
+        "parcelNumber": "474",
+        "address": "ORANICA",
+        "area": "58",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565306,
+    "parcelNumber": "490",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "BANIŠINE",
+    "area": "2223",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613413,
+        "name": "MASLINJAK",
+        "area": "371",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279666,
+        "name": "MASLINJAK",
+        "area": "370",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279667,
+        "name": "ORANICA",
+        "area": "741",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279668,
+        "name": "ORANICA",
+        "area": "741",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660455,
+        "parcelNumber": "490",
+        "address": "VRT",
+        "area": "2223",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565430,
+    "parcelNumber": "593",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ZA ZAGLAV",
+    "area": "3062",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613415,
+        "name": "PAŠNJAK",
+        "area": "510",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279878,
+        "name": "VINOGRAD",
+        "area": "511",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279879,
+        "name": "PAŠNJAK",
+        "area": "510",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279880,
+        "name": "PAŠNJAK",
+        "area": "1021",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279882,
+        "name": "PAŠNJAK",
+        "area": "510",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660456,
+        "parcelNumber": "593",
+        "address": "VINOGRAD",
+        "area": "3062",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565434,
+    "parcelNumber": "594/6",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ZA ZAGLAV",
+    "area": "1459",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613416,
+        "name": "PAŠNJAK",
+        "area": "244",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279894,
+        "name": "PAŠNJAK",
+        "area": "243",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279895,
+        "name": "PAŠNJAK",
+        "area": "486",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279897,
+        "name": "PAŠNJAK",
+        "area": "243",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279898,
+        "name": "MASLINJAK",
+        "area": "243",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660457,
+        "parcelNumber": "594/6",
+        "address": "VINOGRAD",
+        "area": "1459",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565487,
+    "parcelNumber": "611/6",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "OGRADE",
+    "area": "1486",
+    "buildingRemark": 0,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9279985,
+        "name": "MASLINJAK",
+        "area": "495",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279986,
+        "name": "MASLINJAK",
+        "area": "496",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279987,
+        "name": "PAŠNJAK",
+        "area": "495",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660458,
+        "parcelNumber": "611/6",
+        "address": "PAŠNJAK",
+        "area": "1486",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565481,
+    "parcelNumber": "611/33",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "ZA ZAGLAV",
+    "area": "5185",
+    "buildingRemark": 0,
+    "detailSheetNumber": "2",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613417,
+        "name": "ŠUMA",
+        "area": "649",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279972,
+        "name": "ŠUMA",
+        "area": "1296",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279974,
+        "name": "ŠUMA",
+        "area": "1296",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9279976,
+        "name": "ŠUMA",
+        "area": "648",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 31708635,
+        "name": "ŠUMA",
+        "area": "1296",
+        "possessionSheetId": 2694570,
+        "possessionSheetNumber": "27",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660459,
+        "parcelNumber": "611/33",
+        "address": "ŠUMA",
+        "area": "5185",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565570,
+    "parcelNumber": "660/4",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "VRTLI",
+    "area": "120",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9280107,
+        "name": "ORANICA",
+        "area": "20",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280108,
+        "name": "ORANICA",
+        "area": "20",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280109,
+        "name": "ORANICA",
+        "area": "60",
+        "possessionSheetId": 2694565,
+        "possessionSheetNumber": "35",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280110,
+        "name": "ORANICA",
+        "area": "20",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660461,
+        "parcelNumber": "660/4",
+        "address": "VRT",
+        "area": "139",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565886,
+    "parcelNumber": "916/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "GLAVICA",
+    "area": "1411",
+    "buildingRemark": 0,
+    "detailSheetNumber": "5",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613418,
+        "name": "MASLINJAK",
+        "area": "235",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280557,
+        "name": "PAŠNJAK",
+        "area": "470",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280559,
+        "name": "MASLINJAK",
+        "area": "471",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280560,
+        "name": "MASLINJAK",
+        "area": "235",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660462,
+        "parcelNumber": "916/1",
+        "address": "VINOGRAD",
+        "area": "1411",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565925,
+    "parcelNumber": "951/3",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "PODRIPNJZ",
+    "area": "1342",
+    "buildingRemark": 0,
+    "detailSheetNumber": "5",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613420,
+        "name": "PAŠNJAK",
+        "area": "224",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280635,
+        "name": "PAŠNJAK",
+        "area": "447",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280636,
+        "name": "PAŠNJAK",
+        "area": "447",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280637,
+        "name": "PAŠNJAK",
+        "area": "224",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660464,
+        "parcelNumber": "951/3",
+        "address": "ORANICA",
+        "area": "1342",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6565988,
+    "parcelNumber": "1000/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "POD RIPNJAK",
+    "area": "1529",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9280749,
+        "name": "PAŠNJAK",
+        "area": "510",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280750,
+        "name": "PAŠNJAK",
+        "area": "510",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280751,
+        "name": "PAŠNJAK",
+        "area": "509",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660470,
+        "parcelNumber": "1000/1",
+        "address": "VINOGRAD",
+        "area": "1529",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6566021,
+    "parcelNumber": "1021/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "POLJE",
+    "area": "708",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9280820,
+        "name": "MASLINJAK",
+        "area": "236",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280821,
+        "name": "MASLINJAK",
+        "area": "236",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280822,
+        "name": "MASLINJAK",
+        "area": "236",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 2,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660471,
+        "parcelNumber": "1021/2",
+        "address": "VRT",
+        "area": "708",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6566034,
+    "parcelNumber": "1029/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "PODRIPNJAZ",
+    "area": "3646",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613425,
+        "name": "PAŠNJAK",
+        "area": "608",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280848,
+        "name": "MASLINJAK",
+        "area": "1215",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280850,
+        "name": "PAŠNJAK",
+        "area": "1216",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9280851,
+        "name": "PAŠNJAK",
+        "area": "607",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660472,
+        "parcelNumber": "1029/1",
+        "address": "VRT",
+        "area": "4592",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6566150,
+    "parcelNumber": "1089/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "RIPNJAK",
+    "area": "10725",
+    "buildingRemark": 0,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 12613427,
+        "name": "PAŠNJAK",
+        "area": "1788",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9281013,
+        "name": "PAŠNJAK",
+        "area": "3575",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9281014,
+        "name": "PAŠNJAK",
+        "area": "3575",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9281016,
+        "name": "PAŠNJAK",
+        "area": "1787",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660473,
+        "parcelNumber": "1089/2",
+        "address": "PAŠNJAK",
+        "area": "10725",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6566231,
+    "parcelNumber": "1153/1",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "BURE NJIVE",
+    "area": "555",
+    "buildingRemark": 0,
+    "detailSheetNumber": "9",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 9281149,
+        "name": "PAŠNJAK",
+        "area": "185",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9281150,
+        "name": "PAŠNJAK",
+        "area": "185",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "lastChangeLogNumber": "20/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 9281151,
+        "name": "PAŠNJAK",
+        "area": "92",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "lastChangeLogNumber": "18/2025",
+        "building": false
+      },
+      {
+        "parcelPartId": 12613428,
+        "name": "PAŠNJAK",
+        "area": "93",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "lastChangeLogNumber": "19/2025",
+        "building": false
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessionSheetTypeId": 1,
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": [
+      {
+        "parcelId": 5660474,
+        "parcelNumber": "1153/1",
+        "address": "ORANICA",
+        "area": "555",
+        "lrUnit": {
+          "lrUnitId": 2627949,
+          "lrUnitNumber": "54",
+          "mainBookId": 21277,
+          "mainBookName": "SAVAR",
+          "cadastreMunicipalityId": 2387,
+          "status": "0",
+          "verificated": false,
+          "condominiums": false
+        },
+        "parcelParts": []
+      }
+    ]
+  },
+  {
+    "parcelId": 6564686,
+    "parcelNumber": "*35/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "54",
+    "buildingRemark": 1,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 1830960,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "9",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954746,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "9",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956466,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "18",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956635,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "18",
+        "possessionSheetId": 2654971,
+        "possessionSheetNumber": "147",
+        "buildingRight": 0,
+        "building": true
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": []
+  },
+  {
+    "parcelId": 6564688,
+    "parcelNumber": "*35/4",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "29",
+    "buildingRemark": 1,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 1812470,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "4",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954538,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "5",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954879,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "10",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956090,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "10",
+        "possessionSheetId": 2654971,
+        "possessionSheetNumber": "147",
+        "buildingRight": 0,
+        "building": true
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": []
+  },
+  {
+    "parcelId": 6564690,
+    "parcelNumber": "*35/5",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "32",
+    "buildingRemark": 1,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 1824765,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "5",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954806,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "6",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1955223,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "11",
+        "possessionSheetId": 2654971,
+        "possessionSheetNumber": "147",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956515,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "10",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "buildingRight": 0,
+        "building": true
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": []
+  },
+  {
+    "parcelId": 6564697,
+    "parcelNumber": "*37/2",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "30",
+    "buildingRemark": 1,
+    "detailSheetNumber": "1",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 1818776,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "5",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954750,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "10",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956462,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "5",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1956617,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "10",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "buildingRight": 0,
+        "building": true
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": []
+  },
+  {
+    "parcelId": 6564741,
+    "parcelNumber": "*56",
+    "cadMunicipalityId": 2387,
+    "cadMunicipalityRegNum": "334979",
+    "cadMunicipalityName": "SAVAR",
+    "institutionId": 114,
+    "address": "SELO",
+    "area": "51",
+    "buildingRemark": 1,
+    "detailSheetNumber": "4",
+    "hasBuildingRight": false,
+    "parcelParts": [
+      {
+        "parcelPartId": 1843174,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "8",
+        "possessionSheetId": 2646383,
+        "possessionSheetNumber": "33",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1954477,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "9",
+        "possessionSheetId": 2688456,
+        "possessionSheetNumber": "129",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1955153,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "17",
+        "possessionSheetId": 2694567,
+        "possessionSheetNumber": "31",
+        "buildingRight": 0,
+        "building": true
+      },
+      {
+        "parcelPartId": 1955882,
+        "name": "KUĆA, SELO",
+        "type": "Zgrada",
+        "area": "17",
+        "possessionSheetId": 2694566,
+        "possessionSheetNumber": "32",
+        "buildingRight": 0,
+        "building": true
+      }
+    ],
+    "isAdditionalDataSet": false,
+    "legalRegime": false,
+    "graphic": true,
+    "alphaNumeric": true,
+    "status": 0,
+    "resourceCode": 0,
+    "isHarmonized": false,
+    "possessionSheet": {
+      "possessionSheetId": 2646383,
+      "possessionSheetNumber": "33",
+      "cadMunicipalityId": 2387,
+      "cadMunicipalityRegNum": "334979",
+      "cadMunicipalityName": "SAVAR",
+      "possessors": [
+        {
+          "name": "Posjednik 143",
+          "ownership": "5/9",
+          "address": "Adresa 189"
+        },
+        {
+          "name": "Posjednik 450",
+          "ownership": "4/9",
+          "address": "Adresa 190"
+        }
+      ]
+    },
+    "parcelLinks": []
+  }
+]

@@ -98,6 +98,11 @@ R7. Parsing failures are never swallowed. Where the code today does
 | E7 | `GET /cad/parcel-info` | `get_parcel_info` | 3 keys untyped |
 | E8 | `GET /lr/lr-unit` | `get_lr_unit_detailed` | 1 object dropped, 2 lists untyped, 2 keys untyped |
 | E9 | `POST /lr/file-status` | `get_file_status` | covered |
+| E10 | `GET /cad/possession-sheet` | `get_possession_sheet` | covered (fixture synthesised from the mock, section 11 OQ11) |
+| E11 | `GET /cad/possession-sheet-by-number` | `get_possession_sheet_by_number` | covered (same shape as E10) |
+| E12 | `POST /cad/search-parcels` | `search_parcels` | covered in outline; two record shapes (`SearchedParcel`), fixtures synthesised (OQ11) |
+| E13 | `GET /cad/cad-parcels-search-data` | `lookup_possession_sheet_number` | covered |
+| E14 | `GET /cad/parcel-basic-info`, `POST /cad/parcel-list-info` | none | known, not covered (OQ10) |
 
 ### 4.1 Common shape of the search endpoints (E2 to E6)
 
@@ -133,10 +138,10 @@ attribute names stay.
 
 `GET /search-cad-parcels/possession-sheet-numbers?search=363&municipalityRegNum=334979`
 returns `key1` = `possessionSheetId` (11731543, the same id the parcel-info
-`possessionSheets[]` carry) and `value1` = sheet number. No endpoint that
-returns a possession sheet by id is known; the client method
-`find_possession_sheet(sheet_number, municipality_reg_num)` returns the
-search records only. Open question OQ4 in section 11.
+`possessionSheets[]` carry) and `value1` = sheet number. The sheet itself is
+E10/E11 and its parcels E12 (section 7a of the API specification); OQ4 is
+resolved. `find_possession_sheet(sheet_number, municipality_reg_num)` returns
+the search records, `get_possession_sheet_parcels` the sheet with its parcels.
 
 ### 4.4 E5 and E6 main books and books of deposit companies
 
@@ -616,7 +621,10 @@ handling is finalised. Until then the behaviour stated is the requirement.
 | OQ1 | What `historicalOverview=true` adds on a unit with deleted entries or shares with `status != 0` | keep the parameter; models accept any `status` int; `ShareStatus` maps 0 to active and everything else to historical |
 | OQ2 | Shape of a cadastre plomba (`cadPlumb: true`) | `Plumb` unchanged; `get_plombe_details` keeps skipping them |
 | OQ3 | Shape of `possessors[]` on condominium parcels (`condominiumShareNumber`, `condominiumShareOwnership`) | fields stay declared as optional |
-| OQ4 | Endpoint that returns a possession sheet by `possessionSheetId` | E4 exposed as search only |
+| OQ4 | Endpoint that returns a possession sheet by `possessionSheetId` | resolved 2026-09-15: E10 and E11 return the sheet, E12 its parcels (`notes/oq4-possession-sheet-capture-2026-09-15.md`) |
+| OQ9 | Whether E12 caps a sheet's parcel list at 30 records (the longest observed) | `get_possession_sheet_parcels` reports `maybe_truncated` at 30; the MCP tool says so |
+| OQ10 | Shape and use of `parcel-basic-info` and `parcel-list-info` (batch lookup, trimmed records) | not covered; `get_parcel_info` remains the record of reference |
+| OQ11 | Full key set of the E10 and E12 records | the fixtures `sheet_by_id.json` and `searched_parcels_*.json` are synthesised from the mock data in the observed shapes; `SearchedParcel` declares the root fields optional and keeps anything else in `source_fields`, to be replaced by a redacted live capture (`scripts/redact_capture.py` maps `possession_sheet` and `search_parcels`) |
 | OQ5 | Whether E8 accepts a book-of-DC id as `mainBookId` | `find_book_of_dc` returns records only |
 | OQ6 | Units of type `ETAŽNI` (simple condominium) and any `lrUnitTypeId` other than 1 and 3 | `LRUnitType.OTHER` |
 | OQ7 | Non-empty `possessionSheets[].possessors` inside `cadParcels[]` | typed as `list[Possessor]`, observed empty |

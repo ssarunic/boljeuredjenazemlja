@@ -65,7 +65,9 @@ item, several for a portfolio) and return one entry per reference, in order.
   not evaluated is left out, never counted against the parcel);
   `include_zoning` for the building-area factor; `export` for CSV/GeoJSON
   text. Quote the caveats in `notes` (inferred party types, cadastre areas).
-- **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
+- **Possession sheet by number** (its possessors and its parcels) ->
+  `get_possession_sheet` with the exact number; `find_possession_sheet` lists
+  the sheets whose number begins with a text. **KPU books** ->
   `find_book_of_dc`.
 - **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,
   or `get_file_status` for one file number and the unit's `institution_id`.

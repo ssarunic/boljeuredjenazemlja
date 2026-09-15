@@ -20,6 +20,7 @@ See README.md and CLAUDE.md for complete disclaimer.
 import logging
 import os
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, TypeVar
 
@@ -38,7 +39,10 @@ from ..models import (
     MunicipalitySearchResult,
     ParcelInfo,
     ParcelSearchResult,
+    PossessionSheet,
+    PossessionSheetSearchData,
     PossessionSheetSearchResult,
+    SearchedParcel,
 )
 from ..models.gis_entities import ParcelGeometry
 from ..models.planning_entities import ParcelZoning
@@ -58,6 +62,23 @@ UNKNOWN_FIELDS_POLICIES: tuple[str, ...] = ("warn", "ignore", "error")
 _REPORTED_UNKNOWN_FIELDS: set[str] = set()
 
 M = TypeVar("M", bound=BaseModel)
+
+
+@dataclass(frozen=True)
+class PossessionSheetParcels:
+    """A possession sheet and the parcels on it (``get_possession_sheet_parcels``)."""
+
+    sheet: PossessionSheet
+    parcels: list[SearchedParcel]
+    #: Provenance of the parcel list (the sheet carries its own).
+    parcels_provenance: Provenance
+    #: True when the list is as long as the longest ever observed, so a
+    #: server-side cap cannot be ruled out.
+    maybe_truncated: bool
+
+    @property
+    def total_area_m2(self) -> int:
+        return sum(p.area_numeric or 0 for p in self.parcels)
 
 
 class CadastralAPIClient:
@@ -318,7 +339,9 @@ class CadastralAPIClient:
                 cause=e,
             ) from e
 
-    def _provenance(self, register: Register, endpoint: str, params: dict[str, str]) -> Provenance:
+    def _provenance(
+        self, register: Register, endpoint: str, params: dict[str, str] | None = None
+    ) -> Provenance:
         """The provenance of a record just fetched: its register, the exact URL, the time."""
         url = self.client.build_request("GET", endpoint, params=params).url
         return Provenance(register=register, source_url=str(url), retrieved_at=now_utc_iso())
@@ -638,6 +661,27 @@ class CadastralAPIClient:
             },
         )
 
+    def resolve_municipality_id(self, name_or_code: str | int) -> int:
+        """Municipality name or registration number -> internal id (``cadMunicipalityId``).
+
+        The possession-sheet endpoints take the internal id, which the
+        municipality search returns as ``key1``; the registration number is
+        resolved first (:meth:`resolve_municipality_reg_num`) and its record
+        looked up.
+
+        Raises:
+            CadastralAPIError: ``MUNICIPALITY_NOT_FOUND`` (see the resolver)
+        """
+        reg_num = self.resolve_municipality_reg_num(name_or_code)
+        results = self.find_municipality(reg_num)
+        for municipality in results:
+            if municipality.municipality_reg_num == reg_num:
+                return municipality.municipality_id
+        raise CadastralAPIError(
+            error_type=ErrorType.MUNICIPALITY_NOT_FOUND,
+            details={"search_term": str(name_or_code), "reason": "municipality_not_found"},
+        )
+
     def resolve_main_book_id(self, main_book_name: str) -> int:
         """
         Resolve a main book name ("SAVAR") to its id through :meth:`find_main_book`.
@@ -705,6 +749,169 @@ class CadastralAPIClient:
         parcel = self._parse(ParcelInfo, response_data, endpoint, {"parcel_id": str(parcel_id)})
         parcel.provenance = self._provenance("cadastre", endpoint, params)
         return parcel
+
+    # ------------------------------------------------------------------
+    # Possession sheets (posjedovni listovi)
+    # ------------------------------------------------------------------
+
+    def get_possession_sheet(self, possession_sheet_id: str | int) -> PossessionSheet:
+        """A possession sheet with its possessors, by the id the searches and parcel records carry.
+
+        ``GET /cad/possession-sheet?possessionSheetId=``: one sheet in the
+        shape of parcel-info's ``possessionSheets[]``, possessors included,
+        without the sheet's parcels (see :meth:`search_parcels`).
+
+        Raises:
+            CadastralAPIError: ``POSSESSION_SHEET_NOT_FOUND`` on an empty answer
+        """
+        endpoint = "/cad/possession-sheet"
+        params = {"possessionSheetId": str(possession_sheet_id)}
+        response_data = self._request(endpoint, params)
+        if not response_data:
+            raise CadastralAPIError(
+                error_type=ErrorType.POSSESSION_SHEET_NOT_FOUND,
+                details={
+                    "possession_sheet_id": str(possession_sheet_id),
+                    "reason": "empty_response",
+                },
+            )
+        sheet = self._parse(PossessionSheet, response_data, endpoint, dict(params))
+        sheet.provenance = self._provenance("cadastre", endpoint, params)
+        return sheet
+
+    def get_possession_sheet_by_number(
+        self, sheet_number: str, cad_municipality_id: str | int
+    ) -> PossessionSheet:
+        """A possession sheet with its possessors, by number and internal municipality id.
+
+        ``GET /cad/possession-sheet-by-number``; the same answer as
+        :meth:`get_possession_sheet`. The municipality is the internal
+        ``cadMunicipalityId`` (:meth:`resolve_municipality_id`), not the
+        registration number. The number is matched exactly.
+
+        Raises:
+            CadastralAPIError: ``POSSESSION_SHEET_NOT_FOUND`` on an empty answer
+        """
+        endpoint = "/cad/possession-sheet-by-number"
+        params = {
+            "possessionSheetNumber": str(sheet_number).strip(),
+            "cadMunicipalityId": str(cad_municipality_id),
+        }
+        response_data = self._request(endpoint, params)
+        if not response_data:
+            raise CadastralAPIError(
+                error_type=ErrorType.POSSESSION_SHEET_NOT_FOUND,
+                details={
+                    "sheet_number": str(sheet_number),
+                    "cad_municipality_id": str(cad_municipality_id),
+                    "reason": "empty_response",
+                },
+            )
+        sheet = self._parse(PossessionSheet, response_data, endpoint, dict(params))
+        sheet.provenance = self._provenance("cadastre", endpoint, params)
+        return sheet
+
+    def lookup_possession_sheet_number(
+        self, possession_sheet_id: str | int
+    ) -> PossessionSheetSearchData:
+        """A sheet id -> its number and municipality registration number.
+
+        ``GET /cad/cad-parcels-search-data?possessionSheetId=``.
+
+        Raises:
+            CadastralAPIError: ``POSSESSION_SHEET_NOT_FOUND`` on an empty answer
+        """
+        endpoint = "/cad/cad-parcels-search-data"
+        params = {"possessionSheetId": str(possession_sheet_id)}
+        response_data = self._request(endpoint, params)
+        if not response_data:
+            raise CadastralAPIError(
+                error_type=ErrorType.POSSESSION_SHEET_NOT_FOUND,
+                details={
+                    "possession_sheet_id": str(possession_sheet_id),
+                    "reason": "empty_response",
+                },
+            )
+        return self._parse(PossessionSheetSearchData, response_data, endpoint, dict(params))
+
+    #: Records ``search_parcels`` has been seen to return at most; a longer sheet
+    #: has not been observed, so a cap at this size is not ruled out.
+    SEARCH_PARCELS_OBSERVED_MAX = 30
+
+    def search_parcels(
+        self,
+        *,
+        cad_municipality_id: str | int | None = None,
+        possession_sheet_number: str | None = None,
+        parcel_number: str | None = None,
+        parcel_id: str | int | None = None,
+    ) -> list[SearchedParcel]:
+        """The parcel search behind the web form: by possession sheet, exact number or id.
+
+        ``POST /cad/search-parcels`` with the four keys the form always sends
+        (empty strings for the unused ones). Returns full parcel records
+        (:class:`SearchedParcel`), one per parcel, sorted by number:
+
+        - ``cad_municipality_id`` + ``possession_sheet_number``: every parcel
+          on the sheet (the one thing no other endpoint offers);
+        - ``cad_municipality_id`` + ``parcel_number``: that parcel, matched
+          exactly (no prefix search, unlike :meth:`find_parcel`);
+        - ``parcel_id`` alone: that parcel.
+
+        An empty list means nothing matched; the server answers a bad query
+        the same way. No paging parameter is honoured; the longest sheet seen
+        returned ``SEARCH_PARCELS_OBSERVED_MAX`` records, so a cap at that
+        size is possible and a caller should say so when it gets exactly
+        that many.
+        """
+        if not (parcel_id or (cad_municipality_id and (possession_sheet_number or parcel_number))):
+            raise ValueError(
+                "search_parcels needs parcel_id, or cad_municipality_id with "
+                "possession_sheet_number or parcel_number"
+            )
+        endpoint = "/cad/search-parcels"
+        body = {
+            "parcelId": str(parcel_id) if parcel_id else "",
+            "cadMunicipalityId": str(cad_municipality_id) if cad_municipality_id else "",
+            "parcelNumber": normalize_parcel_number(parcel_number) if parcel_number else "",
+            "possessionSheetNumber": str(possession_sheet_number).strip()
+            if possession_sheet_number
+            else "",
+        }
+        response_data = self._request(endpoint, json_body=body)
+        if not response_data:
+            return []
+        records = self._parse_list(SearchedParcel, response_data, endpoint, body)
+        provenance = self._provenance("cadastre", endpoint)
+        for record in records:
+            if record.possession_sheet is not None:
+                record.possession_sheet.provenance = provenance
+        return records
+
+    def get_possession_sheet_parcels(
+        self, sheet_number: str, municipality: str | int
+    ) -> "PossessionSheetParcels":
+        """A possession sheet by number in a municipality, with every parcel on it.
+
+        Resolves the municipality (name or registration number) to its
+        internal id, reads the sheet (:meth:`get_possession_sheet_by_number`)
+        and its parcels (:meth:`search_parcels`): three requests.
+
+        Raises:
+            CadastralAPIError: ``MUNICIPALITY_NOT_FOUND``,
+                ``POSSESSION_SHEET_NOT_FOUND``
+        """
+        municipality_id = self.resolve_municipality_id(municipality)
+        sheet = self.get_possession_sheet_by_number(sheet_number, municipality_id)
+        parcels = self.search_parcels(
+            cad_municipality_id=municipality_id, possession_sheet_number=sheet_number
+        )
+        return PossessionSheetParcels(
+            sheet=sheet,
+            parcels=parcels,
+            parcels_provenance=self._provenance("cadastre", "/cad/search-parcels"),
+            maybe_truncated=len(parcels) >= self.SEARCH_PARCELS_OBSERVED_MAX,
+        )
 
     def get_parcel_by_number(
         self, parcel_number: str, municipality_reg_num: str, exact_match: bool = True

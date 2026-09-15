@@ -68,7 +68,8 @@ The AI decides when to invoke these based on user queries:
 - **`list_cadastral_offices`** - List available cadastral offices
 - **`find_main_book`** - Find land registry main books (glavne knjige) by name, office or institution; gives the `main_book_id` for `get_lr_unit`
 - **`find_book_of_dc`** - Find books of deposited contracts (knjige položenih ugovora, KPU)
-- **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number
+- **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number prefix (sheet ids and numbers)
+- **`get_possession_sheet`** - One possession sheet by exact number: its possessors (paged, filterable by name) and every parcel on it with area, land use and land-registry reference; `parcels_complete` says when a server cap cannot be ruled out
 
 #### One tool, one or many items
 
@@ -419,12 +420,29 @@ cadastral-mcp --transport stdio --log-level DEBUG
 
 ```python
 @mcp.tool()
-async def my_new_tool(param: str) -> dict[str, Any]:
-    """Tool description for AI."""
-    return await tools_handler.my_new_tool(param)
+@anticipated_tool
+async def my_new_tool(
+    param: Annotated[str, Field(description="What the value is and an example")],
+    mode: Annotated[
+        Literal["short", "long"], Field(description='"short" (default) ...; "long" ...')
+    ] = "short",
+) -> dict[str, Any]:
+    """
+    What the tool answers, in the words a user would use (Croatian terms too),
+    when to prefer a sibling tool, and under ``Returns:`` the result keys.
+    """
+    return await tools_handler.my_new_tool(param, mode)
 ```
 
-1. MCPServer automatically generates JSON schema from type annotations
+1. MCPServer generates the JSON schema from the type annotations: the
+   `Field(description=...)` of every parameter becomes the property's
+   `description`, a `Literal` becomes an `enum`. The docstring is the tool's
+   `description`; it must not repeat the parameters in an `Args:` block
+   (`mcp/tests/test_tool_surface.py` checks both, and that the whole tool
+   list stays under its context budget)
+2. Advice that applies to every tool (which register answers what, where to
+   start, paging) goes once into `SERVER_INSTRUCTIONS`, sent to the client in
+   the `initialize` response, not into each docstring
 
 ### Adding New Prompts
 
@@ -434,7 +452,7 @@ async def my_new_tool(param: str) -> dict[str, Any]:
 ```python
 @mcp.prompt()
 async def my_new_prompt(param: str) -> str:
-    """Prompt description."""
+    """What the prompt produces, what it reads, and where ``param`` comes from."""
     return await prompts_handler.my_new_prompt(param)
 ```
 

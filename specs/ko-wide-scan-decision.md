@@ -1,10 +1,20 @@
 # Decision memo: scanning a whole cadastral municipality
 
 Status: draft (a decision is needed before any code)
-Date: 2026-09-15
+Date: 2026-09-15, revised the same day: the possession-sheet question is
+resolved without a scan (section 0); the person search remains.
 Related: [croatian-cadastral-api-specification.md](croatian-cadastral-api-specification.md),
 [api-coverage-specification.md](api-coverage-specification.md) (OQ4),
 [mcp-server.md](mcp-server.md), [gateway-service.md](gateway-service.md) section 6
+
+## 0. Update: the possession-sheet question no longer needs a scan
+
+A capture on 2026-09-15 (`notes/oq4-possession-sheet-capture-2026-09-15.md`)
+found the endpoints the web form uses: `GET /cad/possession-sheet` returns a
+sheet with its possessors and `POST /cad/search-parcels` every parcel on a
+sheet by number. Both are covered by the client (`get_possession_sheet_parcels`)
+and the MCP tool `get_possession_sheet`. What follows applies to the person
+search only.
 
 ## 1. The question
 
@@ -66,10 +76,12 @@ question it is run to answer.
 - Decide C first: the professional-access demo (requirement 9) will show
   whether the official route answers both questions; if it does, A is the
   right answer for the public API and no scan is written.
-- If C is not available, build B for the possession-sheet question only, with:
-  a per-call cap (one municipality, at most N requests), a daily budget, a
-  progress report, no persistence beyond the call, and an explicit note in
-  the answer that the result was assembled from single-parcel lookups.
+- The possession-sheet question is answered by the endpoints of section 0;
+  option B is no longer needed for it. Should the professional access (C)
+  not exist for the person search either, B would be the only technical
+  route, with a per-call cap, a daily budget, a progress report, no
+  persistence beyond the call and an explicit note that the result was
+  assembled from single-parcel lookups; but see the next point.
 - Do not build the person search on the public API without a documented
   legal basis (D). Say so in the tool description so an agent does not try
   to emulate it with a loop of lookups.

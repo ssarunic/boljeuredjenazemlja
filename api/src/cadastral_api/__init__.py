@@ -40,6 +40,7 @@ from .models import (
     PossessionSheetSearchResult,
     Possessor,
     Provenance,
+    SearchedParcel,
     ZoneKind,
     ZoneMatch,
     ZoningStatus,
@@ -90,6 +91,7 @@ __all__ = [
     "PossessionSheet",
     "PossessionSheetSearchResult",
     "Provenance",
+    "SearchedParcel",
     # Analysis (pure functions over the models)
     "AreaCheck",
     "AssemblyAnalysis",

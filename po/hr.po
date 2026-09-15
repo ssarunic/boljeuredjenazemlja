@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Croatian Cadastral API 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-15 13:43+0100\n"
+"POT-Creation-Date: 2026-09-15 16:21+0100\n"
 "PO-Revision-Date: 2025-01-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
@@ -64,27 +64,31 @@ msgid "Land registry unit not found"
 msgstr "Zemljišnoknjižni uložak nije pronađen"
 
 #: cli/src/cadastral_cli/formatters.py:132
+msgid "Possession sheet not found"
+msgstr "Posjedovni list nije pronađen"
+
+#: cli/src/cadastral_cli/formatters.py:133
 msgid "Server error"
 msgstr "Greška poslužitelja"
 
-#: cli/src/cadastral_cli/formatters.py:133
+#: cli/src/cadastral_cli/formatters.py:134
 msgid "Access denied"
 msgstr "Pristup odbijen"
 
-#: cli/src/cadastral_cli/formatters.py:134
+#: cli/src/cadastral_cli/formatters.py:135
 msgid "HTTP error"
 msgstr "HTTP greška"
 
-#: cli/src/cadastral_cli/formatters.py:150
+#: cli/src/cadastral_cli/formatters.py:151
 #, python-brace-format
 msgid "- caused by: {cause}"
 msgstr "- uzrok: {cause}"
 
-#: cli/src/cadastral_cli/formatters.py:158
+#: cli/src/cadastral_cli/formatters.py:159
 msgid "unknown"
 msgstr "nepoznato"
 
-#: cli/src/cadastral_cli/formatters.py:160
+#: cli/src/cadastral_cli/formatters.py:161
 msgid "Unexpected error"
 msgstr "Neočekivana greška"
 

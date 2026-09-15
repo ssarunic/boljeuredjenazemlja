@@ -69,6 +69,26 @@ number and one tag.
   tax numbers decisive when both records have one) and `check_area` /
   `AreaCheck` (cadastre, land-register and graphical areas compared, a
   difference above 5 % flagged).
+- SDK: the possession-sheet endpoints the cadastre's web form uses
+  (OQ4 of the coverage specification, resolved by the capture of
+  2026-09-15): `get_possession_sheet(id)` and
+  `get_possession_sheet_by_number(number, cad_municipality_id)` return a
+  `PossessionSheet` with its possessors; `search_parcels` is the
+  `POST /cad/search-parcels` behind the form (every parcel of a sheet, an
+  exact parcel number, or a parcel id) returning `SearchedParcel` records in
+  their two shapes (a non-harmonized parcel with its `possession_sheet` and
+  links, a harmonized one with an inline `lr_unit` carrying sheet B);
+  `get_possession_sheet_parcels(number, municipality)` bundles the three
+  calls; `resolve_municipality_id` gives the internal id the endpoints need;
+  `lookup_possession_sheet_number` is the reverse lookup;
+  `ErrorType.POSSESSION_SHEET_NOT_FOUND`. The mock server serves all four
+  routes from its parcel data.
+- MCP: `get_possession_sheet(sheet_number, municipality)`: the sheet's
+  possessors (paged, filterable by name) and every parcel on it with area,
+  land use and land-registry reference, `total_area_m2`, both provenances
+  and `parcels_complete` (false with a note when the list is as long as the
+  search has ever returned, since a server cap is not ruled out).
+  `find_possession_sheet` no longer says the sheet cannot be read.
 - SDK: `ParcelIndex` (`cadastral_api.gis`), a spatial index over the parcels
   of one municipality's cached GML: `in_bbox`, `in_polygon` (touching, or
   wholly within, boundary included), `within_radius` (distance from a point
@@ -123,6 +143,23 @@ number and one tag.
   `rate_limit`, `response_too_large`, `invalid_request` ...) and
   `error_details`, and every tool error message ends with `[error_type=...]`.
   `download_municipality_gis` returns `downloaded_at`.
+
+### Changed
+
+- MCP: the tool list a client receives from `tools/list` now carries every
+  parameter's description in the input schema (`Annotated[..., Field(...)]`
+  on the tool signatures, `Field(description=...)` on `ParcelRef` and
+  `LRUnitRef`) and the choice parameters as enums (`get_parcel.source`,
+  `get_lr_unit.detail`, `get_parcel_geometry.format`,
+  `find_parcels_in_area.relation`, `build_assembly.export` are `Literal`
+  types, so a typo is refused by the schema instead of the handler). The
+  docstrings no longer repeat the parameters in an `Args:` block. The server
+  sends an `instructions` text in the `initialize` response (the two
+  registers, where to start, paging, provenance), `find_parcel` and
+  `resolve_municipality` say when to use `get_parcel` and
+  `list_municipalities` instead, `list_cadastral_offices` names its result
+  keys, and the four prompts describe what they produce instead of "Generate a
+  prompt to ...". `mcp/tests/test_tool_surface.py` guards all of it.
 
 ### Fixed
 

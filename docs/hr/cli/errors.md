@@ -28,6 +28,7 @@ Svaka greška počinje ovom oznakom i jednom od poruka u nastavku:
 | **Čestica nije pronađena** | `parcel_not_found` |
 | **Općina nije pronađena** | `municipality_not_found` |
 | **Zemljišnoknjižni uložak nije pronađen** | `lr_unit_not_found` |
+| **Posjedovni list nije pronađen** | `possession_sheet_not_found` |
 | **Greška poslužitelja** | `server_error` |
 | **Pristup odbijen** | `access_denied` |
 | **HTTP greška** | `http_error` |
