@@ -36,7 +36,7 @@ def main() -> None:
 
             # Bounding box
             min_x, min_y, max_x, max_y = geometry.bounds
-            print(f"\n  Bounding box:")
+            print("\n  Bounding box:")
             print(f"    Min X: {min_x:,.2f}")
             print(f"    Min Y: {min_y:,.2f}")
             print(f"    Max X: {max_x:,.2f}")
@@ -45,12 +45,12 @@ def main() -> None:
             print(f"    Height: {max_y - min_y:,.2f} m")
 
             # First few coordinates
-            print(f"\n  First 5 coordinates:")
+            print("\n  First 5 coordinates:")
             for i, coord in enumerate(geometry.coordinates[:5]):
                 print(f"    {i+1}. {coord}")
 
             # Export formats
-            print(f"\n  Export formats:")
+            print("\n  Export formats:")
             print(f"    WKT: {geometry.to_wkt()[:100]}...")
             print(f"    GeoJSON coords: {len(geometry.to_geojson_coords())} points")
 

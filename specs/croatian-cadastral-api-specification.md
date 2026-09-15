@@ -683,8 +683,78 @@ GET /oss/public/search-cad-parcels/possession-sheet-numbers?search=363&municipal
 ```
 
 `key1` is the `possessionSheetId` that parcel-info `possessionSheets[]` carry,
-`value1` the sheet number (prefix match). No endpoint returns a possession sheet
-by id; the sheet's possessors are read through one of its parcels.
+`value1` the sheet number (prefix match). The answer stops at 50 records
+(`search=8` in k.o. Savar returns exactly 50, ending at 843), and the index
+lags the change log: sheet 877, touched in change log 13/2026, is absent
+(`search=877` is `[]`, `search=87` skips 872, 873 and 877) although the sheet
+endpoints and `search-parcels` find it. An empty search is therefore a hint,
+not proof of absence. The sheet itself is read with the endpoints of section 7a.
+
+### 7a. Possession Sheet and the Parcels of a Sheet
+
+Found on 2026-09-15 by reading the web app's service class (see
+`notes/oq4-possession-sheet-capture-2026-09-15.md`); all verified live.
+
+**`GET /cad/possession-sheet?possessionSheetId=16179481`** returns one
+possession sheet in the shape of parcel-info `possessionSheets[]`, possessors
+included, plus `cadMunicipalityId`, `cadMunicipalityRegNum` and
+`cadMunicipalityName`; no parcel list.
+
+**`GET /cad/possession-sheet-by-number?possessionSheetNumber=877&cadMunicipalityId=2387`**
+returns the same, by exact number and the *internal* municipality id
+(`key1` of the municipality search, not the registration number).
+
+For a sheet **harmonized** with the land registry both sheet endpoints return
+a stub without possessors that names the unit instead (the web app branches
+on `lrUnitId`):
+
+```json
+possession-sheet-by-number?possessionSheetNumber=657&cadMunicipalityId=2387
+  {"possessionSheetNumber":"657","cadMunicipalityId":2387,"lrUnitId":13122441,"possessors":[]}
+possession-sheet?possessionSheetId=14823725
+  {"possessionSheetId":14823725,"possessionSheetNumber":"657","cadMunicipalityId":2387,
+   "cadMunicipalityRegNum":"334979","cadMunicipalityName":"SAVAR","lrUnitId":13122441,"possessors":[]}
+```
+
+The by-number stub drops `possessionSheetId` and the municipality name, so
+`PossessionSheet.possession_sheet_id` is optional and `lr_unit_id` declared;
+`possessors_in_land_registry` tells the stub apart. The registered owners are
+those of the unit, which `search-parcels` inlines on each harmonized parcel.
+
+**`GET /cad/cad-parcels-search-data?possessionSheetId=16179481`** returns
+`{"possessionSheetNumber":"877","municipalityNumber":"334979"}`.
+
+**`POST /cad/search-parcels`** is what the web form's *Pregledaj* calls. Body,
+all four keys always present:
+
+```json
+{"parcelId":"","cadMunicipalityId":"2387","parcelNumber":"","possessionSheetNumber":"877"}
+```
+
+Response: a JSON array of full parcel records sorted by number. Observed:
+
+- `cadMunicipalityId` + `possessionSheetNumber`: every parcel on the sheet
+  (877: 1; 657: 6; 363: 30);
+- `cadMunicipalityId` + `parcelNumber`: exact match only (no prefix search);
+- `parcelId` alone: that parcel;
+- `possessionSheetId` and `cadMunicipalityRegNum` are ignored; `{}` and an
+  unknown reference answer `[]` with HTTP 200; no paging parameter is
+  honoured. Sheet 363 returned exactly 30 records; a server-side cap of 30
+  is not ruled out (OQ9).
+
+The record has two shapes, told apart by `isHarmonized`: `false` carries
+`parcelParts[]`, `possessionSheet` (one object, possessors included) and
+`parcelLinks[]`; `true` carries neither but a full inline `lrUnit` with
+`ownershipSheetB.lrUnitShares[]`. Records also carry `lastChangeLog`,
+`lastChangeLogFileNum` and `lastElaborateNumber` at parcel level. Client:
+`search_parcels`, `get_possession_sheet`, `get_possession_sheet_by_number`,
+`lookup_possession_sheet_number`, `get_possession_sheet_parcels`.
+
+Also in the same service class, verified but not yet covered by the client
+(OQ10): `GET /cad/parcel-basic-info?parcelId=` (a trimmed parcel-info whose
+`parcelParts[]` omits building parts and whose `area` is the land part's
+only), `POST /cad/parcel-list-info` (a bare JSON array of parcel ids, batch
+lookup in the basic-info shape) and `GET /reports/get-possessionsheet-extract`.
 
 ### 8. Land Registry Unit Detailed Information
 

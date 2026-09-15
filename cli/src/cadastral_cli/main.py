@@ -57,6 +57,7 @@ from .commands import (  # noqa: E402
     discovery,
     gis,
     parcel,
+    possession_sheet,
     registry,
     search,
     zoning,
@@ -114,6 +115,7 @@ def cli(ctx: click.Context, verbose: bool, lang: str | None) -> None:
 cli.add_command(search.search)
 cli.add_command(search.search_municipality)
 cli.add_command(search.search_possession_sheet)
+cli.add_command(possession_sheet.get_possession_sheet)
 cli.add_command(parcel.get_parcel)
 cli.add_command(registry.get_lr_unit)
 cli.add_command(gis.get_geometry)

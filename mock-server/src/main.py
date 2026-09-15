@@ -311,7 +311,7 @@ async def find_possession_sheet_numbers(
         _six_key_record(sheet_id, number)
         for sheet_id, number in sorted(sheets.items(), key=lambda kv: (len(kv[1]), kv[1]))
         if number.startswith(term)
-    ]
+    ][:50]  # the live search stops at 50 records
 
 
 def _filter_books(
@@ -388,6 +388,194 @@ async def get_parcel_info(
     return JSONResponse(
         status_code=404,
         content={"error": "Parcel not found", "parcelId": parcel_id},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Possession sheets and the parcel search behind the web form
+# ---------------------------------------------------------------------------
+
+
+def _unit_record(data: Any) -> dict[str, Any] | None:
+    """A loaded unit file's payload (the server answers with a list of one)."""
+    if isinstance(data, list):
+        return data[0] if data else None
+    return data if isinstance(data, dict) else None
+
+
+def _sheet_with_municipality(
+    sheet: dict[str, Any], parcel: dict[str, Any], by_number: bool = False
+) -> dict[str, Any]:
+    """A parcel's sheet as the sheet endpoints return it.
+
+    A non-harmonized sheet comes with its possessors and the municipality
+    named. A harmonized sheet (``isHarmonized`` with an ``lrUnit``) comes as
+    the stub the live server sends: no possessors and the unit's ``lrUnitId``;
+    the by-number variant drops the id and the municipality name as well.
+    """
+    if parcel.get("isHarmonized") and parcel.get("lrUnit"):
+        stub: dict[str, Any] = {
+            "possessionSheetNumber": str(sheet.get("possessionSheetNumber")),
+            "cadMunicipalityId": parcel.get("cadMunicipalityId"),
+            "lrUnitId": parcel["lrUnit"].get("lrUnitId"),
+            "possessors": [],
+        }
+        if not by_number:
+            stub = {
+                "possessionSheetId": sheet.get("possessionSheetId"),
+                **stub,
+                "cadMunicipalityRegNum": parcel.get("cadMunicipalityRegNum"),
+                "cadMunicipalityName": parcel.get("cadMunicipalityName"),
+            }
+        return stub
+    record = dict(sheet)
+    record.setdefault("cadMunicipalityId", parcel.get("cadMunicipalityId"))
+    record.setdefault("cadMunicipalityRegNum", parcel.get("cadMunicipalityRegNum"))
+    record.setdefault("cadMunicipalityName", parcel.get("cadMunicipalityName"))
+    return record
+
+
+def _find_sheet(
+    predicate: Any,
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """The first (sheet, parcel) pair whose sheet satisfies ``predicate``."""
+    for parcels in _parcels.values():
+        for parcel in parcels:
+            for sheet in parcel.get("possessionSheets") or []:
+                if predicate(sheet, parcel):
+                    return sheet, parcel
+    return None
+
+
+def searched_parcel_record(
+    parcel: dict[str, Any], sheet_number: str | None = None
+) -> dict[str, Any]:
+    """A parcel-info record reshaped as ``POST /cad/search-parcels`` returns it.
+
+    Two shapes, as observed live: a harmonized parcel carries an inline
+    ``lrUnit`` with sheet B (taken from the loaded unit when the mock has it)
+    and neither sheet nor links; a non-harmonized one carries one
+    ``possessionSheet`` (the sheet asked for, else the first) and its
+    ``parcelLinks``.
+    """
+    dropped = {"possessionSheets", "lrUnit", "parcelLinks", "lrUnitsFromParcelLinks"}
+    record = {key: value for key, value in parcel.items() if key not in dropped}
+    if parcel.get("isHarmonized") and parcel.get("lrUnit"):
+        unit = dict(parcel["lrUnit"])
+        full = _unit_record(_lr_units.get(f"{unit.get('mainBookId')}-{unit.get('lrUnitNumber')}"))
+        if full and "ownershipSheetB" in full:
+            unit["ownershipSheetB"] = full["ownershipSheetB"]
+        record["lrUnit"] = unit
+        return record
+    sheets = parcel.get("possessionSheets") or []
+    chosen = next(
+        (s for s in sheets if str(s.get("possessionSheetNumber")) == str(sheet_number)),
+        sheets[0] if sheets else None,
+    )
+    if chosen is not None:
+        record["possessionSheet"] = chosen
+    record["parcelLinks"] = parcel.get("parcelLinks") or []
+    return record
+
+
+@app.get("/cad/possession-sheet")
+async def get_possession_sheet(
+    possession_sheet_id: str = Query(..., alias="possessionSheetId", description="Sheet id"),
+):
+    """One possession sheet with its possessors, by id (``{}`` when unknown)."""
+    found = _find_sheet(lambda s, p: str(s.get("possessionSheetId")) == possession_sheet_id)
+    if found is None:
+        return {}
+    sheet, parcel = found
+    return _sheet_with_municipality(sheet, parcel)
+
+
+@app.get("/cad/possession-sheet-by-number")
+async def get_possession_sheet_by_number(
+    possession_sheet_number: str = Query(..., alias="possessionSheetNumber"),
+    cad_municipality_id: str = Query(..., alias="cadMunicipalityId"),
+):
+    """One possession sheet by number and internal municipality id (``{}`` when unknown)."""
+    found = _find_sheet(
+        lambda s, p: str(s.get("possessionSheetNumber")) == possession_sheet_number.strip()
+        and str(p.get("cadMunicipalityId")) == cad_municipality_id
+    )
+    if found is None:
+        return {}
+    sheet, parcel = found
+    return _sheet_with_municipality(sheet, parcel, by_number=True)
+
+
+@app.get("/cad/cad-parcels-search-data")
+async def get_cad_parcels_search_data(
+    possession_sheet_id: str = Query(..., alias="possessionSheetId"),
+):
+    """A sheet id -> its number and the municipality registration number (``{}`` when unknown)."""
+    found = _find_sheet(lambda s, p: str(s.get("possessionSheetId")) == possession_sheet_id)
+    if found is None:
+        return {}
+    sheet, parcel = found
+    return {
+        "possessionSheetNumber": str(sheet.get("possessionSheetNumber")),
+        "municipalityNumber": parcel.get("cadMunicipalityRegNum"),
+    }
+
+
+@app.post("/cad/search-parcels")
+async def search_parcels(body: dict[str, Any] = Body(...)):
+    """The parcel search behind the web form (``Pregledaj``).
+
+    Body keys ``parcelId``, ``cadMunicipalityId``, ``parcelNumber``,
+    ``possessionSheetNumber`` (empty strings when unused). ``parcelId`` alone
+    answers that parcel; ``cadMunicipalityId`` with ``possessionSheetNumber``
+    every parcel on the sheet, sorted by number; ``cadMunicipalityId`` with
+    ``parcelNumber`` that parcel, matched exactly. Anything else, and an
+    unknown reference, answers ``[]`` with HTTP 200, as the live server does.
+    ``possessionSheetId`` and the registration number are ignored.
+    """
+    parcel_id = str(body.get("parcelId") or "").strip()
+    municipality_id = str(body.get("cadMunicipalityId") or "").strip()
+    parcel_number = str(body.get("parcelNumber") or "").strip()
+    sheet_number = str(body.get("possessionSheetNumber") or "").strip()
+    if parcel_id:
+        parcel = _parcel_by_id.get(int(parcel_id)) if parcel_id.isdigit() else None
+        return [searched_parcel_record(parcel)] if parcel else []
+    if not municipality_id:
+        return []
+    candidates = [
+        p
+        for parcels in _parcels.values()
+        for p in parcels
+        if str(p.get("cadMunicipalityId")) == municipality_id
+    ]
+    if sheet_number:
+        matched = [
+            p
+            for p in candidates
+            if any(
+                str(s.get("possessionSheetNumber")) == sheet_number
+                for s in p.get("possessionSheets") or []
+            )
+        ]
+        matched.sort(key=lambda p: _parcel_sort_key(str(p.get("parcelNumber", ""))))
+        return [searched_parcel_record(p, sheet_number) for p in matched]
+    if parcel_number:
+        return [
+            searched_parcel_record(p)
+            for p in candidates
+            if str(p.get("parcelNumber")) == parcel_number
+        ]
+    return []
+
+
+def _parcel_sort_key(number: str) -> tuple[int, int, int, str]:
+    bare = number.lstrip("*")
+    main, _, sub = bare.partition("/")
+    return (
+        1 if number.startswith("*") else 0,
+        int(main) if main.isdigit() else 10**9,
+        int(sub) if sub.isdigit() else 0,
+        number,
     )
 
 

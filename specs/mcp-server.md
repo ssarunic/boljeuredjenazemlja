@@ -49,14 +49,18 @@ The AI decides when to invoke these based on user queries:
 
 **Parcel Operations:**
 - **`find_parcel`** - Find one parcel by number and municipality (parcel id, exact-match check, map link); `max_matches` returns the complete search response
-- **`get_parcel`** - Detailed cadastre record of one or more parcels. Takes a list of references (`parcel_id`, or `parcel_number` + `municipality`) and returns one entry per reference; `source` selects the register (cadastre possessors, land-registry hint, or none); `offset`/`limit` page through the possessor records of each parcel (counted across its possession sheets), `possessor_name`/`condominium_unit` filter them, with a `page` block per entry and a refusal naming a smaller limit when an entry is too large. Each entry carries the land registry unit reference.
+- **`get_parcel`** - Detailed cadastre record of one or more parcels. Takes a list of references (`parcel_id`, or `parcel_number` + `municipality`) and returns one entry per reference; `source` selects the register (cadastre possessors, land-registry hint, or none); `offset`/`limit` page through the possessor records of each parcel (counted across its possession sheets), `possessor_name`/`condominium_unit` filter them, with a `page` block per entry and a refusal naming a smaller limit when an entry is too large. Each entry carries the land registry unit reference, `provenance` (register, `source_url`, `retrieved_at`) and `area_check` (cadastre, land-register and graphical areas compared); a failed entry carries `error_type` and `error_details`.
 - **`get_parcel_geometry`** - Download and return parcel boundaries
 - **`get_parcel_zoning`** - Screening of a parcel against the spatial plans' building areas
-- **`download_municipality_gis`** - Download (or refresh) a whole municipality's GIS data into the cache and report what was cached
+- **`find_parcels_in_area`** - The parcels of a municipality inside a bounding box, a polygon or a radius around a point (EPSG:3765), from the cached cadastral map: numbers, graphical areas, centroids, map links, `total_area_m2`, paged, optional GeoJSON
+- **`find_parcel_neighbours`** - The parcels sharing a boundary or a corner with one parcel, longest common boundary first, from the cached cadastral map
+- **`download_municipality_gis`** - Download (or refresh) a whole municipality's GIS data into the cache and report what was cached, including `downloaded_at`
 
 **Land Registry Operations:**
-- **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail` (`summary`, `ownership`, `shares`, `parcels`, `encumbrances`, `full`), `offset`/`limit` paging over the list the level is about (owner rows, shares, parcels or entry groups), `owner_name` filtering the owners (or the shares holding one) by name, `include_plombe_detail` and `historical_overview` shape every entry.
+- **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail` (`summary`, `ownership`, `shares`, `parcels`, `encumbrances`, `full`), `offset`/`limit` paging over the list the level is about (owner rows, shares, parcels or entry groups), `owner_name` filtering the owners (or the shares holding one) by name, `include_plombe_detail` and `historical_overview` shape every entry. Every level carries `provenance`; the owner levels carry `distinct_owners`.
 - **`get_file_status`** - Processing status of one land-registry file (spis, plomba) by number and institution id
+- **`build_assembly`** - Land-assembly analysis of up to 50 parcels: persons x parcels matrix, persons ranked by controlled area and grouped by surname, parcels ranked by a transparent ease-of-acquisition score (weights returned and adjustable; zoning optional), totals by land use, relationship and zoning status, CSV or GeoJSON export as text
+- **`compare_registers`** - Cadastre possessors against registered owners for a set of parcels: `same` / `overlapping` / `disjoint` per parcel, matched pairs (fuzzy flagged), who is in one register only, inferred party types (labelled), public-body share, area check, distinct people across the set
 
 **Lookup Operations:**
 - **`resolve_municipality`** - Municipality name or code to its complete search record (code, name, office and department ids)
@@ -64,7 +68,8 @@ The AI decides when to invoke these based on user queries:
 - **`list_cadastral_offices`** - List available cadastral offices
 - **`find_main_book`** - Find land registry main books (glavne knjige) by name, office or institution; gives the `main_book_id` for `get_lr_unit`
 - **`find_book_of_dc`** - Find books of deposited contracts (knjige položenih ugovora, KPU)
-- **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number
+- **`find_possession_sheet`** - Find cadastre possession sheets (posjedovni listovi) by number prefix (sheet ids and numbers)
+- **`get_possession_sheet`** - One possession sheet by exact number: its possessors (paged, filterable by name) and every parcel on it with area, land use and land-registry reference; `parcels_complete` says when a server cap cannot be ruled out
 
 #### One tool, one or many items
 
@@ -415,12 +420,29 @@ cadastral-mcp --transport stdio --log-level DEBUG
 
 ```python
 @mcp.tool()
-async def my_new_tool(param: str) -> dict[str, Any]:
-    """Tool description for AI."""
-    return await tools_handler.my_new_tool(param)
+@anticipated_tool
+async def my_new_tool(
+    param: Annotated[str, Field(description="What the value is and an example")],
+    mode: Annotated[
+        Literal["short", "long"], Field(description='"short" (default) ...; "long" ...')
+    ] = "short",
+) -> dict[str, Any]:
+    """
+    What the tool answers, in the words a user would use (Croatian terms too),
+    when to prefer a sibling tool, and under ``Returns:`` the result keys.
+    """
+    return await tools_handler.my_new_tool(param, mode)
 ```
 
-1. MCPServer automatically generates JSON schema from type annotations
+1. MCPServer generates the JSON schema from the type annotations: the
+   `Field(description=...)` of every parameter becomes the property's
+   `description`, a `Literal` becomes an `enum`. The docstring is the tool's
+   `description`; it must not repeat the parameters in an `Args:` block
+   (`mcp/tests/test_tool_surface.py` checks both, and that the whole tool
+   list stays under its context budget)
+2. Advice that applies to every tool (which register answers what, where to
+   start, paging) goes once into `SERVER_INSTRUCTIONS`, sent to the client in
+   the `initialize` response, not into each docstring
 
 ### Adding New Prompts
 
@@ -430,7 +452,7 @@ async def my_new_tool(param: str) -> dict[str, Any]:
 ```python
 @mcp.prompt()
 async def my_new_prompt(param: str) -> str:
-    """Prompt description."""
+    """What the prompt produces, what it reads, and where ``param`` comes from."""
     return await prompts_handler.my_new_prompt(param)
 ```
 

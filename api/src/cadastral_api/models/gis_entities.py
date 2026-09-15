@@ -71,6 +71,11 @@ class ParcelGeometry(BaseModel):
         return len(self.coordinates)
 
     @property
+    def ring(self) -> list[tuple[float, float]]:
+        """The outer ring as ``(x, y)`` tuples, for the ``geometry_ops`` functions."""
+        return [(c.x, c.y) for c in self.coordinates]
+
+    @property
     def bounds(self) -> tuple[float, float, float, float]:
         """
         Get bounding box (min_x, min_y, max_x, max_y).

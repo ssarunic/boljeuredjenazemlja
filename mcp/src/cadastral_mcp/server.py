@@ -5,17 +5,18 @@ import json
 import logging
 import sys
 from collections.abc import Callable
-from typing import Any
+from typing import Annotated, Any, Literal
 
 from cadastral_api import CadastralAPIClient
 from cadastral_api.exceptions import CadastralAPIError
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ResourceError, ToolError
+from pydantic import Field
 
 from .config import config
 from .prompts import CadastralPrompts
 from .resources import CadastralResources
-from .tools import CadastralTools, LRUnitRef, ParcelRef
+from .tools import CadastralTools, LRUnitRef, ParcelRef, error_kind
 
 # Configure logging to stderr (CRITICAL: never log to stdout in MCP servers)
 logging.basicConfig(
@@ -28,6 +29,31 @@ logger = logging.getLogger(__name__)
 
 Handler = Callable[..., Any]
 
+#: Sent to the client in the ``initialize`` response; clients that support it
+#: put it in the model's system prompt, so it says once what every tool
+#: description would otherwise repeat.
+SERVER_INSTRUCTIONS = """\
+Croatian cadastre (katastar) and land registry (zemljišne knjige, ZK) lookups.
+Demonstration project: unless configured otherwise the data comes from a local
+mock server whose records are redacted copies of the public shapes; say so
+when an answer is presented as official.
+
+Two registers, never to be confused: the cadastre lists POSSESSORS
+(posjednici, posjedovni list); the land registry lists the registered OWNERS
+(vlasnici, vlastovnica / B-list) and encumbrances (teretovnica / C-list). For
+"vlasnik", "tko je vlasnik", "prema zemljišnim knjigama" use get_lr_unit; for
+"posjednik" use get_parcel. compare_registers says whether the two agree.
+
+Every tool takes the cadastral municipality (katastarska općina, k.o.) by
+name or code, so start with get_parcel or get_lr_unit directly; find_parcel
+is for checking which numbers exist, resolve_municipality for confirming a
+name. Building parcels are written "35/1.ZGR". Lists are paged with offset
+and limit (`page.truncated`, `page.next_offset`); pass a limit for large
+condominiums. Every record carries `provenance` (register, source_url,
+retrieved_at); pass it on with any fact you forward, and treat area_check
+mismatches and `exact_match: false` as findings, not hits.
+"""
+
 
 def _anticipated(error_class: type[Exception]) -> Callable[[Handler], Handler]:
     """Turn a handler's ``ValueError`` into the SDK's anticipated failure.
@@ -38,6 +64,11 @@ def _anticipated(error_class: type[Exception]) -> Callable[[Handler], Handler]:
     ``ToolError`` / ``ResourceError`` as a crash and withholds its message from
     the client, so the agent saw only "Error executing tool <name>". Wrapping
     the handlers hands the message over as the SDK expects.
+
+    The SDK's error carries text only, so the machine-readable kind of the
+    failure (``error_kind``: parcel_not_found, access_denied, rate_limit,
+    invalid_request ...) is appended to the message as ``[error_type=...]``;
+    the list tools put the same kind in each failed entry's ``error_type``.
     """
 
     def decorate(func: Handler) -> Handler:
@@ -46,7 +77,8 @@ def _anticipated(error_class: type[Exception]) -> Callable[[Handler], Handler]:
             try:
                 return await func(*args, **kwargs)
             except (ValueError, CadastralAPIError) as e:
-                raise error_class(str(e)) from e
+                kind, _details = error_kind(e)
+                raise error_class(f"{e} [error_type={kind}]") from e
 
         return wrapper
 
@@ -68,6 +100,7 @@ def create_mcp_server() -> MCPServer:
     mcp = MCPServer(
         name=config.server_name,
         version=config.server_version,
+        instructions=SERVER_INSTRUCTIONS,
     )
 
     # Initialize cadastral API client (shared across all requests)
@@ -129,7 +162,38 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def find_parcel(
-        parcel_number: str, municipality: str, max_matches: int = 0
+        parcel_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral parcel number, e.g. "103/2"; a building parcel as "35/1.ZGR", '
+                    '"35/1 ZGR" or "*35/1"'
+                )
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        max_matches: Annotated[
+            int,
+            Field(
+                description=(
+                    "Above 0, also return the complete search response under `matches`: every "
+                    "record the server matched (parcel_id, parcel_number, is_building_parcel), up"
+                    " to this many, with `matches_total` and `matches_truncated`. Use it to list "
+                    'what exists ("which parcels start with 103"). With it a search from which no'
+                    " single parcel can be chosen is not an error: `success` is false, "
+                    "`parcel_id` null, `match_note` says why and `matches` still holds the "
+                    "records"
+                )
+            ),
+        ] = 0,
     ) -> dict[str, Any]:
         """
         Find a cadastral parcel (čestica / katastarska čestica, k.č.) and return
@@ -139,21 +203,14 @@ def create_mcp_server() -> MCPServer:
         parcel number within a cadastral municipality (katastarska općina, k.o.).
         Aggregates the 3-step API workflow: resolve municipality, find parcel, return info.
 
+        Use it to learn whether a number exists, to get a ``parcel_id`` or to
+        list matches. For the parcel's record itself (area, land use,
+        possessors, land-registry reference) call get_parcel directly with
+        parcel_number + municipality: it does this search on its own.
+
         Also returns ``map_url``, a link to the interactive map (karta) centred
         on the parcel, when the municipality's GIS data is available (downloaded
         once, then cached).
-
-        Args:
-            parcel_number: Cadastral parcel number (e.g., "103/2")
-            municipality: Municipality name (e.g., "SAVAR") or registration code
-            max_matches: Above 0, also return the complete search response:
-                every record the server matched (parcel_id, parcel_number,
-                is_building_parcel), up to this many, under ``matches`` with
-                ``matches_total`` and ``matches_truncated``. Use it to list
-                what exists ("which parcels start with 103"). With it, a
-                search from which no single parcel can be chosen is not an
-                error: ``success`` is False, ``parcel_id`` null, ``match_note``
-                says why and ``matches`` still holds the records.
 
         Returns:
             Dictionary with parcel search results including parcel_id.
@@ -172,12 +229,64 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def get_parcel(
-        parcels: list[ParcelRef],
-        source: str = "cadastre",
-        offset: int = 0,
-        limit: int | None = None,
-        possessor_name: str | None = None,
-        condominium_unit: str | None = None,
+        parcels: Annotated[
+            list[ParcelRef],
+            Field(
+                description=(
+                    'One or more parcel references, each {"parcel_id": ...} (from find_parcel) or'
+                    ' {"parcel_number": ..., "municipality": ...}; one entry per reference comes '
+                    "back, in order"
+                )
+            ),
+        ],
+        source: Annotated[
+            Literal["cadastre", "land_registry", "none"],
+            Field(
+                description=(
+                    'Register to return people from: "cadastre" (default) includes the '
+                    'possession-sheet possessors; "land_registry" omits them and returns the '
+                    "land-registry unit reference plus a hint to fetch the registered owners with"
+                    ' get_lr_unit (use for "vlasnik", "prema zemljišnim knjigama"); "none" '
+                    "returns parcel metadata only"
+                )
+            ),
+        ] = "cadastre",
+        offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many possessor records of each parcel (counted across its "
+                    'possession sheets, in sheet order); source="cadastre" only'
+                )
+            ),
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many possessor records per parcel (null for all); "
+                    'source="cadastre" only'
+                )
+            ),
+        ] = None,
+        possessor_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only possessors whose name contains every word of this text (case and "
+                    'diacritics ignored, words in any order); source="cadastre" only'
+                )
+            ),
+        ] = None,
+        condominium_unit: Annotated[
+            str | None,
+            Field(
+                description=(
+                    'Keep only the possessors of this condominium unit number ("E-16", "E16" and '
+                    '"16" agree); source="cadastre" only'
+                )
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """
         Get the detailed cadastre (katastar) record of one or more parcels
@@ -188,7 +297,8 @@ def create_mcp_server() -> MCPServer:
         reference, in order, and a failed parcel does not stop the others.
         A reference is ``{"parcel_id": ...}`` (from find_parcel) or
         ``{"parcel_number": ..., "municipality": ...}`` (katastarska općina,
-        K.O., by name or code).
+        K.O., by name or code). The parcel search is done here; find_parcel
+        first is only needed to check which numbers exist.
 
         ⚠️ Register matters: cadastre POSSESSORS (posjedovni list) are often NOT
         the registered land-registry OWNERS (vlasnici / vlastovnica / B-list).
@@ -222,18 +332,6 @@ def create_mcp_server() -> MCPServer:
         diacritics ignored) or ``condominium_unit`` (the unit number, "E-16"
         or "16") instead of paging through it.
 
-        Args:
-            parcels: One or more parcel references (parcel_id, or parcel_number + municipality)
-            source: Register to return ownership data from: "cadastre" | "land_registry" | "none"
-            offset: Skip this many possessor records of each parcel (counted
-                across its possession sheets, in sheet order); source="cadastre" only
-            limit: Return at most this many possessor records per parcel
-                (null for all); source="cadastre" only
-            possessor_name: Keep only possessors whose name contains every word
-                of this text (case and diacritics ignored); source="cadastre" only
-            condominium_unit: Keep only the possessors of this condominium unit
-                number ("E-16", "E16" and "16" agree); source="cadastre" only
-
         Returns:
             Dictionary with ``results`` (status, ref, register, data, map_url
             per entry; with source="cadastre" also total_possessors,
@@ -245,6 +343,17 @@ def create_mcp_server() -> MCPServer:
             the cadastre linked it directly ("direct") or only through parcel
             links ("linked", the unit is then promoted from
             ``lr_units_from_parcel_links``), or not at all ("none").
+
+            Every successful entry carries ``provenance`` (``register``,
+            ``source_url``, ``retrieved_at`` in UTC: which register answered,
+            from where and when; pass it on with any fact you forward) and
+            ``area_check``, which compares the cadastre area with the
+            graphical area of the cadastral map and, when the cadastre record
+            carries it, the land register's area, flagging ``mismatch`` above
+            5 %. A failed entry carries ``error_type`` (parcel_not_found,
+            municipality_not_found, access_denied, rate_limit, timeout,
+            response_too_large, invalid_request ...) and ``error_details``, so
+            an empty answer is never read as an empty parcel.
         """
         logger.info(
             f"Tool invoked: get_parcel({len(parcels)} parcels, source={source}, "
@@ -262,13 +371,24 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
-    async def resolve_municipality(name_or_code: str) -> dict[str, Any]:
+    async def resolve_municipality(
+        name_or_code: Annotated[
+            str,
+            Field(
+                description=(
+                    'Municipality name, e.g. "SAVAR", or registration code, e.g. "334979"'
+                )
+            ),
+        ],
+    ) -> dict[str, Any]:
         """
         Resolve a cadastral municipality (katastarska općina, k.o.) name to its
         registration number and complete search record.
 
-        Args:
-            name_or_code: Municipality name (e.g., "SAVAR") or code (e.g., "334979")
+        Every other tool accepts the municipality name directly, so this is
+        only needed to confirm a name or to show its code and office. To
+        enumerate (every municipality of an office, every match of a partial
+        name) use list_municipalities.
 
         Returns:
             Dictionary with ``code`` (registration number), ``name``,
@@ -283,11 +403,46 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def list_municipalities(
-        search: str | None = None,
-        office_id: str | int | None = None,
-        department_id: str | int | None = None,
-        offset: int = 0,
-        limit: int | None = 200,
+        search: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Name or code to match (substring, case-insensitive)"
+                )
+            ),
+        ] = None,
+        office_id: Annotated[
+            str | int | None,
+            Field(
+                description=(
+                    "Cadastral office id (`id` from list_cadastral_offices)"
+                )
+            ),
+        ] = None,
+        department_id: Annotated[
+            str | int | None,
+            Field(
+                description=(
+                    "Department id within the office"
+                )
+            ),
+        ] = None,
+        offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many records"
+                )
+            ),
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many records (default 200; null for all)"
+                )
+            ),
+        ] = 200,
     ) -> dict[str, Any]:
         """
         List cadastral municipalities (katastarske općine, k.o.), filtered by
@@ -296,13 +451,6 @@ def create_mcp_server() -> MCPServer:
         Use it for "which cadastral municipalities belong to the Zadar office"
         or to see every municipality a name matches. Without filters it lists
         all municipalities in the country, paged.
-
-        Args:
-            search: Name or code to match (substring)
-            office_id: Cadastral office id (``id`` from list_cadastral_offices)
-            department_id: Department id within the office
-            offset: Skip this many records
-            limit: Return at most this many (default 200; null for all)
 
         Returns:
             Dictionary with ``municipalities`` (code, name, full_name,
@@ -321,7 +469,43 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def get_parcel_geometry(
-        parcel_number: str, municipality: str, format: str = "geojson", zoom: int = 19
+        parcel_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral parcel number, e.g. "103/2"; a building parcel as "35/1.ZGR", '
+                    '"35/1 ZGR" or "*35/1"'
+                )
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        format: Annotated[
+            Literal["geojson", "wkt", "dict"],
+            Field(
+                description=(
+                    'Output format: "geojson" (default, map_url in properties), "dict" '
+                    '(coordinates, area, centroid, bounds, map_url) or "wkt" (the bare polygon '
+                    "text)"
+                )
+            ),
+        ] = "geojson",
+        zoom: Annotated[
+            int,
+            Field(
+                description=(
+                    "Zoom level of the map link (default 19 fits one parcel; 20 for very small "
+                    "parcels)"
+                )
+            ),
+        ] = 19,
     ) -> dict[str, Any] | str:
         """
         Get a parcel's boundary geometry (granice čestice) as GeoJSON/WKT, with
@@ -329,13 +513,6 @@ def create_mcp_server() -> MCPServer:
 
         For mapping cadastral parcels (katastarska čestica) - coordinates,
         outline, area. Downloads and caches GML data if needed, then extracts geometry.
-
-        Args:
-            parcel_number: Cadastral parcel number (e.g., "103/2")
-            municipality: Municipality name or registration code
-            format: Output format - "geojson" (default), "wkt", or "dict"
-            zoom: Zoom level for the map link (default 19 fits one parcel; 20 for
-                very small parcels)
 
         Returns:
             Geometry data in requested format. "geojson" (in properties) and
@@ -350,10 +527,40 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def get_parcel_zoning(
-        parcel_number: str,
-        municipality: str,
-        include_geometry: bool = False,
-        min_overlap: float = 0.02,
+        parcel_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral parcel number, e.g. "103/2"; a building parcel as "35/1.ZGR", '
+                    '"35/1 ZGR" or "*35/1"'
+                )
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        include_geometry: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Include the zone polygons (EPSG:3765) in the response"
+                )
+            ),
+        ] = False,
+        min_overlap: Annotated[
+            float,
+            Field(
+                description=(
+                    "Drop zones covering a smaller share of the parcel than this (default 0.02)"
+                )
+            ),
+        ] = 0.02,
     ) -> dict[str, Any]:
         """
         Screening of a parcel against the spatial plans (prostorni planovi):
@@ -370,12 +577,6 @@ def create_mcp_server() -> MCPServer:
         from the plans in force and reports every zone covering the parcel
         with the share it covers. The layer is an interpretation of the plans,
         not the plans themselves: always pass the ``disclaimer`` on.
-
-        Args:
-            parcel_number: Cadastral parcel number (e.g., "103/2")
-            municipality: Municipality name or registration code
-            include_geometry: Include the zone polygons (EPSG:3765), default False
-            min_overlap: Drop zones covering a smaller share of the parcel (default 0.02)
 
         Returns:
             ``status``, ``buildability`` ("unknown"), ``matches`` (zone
@@ -394,16 +595,24 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
-    async def list_cadastral_offices(filter_name: str | None = None) -> dict[str, Any]:
+    async def list_cadastral_offices(
+        filter_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only offices whose name contains this text (case-insensitive)"
+                )
+            ),
+        ] = None,
+    ) -> dict[str, Any]:
         """
         List cadastral offices (katastarski uredi / područni uredi), optionally
         filtered by name.
 
-        Args:
-            filter_name: Optional filter string to match office names
-
         Returns:
-            Dictionary with list of offices and count
+            Dictionary with ``offices`` (``id``, ``name``, ``code``, address
+            fields as the server gives them) and ``count``. The ``id`` is the
+            ``office_id`` filter of list_municipalities.
         """
         logger.info(f"Tool invoked: list_cadastral_offices(filter={filter_name})")
         return await tools_handler.list_cadastral_offices(filter_name)
@@ -411,14 +620,97 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def get_lr_unit(
-        units: list[LRUnitRef],
-        detail: str = "ownership",
-        owners_limit: int | None = None,
-        include_plombe_detail: bool = False,
-        historical_overview: bool = False,
-        offset: int = 0,
-        limit: int | None = None,
-        owner_name: str | None = None,
+        units: Annotated[
+            list[LRUnitRef],
+            Field(
+                description=(
+                    'One or more unit references, each {"lr_unit_number", "main_book_id"} (as '
+                    'get_parcel returns under data.lr_unit), {"lr_unit_number", "main_book_name"}'
+                    ' or {"parcel_number", "municipality"}; one entry per reference comes back, '
+                    "in order"
+                )
+            ),
+        ],
+        detail: Annotated[
+            Literal["summary", "ownership", "shares", "parcels", "encumbrances", "full"],
+            Field(
+                description=(
+                    '"ownership" (default): B-list owners with structured shares plus a summary, '
+                    'no geometry or C-sheet, fits in context. "summary": counts only. "shares": '
+                    "sheet B as the register holds it (vlastovnica: raw shares with sub-shares, "
+                    'entries and status). "parcels": sheet A (posjedovnica: the parcels of the '
+                    'unit, with A2 entries). "encumbrances": sheet C (teretovnica: entry groups '
+                    'with amounts and beneficiaries). "full": every sheet at once. Each level is '
+                    "paged on its own"
+                )
+            ),
+        ] = "ownership",
+        owners_limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    'Synonym of `limit` for "ownership" and "full", kept for older callers; '
+                    "`limit` wins when both are given"
+                )
+            ),
+        ] = None,
+        include_plombe_detail: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Resolve what each pending plomba (zaprimljeni neriješeni prijedlog za upis) "
+                    "actually is: request type, processing status and dates, as a `plombe_detail`"
+                    " map (file_number -> detail) per unit. One extra request per plomba"
+                )
+            ),
+        ] = False,
+        historical_overview: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Also return the historical overview (povijesni pregled): deleted entries and"
+                    " shares whose status is not active. Off by default, so owners are the "
+                    "current ones"
+                )
+            ),
+        ] = False,
+        offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many items of the list the level pages: owner records for "
+                    '"ownership", top-level shares for "shares" and "full", parcels for '
+                    '"parcels", entry groups for "encumbrances"'
+                )
+            ),
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many of them (null for all). Every unit carries a `page`"
+                    " block (offset, limit, total, returned, truncated, next_offset); when "
+                    '`truncated` is true call again with offset=next_offset. In "shares" and '
+                    '"full" the shares outside the window are dropped whole (`shares_omitted`). A'
+                    " response too large to return is reported as that unit's error naming the "
+                    "smaller options, so pass a limit whenever a unit may have many co-owners or "
+                    "encumbrances"
+                )
+            ),
+        ] = None,
+        owner_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only the owners whose name contains every word of this text (case and "
+                    'diacritics ignored, words in any order; "sarunic" finds "ŠARUNIĆ SAŠA"). '
+                    'Applies to "ownership" (owner rows), "shares" and "full" (the shares holding'
+                    " such an owner, kept whole with their co-owners); the other levels refuse "
+                    "it. `matching_owners` / `matching_shares` count the matches, `total_owners` "
+                    "/ `total_shares` still describe the whole sheet"
+                )
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """
         Get one or more land registry units (zemljišnoknjižni uložak, zemljišne
@@ -457,50 +749,6 @@ def create_mcp_server() -> MCPServer:
         many co-owners the unit has; ``matching_owners`` is 0 when the name is
         not on the sheet.
 
-        Args:
-            units: One or more unit references (see above).
-            detail: "summary" | "ownership" | "shares" | "parcels" |
-                "encumbrances" | "full". Default "ownership" returns B-list
-                owners with structured shares + summary (no geometry/C-sheet),
-                which fits in context. "shares" is sheet B as the register
-                holds it (vlastovnica: raw shares with sub-shares, entries and
-                status, historical ones included with historical_overview),
-                "parcels" is sheet A (posjedovnica: the parcels of the unit,
-                with sheet A2 entries), "encumbrances" is sheet C (teretovnica:
-                the entry groups with amounts and beneficiaries), each paged on
-                its own; "full" returns every sheet at once.
-            owners_limit: Synonym of ``limit`` for "ownership" and "full"
-                (kept for older callers; ``limit`` wins when both are given).
-            include_plombe_detail: Resolve what each pending plomba (zaprimljeni
-                neriješeni prijedlog za upis) actually is - the request type,
-                processing status, and dates. Adds a ``plombe_detail`` map
-                (file_number -> detail) per unit. Costs one extra request per
-                plomba; off by default.
-            historical_overview: Ask for the historical overview (povijesni
-                pregled) as well: deleted entries and shares whose status is
-                not active. Off by default; owners are then the current ones.
-            offset: Skip this many items of the list the level is about
-                (owner records for "ownership", top-level shares for "shares"
-                and "full", parcels for "parcels", entry groups for
-                "encumbrances").
-            limit: Return at most this many of them. Every unit carries a
-                ``page`` block (offset, limit, total, returned, truncated,
-                next_offset); when ``truncated`` is true call again with
-                ``offset=next_offset`` for the rest. In "shares" and "full"
-                the shares outside the window are dropped whole
-                (``shares_omitted``); a share without owners is a page item too.
-                A response too large to return is reported as that unit's error
-                with the smaller options named, so pass a limit whenever a unit
-                may have many co-owners or encumbrances.
-            owner_name: Keep only the owners whose name contains every word of
-                this text (case and diacritics ignored, words in any order;
-                "sarunic" finds "ŠARUNIĆ SAŠA"). Applies to "ownership"
-                (owner rows), "shares" and "full" (the shares holding such an
-                owner, kept whole with their co-owners); the other levels
-                refuse it. The page walks the matches; ``matching_owners`` /
-                ``matching_shares`` count them, ``total_owners`` /
-                ``total_shares`` still describe the whole sheet.
-
         Returns:
             Dictionary with ``results`` (status, ref, lr_unit_number,
             main_book_id, data | error per entry) and the counts ``total``,
@@ -510,7 +758,14 @@ def create_mcp_server() -> MCPServer:
             = total; do not expect successful + failed alone to add up when
             references share a unit. ``data`` is shaped per ``detail``; owners
             carry a structured ``share`` ({num, den, decimal}) and a
-            ``register`` tag.
+            ``register`` tag. Every level names the unit and carries
+            ``provenance`` (register, ``source_url``, ``retrieved_at``);
+            "summary", "ownership", "shares" and "full" also carry
+            ``distinct_owners``, the number of different people among the
+            owner records (one person on two shares is two records and one
+            owner), for judging fragmentation before reading names. A failed
+            entry carries ``error_type`` and ``error_details`` (see
+            get_parcel).
         """
         logger.info(
             f"Tool invoked: get_lr_unit({len(units)} refs, detail={detail}, "
@@ -530,9 +785,30 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def find_main_book(
-        search: str | None = None,
-        office_id: str | int | None = None,
-        institution_name: str | None = None,
+        search: Annotated[
+            str | None,
+            Field(
+                description=(
+                    'Book name to search, e.g. "SAVAR"; empty lists every book'
+                )
+            ),
+        ] = None,
+        office_id: Annotated[
+            str | int | None,
+            Field(
+                description=(
+                    'Land-registry office (zemljišnoknjižni odjel) id, e.g. "284"'
+                )
+            ),
+        ] = None,
+        institution_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only books of the institution (court) with this name"
+                )
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """
         Find land-registry main books (glavna knjiga, glavne knjige zemljišne
@@ -541,11 +817,6 @@ def create_mcp_server() -> MCPServer:
         Use this to get the ``main_book_id`` that get_lr_unit needs when only
         the cadastral municipality (katastarska općina) name is known: searching
         "SAVAR" returns main book 21277 of the Zadar court (institution 284).
-
-        Args:
-            search: Book name to search (e.g., "SAVAR"); empty lists every book
-            office_id: Land-registry office (zemljišnoknjižni odjel) id, e.g. "284"
-            institution_name: Institution name filter
 
         Returns:
             Dictionary with ``main_books`` (main_book_id, main_book_name,
@@ -557,9 +828,30 @@ def create_mcp_server() -> MCPServer:
     @mcp.tool()
     @anticipated_tool
     async def find_book_of_dc(
-        search: str | None = None,
-        office_id: str | int | None = None,
-        institution_name: str | None = None,
+        search: Annotated[
+            str | None,
+            Field(
+                description=(
+                    'Book name to search, e.g. "ZADAR"; empty lists every book'
+                )
+            ),
+        ] = None,
+        office_id: Annotated[
+            str | int | None,
+            Field(
+                description=(
+                    "Land-registry office id"
+                )
+            ),
+        ] = None,
+        institution_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only books of the institution (court) with this name"
+                )
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """
         Find books of deposited contracts (knjiga položenih ugovora, KPU) of the
@@ -568,11 +860,6 @@ def create_mcp_server() -> MCPServer:
         A KPU book holds flats sold before their building had a land-registry
         unit. Whether its id can be used as a main book id for get_lr_unit is
         not verified; the tool returns the search records only.
-
-        Args:
-            search: Book name to search (e.g., "ZADAR")
-            office_id: Land-registry office id
-            institution_name: Institution name filter
 
         Returns:
             Dictionary with ``books_of_dc`` (book_id, book_name, office_id,
@@ -583,19 +870,116 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
-    async def find_possession_sheet(sheet_number: str, municipality: str) -> dict[str, Any]:
+    async def get_possession_sheet(
+        sheet_number: Annotated[
+            str,
+            Field(
+                description='Possession sheet (posjedovni list) number, matched exactly, e.g. "363"'
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        offset: Annotated[
+            int, Field(description="Skip this many possessor records (paging)")
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many possessor records (null for all); the page block "
+                    "says where to continue"
+                )
+            ),
+        ] = None,
+        possessor_name: Annotated[
+            str | None,
+            Field(
+                description=(
+                    "Keep only the possessors whose name contains every word of this text (case "
+                    "and diacritics ignored, words in any order)"
+                )
+            ),
+        ] = None,
+    ) -> dict[str, Any]:
+        """
+        A cadastre possession sheet (posjedovni list) by number in a cadastral
+        municipality: its possessors (posjednici) and every parcel (čestica)
+        on it, with areas and land use. For "which parcels are on posjedovni
+        list N" and "who is on it" in one call.
+
+        Reads the sheet and the parcel search behind the cadastre's web form
+        (three requests). The number is matched exactly; find_possession_sheet
+        lists the sheets whose number begins with a text. Possessors are
+        cadastre possessors, not land-registry owners: each parcel row carries
+        the land-registry unit reference for get_lr_unit. A sheet harmonized
+        with the land registry lists no possessors of its own
+        (``possessors_in_land_registry`` true): its registered owners come
+        back under ``owners`` (register land_registry, read from the sheet B
+        the parcel search inlines, OIB included where the registry has it)
+        with ``owners_note``, ``possessor_name`` then filters the owners
+        (``matching_owners``; ``filter_applied_to`` names the list), and
+        ``lr_unit`` names the unit for get_lr_unit. The stub's missing sheet
+        id and municipality are filled from the parcel records
+        (``sheet.backfilled_from_parcels``).
+
+        Returns:
+            ``sheet`` (possession_sheet_id, possession_sheet_number,
+            municipality id, code and name, is_condominium, total_ownership),
+            ``possessors``, ``total_possessors``, ``distinct_possessors``,
+            ``page``, ``parcels`` (parcel_id, parcel_number, area_m2, address,
+            land_use, is_building_parcel, is_harmonized, lr_unit,
+            inline_owners), ``parcel_count``, ``total_area_m2``,
+            ``parcels_complete`` (False, with a ``note``, when the list is as
+            long as the longest the search has ever returned, so a cap is not
+            ruled out) and ``provenance`` of the sheet and of the parcel list.
+        """
+        logger.info(
+            f"Tool invoked: get_possession_sheet({sheet_number}, {municipality}, "
+            f"offset={offset}, limit={limit}, possessor_name={possessor_name!r})"
+        )
+        return await tools_handler.get_possession_sheet(
+            sheet_number, municipality, offset=offset, limit=limit, possessor_name=possessor_name
+        )
+
+    @mcp.tool()
+    @anticipated_tool
+    async def find_possession_sheet(
+        sheet_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'Possession sheet number (prefix match, e.g. "363")'
+                )
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+    ) -> dict[str, Any]:
         """
         Find cadastre possession sheets (posjedovni list, posjedovni listovi) by
         sheet number in a cadastral municipality (katastar, katastarska općina).
 
-        The records carry the possession sheet id that parcel possession sheets
-        reference and the sheet number. The cadastre has no endpoint that
-        returns a sheet by id; to see a sheet's possessors (posjednici) look up
-        one of its parcels with get_parcel.
-
-        Args:
-            sheet_number: Possession sheet number (prefix match, e.g. "363")
-            municipality: Municipality name (e.g., "SAVAR") or registration code
+        The records carry the possession sheet id and the sheet number, for
+        every sheet whose number begins with the text, at most 50 of them.
+        The search index lags the change log: a sheet touched recently can be
+        missing here while get_possession_sheet finds it by number, so an
+        empty answer is a hint, not proof that the sheet does not exist. For a
+        sheet's possessors (posjednici) and parcels call get_possession_sheet
+        with the exact number.
 
         Returns:
             Dictionary with ``possession_sheets`` (possession_sheet_id,
@@ -606,7 +990,25 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
-    async def get_file_status(file_number: str, institution_id: int) -> dict[str, Any]:
+    async def get_file_status(
+        file_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'File number as written on the unit, e.g. "Z-12564/2026"'
+                )
+            ),
+        ],
+        institution_id: Annotated[
+            int,
+            Field(
+                description=(
+                    "Land-registry office id: `institution_id` of the unit from get_lr_unit, or "
+                    "of the book from find_main_book"
+                )
+            ),
+        ],
+    ) -> dict[str, Any]:
         """
         Processing status of one land-registry file (spis, plomba, zaprimljeni
         prijedlog) by its number, e.g. "Z-12564/2026": what the request is
@@ -616,11 +1018,6 @@ def create_mcp_server() -> MCPServer:
         A unit's pending plombe carry only the file number; get_lr_unit with
         include_plombe_detail resolves them all at once. Use this tool when you
         already hold a file number and the office that processes it.
-
-        Args:
-            file_number: File number as written on the unit, e.g. "Z-12564/2026"
-            institution_id: Land-registry office id (``institution_id`` of the
-                unit from get_lr_unit, or of the book from find_main_book)
 
         Returns:
             Dictionary with ``found`` and, when found, ``status`` (file id,
@@ -632,8 +1029,382 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
+    async def compare_registers(
+        parcels: Annotated[
+            list[ParcelRef],
+            Field(
+                description=(
+                    'One or more parcel references, each {"parcel_id": ...} (from find_parcel) or'
+                    ' {"parcel_number": ..., "municipality": ...}; one entry per reference comes '
+                    "back, in order"
+                )
+            ),
+        ],
+    ) -> dict[str, Any]:
+        """
+        Are the cadastre possessors (posjednici, posjedovni list) of a parcel
+        the same people as its registered owners (vlasnici, vlastovnica /
+        B-list)? One call per parcel set, for "is the person using the land
+        the person I sign with" (posjednik vs vlasnik, usklađenost katastra i
+        zemljišne knjige).
+
+        For each reference the cadastre record and the parcel's land-registry
+        unit are read (a unit shared by several parcels once) and the two
+        lists of people are matched by tax number or folded name (case and
+        diacritics ignored); a match that rests on the name without a
+        relative's name ("POK. BOŽE") is flagged ``fuzzy``. Each person gets
+        an inferred kind (individual, company, state, municipality), always
+        labelled ``inferred``: an estimate of how many public bodies and
+        companies are involved, not a fact about any one of them.
+
+        Returns:
+            ``results`` with one entry per reference: ``status``, ``ref``,
+            ``parcel_number``, ``municipality_code``, ``lr_unit``,
+            ``provenance`` of both registers, ``map_url`` and ``data`` with
+            ``relationship`` (same | overlapping | disjoint | cadastre_only |
+            no_owners | no_possessors | land_registry_unavailable),
+            ``summary`` (plain language), ``matched`` (pairs with ``fuzzy``,
+            ``by_tax_number``, ``shares_agree``), ``possessors_only``,
+            ``owners_only``, ``possessors`` and ``owners`` (name, share,
+            ``party_type_inferred``), ``distinct_possessors``,
+            ``distinct_owners``, ``distinct_people``, ``party_types``,
+            ``public_body_owner_share``, ``area_check`` (cadastre, sheet A and
+            graphical areas) and ``notes``. Then ``total``, ``successful``,
+            ``failed``, ``units_fetched``, ``relationships`` (count per
+            relationship) and ``people`` (distinct possessors, owners and
+            people across the whole set). A failed entry carries
+            ``error_type``; an entry whose unit could not be read carries
+            ``land_registry_error`` and still lists the possessors.
+        """
+        logger.info(f"Tool invoked: compare_registers({len(parcels)} parcels)")
+        return await tools_handler.compare_registers(list(parcels))
+
+    @mcp.tool()
+    @anticipated_tool
+    async def build_assembly(
+        parcels: Annotated[
+            list[ParcelRef],
+            Field(
+                description=(
+                    "Up to 50 parcel references, as for get_parcel"
+                )
+            ),
+        ],
+        include_zoning: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Read each parcel's building-areas zoning as well (one WFS lookup per parcel;"
+                    " slower)"
+                )
+            ),
+        ] = False,
+        weights: Annotated[
+            dict[str, float] | None,
+            Field(
+                description=(
+                    'Override any factor weight, e.g. {"in_building_area": 0.4}; factors: '
+                    "single_owner, owner_is_possessor, no_encumbrances, no_pending_plombe, "
+                    "in_building_area"
+                )
+            ),
+        ] = None,
+        export: Annotated[
+            Literal["parcels_csv", "persons_csv", "matrix_csv", "geojson"] | None,
+            Field(
+                description=(
+                    '"parcels_csv", "persons_csv" or "matrix_csv" put CSV text under export.text;'
+                    ' "geojson" puts a FeatureCollection of the parcels that have an outline '
+                    "under export (scores in the properties, parcels without an outline under "
+                    "export.skipped)"
+                )
+            ),
+        ] = None,
+        persons_offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many ranked persons"
+                )
+            ),
+        ] = 0,
+        persons_limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many ranked persons (default 50; null for all)"
+                )
+            ),
+        ] = 50,
+    ) -> dict[str, Any]:
+        """
+        Land-assembly analysis (okrupnjavanje zemljišta, due diligence) of a
+        set of parcels: who owns or possesses what (the persons x parcels
+        matrix), the persons ranked by the area they control and grouped by
+        surname, and the parcels ranked by how easy they look to acquire,
+        with the weights shown so the rule can be questioned and changed.
+
+        Reads each parcel's cadastre record, its land-registry unit (shared
+        units once) and the register comparison; with include_zoning also
+        its building-areas screening. At most 50 parcels per call. The score
+        is a weighted share of yes/no factors: single_owner,
+        owner_is_possessor, no_encumbrances, no_pending_plombe,
+        in_building_area (only with include_zoning); a factor that could not
+        be evaluated is left out rather than counted against the parcel, and
+        each parcel's ``factors`` and ``notes`` say which. Party types are
+        inferred from names. Controlled areas use cadastre areas.
+
+        Returns:
+            ``totals`` (parcel_count, total_area_m2, area_by_land_use,
+            area_by_relationship, area_by_zoning_status, distinct_people,
+            distinct_owners, distinct_possessors, party_types,
+            public_body_parcels, fuzzy_matches, parcels_with_encumbrances,
+            parcels_with_pending_plombe, parcels_in_building_area),
+            ``parcels`` (easiest first: relationship, distinct owners and
+            possessors, encumbrances, plombe, zoning, area_mismatch, score,
+            map_url, provenance), ``persons`` (a page of the ranking:
+            owner_of, possessor_of, owned / possessed / controlled area,
+            party_type_inferred) with ``persons_page``, ``surname_groups``,
+            ``matrix`` (person_key, parcel_number, role, shares, fuzzy),
+            ``scores`` (factors and notes per parcel), ``weights``,
+            ``notes``, ``generated_at``, ``total`` and ``successful``
+            (references given and read), ``failed`` (references that could
+            not be read, with error_type), ``units_fetched``,
+            ``zoning_requested`` and ``export`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: build_assembly({len(parcels)} parcels, zoning={include_zoning}, "
+            f"export={export})"
+        )
+        return await tools_handler.build_assembly(
+            list(parcels),
+            include_zoning=include_zoning,
+            weights=weights,
+            export=export,
+            persons_offset=persons_offset,
+            persons_limit=persons_limit,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
+    async def find_parcels_in_area(
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        bbox: Annotated[
+            list[float] | None,
+            Field(
+                description=(
+                    "[min_x, min_y, max_x, max_y] in EPSG:3765 metres"
+                )
+            ),
+        ] = None,
+        polygon: Annotated[
+            str | list[list[float]] | None,
+            Field(
+                description=(
+                    'WKT "POLYGON((x y, x y, ...))" or a list of [x, y] vertices, EPSG:3765'
+                )
+            ),
+        ] = None,
+        center: Annotated[
+            list[float] | None,
+            Field(
+                description=(
+                    "[x, y] of a point in EPSG:3765, together with radius_m"
+                )
+            ),
+        ] = None,
+        radius_m: Annotated[
+            float | None,
+            Field(
+                description=(
+                    "Radius in metres around center"
+                )
+            ),
+        ] = None,
+        relation: Annotated[
+            Literal["intersects", "within"],
+            Field(
+                description=(
+                    '"intersects" (default): the parcel touches the area; "within": the parcel '
+                    "lies wholly inside it"
+                )
+            ),
+        ] = "intersects",
+        offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many parcels"
+                )
+            ),
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many parcels (default 50; null for all)"
+                )
+            ),
+        ] = 50,
+        include_geojson: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Also return the page as a GeoJSON FeatureCollection"
+                )
+            ),
+        ] = False,
+    ) -> dict[str, Any]:
+        """
+        Find the parcels (čestice) of a cadastral municipality inside an area:
+        a bounding box, a polygon, or a radius around a point, so that a
+        target area can be defined without knowing any parcel number
+        (čestice unutar područja, u krugu od N metara).
+
+        Reads the cached cadastral map of the municipality (downloaded on
+        first use, refreshed with download_municipality_gis). Coordinates are
+        EPSG:3765 (HTRS96/TM) metres, the system get_parcel_geometry returns;
+        longitude/latitude is refused with a hint. Gives parcel numbers,
+        graphical areas, centroids and map links; use get_parcel /
+        get_lr_unit on the numbers for the registers' records.
+
+        Returns:
+            ``municipality_code``, ``query`` (as understood), ``parcels`` (each
+            with parcel_number, area_m2, centroid, bounds, distance_m for a
+            radius query, map_url), ``total`` and ``total_area_m2`` over every
+            match, a ``page`` block (offset, limit, total, returned, truncated,
+            next_offset), ``dataset`` (parcel_count of the municipality, crs,
+            source, downloaded_at, note) and ``geojson`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: find_parcels_in_area({municipality}, bbox={bbox}, "
+            f"polygon={'yes' if polygon else None}, center={center}, radius_m={radius_m})"
+        )
+        return await tools_handler.find_parcels_in_area(
+            municipality,
+            bbox=bbox,
+            polygon=polygon,
+            center=center,
+            radius_m=radius_m,
+            relation=relation,
+            offset=offset,
+            limit=limit,
+            include_geojson=include_geojson,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
+    async def find_parcel_neighbours(
+        parcel_number: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral parcel number, e.g. "103/2"; a building parcel as "35/1.ZGR", '
+                    '"35/1 ZGR" or "*35/1"'
+                )
+            ),
+        ],
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        tolerance_m: Annotated[
+            float,
+            Field(
+                description=(
+                    "Gap two outlines may have and still count as touching, in metres (default "
+                    "0.10)"
+                )
+            ),
+        ] = 0.10,
+        offset: Annotated[
+            int,
+            Field(
+                description=(
+                    "Skip this many neighbours"
+                )
+            ),
+        ] = 0,
+        limit: Annotated[
+            int | None,
+            Field(
+                description=(
+                    "Return at most this many neighbours (default 50; null for all)"
+                )
+            ),
+        ] = 50,
+        include_geojson: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Also return the seed parcel and the page as GeoJSON"
+                )
+            ),
+        ] = False,
+    ) -> dict[str, Any]:
+        """
+        The neighbours of a parcel (susjedne čestice): the parcels sharing a
+        boundary with it, longest common boundary first, and those touching
+        it at a corner only (``touches_at_point``). For walking outward from
+        a seed parcel when assembling land.
+
+        Reads the cached cadastral map of the municipality (downloaded on
+        first use). Two outlines within ``tolerance_m`` of each other count
+        as touching. Gives parcel numbers, graphical areas and map links; use
+        get_parcel / get_lr_unit on the numbers for the registers' records.
+
+        Returns:
+            ``parcel`` (the seed's row), ``neighbours`` (rows with
+            shared_boundary_m and touches_at_point), ``total``,
+            ``total_area_m2`` of every neighbour, ``page``, ``dataset`` and
+            ``geojson`` when asked.
+        """
+        logger.info(
+            f"Tool invoked: find_parcel_neighbours({parcel_number}, {municipality}, "
+            f"tolerance_m={tolerance_m})"
+        )
+        return await tools_handler.find_parcel_neighbours(
+            parcel_number,
+            municipality,
+            tolerance_m=tolerance_m,
+            offset=offset,
+            limit=limit,
+            include_geojson=include_geojson,
+        )
+
+    @mcp.tool()
+    @anticipated_tool
     async def download_municipality_gis(
-        municipality: str, force: bool = False
+        municipality: Annotated[
+            str,
+            Field(
+                description=(
+                    'Cadastral municipality (katastarska općina, k.o.) by name, e.g. "SAVAR", or '
+                    'registration code, e.g. "334979"'
+                )
+            ),
+        ],
+        force: Annotated[
+            bool,
+            Field(
+                description=(
+                    "Download again even when the municipality is already cached"
+                )
+            ),
+        ] = False,
     ) -> dict[str, Any]:
         """
         Download the GIS data (parcel boundaries, GML) of a whole cadastral
@@ -644,14 +1415,13 @@ def create_mcp_server() -> MCPServer:
         lookups, to refresh stale data (``force=true``), or to learn how many
         parcels the municipality has.
 
-        Args:
-            municipality: Municipality name (e.g., "SAVAR") or registration code
-            force: Download again even when the municipality is already cached
-
         Returns:
             Dictionary with ``municipality_code``, ``download_url``,
-            ``already_cached``, ``zip_path``, ``zip_size_bytes``, ``gml_path``,
-            ``parcel_count`` and ``source`` (the server the cache came from).
+            ``already_cached``, ``downloaded_at`` (when the cached ZIP was
+            downloaded, ISO 8601 UTC: the age of the data every geometry and
+            zoning answer for this municipality rests on), ``zip_path``,
+            ``zip_size_bytes``, ``gml_path``, ``parcel_count`` and ``source``
+            (the server the cache came from).
         """
         logger.info(f"Tool invoked: download_municipality_gis({municipality}, force={force})")
         return await tools_handler.download_municipality_gis(municipality, force)
@@ -663,13 +1433,12 @@ def create_mcp_server() -> MCPServer:
     @mcp.prompt()
     async def explain_ownership_structure(parcel_id: str) -> str:
         """
-        Generate a prompt to explain parcel ownership structure.
-
-        Args:
-            parcel_id: The unique parcel identifier
-
-        Returns:
-            Formatted prompt text with ownership data for AI analysis
+        Explain the cadastre possession structure of one parcel (posjednici,
+        posjedovni list): who is listed, with what shares, whether it is
+        co-possession. Reads the parcel record and returns an analysis
+        request with the data filled in. parcel_id comes from find_parcel or
+        get_parcel. Cadastre possessors only; for the registered owners
+        (vlasnici) use the get_lr_unit tool.
         """
         logger.info(f"Prompt invoked: explain_ownership_structure({parcel_id})")
         return await prompts_handler.explain_ownership_structure(parcel_id)
@@ -677,13 +1446,11 @@ def create_mcp_server() -> MCPServer:
     @mcp.prompt()
     async def property_report(parcel_id: str) -> str:
         """
-        Generate a comprehensive property report prompt.
-
-        Args:
-            parcel_id: The unique parcel identifier
-
-        Returns:
-            Formatted prompt for generating a detailed property report
+        Property report of one parcel: summary, land-use breakdown,
+        possession structure, development considerations. Reads the parcel
+        record (area, land use parts, building right, possession sheets) and
+        returns a report request with the data filled in. parcel_id comes
+        from find_parcel or get_parcel.
         """
         logger.info(f"Prompt invoked: property_report({parcel_id})")
         return await prompts_handler.property_report(parcel_id)
@@ -691,13 +1458,11 @@ def create_mcp_server() -> MCPServer:
     @mcp.prompt()
     async def compare_parcels(parcel_ids: list[str]) -> str:
         """
-        Generate a prompt to compare multiple parcels.
-
-        Args:
-            parcel_ids: List of parcel identifiers to compare (at least 2)
-
-        Returns:
-            Formatted prompt with data for all parcels
+        Compare two or more parcels side by side: size, land use, building
+        right, number of possessors. Reads each parcel record and returns a
+        comparison request with the data filled in; a parcel that cannot be
+        read is noted, not fatal. At least two parcel_ids (from find_parcel or
+        get_parcel).
         """
         logger.info(f"Prompt invoked: compare_parcels({len(parcel_ids)} parcels)")
         return await prompts_handler.compare_parcels(parcel_ids)
@@ -705,13 +1470,10 @@ def create_mcp_server() -> MCPServer:
     @mcp.prompt()
     async def land_use_summary(parcel_id: str) -> str:
         """
-        Generate a prompt to analyze land use distribution.
-
-        Args:
-            parcel_id: The unique parcel identifier
-
-        Returns:
-            Formatted prompt for land use analysis
+        Land-use distribution of one parcel (način uporabe: oranica, pašnjak,
+        šuma ...): each part with its area and share of the whole. Reads the
+        parcel record and returns an analysis request with the breakdown
+        filled in. parcel_id comes from find_parcel or get_parcel.
         """
         logger.info(f"Prompt invoked: land_use_summary({parcel_id})")
         return await prompts_handler.land_use_summary(parcel_id)
@@ -720,8 +1482,10 @@ def create_mcp_server() -> MCPServer:
     logger.info(
         "Available tools: find_parcel, get_parcel, resolve_municipality, "
         "list_municipalities, get_parcel_geometry, get_parcel_zoning, "
+        "compare_registers, build_assembly, find_parcels_in_area, find_parcel_neighbours, "
         "list_cadastral_offices, get_lr_unit, get_file_status, find_main_book, "
-        "find_book_of_dc, find_possession_sheet, download_municipality_gis"
+        "find_book_of_dc, find_possession_sheet, get_possession_sheet, "
+        "download_municipality_gis"
     )
     logger.info("Available prompts: explain_ownership_structure, property_report, "
                 "compare_parcels, land_use_summary")

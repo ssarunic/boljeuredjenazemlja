@@ -129,7 +129,10 @@ def error_type_label(error_type: ErrorType) -> str:
         ErrorType.PARCEL_NOT_FOUND: _("Parcel not found"),
         ErrorType.MUNICIPALITY_NOT_FOUND: _("Municipality not found"),
         ErrorType.LR_UNIT_NOT_FOUND: _("Land registry unit not found"),
+        ErrorType.POSSESSION_SHEET_NOT_FOUND: _("Possession sheet not found"),
         ErrorType.SERVER_ERROR: _("Server error"),
+        ErrorType.ACCESS_DENIED: _("Access denied"),
+        ErrorType.HTTP_ERROR: _("HTTP error"),
     }
     return labels.get(error_type, str(error_type.value))
 

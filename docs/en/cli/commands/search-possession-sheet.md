@@ -43,8 +43,8 @@ sheet.
    |            363 |   11731543 |
    +----------------+------------+
 
-   💡 To see the possessors, look up one of the sheet parcels: cadastral get-parcel <PARCEL_NUMBER> -m
-   334979 --show-owners
+   💡 Possessors and parcels of a sheet: cadastral get-possession-sheet <SHEET_NUMBER> -m 334979
+   --show-owners
    ```
    <!-- END GENERATED: output -->
 
@@ -54,10 +54,9 @@ sheet.
 
 ## Choices you can make
 
-The cadastre does not hand out a possession sheet by its number, so this
-command stops at confirming the sheet. To see the possessors, look up one of
-the parcels that belongs to the sheet with [get-parcel](get-parcel.md) and
-`--show-owners`; the parcel numbers are on the extract.
+This command only confirms the sheet. For the sheet itself, with its
+possessors and every parcel on it, use
+[get-possession-sheet](get-possession-sheet.md) with the exact number.
 
 `--format json` with `--output` keeps the result as a file.
 
@@ -85,6 +84,7 @@ messages are explained on the [errors page](../errors.md).
 
 ## Related pages
 
+- [get-possession-sheet](get-possession-sheet.md) shows a sheet with its possessors and parcels.
 - [get-parcel](get-parcel.md) shows the possession sheet of a parcel with its possessors.
 - [search](search.md) finds a parcel by its number.
 
@@ -100,8 +100,8 @@ Usage: cadastral search-possession-sheet [OPTIONS] SHEET_NUMBER
   Find a possession sheet (posjedovni list) by number.
 
   Shows the sheet numbers that start with the number you give and the internal
-  ID of each sheet. The cadastre has no lookup of a sheet by ID: to see the
-  possessors, look up one of the sheet's parcels with get-parcel.
+  ID of each sheet. For the sheet itself, with its possessors and parcels, use
+  get-possession-sheet with the exact number.
 
   Examples:
     cadastral search-possession-sheet 363 -m SAVAR

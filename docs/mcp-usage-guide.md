@@ -75,6 +75,24 @@ or `none`) and `map_url` when available. A failed parcel does
 not stop the others. An entry resolved from a fallback match carries
 `exact_match: false` and `match_note`, as `find_parcel` does.
 
+Every successful entry carries `provenance`: `register` (`cadastre`),
+`source_url` (the request that answered) and `retrieved_at` (UTC). Pass it on
+with any fact you forward, so that nothing is mistaken for an official
+extract; it is `null` only for a record that was not fetched from a server.
+The entry also carries `area_check`, which compares the cadastre area with
+the graphical area of the cadastral map (`gis_m2`, when the municipality's GIS
+data is available) and with the land register's area when the cadastre record
+carries it on the parcel link (`land_registry_m2`; otherwise `note` says that
+`get_lr_unit` with `detail="parcels"` reads it from sheet A). `compared` lists
+the areas that were available, `max_difference_fraction` the spread relative
+to the largest, and `mismatch` is true above 5 % (`tolerance_fraction`). A
+failed entry carries `error_type` and, when the server said more,
+`error_details`: `parcel_not_found`, `municipality_not_found`,
+`lr_unit_not_found`, `access_denied` (HTTP 401/403), `rate_limit`, `timeout`,
+`http_error`, `response_too_large`, `invalid_request` (a bad reference or
+option) or `internal_error`. Read it before concluding anything from an empty
+answer: "not found", "refused" and "throttled" are different facts.
+
 With `source="cadastre"`, `offset` and `limit` page through the possessor
 records of each parcel, counted across its possession sheets in sheet order
 (a parcel under a condominium keeps hundreds of possessors on one sheet, so
@@ -146,7 +164,14 @@ duplicates = total`; `successful` alone equals `unique`, the units fetched.
 
 `detail` shapes `data` for every unit. Every level names the unit
 (`lr_unit_number`, `main_book_id`, `main_book_name`, `institution_id`,
-`institution_name`):
+`institution_name`) and carries `provenance` (`register: "land_registry"`,
+`source_url`, `retrieved_at`), and every level but `parcels` and
+`encumbrances` carries `distinct_owners`, the number of different people
+among the owner records (case, diacritics and spacing ignored; two records
+with different tax numbers are two people): one person on two shares is two
+records and one owner, so compare it with `total_owners` to judge
+fragmentation before reading names. A failed entry carries `error_type` and
+`error_details` as in `get_parcel`.
 
 - `"ownership"` (default): owners with structured shares
   (`share = {num, den, decimal}`), each with `entry` (the registration entry
@@ -264,11 +289,41 @@ Zadar court.
 Books of deposited contracts (knjige položenih ugovora, KPU): flats sold before
 their building had a land registry unit. Returns the search records only.
 
+### `get_possession_sheet(sheet_number, municipality, offset=0, limit=None, possessor_name=None)`
+
+A possession sheet (posjedovni list) by exact number: its possessors and
+every parcel on it, in one call. `sheet` names the sheet (id, number,
+municipality, `is_condominium`, `total_ownership`); `possessors` is a page
+of the cadastre possessors (paged with `offset` and `limit`, filtered with
+`possessor_name` as in `get_parcel`, with `total_possessors`,
+`distinct_possessors` and a `page` block); `parcels` lists the sheet's
+parcels with `parcel_id`, `parcel_number`, `area_m2`, `address`,
+`land_use`, `is_building_parcel`, `is_harmonized`, the land-registry
+reference under `lr_unit` (for `get_lr_unit`) and, on a harmonized parcel,
+`inline_owners` (the cadastre inlines sheet B there); `parcel_count` and
+`total_area_m2` sum them. A sheet harmonized with the land registry lists no
+possessors of its own: `possessors_in_land_registry` is `true`, `lr_unit`
+names the unit, and `owners` carries its registered owners (register
+`land_registry`, read from the sheet B the parcel search inlines, with
+`total_owners`, `distinct_owners` and an `owners_note`); `possessor_name`
+then filters the owners and `matching_owners` counts the matches
+(`filter_applied_to` names the list the filter ran on). The stub's missing
+sheet id and municipality are filled from the parcel records and
+`sheet.backfilled_from_parcels` says which; `sheet.is_condominium` is `null`
+on such a sheet, having no possessors to judge by. The owners carry the OIB
+where the registry has it; possessor records never do. `provenance` carries the sheet's and the parcel
+list's URL and time. The parcel search behind the cadastre's web form
+honours no paging and has never been seen to return more than 30 records,
+so a list of that length comes with `parcels_complete: false` and a `note`.
+
 ### `find_possession_sheet(sheet_number, municipality)`
 
-Cadastre possession sheets by number (prefix match). The cadastre has no lookup
-by sheet id; to see a sheet's possessors, call `get_parcel` on one of its
-parcels.
+Cadastre possession sheets whose number begins with the text: the sheet id
+and number of each, at most 50. The search index lags the change log (a
+sheet touched in 2026 was missing from it while `get_possession_sheet` found
+it by number), so an empty answer is a hint, not proof that the sheet does
+not exist. For the sheet itself, possessors and parcels, call
+`get_possession_sheet` with the exact number.
 
 ### `get_file_status(file_number, institution_id)`
 
@@ -281,14 +336,144 @@ land-registry office that holds the unit (`institution_id` of the unit from
 `message` means the register has no such file at that office; it is not an
 error.
 
+### `compare_registers(parcels)`
+
+Are the cadastre possessors of a parcel its registered owners? `parcels` is a
+list of references as for `get_parcel`. For each one the cadastre record and
+the land-registry unit the parcel belongs to are read (a unit shared by
+several parcels is read once) and the two lists of people are matched: by
+tax number when both records carry one, otherwise by name with case,
+diacritics, spacing, punctuation and a share suffix ignored; a match that
+rests on the name without a relative's name ("ŠARUNIĆ AUGUSTIN POK. BOŽE"
+against "Šarunić Augustin") is `fuzzy` and noted.
+
+Each successful entry has `parcel_number`, `municipality_code`, `lr_unit`,
+`provenance` for both registers, `map_url` and `data`:
+
+- `relationship`: `same` (the registers name the same people), `overlapping`
+  (some people in both), `disjoint` (different people), `cadastre_only` (the
+  parcel is not in the land registry), `no_owners`, `no_possessors`, or
+  `land_registry_unavailable` (the unit could not be read; the entry then
+  also carries `land_registry_error` with its `error_type`).
+- `summary`: the same in a sentence.
+- `matched` (pairs with `fuzzy`, `by_tax_number`, `shares_agree`),
+  `possessors_only`, `owners_only`, and the full `possessors` and `owners`
+  lists; every person carries `name`, `register`, `share`, `tax_number`,
+  `address` and `party_type_inferred` (`individual`, `company`, `state`,
+  `municipality` or `unknown`, read from the name and always marked
+  `inferred: true` with its `basis`).
+- `distinct_possessors`, `distinct_owners`, `distinct_people` (across both
+  registers; a matched pair is one person), `party_types` (of the distinct
+  people) and `public_body_owner_share` (the share registered to the state
+  or a municipality, when the shares are given).
+- `area_check`: the cadastre area against the land register's (sheet A of
+  the unit) and the map's graphical area, `mismatch` above 5 %.
+
+The response also carries `units_fetched`, `relationships` (a count per
+relationship) and `people` (distinct possessors, owners and people across
+every successful entry; a person on several parcels counts once). Use it
+before an acquisition: the possessor is who uses the land, the owner is who
+signs; a `disjoint` parcel needs both at the table.
+
+### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50)`
+
+Land-assembly analysis of a set of up to 50 parcels: the three tables an
+investor needs before talking to anyone. For every reference the cadastre
+record, the land-registry unit (a shared unit once) and the register
+comparison are read; with `include_zoning` the building-areas screening as
+well (one WFS lookup per parcel, slower).
+
+- `parcels`: one row per parcel, easiest to acquire first, with
+  `relationship`, `distinct_owners`, `distinct_possessors`,
+  `has_encumbrances`, `has_pending_plombe` and `pending_plombe`,
+  `public_body_owner_share`, `zoning_status`, `in_building_area`,
+  `designation_code`, `plan_name`, `area_mismatch`, `score`, `map_url` and
+  the `provenance` of both registers.
+- `persons`: the persons ranked by the area they control (a page;
+  `persons_page` says where to continue), each with `owner_of`,
+  `possessor_of`, `owned_area_m2` (share x cadastre area), `possessed_area_m2`,
+  `controlled_area_m2` (owned, plus the parcels only possessed),
+  `shares_unknown`, `fuzzy_matches`, `surname` and `party_type_inferred`.
+  `surname_groups` gathers them by surname (the registers write it first).
+- `matrix`: one cell per person and parcel with `role` (`owner`, `possessor`,
+  `both`), the shares and `fuzzy`.
+- `scores`: the factors behind each parcel's score and `weights`. The score
+  is a weighted share of yes/no factors: `single_owner`,
+  `owner_is_possessor`, `no_encumbrances`, `no_pending_plombe` and
+  `in_building_area` (only with `include_zoning`); a factor that could not
+  be evaluated (no unit, no zoning) is left out of both the numerator and
+  the denominator, and `notes` say which. Pass `weights` to change any of
+  them, e.g. `{"in_building_area": 0.4}`; the weights used come back.
+- `totals`: `parcel_count`, `total_area_m2`, `area_by_land_use`,
+  `area_by_relationship`, `area_by_zoning_status`, `distinct_people`,
+  `distinct_owners`, `distinct_possessors`, `party_types`,
+  `public_body_parcels`, `fuzzy_matches`, `parcels_with_encumbrances`,
+  `parcels_with_pending_plombe`, `parcels_in_building_area`.
+
+References that could not be read are listed under `failed` with their
+`error_type`; the analysis covers the rest (`total`, `successful`,
+`units_fetched`, `zoning_requested` and `generated_at` say what it rests on). `export` adds one table as text
+under `export`: `"parcels_csv"`, `"persons_csv"` or `"matrix_csv"` (CSV with
+fixed English columns; the matrix in long form, one row per person and
+parcel) or `"geojson"` (a `FeatureCollection` of the parcels that have an
+outline, scores in the properties, the others under `skipped`). Party types
+are inferred from names and controlled areas use cadastre areas; the
+`notes` repeat both caveats. A response too large to return says so and
+names the way out (fewer parcels, a `persons_limit`, one export at a time).
+
+### `find_parcels_in_area(municipality, bbox=None, polygon=None, center=None, radius_m=None, relation="intersects", offset=0, limit=50, include_geojson=False)`
+
+The parcels of a municipality inside an area, read from the cached cadastral
+map (downloaded on first use), so that a target area can be defined without
+knowing any parcel number. Give exactly one area, in EPSG:3765 (HTRS96/TM)
+metres, the coordinates `get_parcel_geometry` returns:
+
+```json
+{"municipality": "SAVAR", "bbox": [380590, 4880880, 380680, 4880980]}
+{"municipality": "SAVAR", "polygon": "POLYGON((380590 4880880, 380680 4880880, 380590 4880980, 380590 4880880))"}
+{"municipality": "SAVAR", "center": [380616.77, 4880907.83], "radius_m": 50}
+```
+
+`polygon` is WKT or a list of `[x, y]` vertices. `relation` is `"intersects"`
+(default; the parcel touches the area) or `"within"` (it lies wholly inside,
+its boundary included); a radius query measures the distance from the point
+to each parcel's outline (0 when the point is inside it). Longitude/latitude
+is refused with a hint: the tools do not reproject.
+
+The result is `{municipality_code, query, parcels, total, total_area_m2,
+page, dataset}`: `parcels` are rows with `parcel_number`, `area_m2` (the
+graphical area from the map), `centroid`, `bounds`, `distance_m` (radius
+queries) and `map_url`, paged with `offset` and `limit` (default 50);
+`total` and `total_area_m2` count every match, not only the page. `dataset`
+is the map's provenance: `parcel_count` of the municipality, `crs`, `source`
+server, `downloaded_at` and a note that these are outlines and graphical
+areas from the cadastral map, not a survey. `include_geojson` adds the page
+as a GeoJSON `FeatureCollection` (EPSG:3765). The rows carry no owners or
+land use: pass the numbers to `get_parcel` / `get_lr_unit` for the registers.
+
+### `find_parcel_neighbours(parcel_number, municipality, tolerance_m=0.10, offset=0, limit=50, include_geojson=False)`
+
+The parcels around one parcel, from the cached cadastral map: those sharing a
+boundary with it (`shared_boundary_m`, longest first) and those touching it
+at a corner only (`touches_at_point: true`, `shared_boundary_m: 0`). Two
+outlines within `tolerance_m` of each other count as touching (digitising
+gaps). The result is `{municipality_code, parcel, neighbours, total,
+total_area_m2, tolerance_m, page, dataset}` with the same row shape as
+`find_parcels_in_area`; `parcel` is the seed's row. A parcel that is not in
+the municipality's GIS data is an error naming the municipality code. Use it
+to walk outward from a seed parcel; the numbers go to `get_parcel` /
+`get_lr_unit` for the registers' records.
+
 ### `download_municipality_gis(municipality, force=False)`
 
 Downloads the GIS data of a whole cadastral municipality (the ATOM ZIP with
 the parcel boundaries in GML) into the local cache that `get_parcel_geometry`
 and `get_parcel_zoning` read, or refreshes it with `force=true`. Returns the
-`download_url`, whether it was `already_cached`, the cached `zip_path` and
-`gml_path`, the ZIP size, the `parcel_count` of the municipality and the
-`source` server the cache came from. The two geometry tools download on demand;
+`download_url`, whether it was `already_cached`, `downloaded_at` (when the
+cached ZIP was downloaded, UTC: the age of the data every geometry, map link,
+zoning answer and `area_check` for this municipality rests on), the cached
+`zip_path` and `gml_path`, the ZIP size, the `parcel_count` of the
+municipality and the `source` server the cache came from. The two geometry tools download on demand;
 this is for fetching ahead of many lookups or refreshing stale data.
 
 ## Playbook
@@ -308,6 +493,23 @@ this is for fetching ahead of many lookups or refreshing stale data.
   the parcel is not in the land registry rather than inventing an owner.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
+- **Parcels of a posjedovni list, and who is on it**: `get_possession_sheet`
+  with the exact sheet number; `find_possession_sheet` when only the start
+  of the number is known.
+- **Is the possessor the owner** (posjednik vs vlasnik, one parcel or a set):
+  `compare_registers` with the parcel references. It reads both registers
+  and says `same`, `overlapping` or `disjoint` per parcel, who is in one
+  register only, and how many distinct people the set involves.
+- **Assembling land from a set of parcels** (who to sit down with, where to
+  start): `build_assembly` with the references (from `find_parcels_in_area`
+  or a list), `include_zoning` when the building area matters, `export` for
+  a CSV to paste into an email. Read `scores[].factors` and `weights` before
+  quoting a ranking; the rule is transparent on purpose.
+- **Which parcels are in this area / around this parcel**:
+  `find_parcels_in_area` (bounding box, polygon or radius, EPSG:3765 metres)
+  and `find_parcel_neighbours` give parcel numbers, graphical areas and
+  `total_area_m2` from the cached cadastral map, no registers involved; then
+  `get_parcel` / `get_lr_unit` with the numbers for possessors and owners.
 - **A large unit** (a condominium with hundreds of shares, a long list C):
   `get_lr_unit` with `owner_name` when one person is wanted ("is X an owner",
   "which flat does X own"); otherwise `detail="ownership"` and a `limit`, then
@@ -345,8 +547,20 @@ Resources: `cadastral://parcel/{parcel_id}` (the parcel record),
 the numeric `parcel_id` that `find_parcel` returns and read the cadastre
 record (possessors, not land-registry owners).
 
+The server also sends a short `instructions` text when the client connects
+(the two registers, which tool to start with, paging, provenance). Clients
+that support it put it in the model's system prompt; the tool descriptions
+carry the same rules per tool, so nothing is lost with a client that does not.
+
 ## Troubleshooting
 
+- **`error_type`**: every failed entry of `get_parcel` and `get_lr_unit`
+  carries one, and every tool error message ends with `[error_type=...]`.
+  `access_denied` means the server refused (HTTP 401/403), `rate_limit` that
+  it throttled, `*_not_found` that nothing exists under that reference,
+  `response_too_large` that the entry must be paged, `invalid_request` that
+  the reference or an option was wrong. Only `*_not_found` means "no such
+  record".
 - **Municipality not found**: check the spelling or use the registration code
   from `resolve_municipality`.
 - **No parcels found**: check the number format ("103/2", not "103-2") and the

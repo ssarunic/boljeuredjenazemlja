@@ -6,12 +6,27 @@ import logging
 from typing import Any
 
 from cadastral_api import CadastralAPIClient, GMLParser
+from cadastral_api.analysis import (
+    AssemblyInput,
+    build_assembly,
+    check_area,
+    compare_registers,
+    count_distinct_persons,
+    matrix_csv,
+    parcels_csv,
+    parcels_geojson,
+    persons_csv,
+    resolve_weights,
+)
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
+from cadastral_api.gis import IndexedParcel, ParcelIndex
+from cadastral_api.gis.geometry_ops import parse_ring
+from cadastral_api.gis.spatial_index import Relation
 from cadastral_api.models.entities import ParcelInfo
-from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM
+from cadastral_api.models.gis_entities import DEFAULT_MAP_ZOOM, ParcelGeometry
 from cadastral_api.planning import validate_min_overlap
 from cadastral_api.utils import fold_text, is_building_parcel_number, normalize_parcel_number
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -31,15 +46,76 @@ def search_record(model: Any) -> dict[str, Any]:
     return record
 
 
+class ResponseTooLargeError(ValueError):
+    """A shaped entry exceeds the response ceiling; the message names the smaller options."""
+
+
+def error_kind(exc: BaseException) -> tuple[str, dict[str, Any]]:
+    """The machine-readable kind of a failure, and its details.
+
+    The SDK raises ``CadastralAPIError`` with an ``ErrorType`` (parcel_not_found,
+    lr_unit_not_found, rate_limit, access_denied, timeout ...); the handlers
+    wrap it in a ``ValueError`` written for the agent, so the chain of causes
+    is walked back to it. A ``ResponseTooLargeError`` is ``response_too_large``,
+    any other ``ValueError`` (a bad reference, a bad option) is
+    ``invalid_request``, anything else ``internal_error``. An empty answer is
+    then never read as an empty parcel: the kind says whether nothing exists,
+    the server refused, or the request was throttled.
+    """
+    current: BaseException | None = exc
+    while current is not None:
+        if isinstance(current, CadastralAPIError):
+            details = {
+                key: value if isinstance(value, (str, int, float, bool)) else str(value)
+                for key, value in current.details.items()
+                if value is not None
+            }
+            return current.error_type.value, details
+        if isinstance(current, ResponseTooLargeError):
+            return "response_too_large", {}
+        current = current.__cause__
+    if isinstance(exc, ValueError):
+        return "invalid_request", {}
+    return "internal_error", {}
+
+
+def error_fields(exc: BaseException) -> dict[str, Any]:
+    """The ``error``, ``error_type`` and ``error_details`` keys of a failed entry."""
+    kind, details = error_kind(exc)
+    fields: dict[str, Any] = {"error": str(exc), "error_type": kind}
+    if details:
+        fields["error_details"] = details
+    return fields
+
+
+def _int_area(text: str | None) -> int | None:
+    """An area the server wrote as text ("1200", "1200.00", "1 200") as an int, or None."""
+    if not text:
+        return None
+    try:
+        return int(float(str(text).replace(" ", "").replace(",", ".")))
+    except ValueError:
+        return None
+
+
 class ParcelRef(BaseModel):
     """One parcel to fetch: by ``parcel_id``, or by ``parcel_number`` + ``municipality``."""
 
     model_config = ConfigDict(extra="forbid")
 
     # Parcel ids are integers everywhere in the SDK; a numeric string is accepted too.
-    parcel_id: int | None = None
-    parcel_number: str | None = None
-    municipality: str | None = None
+    parcel_id: int | None = Field(
+        default=None,
+        description="Parcel id as find_parcel returns it (`parcel_id`); alone it names the parcel",
+    )
+    parcel_number: str | None = Field(
+        default=None,
+        description='Cadastral parcel number, e.g. "103/2" or "35/1.ZGR"; needs municipality',
+    )
+    municipality: str | None = Field(
+        default=None,
+        description='Cadastral municipality (k.o.) name, e.g. "SAVAR", or code, e.g. "334979"',
+    )
 
     @model_validator(mode="after")
     def _complete(self) -> "ParcelRef":
@@ -63,11 +139,38 @@ class LRUnitRef(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # Unit numbers are strings ("769", "374/A") but are often typed as numbers.
-    lr_unit_number: str | int | None = None
-    main_book_id: int | None = None
-    main_book_name: str | None = None
-    parcel_number: str | None = None
-    municipality: str | None = None
+    lr_unit_number: str | int | None = Field(
+        default=None,
+        description=(
+            'Land-registry unit number (broj uloška), e.g. "769" or "374/A"; needs '
+            "main_book_id or main_book_name"
+        ),
+    )
+    main_book_id: int | None = Field(
+        default=None,
+        description=(
+            "Main book (glavna knjiga) id, as get_parcel returns under data.lr_unit or "
+            "find_main_book gives"
+        ),
+    )
+    main_book_name: str | None = Field(
+        default=None,
+        description=(
+            'Main book name, e.g. "SAVAR", resolved through the main-book search instead of'
+            " main_book_id"
+        ),
+    )
+    parcel_number: str | None = Field(
+        default=None,
+        description=(
+            'Cadastral parcel number, e.g. "279/6", to fetch the unit the parcel belongs '
+            "to; needs municipality"
+        ),
+    )
+    municipality: str | None = Field(
+        default=None,
+        description='Cadastral municipality (k.o.) name, e.g. "SAVAR", or code, e.g. "334979"',
+    )
 
     @model_validator(mode="after")
     def _complete(self) -> "LRUnitRef":
@@ -159,6 +262,13 @@ class CadastralTools:
                 "success": True
             }
         """
+        response, _geometry = await self._search_parcel(parcel_number, municipality, max_matches)
+        return response
+
+    async def _search_parcel(
+        self, parcel_number: str, municipality: str, max_matches: int
+    ) -> tuple[dict[str, Any], ParcelGeometry | None]:
+        """``search_parcel``, with the parcel outline it looked up for the map link (or None)."""
         try:
             logger.info(f"Searching for parcel {parcel_number} in {municipality}")
 
@@ -202,7 +312,7 @@ class CadastralTools:
                     "municipality_code": muni_code,
                     "success": False,
                     **matches,
-                }
+                }, None
             exact_match = kind == "exact"
             response: dict[str, Any] = {
                 "parcel_id": result.parcel_id,
@@ -223,10 +333,10 @@ class CadastralTools:
                     r.parcel_number for r in siblings
                 ][: self.MAX_OTHER_MATCHES]
             response.update(matches)
-            map_url = self._map_url_for(result.parcel_number, muni_code)
-            if map_url:
-                response["map_url"] = map_url
-            return response
+            geometry = self._geometry_for(result.parcel_number, muni_code)
+            if geometry is not None:
+                response["map_url"] = geometry.map_url()
+            return response, geometry
 
         except CadastralAPIError as e:
             logger.error(f"Search failed for {parcel_number} in {municipality}: {e}", exc_info=True)
@@ -416,7 +526,7 @@ class CadastralTools:
             try:
                 ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
             except ValueError as e:
-                results.append({"status": "error", "error": str(e), "ref": spec})
+                results.append({"status": "error", **error_fields(e), "ref": spec})
                 continue
             try:
                 results.append(
@@ -426,7 +536,7 @@ class CadastralTools:
                 logger.error(f"Failed to fetch parcel {ref}: {e}")
                 results.append({
                     "status": "error",
-                    "error": str(e),
+                    **error_fields(e),
                     "ref": ref.model_dump(exclude_none=True),
                 })
 
@@ -448,16 +558,11 @@ class CadastralTools:
         possessor_filter: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """The ``results`` entry of one parcel reference (raises on failure)."""
-        search_result: dict[str, Any] | None = None
-        if ref.parcel_id is not None:
-            parcel_id = ref.parcel_id
-        else:
-            assert ref.parcel_number is not None and ref.municipality is not None
-            search_result = await self.search_parcel(ref.parcel_number, ref.municipality)
-            parcel_id = search_result["parcel_id"]
-
-        parcel = self.client.get_parcel_info(parcel_id)
+        parcel, geometry, search_result = await self._load_parcel(ref)
         result_data = parcel.model_dump(mode="json")
+        # Retrieval provenance describes the entry, so it sits next to
+        # ``register`` rather than inside the record it is about.
+        provenance = result_data.pop("provenance", None)
 
         # A parcel whose unit is reachable only through parcel links has a
         # null ``lr_unit``; put the resolved unit there, as promised, and let
@@ -482,6 +587,7 @@ class CadastralTools:
             "status": "success",
             "ref": ref.model_dump(exclude_none=True),
             "register": source,
+            "provenance": provenance,
             "cadastre_lr_harmonized": parcel.is_harmonized,
             "data": result_data,
         }
@@ -500,15 +606,74 @@ class CadastralTools:
             entry["exact_match"] = False
             entry["requested_parcel_number"] = search_result["requested_parcel_number"]
             entry["match_note"] = search_result["match_note"]
-        # Best-effort map link from the cached municipality GIS data (the
-        # search already looked it up when the parcel was given by number)
-        if search_result is not None:
-            map_url = search_result.get("map_url")
-        else:
-            map_url = self._map_url_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
-        if map_url:
-            entry["map_url"] = map_url
+        if geometry is not None:
+            entry["map_url"] = geometry.map_url()
+        entry["area_check"] = self._area_check(parcel, geometry)
         return entry
+
+    async def _load_parcel(
+        self, ref: ParcelRef
+    ) -> tuple[ParcelInfo, ParcelGeometry | None, dict[str, Any] | None]:
+        """The record a reference names, its outline (best effort) and the search response.
+
+        A parcel given by number is searched first (which also looks up the
+        outline for the map link); one given by id is fetched directly and
+        its outline looked up afterwards, once. The outline serves the map
+        link and the graphical area of ``area_check``; None when the
+        municipality's GIS data has no such parcel.
+        """
+        search_result: dict[str, Any] | None = None
+        geometry: ParcelGeometry | None = None
+        if ref.parcel_id is not None:
+            parcel_id = ref.parcel_id
+        else:
+            assert ref.parcel_number is not None and ref.municipality is not None
+            search_result, geometry = await self._search_parcel(
+                ref.parcel_number, ref.municipality, 0
+            )
+            parcel_id = search_result["parcel_id"]
+        parcel = self.client.get_parcel_info(parcel_id)
+        if search_result is None:
+            geometry = self._geometry_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
+        return parcel, geometry, search_result
+
+    #: Relative difference between two areas of one parcel above which they disagree.
+    AREA_TOLERANCE = 0.05
+
+    @classmethod
+    def _area_check(cls, parcel: ParcelInfo, geometry: ParcelGeometry | None) -> dict[str, Any]:
+        """Compare the areas the registers give one parcel (``check_area``).
+
+        The cadastre area is the record's own; the graphical area comes from
+        the cached GIS outline when there is one; the land-register area is
+        the one the cadastre carries on the parcel link (the "linked" shape
+        only). Sheet A of the unit is not read here, since that costs a
+        land-registry request: get_lr_unit with detail="parcels" has it.
+        """
+        lr_area: int | None = None
+        note: str | None = None
+        links = [link for link in parcel.parcel_links or [] if link.area]
+        same_number = [link for link in links if link.parcel_number == parcel.parcel_number]
+        if same_number:
+            lr_area = _int_area(same_number[0].area)
+        elif len(links) == 1:
+            lr_area = _int_area(links[0].area)
+            note = (
+                f"land-register area is that of land-register parcel {links[0].parcel_number}, "
+                f"linked to this cadastre parcel"
+            )
+        if lr_area is None:
+            note = (
+                'land-register area not on the cadastre record; get_lr_unit detail="parcels" '
+                "reads it from sheet A"
+            )
+        return check_area(
+            cadastre_m2=parcel.area_numeric or None,
+            land_registry_m2=lr_area,
+            gis_m2=geometry.povrsina_graficka if geometry is not None else None,
+            tolerance=cls.AREA_TOLERANCE,
+            note=note,
+        ).model_dump(mode="json")
 
     @staticmethod
     def _fold(text: str) -> str:
@@ -601,19 +766,22 @@ class CadastralTools:
 
     @staticmethod
     def _distinct_possessors(parcel: Any) -> int:
-        """How many different names the parcel's possessor records carry.
+        """How many different people the parcel's possessor records name.
 
         A person who holds two units of a condominium (a flat and a storage
         room, say) is two possessor records, often with two addresses; the
-        records are kept as the cadastre holds them and this count, by
-        ``name_normalized`` across every sheet, says how many people that is.
-        Two different people with the same name count once.
+        records are kept as the cadastre holds them and this count, across
+        every sheet, says how many people that is. Names are compared with
+        ``count_distinct_persons`` (case, diacritics, spacing and punctuation
+        ignored), the same identity the land-registry ``distinct_owners`` and
+        the register comparison use. Two different people with the same name
+        count once.
         """
-        return len({
-            possessor.name_normalized
+        return count_distinct_persons(
+            (possessor.name, None)
             for sheet in parcel.possession_sheets
             for possessor in sheet.possessors
-        })
+        )
 
     @classmethod
     def _check_parcel_size(
@@ -634,7 +802,7 @@ class CadastralTools:
         # suggest the largest window that fits, with a tenth to spare.
         fits = int(returned * cls.MAX_PARCEL_RESPONSE_CHARS / size * 0.9) if returned else 10
         smaller = max(1, fits)
-        raise ValueError(
+        raise ResponseTooLargeError(
             f"The cadastre record of parcel {parcel.parcel_number} is {size:,} "
             f"characters ({returned} of {page['total']} possessor records in this "
             f"window), too large to return in one response. Pass a smaller limit "
@@ -1111,6 +1279,11 @@ class CadastralTools:
             "institution_id": lr_unit.institution_id,
             "institution_name": lr_unit.institution_name,
             "lr_unit_derived_from_links": lr_unit.lr_unit_derived_from_links,
+            "provenance": (
+                lr_unit.provenance.as_dict()
+                if getattr(lr_unit, "provenance", None) is not None
+                else None
+            ),
         }
 
     #: The detail levels ``owner_name`` applies to: the ones whose page items
@@ -1159,6 +1332,11 @@ class CadastralTools:
         owner_name = cls._owner_name_filter(owner_name, detail)
         summary = lr_unit.summary()
         is_condo = lr_unit.is_condominium()
+        # Different people among the owner records, whatever the window or
+        # filter: one person holding two shares is two records and one owner.
+        distinct_owners = count_distinct_persons(
+            (owner.name, owner.tax_number) for owner in lr_unit.get_all_owners()
+        )
         condo_fields: dict[str, Any] = {}
         if is_condo:
             condo_fields = {
@@ -1167,7 +1345,12 @@ class CadastralTools:
             }
 
         if detail == "summary":
-            return {**cls._identity(lr_unit), "summary": summary, **condo_fields}
+            return {
+                **cls._identity(lr_unit),
+                "distinct_owners": distinct_owners,
+                "summary": summary,
+                **condo_fields,
+            }
 
         if detail in ("full", "shares"):
             if detail == "full":
@@ -1185,6 +1368,7 @@ class CadastralTools:
                 result["owner_name"] = owner_name
                 result["matching_shares"] = matching
             result["total_owners"] = total_owners
+            result["distinct_owners"] = distinct_owners
             result["owners_truncated"] = (
                 cls._count_owner_records(sheet.get("lr_unit_shares") or []) < total_owners
             )
@@ -1247,6 +1431,7 @@ class CadastralTools:
             "is_condominium": is_condo,
             "owners": owners,
             "total_owners": total,
+            "distinct_owners": distinct_owners,
         }
         if owner_name is not None:
             result["owner_name"] = owner_name
@@ -1277,7 +1462,7 @@ class CadastralTools:
         returned = page.get("returned") or 0
         smaller = max(1, returned // 4) if returned else 10
         if detail != "full":
-            raise ValueError(
+            raise ResponseTooLargeError(
                 f"The {detail} of land-registry unit {lr_unit.lr_unit_number} are "
                 f"{size:,} characters ({returned} {cls.PAGED_LIST[detail]} in this window), "
                 f"too large to return in one response. Pass a smaller limit (e.g. "
@@ -1300,7 +1485,7 @@ class CadastralTools:
             options.insert(0, "owners_limit (e.g. owners_limit=10) to cap the shares returned")
         elif limit is not None and sheet == "ownership_sheet_b":
             options.insert(0, f"a smaller limit (e.g. limit={smaller}), paged with offset")
-        raise ValueError(
+        raise ResponseTooLargeError(
             f"A full dump of land-registry unit {lr_unit.lr_unit_number} is "
             f"{size:,} characters ({total_owners} owner records; the largest part is "
             f"{sheet} at {sheet_size:,} characters), too large to return in one "
@@ -1418,7 +1603,7 @@ class CadastralTools:
             try:
                 ref = spec if isinstance(spec, LRUnitRef) else LRUnitRef.model_validate(spec)
             except ValueError as e:
-                results.append({"status": "error", "error": str(e), "ref": spec})
+                results.append({"status": "error", **error_fields(e), "ref": spec})
                 continue
             entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
 
@@ -1444,7 +1629,7 @@ class CadastralTools:
                 lr_unit = self._fetch_lr_unit(ref, historical_overview)
             except Exception as e:  # noqa: BLE001 - recorded per item on purpose
                 logger.error(f"Failed to fetch {ref.describe()}: {e}")
-                entry.update(status="error", error=str(e))
+                entry.update(status="error", **error_fields(e))
                 results.append(entry)
                 continue
 
@@ -1462,7 +1647,7 @@ class CadastralTools:
                 if include_plombe_detail and lr_unit.has_pending_plombe():
                     data["plombe_detail"] = self._plombe_detail(lr_unit)
             except Exception as e:  # noqa: BLE001 - e.g. a full dump too large to return
-                entry.update(status="error", error=str(e))
+                entry.update(status="error", **error_fields(e))
                 results.append(entry)
                 continue
 
@@ -1554,6 +1739,546 @@ class CadastralTools:
             response["status"] = status.model_dump(mode="json", by_alias=False)
         return response
 
+    async def compare_registers(self, parcels: list[ParcelRef | dict[str, Any]]) -> dict[str, Any]:
+        """
+        Are the cadastre possessors of each parcel its registered owners?
+
+        For every reference the cadastre record and the land-registry unit
+        the parcel belongs to are read (a unit shared by several parcels is
+        read once) and the two lists of people are matched with the shared
+        person identity: exact matches first (tax number, or the folded
+        name), then fuzzy ones (the name without a relative's name), which
+        are flagged. Each entry says whether the registers name the same
+        people, overlap, or are disjoint, lists who is in one register only,
+        infers each person's kind (individual, company, state, municipality;
+        always labelled inferred), sums the share registered to public
+        bodies, and compares the cadastre, land-register and graphical areas.
+
+        Args:
+            parcels: One or more parcel references (parcel_id, or
+                parcel_number + municipality).
+
+        Returns:
+            ``results`` (one entry per reference: status, ref, parcel_number,
+            municipality_code, lr_unit, provenance of both registers, data,
+            map_url), ``total``, ``successful``, ``failed``, ``units_fetched``,
+            ``relationships`` (count per relationship) and ``people``
+            (distinct possessors, owners and people across every successful
+            entry).
+        """
+        if not parcels:
+            raise ValueError("Give at least one parcel reference.")
+        logger.info(f"Comparing registers for {len(parcels)} parcel(s)")
+        results: list[dict[str, Any]] = []
+        units: dict[tuple[str, int], Any] = {}
+        possessors: list[tuple[str | None, str | None]] = []
+        owners: list[tuple[str | None, str | None]] = []
+        relationships: dict[str, int] = {}
+        for spec in parcels:
+            try:
+                ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
+            except ValueError as e:
+                results.append({"status": "error", **error_fields(e), "ref": spec})
+                continue
+            entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
+            try:
+                parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
+                    ref, units
+                )
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Register comparison failed for {ref}: {e}")
+                entry.update(status="error", **error_fields(e))
+                results.append(entry)
+                continue
+            entry.update(
+                status="success",
+                parcel_number=parcel.parcel_number,
+                municipality_code=parcel.cad_municipality_reg_num,
+                lr_unit=comparison.lr_unit,
+                provenance={
+                    "cadastre": parcel.provenance.as_dict() if parcel.provenance else None,
+                    "land_registry": (
+                        unit.provenance.as_dict()
+                        if unit is not None and unit.provenance is not None
+                        else None
+                    ),
+                },
+                data=comparison.model_dump(mode="json"),
+            )
+            if unit_error is not None:
+                entry["land_registry_error"] = error_fields(unit_error)
+            if geometry is not None:
+                entry["map_url"] = geometry.map_url()
+            results.append(entry)
+            relationships[comparison.relationship] = (
+                relationships.get(comparison.relationship, 0) + 1
+            )
+            possessors.extend((p.name, p.tax_number) for p in comparison.possessors)
+            owners.extend((o.name, o.tax_number) for o in comparison.owners)
+
+        successful = sum(1 for r in results if r["status"] == "success")
+        return {
+            "results": results,
+            "total": len(parcels),
+            "successful": successful,
+            "failed": len(results) - successful,
+            "units_fetched": len(units),
+            "relationships": relationships,
+            "people": {
+                "distinct_possessors": count_distinct_persons(possessors),
+                "distinct_owners": count_distinct_persons(owners),
+                "distinct_people": count_distinct_persons(possessors + owners),
+                "note": (
+                    "Different people by name (and tax number where given) across every "
+                    "successful entry; a person on several parcels counts once."
+                ),
+            },
+        }
+
+    async def _load_comparison(
+        self, ref: ParcelRef, units: dict[tuple[str, int], Any]
+    ) -> tuple[ParcelInfo, ParcelGeometry | None, Any, Exception | None, Any]:
+        """A parcel, its outline, its unit (read once per call) and the register comparison.
+
+        Shared by compare_registers and build_assembly, which differ only in
+        what they do with the result.
+        """
+        parcel, geometry, _search = await self._load_parcel(ref)
+        unit, unit_error = self._unit_of(parcel, units)
+        comparison = compare_registers(
+            parcel,
+            unit,
+            gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
+            lr_unit_error=str(unit_error) if unit_error else None,
+        )
+        return parcel, geometry, unit, unit_error, comparison
+
+    def _unit_of(
+        self, parcel: ParcelInfo, units: dict[tuple[str, int], Any]
+    ) -> tuple[Any, Exception | None]:
+        """The land-registry unit a parcel belongs to, read once per call.
+
+        Returns ``(unit, None)``, ``(None, None)`` for a parcel that is not in
+        the land registry, or ``(None, error)`` when the unit should exist but
+        could not be read (ambiguous links, not found, refused ...).
+        """
+        try:
+            ref = CadastralAPIClient._resolve_lr_unit_ref(parcel)
+            if ref is None:
+                return None, None
+            if ref not in units:
+                units[ref] = self.client.get_lr_unit_detailed(ref[0], ref[1])
+            return units[ref], None
+        except CadastralAPIError as e:
+            return None, e
+
+    #: Parcels one assembly analysis may cover: each costs a cadastre record and,
+    #: usually, a land-registry unit (20 s or more for a large condominium).
+    MAX_ASSEMBLY_PARCELS = 50
+
+    #: What ``build_assembly`` can export next to its JSON.
+    VALID_EXPORTS = ("parcels_csv", "persons_csv", "matrix_csv", "geojson")
+
+    async def build_assembly(
+        self,
+        parcels: list[ParcelRef | dict[str, Any]],
+        include_zoning: bool = False,
+        weights: dict[str, float] | None = None,
+        export: str | None = None,
+        persons_offset: int = 0,
+        persons_limit: int | None = 50,
+    ) -> dict[str, Any]:
+        """
+        Land-assembly analysis of a set of parcels: the persons x parcels
+        matrix, the persons ranked by controlled area and grouped by surname,
+        and the parcels ranked by ease of acquisition, with the weights shown.
+
+        For every reference the cadastre record, the land-registry unit (read
+        once per unit) and the register comparison are gathered; with
+        ``include_zoning`` the building-areas screening as well (one WFS
+        lookup per parcel). ``build_assembly`` in the SDK does the rest.
+
+        Args:
+            parcels: Up to ``MAX_ASSEMBLY_PARCELS`` parcel references.
+            include_zoning: Read each parcel's zoning for the building-area factor.
+            weights: Override any of the score's factor weights.
+            export: "parcels_csv" | "persons_csv" | "matrix_csv" | "geojson"
+                to add that table as text (or a FeatureCollection) under
+                ``export``.
+            persons_offset: Skip this many ranked persons.
+            persons_limit: Return at most this many (default 50; None for all).
+
+        Returns:
+            ``totals``, ``parcels`` (easiest first, with ``score``),
+            ``persons`` (a page of the ranking, with ``persons_page``),
+            ``surname_groups``, ``matrix`` (one cell per person and parcel),
+            ``scores`` (the factors behind each score), ``weights``,
+            ``notes``, ``generated_at``, ``failed`` (references that could not
+            be read, with ``error_type``), ``units_fetched`` and ``export``
+            when asked.
+        """
+        if not parcels:
+            raise ValueError("Give at least one parcel reference.")
+        if len(parcels) > self.MAX_ASSEMBLY_PARCELS:
+            raise ValueError(
+                f"An assembly analysis covers at most {self.MAX_ASSEMBLY_PARCELS} parcels per "
+                f"call ({len(parcels)} given): each parcel costs a cadastre record and a "
+                f"land-registry unit. Split the set and merge the persons by name, or use "
+                f"find_parcels_in_area to narrow the area first."
+            )
+        if export is not None and export not in self.VALID_EXPORTS:
+            raise ValueError(f"export must be one of {self.VALID_EXPORTS}, got {export!r}")
+        if persons_limit is not None and persons_limit < 1:
+            raise ValueError(f"persons_limit must be at least 1, got {persons_limit}")
+        if persons_offset < 0:
+            raise ValueError(f"persons_offset must not be negative, got {persons_offset}")
+        used_weights = resolve_weights(weights)
+
+        logger.info(f"Building assembly analysis for {len(parcels)} parcel(s)")
+        items: list[AssemblyInput] = []
+        failed: list[dict[str, Any]] = []
+        units: dict[tuple[str, int], Any] = {}
+        geometries: dict[str, ParcelGeometry] = {}
+        zoning_notes: list[str] = []
+        for spec in parcels:
+            try:
+                ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
+            except ValueError as e:
+                failed.append({"ref": spec, **error_fields(e)})
+                continue
+            try:
+                parcel, geometry, unit, unit_error, comparison = await self._load_comparison(
+                    ref, units
+                )
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Assembly input failed for {ref}: {e}")
+                failed.append({"ref": ref.model_dump(exclude_none=True), **error_fields(e)})
+                continue
+            zoning = None
+            if include_zoning:
+                try:
+                    zoning = await asyncio.to_thread(
+                        self.client.get_parcel_zoning,
+                        parcel.parcel_number,
+                        parcel.cad_municipality_reg_num,
+                    )
+                except Exception as e:  # noqa: BLE001 - the factor is then not evaluated
+                    logger.warning(f"Zoning failed for {parcel.parcel_number}: {e}")
+                    zoning_notes.append(
+                        f"zoning of {parcel.parcel_number} not read "
+                        f"({error_kind(e)[0]}); its building-area factor is not evaluated"
+                    )
+            if geometry is not None:
+                geometries[parcel.parcel_number] = geometry
+            items.append(
+                AssemblyInput(
+                    parcel=parcel,
+                    lr_unit=unit,
+                    comparison=comparison,
+                    zoning=zoning,
+                    map_url=geometry.map_url() if geometry is not None else None,
+                )
+            )
+        if not items:
+            raise ValueError(
+                "None of the parcels could be read: "
+                + "; ".join(f"{f.get('ref')}: {f['error']}" for f in failed)
+            )
+
+        analysis = build_assembly(items, used_weights)
+        persons_window = self._window(analysis.persons, persons_offset, persons_limit)
+        response: dict[str, Any] = {
+            "generated_at": analysis.generated_at,
+            "weights": analysis.weights,
+            "totals": analysis.totals.model_dump(mode="json"),
+            "parcels": [p.model_dump(mode="json") for p in analysis.parcels],
+            "persons": [p.model_dump(mode="json") for p in persons_window],
+            "persons_page": self._page(
+                persons_offset, persons_limit, len(analysis.persons), len(persons_window)
+            ),
+            "surname_groups": [g.model_dump(mode="json") for g in analysis.surname_groups],
+            "matrix": [c.model_dump(mode="json") for c in analysis.matrix],
+            "scores": [s.model_dump(mode="json") for s in analysis.scores],
+            "notes": analysis.notes + zoning_notes,
+            "total": len(parcels),
+            "successful": len(items),
+            "failed": failed,
+            "units_fetched": len(units),
+            "zoning_requested": include_zoning,
+        }
+        if export == "parcels_csv":
+            response["export"] = {"format": export, "text": parcels_csv(analysis)}
+        elif export == "persons_csv":
+            response["export"] = {"format": export, "text": persons_csv(analysis)}
+        elif export == "matrix_csv":
+            response["export"] = {"format": export, "text": matrix_csv(analysis)}
+        elif export == "geojson":
+            response["export"] = {"format": export, **parcels_geojson(analysis, geometries)}
+        size = len(json.dumps(response, ensure_ascii=False))
+        if size > self.MAX_PARCEL_RESPONSE_CHARS:
+            raise ResponseTooLargeError(
+                f"The assembly analysis of {len(items)} parcels is {size:,} characters, too "
+                f"large to return in one response. Analyse fewer parcels per call, pass a "
+                f"persons_limit, or ask for one export at a time."
+            )
+        return response
+
+    #: Parcel rows the area tools return unless asked otherwise.
+    DEFAULT_AREA_LIMIT = 50
+
+    #: How a parcel relates to the query area.
+    VALID_RELATIONS = ("intersects", "within")
+
+    @staticmethod
+    def _metric_point(value: Any, what: str) -> tuple[float, float]:
+        """An ``[x, y]`` pair in EPSG:3765 metres, refusing longitude/latitude."""
+        try:
+            x, y = float(value[0]), float(value[1])
+        except (TypeError, ValueError, IndexError):
+            raise ValueError(f"{what} must be [x, y] in EPSG:3765 metres, got {value!r}") from None
+        if len(value) != 2:
+            raise ValueError(f"{what} must be [x, y] in EPSG:3765 metres, got {value!r}")
+        if abs(x) <= 180 and abs(y) <= 90:
+            raise ValueError(
+                f"{what} ({x}, {y}) looks like longitude/latitude; the area tools take "
+                f"EPSG:3765 (HTRS96/TM) metres, the coordinates get_parcel_geometry returns "
+                f"(easting about 250000-800000, northing about 4600000-5200000)."
+            )
+        return x, y
+
+    async def _parcel_index(self, municipality: str) -> tuple[str, ParcelIndex]:
+        """The municipality's code and spatial index (built in a worker thread)."""
+        muni_code = self._resolve_municipality(municipality)
+        try:
+            index = await asyncio.to_thread(self.client.get_parcel_index, muni_code)
+        except CadastralAPIError:
+            raise
+        except Exception as e:  # noqa: BLE001 - download, zip and parse errors alike
+            logger.error(f"GIS index failed for {muni_code}: {e}", exc_info=True)
+            raise ValueError(
+                f"Could not load the GIS data of municipality '{municipality}' ({muni_code}): {e}"
+            ) from e
+        return muni_code, index
+
+    def _gis_dataset(self, muni_code: str, index: ParcelIndex) -> dict[str, Any]:
+        """Provenance of an answer read from the cached cadastral map."""
+        cache = self.client.gis_cache
+        downloaded_at = cache.downloaded_at(muni_code)
+        return {
+            "municipality_code": muni_code,
+            "parcel_count": len(index),
+            "crs": "EPSG:3765",
+            "source": cache.get_source(muni_code),
+            "downloaded_at": downloaded_at.isoformat() if downloaded_at is not None else None,
+            "note": (
+                "Outlines and graphical areas from the cadastral map (ATOM GML download), "
+                "not a survey; parcel numbers are the cadastre's."
+            ),
+        }
+
+    @staticmethod
+    def _parcel_row(item: IndexedParcel, **extra: Any) -> dict[str, Any]:
+        """A parcel of the index as the agent should see it."""
+        return {
+            "parcel_number": item.parcel_number,
+            "area_m2": item.area_m2,
+            "centroid": [round(item.centroid[0], 2), round(item.centroid[1], 2)],
+            "bounds": [round(v, 2) for v in item.bounds],
+            **extra,
+            "map_url": item.geometry.map_url(),
+        }
+
+    async def find_parcels_in_area(
+        self,
+        municipality: str,
+        bbox: list[float] | None = None,
+        polygon: str | list[list[float]] | None = None,
+        center: list[float] | None = None,
+        radius_m: float | None = None,
+        relation: str = "intersects",
+        offset: int = 0,
+        limit: int | None = DEFAULT_AREA_LIMIT,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        The parcels of a municipality inside an area: a bounding box, a
+        polygon, or a radius around a point (EPSG:3765 metres).
+
+        Read from the cached cadastral map of the municipality (downloaded on
+        first use), so no parcel number is needed to define a target area.
+
+        Args:
+            municipality: Municipality name or registration code.
+            bbox: ``[min_x, min_y, max_x, max_y]``.
+            polygon: WKT ``POLYGON((x y, ...))`` or a list of ``[x, y]`` vertices.
+            center: ``[x, y]`` of the point, with ``radius_m``.
+            radius_m: Radius in metres around ``center``.
+            relation: ``"intersects"`` (default: the parcel touches the area)
+                or ``"within"`` (lies wholly inside it); a radius query always
+                measures the distance from the point to the parcel outline.
+            offset: Skip this many parcels.
+            limit: Return at most this many (default 50; None for all).
+            include_geojson: Add a GeoJSON FeatureCollection of the page.
+
+        Returns:
+            ``municipality_code``, ``query`` (as understood), ``parcels`` (rows
+            with parcel_number, area_m2, centroid, bounds, distance_m for a
+            radius query, map_url), ``total`` and ``total_area_m2`` over
+            every match, ``page``, ``dataset`` (the cached map's provenance)
+            and, when asked, ``geojson``.
+        """
+        modes = [
+            name for name, value in (("bbox", bbox), ("polygon", polygon), ("center", center))
+            if value is not None
+        ]
+        if len(modes) != 1:
+            raise ValueError(
+                "Give exactly one area: bbox, polygon, or center with radius_m "
+                f"(got {', '.join(modes) or 'none'})."
+            )
+        if (center is None) != (radius_m is None):
+            raise ValueError("center and radius_m go together.")
+        if relation not in self.VALID_RELATIONS:
+            raise ValueError(f"relation must be one of {self.VALID_RELATIONS}, got {relation!r}")
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+
+        query: dict[str, Any]
+        if bbox is not None:
+            if len(bbox) != 4:
+                raise ValueError(f"bbox must be [min_x, min_y, max_x, max_y], got {bbox!r}")
+            low = self._metric_point(bbox[:2], "bbox corner")
+            high = self._metric_point(bbox[2:], "bbox corner")
+            if low[0] > high[0] or low[1] > high[1]:
+                raise ValueError("bbox must be [min_x, min_y, max_x, max_y] with min <= max")
+            query = {"bbox": [*low, *high], "relation": relation}
+        elif polygon is not None:
+            ring = parse_ring(polygon)
+            self._metric_point(ring[0], "polygon vertex")
+            query = {"polygon": [list(p) for p in ring], "relation": relation}
+        else:
+            assert center is not None and radius_m is not None
+            point = self._metric_point(center, "center")
+            if radius_m <= 0:
+                raise ValueError(f"radius_m must be positive, got {radius_m}")
+            query = {"center": list(point), "radius_m": float(radius_m)}
+
+        logger.info(f"Finding parcels in {municipality} by {modes[0]}")
+        muni_code, index = await self._parcel_index(municipality)
+
+        wanted_relation: Relation = "within" if relation == "within" else "intersects"
+        distances: dict[str, float] = {}
+        if bbox is not None:
+            hits = index.in_bbox((*low, *high), wanted_relation)
+        elif polygon is not None:
+            hits = index.in_polygon(ring, wanted_relation)
+        else:
+            assert radius_m is not None
+            radius_hits = index.within_radius(point[0], point[1], float(radius_m))
+            hits = [hit.parcel for hit in radius_hits]
+            distances = {hit.parcel.parcel_number: hit.distance_m for hit in radius_hits}
+
+        window = self._window(hits, offset, limit)
+        rows = [
+            self._parcel_row(
+                item, **({"distance_m": distances[item.parcel_number]} if distances else {})
+            )
+            for item in window
+        ]
+        response: dict[str, Any] = {
+            "municipality_code": muni_code,
+            "query": query,
+            "parcels": rows,
+            "total": len(hits),
+            "total_area_m2": ParcelIndex.total_area(hits),
+            "page": self._page(offset, limit, len(hits), len(window)),
+            "dataset": self._gis_dataset(muni_code, index),
+        }
+        if include_geojson:
+            response["geojson"] = self._feature_collection(window)
+        return response
+
+    @staticmethod
+    def _feature_collection(items: list[IndexedParcel]) -> dict[str, Any]:
+        return {
+            "type": "FeatureCollection",
+            "features": [item.geometry.to_geojson() for item in items],
+        }
+
+    async def find_parcel_neighbours(
+        self,
+        parcel_number: str,
+        municipality: str,
+        tolerance_m: float = 0.10,
+        offset: int = 0,
+        limit: int | None = DEFAULT_AREA_LIMIT,
+        include_geojson: bool = False,
+    ) -> dict[str, Any]:
+        """
+        The parcels around one parcel: those sharing a boundary with it, and
+        those touching it at a corner.
+
+        Read from the cached cadastral map (downloaded on first use). A
+        neighbour with ``touches_at_point`` true meets the parcel at a point
+        only (a street corner, say); the others share ``shared_boundary_m``
+        metres of boundary, longest first.
+
+        Args:
+            parcel_number: Cadastral parcel number (e.g., "103/2").
+            municipality: Municipality name or registration code.
+            tolerance_m: How far apart two outlines may be and still count as
+                touching (default 0.10 m, for digitising gaps).
+            offset: Skip this many neighbours.
+            limit: Return at most this many (default 50; None for all).
+            include_geojson: Add a GeoJSON FeatureCollection of the page.
+
+        Returns:
+            ``parcel`` (the seed parcel's row), ``neighbours`` (rows with
+            shared_boundary_m and touches_at_point), ``total``,
+            ``total_area_m2`` of every neighbour, ``page``, ``dataset`` and,
+            when asked, ``geojson``.
+        """
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        if tolerance_m < 0:
+            raise ValueError(f"tolerance_m must not be negative, got {tolerance_m}")
+        wanted = normalize_parcel_number(parcel_number)
+        logger.info(f"Finding neighbours of {wanted} in {municipality}")
+        muni_code, index = await self._parcel_index(municipality)
+        seed = index.by_number(wanted)
+        if seed is None:
+            raise ValueError(
+                f"Parcel '{parcel_number}' has no geometry in the GIS data for municipality "
+                f"'{municipality}' ({muni_code}). Check the parcel number; if the cached GIS "
+                f"data may be stale, refresh it with download_municipality_gis(force=true)."
+            )
+        neighbours = index.neighbours(wanted, tolerance_m)
+        window = self._window(neighbours, offset, limit)
+        response: dict[str, Any] = {
+            "municipality_code": muni_code,
+            "parcel": self._parcel_row(seed),
+            "neighbours": [
+                self._parcel_row(
+                    n.parcel,
+                    shared_boundary_m=n.shared_boundary_m,
+                    touches_at_point=n.touches_at_point,
+                )
+                for n in window
+            ],
+            "total": len(neighbours),
+            "total_area_m2": ParcelIndex.total_area(n.parcel for n in neighbours),
+            "tolerance_m": tolerance_m,
+            "page": self._page(offset, limit, len(neighbours), len(window)),
+            "dataset": self._gis_dataset(muni_code, index),
+        }
+        if include_geojson:
+            response["geojson"] = self._feature_collection([seed, *(n.parcel for n in window)])
+        return response
+
     async def download_municipality_gis(
         self, municipality: str, force: bool = False
     ) -> dict[str, Any]:
@@ -1570,8 +2295,8 @@ class CadastralTools:
             force: Download again even when the municipality is cached.
 
         Returns:
-            {"municipality_code", "download_url", "already_cached", "zip_path",
-            "zip_size_bytes", "gml_path", "parcel_count", "source"}.
+            {"municipality_code", "download_url", "already_cached", "downloaded_at",
+            "zip_path", "zip_size_bytes", "gml_path", "parcel_count", "source"}.
         """
         muni_code = self._resolve_municipality(municipality)
         cache = self.client.gis_cache
@@ -1581,6 +2306,7 @@ class CadastralTools:
             zip_path = await asyncio.to_thread(cache.download_municipality, muni_code, force)
             gml_path = await asyncio.to_thread(cache.get_parcel_data, muni_code, True)
             parcel_count = await asyncio.to_thread(lambda: GMLParser(gml_path).count_parcels())
+            downloaded_at = cache.downloaded_at(muni_code)
         except Exception as e:  # noqa: BLE001 - HTTP, zip and parse errors alike
             logger.error(f"GIS download failed for {muni_code}: {e}", exc_info=True)
             raise ValueError(
@@ -1591,6 +2317,7 @@ class CadastralTools:
             "municipality_code": muni_code,
             "download_url": f"{cache.base_url}/atom/ko-{muni_code}.zip",
             "already_cached": already_cached,
+            "downloaded_at": downloaded_at.isoformat() if downloaded_at is not None else None,
             "zip_path": str(zip_path),
             "zip_size_bytes": zip_path.stat().st_size,
             "gml_path": str(gml_path),
@@ -1648,6 +2375,166 @@ class CadastralTools:
             logger.error(f"Books-of-DC search failed: {e}", exc_info=True)
             raise ValueError("Could not search books of deposited contracts.") from e
 
+    async def get_possession_sheet(
+        self,
+        sheet_number: str,
+        municipality: str,
+        offset: int = 0,
+        limit: int | None = None,
+        possessor_name: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        A possession sheet (posjedovni list) by number: its possessors and
+        every parcel on it.
+
+        Three requests: the municipality's internal id, the sheet with its
+        possessors, and the parcel search that lists the sheet's parcels.
+        Possessors are paged like get_parcel's; the parcels come whole.
+
+        Args:
+            sheet_number: Possession sheet number (exact).
+            municipality: Municipality name or registration code.
+            offset: Skip this many possessor records.
+            limit: Return at most this many (None for all).
+            possessor_name: Keep only the possessors whose name contains every
+                word of this text (case and diacritics ignored).
+
+        Returns:
+            ``sheet`` (id, number, municipality, is_condominium, total ownership),
+            ``possessors_in_land_registry`` (a harmonized sheet lists no
+            possessors; ``owners`` then carries the unit's registered owners,
+            ``possessor_name`` filters them and ``matching_owners`` counts the
+            matches; the sheet's missing id and municipality are filled from
+            the parcel records, ``backfilled_from_parcels`` says which),
+            ``lr_unit``, ``possessors`` (a page), ``total_possessors``,
+            ``distinct_possessors``,
+            ``page``, ``parcels`` (number, id, area, land use, building parcel,
+            harmonized, land-registry reference, inline owners when harmonized),
+            ``parcel_count``, ``total_area_m2``, ``parcels_complete`` (False
+            when the list is as long as the longest ever observed, so a
+            server cap cannot be ruled out) and ``provenance`` of both calls.
+        """
+        if limit is not None and limit < 1:
+            raise ValueError(f"limit must be at least 1, got {limit}")
+        if offset < 0:
+            raise ValueError(f"offset must not be negative, got {offset}")
+        possessor_filter = self._possessor_filter(possessor_name, None)
+        number = str(sheet_number).strip()
+        if not number:
+            raise ValueError("sheet_number must not be blank")
+        logger.info(f"Reading possession sheet {number} in {municipality}")
+        try:
+            result = await asyncio.to_thread(
+                self.client.get_possession_sheet_parcels, number, municipality
+            )
+        except CadastralAPIError as e:
+            if e.error_type is ErrorType.POSSESSION_SHEET_NOT_FOUND:
+                raise ValueError(
+                    f"No possession sheet numbered '{number}' in municipality "
+                    f"'{municipality}'. The number is matched exactly; find_possession_sheet "
+                    f"lists the sheets whose number begins with it."
+                ) from e
+            if e.error_type is ErrorType.MUNICIPALITY_NOT_FOUND:
+                raise ValueError(f"Municipality '{municipality}' not found") from e
+            raise ValueError(
+                f"Could not read possession sheet '{number}' in {municipality}: {e}"
+            ) from e
+
+        sheet = result.sheet
+        sheet_dump = sheet.model_dump(mode="json")
+        sheet_dump.pop("provenance", None)
+        if result.backfilled_from_parcels:
+            sheet_dump["backfilled_from_parcels"] = list(result.backfilled_from_parcels)
+        possessors = sheet_dump.pop("possessors") or []
+        if possessor_filter:
+            possessors = [p for p in possessors if self._possessor_matches(p, possessor_filter)]
+        window = self._window(possessors, offset, limit)
+        parcels = [
+            {
+                "parcel_id": p.parcel_id,
+                "parcel_number": p.parcel_number,
+                "parcel_number_display": p.parcel_number_display,
+                "area_m2": p.area_numeric,
+                "address": p.address,
+                "land_use": p.land_use_summary,
+                "is_building_parcel": p.is_building_parcel,
+                "is_harmonized": p.is_harmonized,
+                "lr_unit": (
+                    {"lr_unit_number": u.lr_unit_number, "main_book_id": u.main_book_id}
+                    if (u := p.resolved_lr_unit()) is not None
+                    else None
+                ),
+                "inline_owners": len(p.lr_unit.owner_rows()) if p.lr_unit is not None else None,
+            }
+            for p in result.parcels
+        ]
+        lr_ref = result.lr_unit
+        response: dict[str, Any] = {
+            "sheet": sheet_dump,
+            "possessors_in_land_registry": result.possessors_in_land_registry,
+            "lr_unit": (
+                {"lr_unit_number": lr_ref.lr_unit_number, "main_book_id": lr_ref.main_book_id}
+                if lr_ref is not None
+                else None
+            ),
+            "possessors": window,
+            "total_possessors": len(sheet.possessors),
+            "distinct_possessors": count_distinct_persons(
+                (p.name, None) for p in sheet.possessors
+            ),
+            "page": self._page(offset, limit, len(possessors), len(window)),
+            "parcels": parcels,
+            "parcel_count": len(parcels),
+            "total_area_m2": result.total_area_m2,
+            "parcels_complete": not result.maybe_truncated,
+            "provenance": {
+                "sheet": sheet.provenance.as_dict() if sheet.provenance else None,
+                "parcels": result.parcels_provenance.as_dict(),
+            },
+        }
+        if result.possessors_in_land_registry:
+            # A harmonized sheet: the cadastre lists nobody and names the unit;
+            # the registered owners are the possessors, and the parcel search
+            # already inlined sheet B, so no unit is read.
+            owners = result.owner_rows()
+            if possessor_filter:
+                owners = [o for o in owners if self._possessor_matches(o, possessor_filter)]
+            response["owners"] = owners
+            response["total_owners"] = len(owners)
+            response["distinct_owners"] = count_distinct_persons(
+                (o.get("name"), o.get("tax_number")) for o in owners
+            )
+            response["owners_note"] = (
+                "This sheet is harmonized with the land registry: the cadastre records no "
+                "possessors of its own and refers to the land-registry unit, whose registered "
+                "owners (register land_registry) are listed under owners, read from sheet B as "
+                "the parcel search inlines it, tax numbers (OIB) included where the registry "
+                "has them. get_lr_unit gives their entries, shares in full and the encumbrances."
+            )
+            if possessor_filter:
+                response["possessor_filter"] = possessor_filter
+                response["filter_applied_to"] = "owners"
+                response["matching_owners"] = len(owners)
+        elif possessor_filter:
+            response["possessor_filter"] = possessor_filter
+            response["filter_applied_to"] = "possessors"
+            response["matching_possessors"] = len(possessors)
+        if result.maybe_truncated:
+            response["note"] = (
+                f"{len(parcels)} parcels is the most the parcel search has ever returned for "
+                f"one sheet; a server-side cap of that size is not ruled out, so the list may "
+                f"be incomplete."
+            )
+        size = len(json.dumps(response, ensure_ascii=False))
+        if size > self.MAX_PARCEL_RESPONSE_CHARS:
+            raise ResponseTooLargeError(
+                f"Possession sheet {number} is {size:,} characters ({len(window)} of "
+                f"{len(possessors)} possessor records, {len(parcels)} parcels), too large to "
+                f"return in one response. Pass a smaller limit and page with offset, or "
+                f"possessor_name to pick the records you need."
+            )
+        return response
+
     async def find_possession_sheet(self, sheet_number: str, municipality: str) -> dict[str, Any]:
         """
         Find cadastre possession sheets (posjedovni listovi) by sheet number.
@@ -1671,20 +2558,20 @@ class CadastralTools:
                 f"Could not search possession sheets for '{sheet_number}' in {municipality}."
             ) from e
 
-    def _map_url_for(self, parcel_number: str, muni_code: str) -> str | None:
+    def _geometry_for(self, parcel_number: str, muni_code: str) -> ParcelGeometry | None:
         """
-        Best-effort interactive map link for a parcel.
+        Best-effort parcel outline from the cached municipality GIS data.
 
-        Uses the cached municipality GIS data (downloaded on first use). Any
-        failure (download, parse, parcel not in the GML) is logged and yields
-        None so that the calling tool still returns its main result.
+        Downloaded on first use. Any failure (download, parse, parcel not in
+        the GML) is logged and yields None so that the calling tool still
+        returns its main result: the map link and the graphical area it
+        serves are extras.
         """
         try:
-            geometry = self.client.get_parcel_geometry(parcel_number, muni_code)
-        except Exception as e:  # noqa: BLE001 - the link is optional
-            logger.warning(f"No map link for {parcel_number} in {muni_code}: {e}")
+            return self.client.get_parcel_geometry(parcel_number, muni_code)
+        except Exception as e:  # noqa: BLE001 - the geometry is optional
+            logger.warning(f"No GIS geometry for {parcel_number} in {muni_code}: {e}")
             return None
-        return geometry.map_url() if geometry is not None else None
 
     def _resolve_municipality(self, name_or_code: str) -> str:
         """Municipality name or code -> registration code (see the SDK resolver).

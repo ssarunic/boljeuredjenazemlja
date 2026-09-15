@@ -12,9 +12,10 @@ from pathlib import Path
 api_src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(api_src))
 
-from cadastral_api import CadastralAPIClient
 from rich.console import Console
 from rich.table import Table
+
+from cadastral_api import CadastralAPIClient
 
 console = Console()
 

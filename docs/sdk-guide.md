@@ -116,6 +116,31 @@ reliable than the upstream `condominiums` flag; individual apartments appear as
 shares in `unit.ownership_sheet_b.lr_unit_shares`. `unit.lr_unit_type` is the same
 information as an enum (`LRUnitType.OWNERSHIP`, `CONDOMINIUM_DEFINED_SHARES`, `OTHER`).
 
+### Possession sheets and their parcels
+
+The cadastre's web form reads a possession sheet (posjedovni list) through
+endpoints its own search does not expose; the client covers them:
+
+```python
+result = client.get_possession_sheet_parcels("363", "SAVAR")   # three requests
+sheet = result.sheet                       # PossessionSheet with possessors and provenance
+for parcel in result.parcels:              # SearchedParcel records, sorted by number
+    print(parcel.parcel_number, parcel.area_numeric, parcel.land_use_summary)
+    unit = parcel.resolved_lr_unit()        # inline on a harmonized parcel, via the link otherwise
+result.total_area_m2, result.maybe_truncated   # True at 30 parcels: a server cap is not ruled out
+
+client.get_possession_sheet(16179481)                  # by the id the searches carry
+client.get_possession_sheet_by_number("877", 2387)     # by number and internal municipality id
+client.resolve_municipality_id("SAVAR")                # 2387, the id these endpoints take
+client.search_parcels(cad_municipality_id=2387, parcel_number="103/2")   # exact match
+client.lookup_possession_sheet_number(16179481)        # -> number and registration number
+```
+
+A harmonized parcel's record carries an inline `lr_unit` with sheet B
+(`parcel.lr_unit.owner_rows()`) and no possession sheet; a non-harmonized one
+carries `possession_sheet` and `parcel_links`. A sheet that does not exist
+raises `POSSESSION_SHEET_NOT_FOUND`.
+
 ### Finding the main book
 
 The unit endpoint wants a main book id. When you only know the name (normally the
@@ -219,6 +244,36 @@ with CadastralAPIClient() as client:
 Coordinates are in EPSG:3765 (HTRS96 / Croatia TM). The GML parser is available on
 its own as `cadastral_api.GMLParser` when you already have a file.
 
+### Parcels by area and neighbours
+
+The cached GML of a municipality holds every parcel outline, so the questions
+a parcel number cannot answer are answered locally, without a request per
+parcel. `get_parcel_index` loads the file once per client into a
+`ParcelIndex` (pure Python, a grid prefilter and exact ring tests; EPSG:3765
+metres throughout):
+
+```python
+index = client.get_parcel_index("334979")
+print(len(index), "parcels")
+
+inside = index.in_bbox((380590, 4880880, 380680, 4880980))          # touching the box
+whole = index.in_bbox((380590, 4880880, 380680, 4880980), "within")  # wholly inside it
+triangle = index.in_polygon([(380590, 4880880), (380680, 4880880), (380590, 4880980)])
+for hit in index.within_radius(380616.77, 4880907.83, 50.0):        # nearest first
+    print(hit.parcel.parcel_number, hit.distance_m)
+for neighbour in index.neighbours("103/2"):
+    print(neighbour.parcel.parcel_number, neighbour.shared_boundary_m, neighbour.touches_at_point)
+print(ParcelIndex.total_area(inside), "m2")
+```
+
+Each result item is an `IndexedParcel` with the `ParcelGeometry`, its
+`ring`, `bounds`, `centroid` and `area_m2` (the graphical area from the map).
+`neighbours` reports the length of the common boundary in metres and tells a
+corner touch (`touches_at_point`) from a shared edge; `tolerance_m` (default
+0.10) absorbs digitising gaps. Areas are graphical, from the cadastral map,
+not surveyed: compare them with the registers' areas through `check_area`
+(see "Provenance and reading across the registers") before quoting one.
+
 ## Spatial plans: building areas
 
 Spatial plans do not reference parcels, so the only way to ask "is this parcel
@@ -297,8 +352,101 @@ with CadastralAPIClient() as client:
 ```
 
 Error types: `CONNECTION`, `TIMEOUT`, `RATE_LIMIT`, `INVALID_RESPONSE`,
-`PARCEL_NOT_FOUND`, `MUNICIPALITY_NOT_FOUND`, `LR_UNIT_NOT_FOUND`, `SERVER_ERROR`.
-Connection and rate-limit errors are retried with backoff before being raised.
+`PARCEL_NOT_FOUND`, `MUNICIPALITY_NOT_FOUND`, `LR_UNIT_NOT_FOUND`, `SERVER_ERROR`,
+`ACCESS_DENIED` (HTTP 401 or 403: the server refused, which is not a network
+failure and not an empty parcel) and `HTTP_ERROR` (any other 4xx; both carry
+`status_code` in `details`). Rate-limit and server errors are retried with
+backoff before being raised.
+
+## Provenance and reading across the registers
+
+Every record that `get_parcel_info` or `get_lr_unit_detailed` returns (and so
+`get_parcel_by_number` and `get_lr_unit_from_parcel`) carries `provenance`:
+the register it came from, the URL that answered and the time of retrieval
+in UTC. A record built from a file has none. Quote it with anything you
+forward, so that a printout is never taken for an official extract.
+
+```python
+parcel = client.get_parcel_by_number("103/2", "334979")
+print(parcel.provenance.register, parcel.provenance.source_url, parcel.provenance.retrieved_at)
+```
+
+`cadastral_api.analysis` reads across the registers without a request:
+
+```python
+from cadastral_api import check_area, count_distinct_persons, person_key, same_person
+
+# One person identity for both registers: case, diacritics, spacing,
+# punctuation and a share suffix ("... ZA 2/6") ignored; a relative's name
+# ("POK. BOŽE", "UD. IVE") only in the loose key, so that match is fuzzy.
+match, fuzzy = same_person(person_key("ŠARUNIĆ AUGUSTIN POK. BOŽE"), person_key("Sarunic Augustin"))
+# (True, True)
+owners = lr_unit.get_all_owners()
+count_distinct_persons((o.name, o.tax_number) for o in owners)   # people, not records
+
+# Do the areas agree? Cadastre record, land register, cadastral map.
+check = check_area(cadastre_m2=parcel.area_numeric, land_registry_m2=1180, gis_m2=geometry.povrsina_graficka)
+check.compared, check.max_difference_fraction, check.mismatch   # flagged above 5 %
+```
+
+Tax numbers decide when both records carry one; the count never merges two
+people on the loose key alone.
+
+`compare_registers` puts the two registers side by side for one parcel:
+
+```python
+from cadastral_api import compare_registers, infer_party_type
+
+parcel = client.get_parcel_by_number("1122/1", "334979")
+unit = client.get_lr_unit_from_parcel("1122/1", "334979")
+result = compare_registers(parcel, unit, gis_area_m2=geometry.povrsina_graficka)
+result.relationship          # same | overlapping | disjoint | cadastre_only | ...
+result.summary               # the same in a sentence
+[(m.possessor.name, m.owner.name, m.fuzzy) for m in result.matched]
+[o.name for o in result.owners_only]     # registered owners not on the possession sheet
+result.distinct_people, result.party_types, result.public_body_owner_share
+result.area_check.mismatch   # cadastre against sheet A and the map
+
+infer_party_type("HRVATSKE ŠUME d.o.o.")   # company, inferred=True, basis names the legal form
+```
+
+Every person carries `party_type_inferred`, read from the spelling of the
+name and always marked as an inference: enough to estimate how many public
+bodies and companies a set of parcels involves, not to state a fact about
+one owner.
+
+`build_assembly` turns a set of such records into the tables of a land
+assembly: the persons x parcels matrix, the persons ranked by controlled
+area and grouped by surname, and the parcels ranked by a transparent
+ease-of-acquisition score:
+
+```python
+from cadastral_api import AssemblyInput, build_assembly
+from cadastral_api.analysis import DEFAULT_WEIGHTS, parcels_csv, persons_csv
+
+items = []
+for number in ["103/2", "45", "396/1"]:
+    parcel = client.get_parcel_by_number(number, "334979")
+    unit = client.get_lr_unit_from_parcel(number, "334979")   # or None when not in the registry
+    zoning = client.get_parcel_zoning(number, "334979")        # optional
+    items.append(AssemblyInput(parcel, unit, compare_registers(parcel, unit), zoning))
+
+analysis = build_assembly(items, weights={**DEFAULT_WEIGHTS, "in_building_area": 0.3})
+for summary in analysis.parcels:          # easiest to acquire first
+    print(summary.parcel_number, summary.score, summary.relationship)
+for person in analysis.persons[:10]:      # largest controlled area first
+    print(person.name, person.controlled_area_m2, person.owner_of, person.possessor_of)
+analysis.surname_groups, analysis.matrix, analysis.totals, analysis.scores[0].factors
+open("parcels.csv", "w").write(parcels_csv(analysis))
+```
+
+The score is a weighted share of yes/no factors (`single_owner`,
+`owner_is_possessor`, `no_encumbrances`, `no_pending_plombe`,
+`in_building_area`); a factor that cannot be evaluated (no unit, no zoning)
+is left out of the numerator and the denominator, and each `AcquisitionScore`
+lists its `factors`, `weights` and `notes`. Controlled areas use cadastre
+areas and an owner role without a registered share counts the whole parcel;
+`analysis.notes` repeats these caveats for whoever reads the tables.
 
 ## Things to know about the data
 

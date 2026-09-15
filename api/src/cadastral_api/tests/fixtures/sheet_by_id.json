@@ -1,0 +1,19 @@
+{
+  "possessionSheetId": 2646383,
+  "possessionSheetNumber": "33",
+  "cadMunicipalityId": 2387,
+  "cadMunicipalityRegNum": "334979",
+  "cadMunicipalityName": "SAVAR",
+  "possessors": [
+    {
+      "name": "Posjednik 143",
+      "ownership": "5/9",
+      "address": "Adresa 189"
+    },
+    {
+      "name": "Posjednik 450",
+      "ownership": "4/9",
+      "address": "Adresa 190"
+    }
+  ]
+}

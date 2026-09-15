@@ -71,3 +71,28 @@ def test_get_lr_unit_schema_exposes_owner_name(server) -> None:
     schema = next(t for t in tools if t.name == "get_lr_unit").input_schema
     assert {"units", "detail", "offset", "limit", "owner_name"} <= set(schema["properties"])
     assert schema["properties"]["owner_name"]["default"] is None
+
+
+def test_tool_failure_names_the_kind_of_error(server) -> None:
+    with pytest.raises(ToolError) as excinfo:
+        args = {"parcel_number": "1", "municipality": "NOWHERE"}
+        asyncio.run(server.call_tool("find_parcel", args))
+    # The fake raises a plain ValueError; the SDK's typed errors keep their type.
+    assert str(excinfo.value).endswith("[error_type=invalid_request]")
+
+
+def test_error_kind_walks_the_chain_of_causes() -> None:
+    from cadastral_api.exceptions import CadastralAPIError, ErrorType
+
+    from cadastral_mcp.tools import ResponseTooLargeError, error_kind
+
+    try:
+        try:
+            raise CadastralAPIError(ErrorType.RATE_LIMIT, details={"retry_count": 3, "x": None})
+        except CadastralAPIError as e:
+            raise ValueError("Could not search") from e
+    except ValueError as wrapped:
+        assert error_kind(wrapped) == ("rate_limit", {"retry_count": 3})
+    assert error_kind(ResponseTooLargeError("big")) == ("response_too_large", {})
+    assert error_kind(ValueError("bad ref")) == ("invalid_request", {})
+    assert error_kind(RuntimeError("boom")) == ("internal_error", {})

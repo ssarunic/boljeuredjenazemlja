@@ -1,8 +1,21 @@
 """Croatian Cadastral System (Ureena zemlja) API Client."""
 
+from .analysis import (
+    AreaCheck,
+    AssemblyAnalysis,
+    AssemblyInput,
+    RegisterComparison,
+    build_assembly,
+    check_area,
+    compare_registers,
+    count_distinct_persons,
+    infer_party_type,
+    person_key,
+    same_person,
+)
 from .client import CadastralAPIClient
 from .exceptions import CadastralAPIError, ErrorType
-from .gis import GISCache, GMLParser
+from .gis import GISCache, GMLParser, ParcelIndex
 from .models import (
     BookOfDCSearchResult,
     CadastralOffice,
@@ -26,6 +39,8 @@ from .models import (
     PossessionSheet,
     PossessionSheetSearchResult,
     Possessor,
+    Provenance,
+    SearchedParcel,
     ZoneKind,
     ZoneMatch,
     ZoningStatus,
@@ -45,6 +60,7 @@ __all__ = [
     # GIS
     "GISCache",
     "GMLParser",
+    "ParcelIndex",
     # Spatial plans
     "PlanningWFSClient",
     "ParcelZoning",
@@ -74,6 +90,20 @@ __all__ = [
     "Possessor",
     "PossessionSheet",
     "PossessionSheetSearchResult",
+    "Provenance",
+    "SearchedParcel",
+    # Analysis (pure functions over the models)
+    "AreaCheck",
+    "AssemblyAnalysis",
+    "AssemblyInput",
+    "RegisterComparison",
+    "build_assembly",
+    "check_area",
+    "compare_registers",
+    "count_distinct_persons",
+    "infer_party_type",
+    "person_key",
+    "same_person",
     # Helpers
     "display_parcel_number",
     "normalize_parcel_number",

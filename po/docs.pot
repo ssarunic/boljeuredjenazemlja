@@ -21,7 +21,8 @@ msgstr ""
 #: commands/cache-clear.md:15 commands/cache-info.md:14
 #: commands/cache-list.md:15 commands/download-gis.md:15
 #: commands/get-geometry.md:15 commands/get-lr-unit.md:17
-#: commands/get-parcel.md:15 commands/get-zoning.md:17 commands/info.md:15
+#: commands/get-parcel.md:15 commands/get-possession-sheet.md:16
+#: commands/get-zoning.md:17 commands/info.md:15
 #: commands/list-books-of-dc.md:16 commands/list-main-books.md:16
 #: commands/list-municipalities.md:14 commands/list-offices.md:14
 #: commands/search-municipality.md:15 commands/search-possession-sheet.md:16
@@ -42,7 +43,8 @@ msgstr ""
 #: commands/cache-clear.md:20 commands/cache-info.md:19
 #: commands/cache-list.md:20 commands/download-gis.md:20
 #: commands/get-geometry.md:21 commands/get-lr-unit.md:23
-#: commands/get-parcel.md:22 commands/get-zoning.md:24 commands/info.md:20
+#: commands/get-parcel.md:22 commands/get-possession-sheet.md:25
+#: commands/get-zoning.md:24 commands/info.md:20
 #: commands/list-books-of-dc.md:21 commands/list-main-books.md:21
 #: commands/list-municipalities.md:19 commands/list-offices.md:19
 #: commands/search-municipality.md:21 commands/search-possession-sheet.md:21
@@ -60,7 +62,8 @@ msgstr ""
 #: commands/cache-clear.md:26 commands/cache-info.md:23
 #: commands/cache-list.md:24 commands/download-gis.md:26
 #: commands/get-geometry.md:31 commands/get-lr-unit.md:34
-#: commands/get-parcel.md:33 commands/get-zoning.md:41 commands/info.md:24
+#: commands/get-parcel.md:33 commands/get-possession-sheet.md:33
+#: commands/get-zoning.md:41 commands/info.md:24
 #: commands/list-books-of-dc.md:27 commands/list-main-books.md:26
 #: commands/list-municipalities.md:24 commands/list-offices.md:23
 #: commands/search-municipality.md:25 commands/search-possession-sheet.md:27
@@ -71,7 +74,8 @@ msgstr ""
 #: commands/cache-clear.md:28 commands/cache-info.md:25
 #: commands/cache-list.md:26 commands/download-gis.md:28
 #: commands/get-geometry.md:33 commands/get-lr-unit.md:36
-#: commands/get-parcel.md:35 commands/get-zoning.md:43 commands/info.md:26
+#: commands/get-parcel.md:35 commands/get-possession-sheet.md:35
+#: commands/get-zoning.md:43 commands/info.md:26
 #: commands/list-books-of-dc.md:29 commands/list-main-books.md:28
 #: commands/list-municipalities.md:26 commands/list-offices.md:25
 #: commands/search-municipality.md:27 commands/search-possession-sheet.md:29
@@ -88,7 +92,8 @@ msgstr ""
 #: commands/cache-clear.md:36 commands/cache-info.md:32
 #: commands/cache-list.md:33 commands/download-gis.md:35
 #: commands/get-geometry.md:40 commands/get-lr-unit.md:43
-#: commands/get-parcel.md:42 commands/get-zoning.md:50 commands/info.md:33
+#: commands/get-parcel.md:42 commands/get-possession-sheet.md:42
+#: commands/get-zoning.md:50 commands/info.md:33
 #: commands/list-books-of-dc.md:36 commands/list-main-books.md:35
 #: commands/list-municipalities.md:33 commands/list-offices.md:32
 #: commands/search-municipality.md:34 commands/search-possession-sheet.md:36
@@ -102,8 +107,9 @@ msgstr ""
 
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
-#: commands/get-geometry.md:75 commands/get-lr-unit.md:99
-#: commands/get-parcel.md:102 commands/get-zoning.md:90 commands/info.md:65
+#: commands/get-geometry.md:74 commands/get-lr-unit.md:99
+#: commands/get-parcel.md:102 commands/get-possession-sheet.md:79
+#: commands/get-zoning.md:90 commands/info.md:65
 #: commands/list-books-of-dc.md:53 commands/list-main-books.md:53
 #: commands/list-municipalities.md:66 commands/list-offices.md:89
 #: commands/search-municipality.md:52 commands/search-possession-sheet.md:55
@@ -124,11 +130,12 @@ msgstr ""
 
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:99 commands/get-lr-unit.md:278
-#: commands/get-parcel.md:213 commands/get-zoning.md:122 commands/info.md:73
+#: commands/get-geometry.md:98 commands/get-lr-unit.md:278
+#: commands/get-parcel.md:213 commands/get-possession-sheet.md:113
+#: commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
 #: commands/list-municipalities.md:90 commands/list-offices.md:104
-#: commands/search-municipality.md:75 commands/search-possession-sheet.md:73
+#: commands/search-municipality.md:75 commands/search-possession-sheet.md:72
 #: commands/search.md:97
 msgid "If something goes wrong"
 msgstr ""
@@ -145,11 +152,12 @@ msgstr ""
 
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:118 commands/get-lr-unit.md:294
-#: commands/get-parcel.md:260 commands/get-zoning.md:141 commands/info.md:80
+#: commands/get-geometry.md:117 commands/get-lr-unit.md:294
+#: commands/get-parcel.md:265 commands/get-possession-sheet.md:128
+#: commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
 #: commands/list-municipalities.md:103 commands/list-offices.md:110
-#: commands/search-municipality.md:89 commands/search-possession-sheet.md:86
+#: commands/search-municipality.md:89 commands/search-possession-sheet.md:85
 #: commands/search.md:114
 msgid "Related pages"
 msgstr ""
@@ -164,8 +172,9 @@ msgstr ""
 
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:124 commands/get-lr-unit.md:301
-#: commands/get-parcel.md:267 commands/get-zoning.md:147 commands/info.md:86
+#: commands/get-geometry.md:123 commands/get-lr-unit.md:301
+#: commands/get-parcel.md:272 commands/get-possession-sheet.md:135
+#: commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
 #: commands/list-municipalities.md:109 commands/list-offices.md:116
 #: commands/search-municipality.md:96 commands/search-possession-sheet.md:92
@@ -200,12 +209,12 @@ msgstr ""
 #: commands/cache-info.md:26 commands/cache-list.md:27
 #: commands/download-gis.md:29 commands/get-geometry.md:34
 #: commands/get-lr-unit.md:37 commands/get-parcel.md:36
-#: commands/get-zoning.md:44 commands/info.md:27
-#: commands/list-books-of-dc.md:30 commands/list-main-books.md:29
-#: commands/list-municipalities.md:27 commands/list-offices.md:26
-#: commands/search-municipality.md:28 commands/search-possession-sheet.md:30
-#: commands/search.md:33 start-here.md:35 start-here.md:49 start-here.md:66
-#: start-here.md:96
+#: commands/get-possession-sheet.md:36 commands/get-zoning.md:44
+#: commands/info.md:27 commands/list-books-of-dc.md:30
+#: commands/list-main-books.md:29 commands/list-municipalities.md:27
+#: commands/list-offices.md:26 commands/search-municipality.md:28
+#: commands/search-possession-sheet.md:30 commands/search.md:33
+#: start-here.md:35 start-here.md:49 start-here.md:66 start-here.md:96
 msgid "Type the following line and press Enter:"
 msgstr ""
 
@@ -387,7 +396,7 @@ msgid ""
 "system. A mapping program will know what to do with them."
 msgstr ""
 
-#: commands/get-geometry.md:68
+#: commands/get-geometry.md:67
 msgid ""
 "**GEOMETRY STATISTICS** summarises the shape: the number of corner points "
 "(**Vertices**), the area computed from them (**Area (GIS)**), the smallest "
@@ -397,7 +406,7 @@ msgid ""
 "form. Each pair of numbers is one corner point."
 msgstr ""
 
-#: commands/get-geometry.md:77
+#: commands/get-geometry.md:76
 msgid ""
 "`--format` chooses the form of the boundary. `wkt` is the standard text form "
 "shown above. `geojson` is the form most web maps read. `csv` gives one corner"
@@ -405,38 +414,38 @@ msgid ""
 "programs. The `geojson` and `json` forms also carry the map link (`map_url`)."
 msgstr ""
 
-#: commands/get-geometry.md:82
+#: commands/get-geometry.md:81
 msgid ""
 "To hand the boundary to someone, write it to a file with `--output`. A "
 "GeoJSON file can be dragged onto many online map viewers:"
 msgstr ""
 
-#: commands/get-geometry.md:101 commands/get-zoning.md:124
+#: commands/get-geometry.md:100 commands/get-zoning.md:124
 msgid ""
 "If the parcel is not in the boundary data of the municipality, you will see "
 "this:"
 msgstr ""
 
-#: commands/get-geometry.md:111 commands/get-zoning.md:134
+#: commands/get-geometry.md:110 commands/get-zoning.md:134
 msgid ""
 "The boundary data and the cadastre are not always in step; check the parcel "
 "with [search](search.md) first."
 msgstr ""
 
-#: commands/get-geometry.md:114
+#: commands/get-geometry.md:113
 msgid ""
 "If the boundary data of the municipality cannot be downloaded, ask the person"
 " who installed the tool whether the practice server is running. Other "
 "messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/get-geometry.md:120
+#: commands/get-geometry.md:119
 msgid ""
 "[download-gis](download-gis.md) downloads the boundary data of a whole "
 "municipality."
 msgstr ""
 
-#: commands/get-geometry.md:121
+#: commands/get-geometry.md:120
 msgid ""
 "[cache-list](cache-list.md) shows which municipalities are already on your "
 "computer."
@@ -754,26 +763,26 @@ msgstr ""
 msgid "If the municipality is not recognised, the tool says so and stops:"
 msgstr ""
 
-#: commands/get-parcel.md:223
+#: commands/get-parcel.md:228
 msgid ""
 "Check the spelling, or use the registration number instead of the name. You "
 "can find it with [search-municipality](search-municipality.md)."
 msgstr ""
 
-#: commands/get-parcel.md:226
+#: commands/get-parcel.md:231
 msgid ""
 "If the parcel is not found, check the number on your document, including any "
 "part after the slash. Other messages are explained on the [errors "
 "page](../errors.md)."
 msgstr ""
 
-#: commands/get-parcel.md:230
+#: commands/get-parcel.md:235
 msgid ""
 "A parcel that does not exist does not stop a list. It gets a cross in the "
 "**Status** column and an explanation in an **ERRORS** table at the end:"
 msgstr ""
 
-#: commands/get-parcel.md:255
+#: commands/get-parcel.md:260
 msgid ""
 "Correct the number and run the command again for that parcel alone. If you "
 "would rather stop at the first problem, add `--stop-on-error`. If the tool "
@@ -781,19 +790,134 @@ msgid ""
 "folder where the file is, or type the full path to it."
 msgstr ""
 
-#: commands/get-parcel.md:262
+#: commands/get-parcel.md:267
 msgid ""
 "[get-lr-unit](get-lr-unit.md) reads the land registry unit whose number "
 "appears under the land registry heading."
 msgstr ""
 
-#: commands/get-parcel.md:263
+#: commands/get-parcel.md:268
 msgid "[search](search.md) is the short form of this command."
 msgstr ""
 
-#: commands/get-parcel.md:264
+#: commands/get-parcel.md:269
 msgid ""
 "[get-geometry](get-geometry.md) gives the boundary of the parcel for a map."
+msgstr ""
+
+#: commands/get-possession-sheet.md:9
+msgid "See a possession sheet with its parcels"
+msgstr ""
+
+#: commands/get-possession-sheet.md:11
+msgid ""
+"A possession sheet (posjedovni list) is the cadastre's record of who "
+"possesses a group of parcels. This command shows the whole sheet: every "
+"parcel on it, with its area, land use and land registry unit, and, when you "
+"ask for them, the possessors recorded on the sheet."
+msgstr ""
+
+#: commands/get-possession-sheet.md:18
+msgid ""
+"An inheritance names a possession sheet, and you want the list of parcels on "
+"it before you look up each one in the land registry."
+msgstr ""
+
+#: commands/get-possession-sheet.md:20
+msgid ""
+"A client says \"our land is on posjedovni list 363\" and you want to see how "
+"much land that is and who the cadastre records as possessing it."
+msgstr ""
+
+#: commands/get-possession-sheet.md:22
+msgid ""
+"You want to check whether a parcel someone mentions is on the same sheet as "
+"the others."
+msgstr ""
+
+#: commands/get-possession-sheet.md:27
+msgid ""
+"You need the exact possession sheet number and the cadastral municipality "
+"(katastarska općina), both printed on the extract from the possession sheet "
+"and on most inheritance decisions. If you only know the start of the number, "
+"[search-possession-sheet](search-possession-sheet.md) lists the sheets that "
+"begin with it."
+msgstr ""
+
+#: commands/get-possession-sheet.md:71
+msgid ""
+"The first block names the sheet and counts what is on it. **Total area** adds"
+" up the cadastre areas of the parcels. The **PARCELS** table lists every "
+"parcel: **Land Use** is the cadastre's classification with the area of each "
+"kind, **Cadastre/LR harmonized** says whether the cadastre and the land "
+"registry agree about the parcel, and **LR Unit** gives the land registry unit"
+" and main book you pass to [get-lr-unit](get-lr-unit.md) for the registered "
+"owners."
+msgstr ""
+
+#: commands/get-possession-sheet.md:81
+msgid ""
+"Add `--show-owners` to see the possessors recorded on the sheet, with their "
+"shares and addresses. They are possessors according to the cadastre, not the "
+"registered owners; the registered owners are in the land registry unit named "
+"in the **LR Unit** column, and the last line of the output shows the command "
+"that reads it."
+msgstr ""
+
+#: commands/get-possession-sheet.md:87
+msgid ""
+"Some sheets are harmonized with the land registry: for them the cadastre "
+"records no possessors of its own and refers to the land registry unit "
+"instead. The tool then says **in the land registry (harmonized sheet)** on "
+"the **Possessors** line and, with `--show-owners`, lists the registered "
+"owners of that unit under **REGISTERED OWNERS (LAND REGISTRY)**; in JSON "
+"`possessors_in_land_registry` is `true` and the people are under `owners`."
+msgstr ""
+
+#: commands/get-possession-sheet.md:94
+msgid ""
+"`--format json` writes the sheet as one document, with `parcels`, "
+"`total_parcels`, `total_area_m2` and `parcels_complete`; `--format csv` "
+"writes one row per parcel. Both go to a file with `--output`."
+msgstr ""
+
+#: commands/get-possession-sheet.md:98
+msgid ""
+"The cadastre's parcel search has never been seen to return more than 30 "
+"parcels for one sheet. When a sheet comes back with exactly that many, the "
+"tool warns that the list may be incomplete and `parcels_complete` is `false`;"
+" check the extract from the possession sheet in that case."
+msgstr ""
+
+#: commands/get-possession-sheet.md:115
+msgid ""
+"If there is no sheet with that exact number in the cadastral municipality, "
+"the tool stops with this line:"
+msgstr ""
+
+#: commands/get-possession-sheet.md:124
+msgid ""
+"Check the number on your document; the number must be complete, so try "
+"[search-possession-sheet](search-possession-sheet.md) if you only know how it"
+" starts. Other messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/get-possession-sheet.md:130
+msgid ""
+"[get-lr-unit](get-lr-unit.md) shows the registered owners and the charges of "
+"the land registry unit a parcel belongs to."
+msgstr ""
+
+#: commands/get-possession-sheet.md:131
+msgid ""
+"[get-parcel](get-parcel.md) shows one parcel in full, with its possession "
+"sheet."
+msgstr ""
+
+#: commands/get-possession-sheet.md:132
+msgid ""
+"[search-possession-sheet](search-possession-sheet.md) finds the sheets whose "
+"number starts with a text."
 msgstr ""
 
 #: commands/get-zoning.md:9
@@ -1335,25 +1459,30 @@ msgstr ""
 
 #: commands/search-possession-sheet.md:57
 msgid ""
-"The cadastre does not hand out a possession sheet by its number, so this "
-"command stops at confirming the sheet. To see the possessors, look up one of "
-"the parcels that belongs to the sheet with [get-parcel](get-parcel.md) and "
-"`--show-owners`; the parcel numbers are on the extract."
+"This command only confirms the sheet. For the sheet itself, with its "
+"possessors and every parcel on it, use [get-possession-sheet](get-possession-"
+"sheet.md) with the exact number."
 msgstr ""
 
-#: commands/search-possession-sheet.md:62
+#: commands/search-possession-sheet.md:61
 msgid "`--format json` with `--output` keeps the result as a file."
 msgstr ""
 
-#: commands/search-possession-sheet.md:75
+#: commands/search-possession-sheet.md:74
 msgid ""
 "If no sheet starts with the number you typed, the tool stops with this line:"
 msgstr ""
 
-#: commands/search-possession-sheet.md:83
+#: commands/search-possession-sheet.md:82
 msgid ""
 "Check the number and the cadastral municipality on your document. Other "
 "messages are explained on the [errors page](../errors.md)."
+msgstr ""
+
+#: commands/search-possession-sheet.md:87
+msgid ""
+"[get-possession-sheet](get-possession-sheet.md) shows a sheet with its "
+"possessors and parcels."
 msgstr ""
 
 #: commands/search-possession-sheet.md:88
@@ -1492,66 +1621,66 @@ msgid ""
 "page lists the messages and says what to do about each."
 msgstr ""
 
-#: errors.md:33
+#: errors.md:36
 msgid "Messages about what you typed"
 msgstr ""
 
-#: errors.md:35
+#: errors.md:38
 msgid ""
 "**Parcel not found** means the parcel number does not exist in the "
 "municipality you named. Check the number on your document, including the part"
 " after the slash, and check that you named the right municipality."
 msgstr ""
 
-#: errors.md:39
+#: errors.md:42
 msgid ""
 "**Municipality not found** means the name or number after `-m` is not known. "
 "Check the spelling, or find the registration number with [search-"
 "municipality](commands/search-municipality.md) and use that instead."
 msgstr ""
 
-#: errors.md:43
+#: errors.md:46
 msgid ""
 "**Land registry unit not found** means the unit number and main book you gave"
 " do not match a unit. Check both numbers. If you started from a parcel, the "
 "parcel may not be entered in the land registry yet."
 msgstr ""
 
-#: errors.md:47
+#: errors.md:50
 msgid "Messages about the connection"
 msgstr ""
 
-#: errors.md:49
+#: errors.md:52
 msgid ""
 "**Connection error** means the tool could not reach the server. For practice "
 "use, the practice server on your computer is not running. Ask the person who "
 "installed the tool to start it, then run the command again."
 msgstr ""
 
-#: errors.md:53
+#: errors.md:56
 msgid ""
 "**Request timed out** means the server did not answer in time. Wait a moment "
 "and run the command again."
 msgstr ""
 
-#: errors.md:56
+#: errors.md:59
 msgid ""
 "**Rate limit exceeded** means requests were sent too quickly. The tool "
 "already spaces its requests; wait a minute and try again."
 msgstr ""
 
-#: errors.md:59
+#: errors.md:62
 msgid ""
 "**Server error** and **Invalid response from server** mean the server "
 "answered but not in the expected way. Try again later. If it keeps happening,"
 " tell the person who installed the tool."
 msgstr ""
 
-#: errors.md:63
+#: errors.md:66
 msgid "Messages from Terminal itself"
 msgstr ""
 
-#: errors.md:65
+#: errors.md:68
 msgid ""
 "If Terminal answers `command not found`, the tool is not installed for your "
 "account or Terminal was opened before the installation finished. Close "
@@ -1559,7 +1688,7 @@ msgid ""
 "installed the tool."
 msgstr ""
 
-#: errors.md:70
+#: errors.md:73
 msgid ""
 "If the tool prints `Missing option` or `No such option`, part of the command "
 "is misspelt. Compare your line with the example on the command's page."
@@ -1597,8 +1726,9 @@ msgstr ""
 #: glossary.md:18
 msgid ""
 "| Posjedovni list | The possession sheet of the cadastre: who possesses a "
-"parcel according to the cadastre. Not proof of ownership. | [get-"
-"parcel](commands/get-parcel.md) with `--show-owners`. |"
+"parcel according to the cadastre. Not proof of ownership. | [get-possession-"
+"sheet](commands/get-possession-sheet.md); [get-parcel](commands/get-"
+"parcel.md) with `--show-owners`. |"
 msgstr ""
 
 #: glossary.md:19
@@ -1875,24 +2005,24 @@ msgstr ""
 msgid "Complete reference"
 msgstr ""
 
-#: reference.md:46
+#: reference.md:47
 msgid "Other pages"
 msgstr ""
 
-#: reference.md:48
+#: reference.md:49
 msgid "[Start here](start-here.md): the tutorial."
 msgstr ""
 
-#: reference.md:49
+#: reference.md:50
 msgid ""
 "[Glossary](glossary.md): the words of the land registry and the cadastre."
 msgstr ""
 
-#: reference.md:50
+#: reference.md:51
 msgid "[Errors](errors.md): what the messages mean."
 msgstr ""
 
-#: reference.md:51
+#: reference.md:52
 msgid ""
 "[Installation](install.md): for the technical colleague who sets the tool up."
 msgstr ""

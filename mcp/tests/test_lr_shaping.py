@@ -389,3 +389,37 @@ def test_without_owner_name_nothing_about_the_answer_changes(unit) -> None:
     assert "owner_name" not in shaped and "matching_owners" not in shaped
     full = CadastralTools._shape_lr_unit(unit, "full", None, 0)
     assert "owner_name" not in full and "matching_shares" not in full
+
+
+def test_every_level_names_the_unit_with_its_provenance(unit) -> None:
+    for detail in ("summary", "ownership", "shares", "parcels", "encumbrances", "full"):
+        shaped = CadastralTools._shape_lr_unit(unit, detail, None)
+        # A fixture unit was never fetched: the key is there, the value null.
+        assert "provenance" in shaped and shaped["provenance"] is None
+
+
+def test_owner_levels_count_distinct_owners(unit) -> None:
+    names = {row["name"] for row in unit.ownership_sheet_b.owner_rows()}
+    for detail in ("summary", "ownership", "shares", "full"):
+        shaped = CadastralTools._shape_lr_unit(unit, detail, None)
+        assert shaped["distinct_owners"] == len(names) == 3  # 4 records, one person on two shares
+    # The count describes the whole sheet, whatever the window.
+    paged = CadastralTools._shape_lr_unit(unit, "ownership", 1)
+    assert paged["distinct_owners"] == 3 and len(paged["owners"]) == 1
+    assert "distinct_owners" not in CadastralTools._shape_lr_unit(unit, "parcels", None)
+
+
+def test_distinct_owners_merges_spellings_and_splits_tax_numbers(unit) -> None:
+    from cadastral_api.models.entities import Party
+
+    share = unit.ownership_sheet_b.lr_unit_shares[0]
+    first = share.owners[0]
+    share.owners.append(Party.model_validate({"name": first.name.lower() + "  "}))
+    share.owners.append(Party.model_validate({"name": first.name, "taxNumber": "1"}))
+    share.owners.append(Party.model_validate({"name": first.name, "taxNumber": "2"}))
+    shaped = CadastralTools._shape_lr_unit(unit, "ownership", None)
+    # Three more records: a respelling (same person, no tax number: joins the
+    # name) and two new tax numbers on a name that already has one, which makes
+    # that name three people; the other two names are unchanged.
+    assert shaped["total_owners"] == 7
+    assert shaped["distinct_owners"] == 5

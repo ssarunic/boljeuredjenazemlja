@@ -52,13 +52,36 @@ item, several for a portfolio) and return one entry per reference, in order.
 - **Building parcels** ("35/1 ZGR", "zgr. 35/1", "*35/1") -> any spelling works;
   they have no land-registry unit of their own (the building is registered on
   its land parcel), so their `get_lr_unit` entry is an error saying so.
-- **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
+- **Is the possessor the owner** (posjednik vs vlasnik) -> `compare_registers`
+  with the parcel references: `relationship` per parcel (`same`,
+  `overlapping`, `disjoint`, `cadastre_only`), matched pairs (`fuzzy` when
+  the match rests on the name without "POK./UD."), who is in one register
+  only, `party_type_inferred` (always an inference), distinct people across
+  the set. Read both registers through it instead of comparing by hand.
+- **Assembling land, due diligence over a set** -> `build_assembly` with up
+  to 50 parcel references: matrix of persons x parcels, persons ranked by
+  controlled area (grouped by surname), parcels ranked by ease of
+  acquisition with the `weights` and per-parcel `factors` shown (a factor
+  not evaluated is left out, never counted against the parcel);
+  `include_zoning` for the building-area factor; `export` for CSV/GeoJSON
+  text. Quote the caveats in `notes` (inferred party types, cadastre areas).
+- **Possession sheet by number** (its possessors and its parcels) ->
+  `get_possession_sheet` with the exact number. A harmonized sheet has no
+  cadastre possessors (`possessors_in_land_registry`); its registered owners
+  come back under `owners`. `find_possession_sheet` lists the sheets whose
+  number begins with a text, at most 50, from an index that lags: an empty
+  answer is not proof the sheet does not exist. **KPU books** ->
   `find_book_of_dc`.
 - **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,
   or `get_file_status` for one file number and the unit's `institution_id`.
 - **Municipalities of an office** -> `list_municipalities` with the
   `office_id` from `list_cadastral_offices`.
 - **Map / boundaries** -> `get_parcel_geometry`.
+- **Parcels in an area, or around a parcel** -> `find_parcels_in_area` (bbox,
+  polygon or centre + radius, EPSG:3765 metres as `get_parcel_geometry`
+  returns them) and `find_parcel_neighbours` (shared boundary, corner touch).
+  Both read the cached cadastral map and give numbers and graphical areas
+  only; follow with `get_parcel` / `get_lr_unit` for the registers.
 
 ## Response shaping
 
@@ -76,10 +99,21 @@ item, several for a portfolio) and return one entry per reference, in order.
   options named; use a per-sheet level with a limit instead of retrying `full`.
 - `historical_overview=true` adds deleted entries and non-active shares.
 - Every entry has a `status` (`success`, `error`, `duplicate`); read the
-  `error` of a failed reference instead of retrying blindly.
+  `error` and `error_type` of a failed reference instead of retrying blindly:
+  `*_not_found` means no such record, `access_denied` that the server refused,
+  `rate_limit` that it throttled, `response_too_large` that the entry must be
+  paged (`limit`, `offset`), `invalid_request` that the reference was wrong.
+  Tool-level errors end with `[error_type=...]` for the same reason.
 
 ## Notes
 
+- Every successful entry carries `provenance` (`register`, `source_url`,
+  `retrieved_at`): quote it with any fact you forward, so the answer is never
+  taken for an official extract. `get_parcel` entries also carry `area_check`
+  (cadastre area against the cadastral map's graphical area and, when known,
+  the land register's; `mismatch` above 5 %). `get_lr_unit` entries carry
+  `distinct_owners` next to `total_owners` (one person on two shares is two
+  records, one owner) for judging fragmentation.
 - A parcel with `in_land_registry: false` (or the
   `parcel_not_in_land_registry` error) is cadastre-only - report it as such
   rather than inventing an owner.

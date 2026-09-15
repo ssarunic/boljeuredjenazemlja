@@ -7,6 +7,7 @@ from .entities import (
     EncumbranceSheetC,
     FileStatus,
     FileStatusInstitution,
+    InlineLRUnit,
     KeyValueSearchResult,
     LandRegistryUnit,
     LandRegistryUnitDetailed,
@@ -24,8 +25,10 @@ from .entities import (
     Party,
     Plumb,
     PossessionSheet,
+    PossessionSheetSearchData,
     PossessionSheetSearchResult,
     Possessor,
+    SearchedParcel,
     SheetAAdditionalInfo,
     SheetAParcelList,
     SourceModel,
@@ -42,6 +45,7 @@ from .planning_entities import (
     ZoneMatch,
     ZoningStatus,
 )
+from .provenance import Provenance, Register, now_utc_iso
 
 __all__ = [
     "BUILDING_AREAS_DISCLAIMER",
@@ -59,6 +63,7 @@ __all__ = [
     "EncumbranceSheetC",
     "FileStatus",
     "FileStatusInstitution",
+    "InlineLRUnit",
     "KeyValueSearchResult",
     "LandRegistryUnit",
     "LandRegistryUnitDetailed",
@@ -79,7 +84,12 @@ __all__ = [
     "Plumb",
     "Possessor",
     "PossessionSheet",
+    "PossessionSheetSearchData",
     "PossessionSheetSearchResult",
+    "Provenance",
+    "SearchedParcel",
+    "Register",
+    "now_utc_iso",
     "SheetAAdditionalInfo",
     "SheetAParcelList",
     "SourceModel",

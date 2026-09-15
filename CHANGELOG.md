@@ -63,8 +63,139 @@ number and one tag.
   totals, and 0 matches is an answer, not an error.
 - SDK: `PossessionSheet.is_condominium`, true when a possessor carries a
   condominium unit number or a common-area share.
+- SDK: `ErrorType.ACCESS_DENIED` for HTTP 401 and 403 and `ErrorType.HTTP_ERROR`
+  for any other 4xx, both with `status_code` in the details. A refusal used to
+  fall through as `connection`, indistinguishable from a network failure. The
+  CLI labels them "Access denied" / "Pristup odbijen" and "HTTP error".
+- SDK: every record from `get_parcel_info` and `get_lr_unit_detailed` carries
+  `provenance` (`register`, `source_url`, `retrieved_at` in UTC), stamped by
+  the client after the fetch; a record built from a file has none.
+  `GISCache.downloaded_at(code)` gives the download time of a cached
+  municipality.
+- SDK: `cadastral_api.analysis`, pure functions over the models: `person_key`,
+  `same_person` and `count_distinct_persons` (one person identity for both
+  registers: case, diacritics, spacing, punctuation and a share suffix
+  ignored, a relative's name ("POK. BOŽE", "UD. IVE") only in the loose key,
+  tax numbers decisive when both records have one) and `check_area` /
+  `AreaCheck` (cadastre, land-register and graphical areas compared, a
+  difference above 5 % flagged).
+- SDK: the possession-sheet endpoints the cadastre's web form uses
+  (OQ4 of the coverage specification, resolved by the capture of
+  2026-09-15): `get_possession_sheet(id)` and
+  `get_possession_sheet_by_number(number, cad_municipality_id)` return a
+  `PossessionSheet` with its possessors; `search_parcels` is the
+  `POST /cad/search-parcels` behind the form (every parcel of a sheet, an
+  exact parcel number, or a parcel id) returning `SearchedParcel` records in
+  their two shapes (a non-harmonized parcel with its `possession_sheet` and
+  links, a harmonized one with an inline `lr_unit` carrying sheet B);
+  `get_possession_sheet_parcels(number, municipality)` bundles the three
+  calls; `resolve_municipality_id` gives the internal id the endpoints need;
+  `lookup_possession_sheet_number` is the reverse lookup;
+  `ErrorType.POSSESSION_SHEET_NOT_FOUND`. The mock server serves all four
+  routes from its parcel data.
+- CLI: `get-possession-sheet SHEET -m K.O.` (Croatian `posjedovni-list`): the
+  sheet, every parcel on it with area, land use and land-registry unit, and
+  with `--show-owners` (`--posjednici`) its possessors; `--format json`
+  writes the sheet with `parcels`, `total_parcels`, `total_area_m2` and
+  `parcels_complete`, `--format csv` one row per parcel. The Croatian
+  spelling of `search-possession-sheet` is now `traži-posjedovni-list`
+  (it was `posjedovni-list`), in line with `traži-općinu`; both commands'
+  help now point to each other.
+- MCP: `get_possession_sheet(sheet_number, municipality)`: the sheet's
+  possessors (paged, filterable by name) and every parcel on it with area,
+  land use and land-registry reference, `total_area_m2`, both provenances
+  and `parcels_complete` (false with a note when the list is as long as the
+  search has ever returned, since a server cap is not ruled out).
+  `find_possession_sheet` no longer says the sheet cannot be read.
+- SDK: `ParcelIndex` (`cadastral_api.gis`), a spatial index over the parcels
+  of one municipality's cached GML: `in_bbox`, `in_polygon` (touching, or
+  wholly within, boundary included), `within_radius` (distance from a point
+  to each outline, nearest first), `neighbours` (shared boundary length in
+  metres, corner touches told apart) and `total_area`; pure Python with a
+  grid prefilter. `CadastralAPIClient.get_parcel_index(code)` builds it once
+  per GML file. `geometry_ops` gains point, segment and ring distances,
+  `shared_boundary_length`, `ring_centroid` and `parse_ring` (WKT or
+  vertex lists); `ParcelGeometry.ring` gives the outline as tuples.
+- MCP: `find_parcels_in_area` (bounding box, polygon or radius around a
+  point, EPSG:3765 metres; `relation` intersects or within; paged rows with
+  graphical area, centroid, bounds, distance and map link; `total_area_m2`
+  over every match; optional GeoJSON; the map's provenance under `dataset`)
+  and `find_parcel_neighbours` (parcels sharing a boundary or a corner with
+  one parcel). Longitude/latitude input is refused with a hint.
+- SDK: `compare_registers(parcel, lr_unit)` in `cadastral_api.analysis`
+  matches a parcel's cadastre possessors against its unit's registered
+  owners with the shared person identity (exact first, then fuzzy and
+  flagged) and returns a `RegisterComparison`: relationship (`same`,
+  `overlapping`, `disjoint`, `cadastre_only`, ...), matched pairs with
+  `shares_agree`, who is in one register only, distinct people, inferred
+  party types, the share registered to public bodies and the area check
+  against sheet A. `infer_party_type(name)` reads individual / company /
+  state / municipality from a name (legal forms, "Republika Hrvatska",
+  grad / općina / županija), always labelled inferred.
+- MCP: `compare_registers(parcels)`: one entry per parcel with the
+  comparison, both registers' provenance and, when the unit could not be
+  read, `land_registry_error`; units shared by several parcels are read
+  once; `relationships` and `people` (distinct possessors, owners and people
+  across the set) summarise the whole set.
+- SDK: `build_assembly(items)` and `acquisition_score(item)` in
+  `cadastral_api.analysis`: the persons x parcels matrix (long form), the
+  persons ranked by controlled area (share x cadastre area, plus the parcels
+  only possessed) and grouped by surname, and an ease-of-acquisition score
+  per parcel as a weighted share of yes/no factors (single owner, owner is
+  possessor, no encumbrances, no pending plombe, in a building area) whose
+  weights are returned and overridable; a factor that cannot be evaluated is
+  left out of the score rather than counted against the parcel. Totals by
+  land use, relationship and zoning status. `parcels_csv`, `persons_csv`,
+  `matrix_csv` and `parcels_geojson` export the tables as text or a
+  FeatureCollection.
+- MCP: `build_assembly(parcels, include_zoning, weights, export,
+  persons_offset, persons_limit)`: the analysis over up to 50 parcels, units
+  read once, zoning optional (a failed zoning lookup is a note, not an
+  error), references that could not be read listed under `failed`, and one
+  export at a time under `export`.
+- MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
+  cadastre area against the cadastral map's graphical area and the
+  land-register area on the parcel link), every `get_lr_unit` entry
+  `provenance` and, on the owner levels, `distinct_owners`; a failed entry of
+  either tool carries `error_type` (`parcel_not_found`, `access_denied`,
+  `rate_limit`, `response_too_large`, `invalid_request` ...) and
+  `error_details`, and every tool error message ends with `[error_type=...]`.
+  `download_municipality_gis` returns `downloaded_at`.
+
+### Changed
+
+- MCP: the tool list a client receives from `tools/list` now carries every
+  parameter's description in the input schema (`Annotated[..., Field(...)]`
+  on the tool signatures, `Field(description=...)` on `ParcelRef` and
+  `LRUnitRef`) and the choice parameters as enums (`get_parcel.source`,
+  `get_lr_unit.detail`, `get_parcel_geometry.format`,
+  `find_parcels_in_area.relation`, `build_assembly.export` are `Literal`
+  types, so a typo is refused by the schema instead of the handler). The
+  docstrings no longer repeat the parameters in an `Args:` block. The server
+  sends an `instructions` text in the `initialize` response (the two
+  registers, where to start, paging, provenance), `find_parcel` and
+  `resolve_municipality` say when to use `get_parcel` and
+  `list_municipalities` instead, `list_cadastral_offices` names its result
+  keys, and the four prompts describe what they produce instead of "Generate a
+  prompt to ...". `mcp/tests/test_tool_surface.py` guards all of it.
 
 ### Fixed
+
+- SDK, CLI, MCP: a possession sheet harmonized with the land registry comes
+  back from the cadastre as a stub without possessors (and, by number,
+  without its id) that names the land-registry unit; the `PossessionSheet`
+  model rejected it. `possession_sheet_id` is optional now, `lr_unit_id` is
+  declared, `possessors_in_land_registry` tells the stub apart, and
+  `get_possession_sheet` (MCP and CLI) lists the unit's registered owners
+  from the sheet B the parcel search inlines, labelled as land-registry
+  owners. The stub's missing sheet id and municipality are filled from the
+  parcel records (`backfilled_from_parcels`), `is_condominium` is null on it,
+  and `possessor_name` reports `matching_owners` there. The mock server
+  returns the stub for its harmonized sheets and caps the sheet-number
+  search at 50 records, as the live one does.
+- MCP: `distinct_possessors` compared title-cased names, so a possessor
+  written "ŠARUNIĆ" on one sheet and "SARUNIC" on another counted twice; it
+  now uses the shared person identity (`count_distinct_persons`).
 
 - CLI: `get-geometry --format wkt` printed the polygon through the terminal
   renderer, which wrapped it at 80 columns even when piped; it is printed as

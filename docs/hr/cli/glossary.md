@@ -16,7 +16,7 @@ navedeni onako kako stoje na službenim ispravama.
 |---|---|---|
 | Katastarska čestica (k.č.) | Čestica: jedan numerirani dio zemljišta u katastru. | Broj čestice koji upisujete iza `pretraži`, `čestica` i `granica`. |
 | Katastarska općina (k.o.) | Katastarska općina kojoj čestica pripada. Svaka ima naziv i matični broj, koji alat ispisuje kao šifru. | Vrijednost iza `-ko` u većini naredbi. [traži-općinu](commands/search-municipality.md) pronalazi matični broj. |
-| Posjedovni list | Posjedovni list katastra: tko posjeduje česticu prema katastru. Nije dokaz vlasništva. | [čestica](commands/get-parcel.md) uz `--posjednici`. |
+| Posjedovni list | Posjedovni list katastra: tko posjeduje česticu prema katastru. Nije dokaz vlasništva. | [posjedovni-list](commands/get-possession-sheet.md); [čestica](commands/get-parcel.md) uz `--posjednici`. |
 | Posjednik | Posjednik upisan u katastru. | Reci posjedovnog lista na [čestica](commands/get-parcel.md). |
 | Zemljišnoknjižni uložak (ZK uložak) | Sadrži pravno stanje nekretnine; vodi ga zemljišnoknjižni odjel općinskog suda. | [uložak](commands/get-lr-unit.md). Njegov broj pojavljuje se i na [čestica](commands/get-parcel.md), za jednu česticu ili za popis. |
 | Čestica zgrade (zgr.) | Čestica starog katastra koja obuhvaća samo zgradu. Piše se `35/1 ZGR`, `35/1.ZGR` ili `zgr. 35/1`; nema vlastiti zemljišnoknjižni uložak. | Broj čestice u naredbama [get-parcel](commands/get-parcel.md) i [search](commands/search.md), ispisan kao `zgr. 35/1`. |

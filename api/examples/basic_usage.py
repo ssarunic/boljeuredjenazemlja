@@ -45,7 +45,7 @@ def print_parcel_summary(parcel_number: str, municipality_code: str) -> None:
                 return
 
             # Display parcel information
-            print(f"\n📍 Parcel Details:")
+            print("\n📍 Parcel Details:")
             print(f"   Number: {parcel_info.parcel_number}")
             print(f"   ID: {parcel_info.parcel_id}")
             print(f"   Municipality: {parcel_info.cad_municipality_name}")
@@ -54,7 +54,7 @@ def print_parcel_summary(parcel_number: str, municipality_code: str) -> None:
             print(f"   Building permitted: {'Yes' if parcel_info.has_building_right else 'No'}")
 
             # Land use information
-            print(f"\n🌾 Land Use:")
+            print("\n🌾 Land Use:")
             for land_type, area in parcel_info.land_use_summary.items():
                 print(f"   {land_type}: {area:,} m²")
 
