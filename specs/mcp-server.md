@@ -59,6 +59,7 @@ The AI decides when to invoke these based on user queries:
 **Land Registry Operations:**
 - **`get_lr_unit`** - One or more land registry units. Takes a list of references, each by `lr_unit_number` + `main_book_id`, by `lr_unit_number` + `main_book_name`, or by `parcel_number` + `municipality` (resolved through parcel links when needed). Returns one entry per reference; units shared by several references are fetched once. `detail` (`summary`, `ownership`, `shares`, `parcels`, `encumbrances`, `full`), `offset`/`limit` paging over the list the level is about (owner rows, shares, parcels or entry groups), `owner_name` filtering the owners (or the shares holding one) by name, `include_plombe_detail` and `historical_overview` shape every entry. Every level carries `provenance`; the owner levels carry `distinct_owners`.
 - **`get_file_status`** - Processing status of one land-registry file (spis, plomba) by number and institution id
+- **`compare_registers`** - Cadastre possessors against registered owners for a set of parcels: `same` / `overlapping` / `disjoint` per parcel, matched pairs (fuzzy flagged), who is in one register only, inferred party types (labelled), public-body share, area check, distinct people across the set
 
 **Lookup Operations:**
 - **`resolve_municipality`** - Municipality name or code to its complete search record (code, name, office and department ids)

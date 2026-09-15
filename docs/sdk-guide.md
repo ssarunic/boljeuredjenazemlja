@@ -367,6 +367,29 @@ check.compared, check.max_difference_fraction, check.mismatch   # flagged above 
 Tax numbers decide when both records carry one; the count never merges two
 people on the loose key alone.
 
+`compare_registers` puts the two registers side by side for one parcel:
+
+```python
+from cadastral_api import compare_registers, infer_party_type
+
+parcel = client.get_parcel_by_number("1122/1", "334979")
+unit = client.get_lr_unit_from_parcel("1122/1", "334979")
+result = compare_registers(parcel, unit, gis_area_m2=geometry.povrsina_graficka)
+result.relationship          # same | overlapping | disjoint | cadastre_only | ...
+result.summary               # the same in a sentence
+[(m.possessor.name, m.owner.name, m.fuzzy) for m in result.matched]
+[o.name for o in result.owners_only]     # registered owners not on the possession sheet
+result.distinct_people, result.party_types, result.public_body_owner_share
+result.area_check.mismatch   # cadastre against sheet A and the map
+
+infer_party_type("HRVATSKE ŠUME d.o.o.")   # company, inferred=True, basis names the legal form
+```
+
+Every person carries `party_type_inferred`, read from the spelling of the
+name and always marked as an inference: enough to estimate how many public
+bodies and companies a set of parcels involves, not to state a fact about
+one owner.
+
 ## Things to know about the data
 
 - Ownership fractions are optional. Many possessor records have no `ownership`

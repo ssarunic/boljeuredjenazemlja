@@ -16,8 +16,11 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Literal
 
-from ..utils import fold_text, split_name_share
+from pydantic import BaseModel, Field
+
+from ..utils import LEGAL_FORMS, fold_text, split_name_share
 
 #: Words (folded) that introduce a relative's name: the late father ("pok."),
 #: the late husband ("ud.", udova), the maiden name ("rođ."), "sin"/"kći" of.
@@ -118,3 +121,60 @@ def count_distinct_persons(records: Iterable[tuple[str | None, str | None]]) -> 
         if key.tax_number:
             group.add(key.tax_number)
     return sum(max(1, len(group)) for group in tax_numbers_by_name.values())
+
+
+# ---------------------------------------------------------------------------
+# Party type, inferred from the name
+# ---------------------------------------------------------------------------
+
+#: Inferred kinds of owner. The values are those of ``PartyType`` in the
+#: entities; the register itself never says (``Party.party_type`` is unknown).
+InferredPartyType = Literal["individual", "company", "state", "municipality", "unknown"]
+
+#: Words (folded, dots removed) that mark a legal person besides the legal forms.
+_COMPANY_WORDS = frozenset(
+    {"zadruga", "udruga", "banka", "ustanova", "zaklada", "fond", "drustvo", "poduzece", "tvrtka"}
+)
+#: Local self-government: a town (grad), a municipality (općina), a county (županija).
+_MUNICIPALITY_WORDS = frozenset({"grad", "opcina", "zupanija"})
+
+
+class PartyTypeInference(BaseModel):
+    """What kind of person a register name most likely denotes, and why.
+
+    Always marked ``inferred``: the registers do not record it, and a rule on
+    the spelling of a name can be wrong (a person surnamed Grad, a company
+    written without its legal form). Use it to estimate how many public bodies
+    and companies sit at the table, not to state a fact about one of them.
+    """
+
+    party_type: InferredPartyType = Field(
+        description="individual | company | state | municipality | unknown"
+    )
+    inferred: Literal[True] = Field(default=True, description="Always true: read from the name")
+    basis: str = Field(description="The spelling the inference rests on")
+
+
+def infer_party_type(name: str | None) -> PartyTypeInference:
+    """Infer a party type from a register name (see ``PartyTypeInference``)."""
+    bare = split_name_share(name or "")[0]
+    tokens = fold_text(bare.replace(".", "").replace(",", " ")).split()
+    if not tokens:
+        return PartyTypeInference(party_type="unknown", basis="no name")
+    folded = " ".join(tokens)
+    if "republika hrvatska" in folded or "republike hrvatske" in folded or "rh" in tokens:
+        return PartyTypeInference(party_type="state", basis="the name says Republika Hrvatska")
+    for token in tokens:
+        if token in _MUNICIPALITY_WORDS:
+            return PartyTypeInference(
+                party_type="municipality",
+                basis=f"the name contains {token!r} (local self-government)",
+            )
+    for token in tokens:
+        if token in LEGAL_FORMS or token in _COMPANY_WORDS:
+            return PartyTypeInference(
+                party_type="company", basis=f"the name contains the legal form or word {token!r}"
+            )
+    return PartyTypeInference(
+        party_type="individual", basis="no legal form or public body in the name"
+    )

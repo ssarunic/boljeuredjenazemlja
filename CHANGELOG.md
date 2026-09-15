@@ -84,6 +84,21 @@ number and one tag.
   over every match; optional GeoJSON; the map's provenance under `dataset`)
   and `find_parcel_neighbours` (parcels sharing a boundary or a corner with
   one parcel). Longitude/latitude input is refused with a hint.
+- SDK: `compare_registers(parcel, lr_unit)` in `cadastral_api.analysis`
+  matches a parcel's cadastre possessors against its unit's registered
+  owners with the shared person identity (exact first, then fuzzy and
+  flagged) and returns a `RegisterComparison`: relationship (`same`,
+  `overlapping`, `disjoint`, `cadastre_only`, ...), matched pairs with
+  `shares_agree`, who is in one register only, distinct people, inferred
+  party types, the share registered to public bodies and the area check
+  against sheet A. `infer_party_type(name)` reads individual / company /
+  state / municipality from a name (legal forms, "Republika Hrvatska",
+  grad / općina / županija), always labelled inferred.
+- MCP: `compare_registers(parcels)`: one entry per parcel with the
+  comparison, both registers' provenance and, when the unit could not be
+  read, `land_registry_error`; units shared by several parcels are read
+  once; `relationships` and `people` (distinct possessors, owners and people
+  across the set) summarise the whole set.
 - MCP: every `get_parcel` entry carries `provenance` and `area_check` (the
   cadastre area against the cadastral map's graphical area and the
   land-register area on the parcel link), every `get_lr_unit` entry

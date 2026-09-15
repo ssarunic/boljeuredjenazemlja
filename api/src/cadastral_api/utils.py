@@ -354,6 +354,8 @@ _NAME_TOKEN_RE = re.compile(r"^[A-ZČĆŠĐŽ][\w.&'\-]*$", re.UNICODE)
 # "j.d.o.o.", "k.d.". It ends the name and may follow a lower-case word
 # ("Zagrebačke banke d.d."), so a short look-ahead absorbs both.
 _LEGAL_FORMS = frozenset({"dd", "doo", "jdoo", "kd", "obrt"})
+#: The same set for other modules (``cadastral_api.analysis`` infers party types from it).
+LEGAL_FORMS = _LEGAL_FORMS
 #: Most names run to three or four words; the cap stops a run-on sentence.
 _MAX_BENEFICIARY_WORDS = 8
 #: How far past the capitalised run to look for a trailing legal form.

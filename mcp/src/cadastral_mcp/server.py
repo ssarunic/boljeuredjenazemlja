@@ -656,6 +656,51 @@ def create_mcp_server() -> MCPServer:
 
     @mcp.tool()
     @anticipated_tool
+    async def compare_registers(parcels: list[ParcelRef]) -> dict[str, Any]:
+        """
+        Are the cadastre possessors (posjednici, posjedovni list) of a parcel
+        the same people as its registered owners (vlasnici, vlastovnica /
+        B-list)? One call per parcel set, for "is the person using the land
+        the person I sign with" (posjednik vs vlasnik, usklađenost katastra i
+        zemljišne knjige).
+
+        For each reference the cadastre record and the parcel's land-registry
+        unit are read (a unit shared by several parcels once) and the two
+        lists of people are matched by tax number or folded name (case and
+        diacritics ignored); a match that rests on the name without a
+        relative's name ("POK. BOŽE") is flagged ``fuzzy``. Each person gets
+        an inferred kind (individual, company, state, municipality), always
+        labelled ``inferred``: an estimate of how many public bodies and
+        companies are involved, not a fact about any one of them.
+
+        Args:
+            parcels: One or more parcel references (parcel_id, or
+                parcel_number + municipality), as for get_parcel
+
+        Returns:
+            ``results`` with one entry per reference: ``status``, ``ref``,
+            ``parcel_number``, ``municipality_code``, ``lr_unit``,
+            ``provenance`` of both registers, ``map_url`` and ``data`` with
+            ``relationship`` (same | overlapping | disjoint | cadastre_only |
+            no_owners | no_possessors | land_registry_unavailable),
+            ``summary`` (plain language), ``matched`` (pairs with ``fuzzy``,
+            ``by_tax_number``, ``shares_agree``), ``possessors_only``,
+            ``owners_only``, ``possessors`` and ``owners`` (name, share,
+            ``party_type_inferred``), ``distinct_possessors``,
+            ``distinct_owners``, ``distinct_people``, ``party_types``,
+            ``public_body_owner_share``, ``area_check`` (cadastre, sheet A and
+            graphical areas) and ``notes``. Then ``total``, ``successful``,
+            ``failed``, ``units_fetched``, ``relationships`` (count per
+            relationship) and ``people`` (distinct possessors, owners and
+            people across the whole set). A failed entry carries
+            ``error_type``; an entry whose unit could not be read carries
+            ``land_registry_error`` and still lists the possessors.
+        """
+        logger.info(f"Tool invoked: compare_registers({len(parcels)} parcels)")
+        return await tools_handler.compare_registers(list(parcels))
+
+    @mcp.tool()
+    @anticipated_tool
     async def find_parcels_in_area(
         municipality: str,
         bbox: list[float] | None = None,
@@ -857,7 +902,7 @@ def create_mcp_server() -> MCPServer:
     logger.info(
         "Available tools: find_parcel, get_parcel, resolve_municipality, "
         "list_municipalities, get_parcel_geometry, get_parcel_zoning, "
-        "find_parcels_in_area, find_parcel_neighbours, "
+        "compare_registers, find_parcels_in_area, find_parcel_neighbours, "
         "list_cadastral_offices, get_lr_unit, get_file_status, find_main_book, "
         "find_book_of_dc, find_possession_sheet, download_municipality_gis"
     )

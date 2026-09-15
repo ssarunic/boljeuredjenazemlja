@@ -306,6 +306,45 @@ land-registry office that holds the unit (`institution_id` of the unit from
 `message` means the register has no such file at that office; it is not an
 error.
 
+### `compare_registers(parcels)`
+
+Are the cadastre possessors of a parcel its registered owners? `parcels` is a
+list of references as for `get_parcel`. For each one the cadastre record and
+the land-registry unit the parcel belongs to are read (a unit shared by
+several parcels is read once) and the two lists of people are matched: by
+tax number when both records carry one, otherwise by name with case,
+diacritics, spacing, punctuation and a share suffix ignored; a match that
+rests on the name without a relative's name ("ŠARUNIĆ AUGUSTIN POK. BOŽE"
+against "Šarunić Augustin") is `fuzzy` and noted.
+
+Each successful entry has `parcel_number`, `municipality_code`, `lr_unit`,
+`provenance` for both registers, `map_url` and `data`:
+
+- `relationship`: `same` (the registers name the same people), `overlapping`
+  (some people in both), `disjoint` (different people), `cadastre_only` (the
+  parcel is not in the land registry), `no_owners`, `no_possessors`, or
+  `land_registry_unavailable` (the unit could not be read; the entry then
+  also carries `land_registry_error` with its `error_type`).
+- `summary`: the same in a sentence.
+- `matched` (pairs with `fuzzy`, `by_tax_number`, `shares_agree`),
+  `possessors_only`, `owners_only`, and the full `possessors` and `owners`
+  lists; every person carries `name`, `register`, `share`, `tax_number`,
+  `address` and `party_type_inferred` (`individual`, `company`, `state`,
+  `municipality` or `unknown`, read from the name and always marked
+  `inferred: true` with its `basis`).
+- `distinct_possessors`, `distinct_owners`, `distinct_people` (across both
+  registers; a matched pair is one person), `party_types` (of the distinct
+  people) and `public_body_owner_share` (the share registered to the state
+  or a municipality, when the shares are given).
+- `area_check`: the cadastre area against the land register's (sheet A of
+  the unit) and the map's graphical area, `mismatch` above 5 %.
+
+The response also carries `units_fetched`, `relationships` (a count per
+relationship) and `people` (distinct possessors, owners and people across
+every successful entry; a person on several parcels counts once). Use it
+before an acquisition: the possessor is who uses the land, the owner is who
+signs; a `disjoint` parcel needs both at the table.
+
 ### `find_parcels_in_area(municipality, bbox=None, polygon=None, center=None, radius_m=None, relation="intersects", offset=0, limit=50, include_geojson=False)`
 
 The parcels of a municipality inside an area, read from the cached cadastral
@@ -378,6 +417,10 @@ this is for fetching ahead of many lookups or refreshing stale data.
   the parcel is not in the land registry rather than inventing an owner.
 - **Map or boundary**: `get_parcel_geometry`, or the `map_url` that `find_parcel`
   and `get_parcel` already return.
+- **Is the possessor the owner** (posjednik vs vlasnik, one parcel or a set):
+  `compare_registers` with the parcel references. It reads both registers
+  and says `same`, `overlapping` or `disjoint` per parcel, who is in one
+  register only, and how many distinct people the set involves.
 - **Which parcels are in this area / around this parcel**:
   `find_parcels_in_area` (bounding box, polygon or radius, EPSG:3765 metres)
   and `find_parcel_neighbours` give parcel numbers, graphical areas and

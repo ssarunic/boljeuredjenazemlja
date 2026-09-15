@@ -52,6 +52,12 @@ item, several for a portfolio) and return one entry per reference, in order.
 - **Building parcels** ("35/1 ZGR", "zgr. 35/1", "*35/1") -> any spelling works;
   they have no land-registry unit of their own (the building is registered on
   its land parcel), so their `get_lr_unit` entry is an error saying so.
+- **Is the possessor the owner** (posjednik vs vlasnik) -> `compare_registers`
+  with the parcel references: `relationship` per parcel (`same`,
+  `overlapping`, `disjoint`, `cadastre_only`), matched pairs (`fuzzy` when
+  the match rests on the name without "POK./UD."), who is in one register
+  only, `party_type_inferred` (always an inference), distinct people across
+  the set. Read both registers through it instead of comparing by hand.
 - **Possession sheet by number** -> `find_possession_sheet`; **KPU books** ->
   `find_book_of_dc`.
 - **What a pending plomba is** -> `get_lr_unit` with `include_plombe_detail`,

@@ -1,6 +1,15 @@
 """Croatian Cadastral System (Ureena zemlja) API Client."""
 
-from .analysis import AreaCheck, check_area, count_distinct_persons, person_key, same_person
+from .analysis import (
+    AreaCheck,
+    RegisterComparison,
+    check_area,
+    compare_registers,
+    count_distinct_persons,
+    infer_party_type,
+    person_key,
+    same_person,
+)
 from .client import CadastralAPIClient
 from .exceptions import CadastralAPIError, ErrorType
 from .gis import GISCache, GMLParser, ParcelIndex
@@ -80,8 +89,11 @@ __all__ = [
     "Provenance",
     # Analysis (pure functions over the models)
     "AreaCheck",
+    "RegisterComparison",
     "check_area",
+    "compare_registers",
     "count_distinct_persons",
+    "infer_party_type",
     "person_key",
     "same_person",
     # Helpers

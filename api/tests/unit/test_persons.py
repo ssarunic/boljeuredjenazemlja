@@ -59,3 +59,21 @@ def test_count_distinct_persons() -> None:
     assert count_distinct_persons([]) == 0
     # The loose key is not used for counting: a relative's name keeps records apart.
     assert count_distinct_persons([("A B POK. C", None), ("A B", None)]) == 2
+
+
+def test_infer_party_type() -> None:
+    from cadastral_api.analysis import infer_party_type
+
+    assert infer_party_type("REPUBLIKA HRVATSKA").party_type == "state"
+    assert infer_party_type("REPUBLIKE HRVATSKE, Ministarstvo financija").party_type == "state"
+    assert infer_party_type("GRAD ZAGREB").party_type == "municipality"
+    assert infer_party_type("OPĆINA SALI").party_type == "municipality"
+    assert infer_party_type("ZADARSKA ŽUPANIJA").party_type == "municipality"
+    assert infer_party_type("HRVATSKE ŠUME d.o.o.").party_type == "company"
+    assert infer_party_type("ZAGREBAČKA BANKA D.D.").party_type == "company"
+    assert infer_party_type("OBRT ZA USLUGE MARIĆ").party_type == "company"
+    assert infer_party_type("ŠARUNIĆ SAŠA").party_type == "individual"
+    assert infer_party_type("ŠARUNIĆ AUGUSTIN POK. BOŽE ZA 2/6").party_type == "individual"
+    assert infer_party_type("").party_type == "unknown"
+    inferred = infer_party_type("HRVATSKE ŠUME d.o.o.")
+    assert inferred.inferred is True and "doo" in inferred.basis

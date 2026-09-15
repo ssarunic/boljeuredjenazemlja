@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from cadastral_api import CadastralAPIClient, GMLParser
-from cadastral_api.analysis import check_area, count_distinct_persons
+from cadastral_api.analysis import check_area, compare_registers, count_distinct_persons
 from cadastral_api.exceptions import CadastralAPIError, ErrorType
 from cadastral_api.gis import IndexedParcel, ParcelIndex
 from cadastral_api.gis.geometry_ops import parse_ring
@@ -510,18 +510,7 @@ class CadastralTools:
         possessor_filter: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """The ``results`` entry of one parcel reference (raises on failure)."""
-        search_result: dict[str, Any] | None = None
-        geometry: ParcelGeometry | None = None
-        if ref.parcel_id is not None:
-            parcel_id = ref.parcel_id
-        else:
-            assert ref.parcel_number is not None and ref.municipality is not None
-            search_result, geometry = await self._search_parcel(
-                ref.parcel_number, ref.municipality, 0
-            )
-            parcel_id = search_result["parcel_id"]
-
-        parcel = self.client.get_parcel_info(parcel_id)
+        parcel, geometry, search_result = await self._load_parcel(ref)
         result_data = parcel.model_dump(mode="json")
         # Retrieval provenance describes the entry, so it sits next to
         # ``register`` rather than inside the record it is about.
@@ -569,16 +558,36 @@ class CadastralTools:
             entry["exact_match"] = False
             entry["requested_parcel_number"] = search_result["requested_parcel_number"]
             entry["match_note"] = search_result["match_note"]
-        # The parcel outline from the cached municipality GIS data serves the
-        # map link and the graphical area of ``area_check``; a parcel given by
-        # number was already looked up by the search, one given by id is
-        # looked up here, once.
-        if search_result is None:
-            geometry = self._geometry_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
         if geometry is not None:
             entry["map_url"] = geometry.map_url()
         entry["area_check"] = self._area_check(parcel, geometry)
         return entry
+
+    async def _load_parcel(
+        self, ref: ParcelRef
+    ) -> tuple[ParcelInfo, ParcelGeometry | None, dict[str, Any] | None]:
+        """The record a reference names, its outline (best effort) and the search response.
+
+        A parcel given by number is searched first (which also looks up the
+        outline for the map link); one given by id is fetched directly and
+        its outline looked up afterwards, once. The outline serves the map
+        link and the graphical area of ``area_check``; None when the
+        municipality's GIS data has no such parcel.
+        """
+        search_result: dict[str, Any] | None = None
+        geometry: ParcelGeometry | None = None
+        if ref.parcel_id is not None:
+            parcel_id = ref.parcel_id
+        else:
+            assert ref.parcel_number is not None and ref.municipality is not None
+            search_result, geometry = await self._search_parcel(
+                ref.parcel_number, ref.municipality, 0
+            )
+            parcel_id = search_result["parcel_id"]
+        parcel = self.client.get_parcel_info(parcel_id)
+        if search_result is None:
+            geometry = self._geometry_for(parcel.parcel_number, parcel.cad_municipality_reg_num)
+        return parcel, geometry, search_result
 
     #: Relative difference between two areas of one parcel above which they disagree.
     AREA_TOLERANCE = 0.05
@@ -1679,6 +1688,126 @@ class CadastralTools:
         else:
             response["status"] = status.model_dump(mode="json", by_alias=False)
         return response
+
+    async def compare_registers(self, parcels: list[ParcelRef | dict[str, Any]]) -> dict[str, Any]:
+        """
+        Are the cadastre possessors of each parcel its registered owners?
+
+        For every reference the cadastre record and the land-registry unit
+        the parcel belongs to are read (a unit shared by several parcels is
+        read once) and the two lists of people are matched with the shared
+        person identity: exact matches first (tax number, or the folded
+        name), then fuzzy ones (the name without a relative's name), which
+        are flagged. Each entry says whether the registers name the same
+        people, overlap, or are disjoint, lists who is in one register only,
+        infers each person's kind (individual, company, state, municipality;
+        always labelled inferred), sums the share registered to public
+        bodies, and compares the cadastre, land-register and graphical areas.
+
+        Args:
+            parcels: One or more parcel references (parcel_id, or
+                parcel_number + municipality).
+
+        Returns:
+            ``results`` (one entry per reference: status, ref, parcel_number,
+            municipality_code, lr_unit, provenance of both registers, data,
+            map_url), ``total``, ``successful``, ``failed``, ``units_fetched``,
+            ``relationships`` (count per relationship) and ``people``
+            (distinct possessors, owners and people across every successful
+            entry).
+        """
+        if not parcels:
+            raise ValueError("Give at least one parcel reference.")
+        logger.info(f"Comparing registers for {len(parcels)} parcel(s)")
+        results: list[dict[str, Any]] = []
+        units: dict[tuple[str, int], Any] = {}
+        possessors: list[tuple[str | None, str | None]] = []
+        owners: list[tuple[str | None, str | None]] = []
+        relationships: dict[str, int] = {}
+        for spec in parcels:
+            try:
+                ref = spec if isinstance(spec, ParcelRef) else ParcelRef.model_validate(spec)
+            except ValueError as e:
+                results.append({"status": "error", **error_fields(e), "ref": spec})
+                continue
+            entry: dict[str, Any] = {"ref": ref.model_dump(exclude_none=True)}
+            try:
+                parcel, geometry, _search = await self._load_parcel(ref)
+                unit, unit_error = self._unit_of(parcel, units)
+                comparison = compare_registers(
+                    parcel,
+                    unit,
+                    gis_area_m2=geometry.povrsina_graficka if geometry is not None else None,
+                    lr_unit_error=str(unit_error) if unit_error else None,
+                )
+            except Exception as e:  # noqa: BLE001 - recorded per item on purpose
+                logger.error(f"Register comparison failed for {ref}: {e}")
+                entry.update(status="error", **error_fields(e))
+                results.append(entry)
+                continue
+            entry.update(
+                status="success",
+                parcel_number=parcel.parcel_number,
+                municipality_code=parcel.cad_municipality_reg_num,
+                lr_unit=comparison.lr_unit,
+                provenance={
+                    "cadastre": parcel.provenance.as_dict() if parcel.provenance else None,
+                    "land_registry": (
+                        unit.provenance.as_dict()
+                        if unit is not None and unit.provenance is not None
+                        else None
+                    ),
+                },
+                data=comparison.model_dump(mode="json"),
+            )
+            if unit_error is not None:
+                entry["land_registry_error"] = error_fields(unit_error)
+            if geometry is not None:
+                entry["map_url"] = geometry.map_url()
+            results.append(entry)
+            relationships[comparison.relationship] = (
+                relationships.get(comparison.relationship, 0) + 1
+            )
+            possessors.extend((p.name, p.tax_number) for p in comparison.possessors)
+            owners.extend((o.name, o.tax_number) for o in comparison.owners)
+
+        successful = sum(1 for r in results if r["status"] == "success")
+        return {
+            "results": results,
+            "total": len(parcels),
+            "successful": successful,
+            "failed": len(results) - successful,
+            "units_fetched": len(units),
+            "relationships": relationships,
+            "people": {
+                "distinct_possessors": count_distinct_persons(possessors),
+                "distinct_owners": count_distinct_persons(owners),
+                "distinct_people": count_distinct_persons(possessors + owners),
+                "note": (
+                    "Different people by name (and tax number where given) across every "
+                    "successful entry; a person on several parcels counts once."
+                ),
+            },
+        }
+
+    def _unit_of(
+        self, parcel: ParcelInfo, units: dict[tuple[str, int], Any]
+    ) -> tuple[Any, Exception | None]:
+        """The land-registry unit a parcel belongs to, read once per call.
+
+        Returns ``(unit, None)``, ``(None, None)`` for a parcel that is not in
+        the land registry, or ``(None, error)`` when the unit should exist but
+        could not be read (ambiguous links, not found, refused ...).
+        """
+        try:
+            ref = CadastralAPIClient._resolve_lr_unit_ref(parcel)
+            if ref is None:
+                return None, None
+            if ref not in units:
+                units[ref] = self.client.get_lr_unit_detailed(ref[0], ref[1])
+            return units[ref], None
+        except CadastralAPIError as e:
+            return None, e
 
     #: Parcel rows the area tools return unless asked otherwise.
     DEFAULT_AREA_LIMIT = 50
