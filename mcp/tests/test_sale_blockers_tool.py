@@ -237,3 +237,52 @@ def test_the_people_block_counts_a_matched_person_once() -> None:
     assert people["distinct_possessors"] == 2 and people["distinct_owners"] == 7
     # 2 + 7 records, one person in both registers, the same parcel twice.
     assert people["distinct_people"] == 8 == data["distinct_people"]
+
+
+class _TwoParcelClient(_FakeClient):
+    """Two parcels on two units, each with an Augustin: not the same person."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.parcels = {
+            1: ParcelInfo.model_validate(
+                json.loads((FIXTURES / "parcel_info_linked.json").read_text())
+            ),
+            2: ParcelInfo.model_validate(
+                json.loads((FIXTURES / "parcel_info_direct.json").read_text())
+            ),
+        }
+        self.units = {
+            "449": _unit("lr_unit_lrparcels.json"),
+            "788": _unit("lr_unit_cadparcels.json"),
+        }
+        for number, parcel in self.parcels.items():
+            sheet = parcel.possession_sheets[0]
+            sheet.possessors = sheet.possessors[:1]
+            sheet.possessors[0].name = f"POSJEDNIK {number}"
+            for other in parcel.possession_sheets[1:]:
+                other.possessors = []
+        legacy = self.units["449"].ownership_sheet_b.lr_unit_shares[0].owners[0]
+        legacy.name, legacy.tax_number, legacy.entry = "ŠARUNIĆ AUGUSTIN POK. BOŽE", None, None
+        living = self.units["788"].ownership_sheet_b.lr_unit_shares[0].owners[0]
+        living.name, living.tax_number = "ŠARUNIĆ AUGUSTIN", "63061048570"
+
+    def get_parcel_info(self, parcel_id):
+        return self.parcels[int(parcel_id)]
+
+    def get_lr_unit_detailed(self, unit_number, main_book_id=None, **kwargs):
+        return self.units[str(unit_number)]
+
+
+def test_namesakes_on_two_parcels_are_two_people_in_the_set_total() -> None:
+    tools = CadastralTools(_TwoParcelClient())
+    res = _run(tools.compare_registers([{"parcel_id": 1}, {"parcel_id": 2}]))
+    per_parcel = [entry["data"]["distinct_people"] for entry in res["results"]]
+    assert res["units_fetched"] == 2
+    # Nobody appears on both parcels: the set total is the sum of the two.
+    assert res["people"]["distinct_people"] == sum(per_parcel)
+    owners = [
+        o for entry in res["results"] for o in entry["data"]["owners"] if "AUGUSTIN" in o["name"]
+    ]
+    assert len(owners) == 2
+    assert {o["flags"]["likely_deceased"]["likely_deceased"] for o in owners} == {True, False}
