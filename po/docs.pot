@@ -107,7 +107,7 @@ msgstr ""
 
 #: commands/cache-clear.md:46 commands/cache-info.md:54
 #: commands/cache-list.md:51 commands/download-gis.md:56
-#: commands/get-geometry.md:74 commands/get-lr-unit.md:99
+#: commands/get-geometry.md:74 commands/get-lr-unit.md:100
 #: commands/get-parcel.md:102 commands/get-possession-sheet.md:79
 #: commands/get-zoning.md:90 commands/info.md:65
 #: commands/list-books-of-dc.md:53 commands/list-main-books.md:53
@@ -130,7 +130,7 @@ msgstr ""
 
 #: commands/cache-clear.md:66 commands/cache-info.md:62
 #: commands/cache-list.md:59 commands/download-gis.md:71
-#: commands/get-geometry.md:98 commands/get-lr-unit.md:351
+#: commands/get-geometry.md:98 commands/get-lr-unit.md:366
 #: commands/get-parcel.md:213 commands/get-possession-sheet.md:113
 #: commands/get-zoning.md:122 commands/info.md:73
 #: commands/list-books-of-dc.md:74 commands/list-main-books.md:78
@@ -152,7 +152,7 @@ msgstr ""
 
 #: commands/cache-clear.md:87 commands/cache-info.md:67
 #: commands/cache-list.md:64 commands/download-gis.md:90
-#: commands/get-geometry.md:117 commands/get-lr-unit.md:367
+#: commands/get-geometry.md:117 commands/get-lr-unit.md:382
 #: commands/get-parcel.md:265 commands/get-possession-sheet.md:128
 #: commands/get-zoning.md:141 commands/info.md:80
 #: commands/list-books-of-dc.md:87 commands/list-main-books.md:92
@@ -172,7 +172,7 @@ msgstr ""
 
 #: commands/cache-clear.md:93 commands/cache-info.md:73
 #: commands/cache-list.md:71 commands/download-gis.md:96
-#: commands/get-geometry.md:123 commands/get-lr-unit.md:375
+#: commands/get-geometry.md:123 commands/get-lr-unit.md:390
 #: commands/get-parcel.md:272 commands/get-possession-sheet.md:135
 #: commands/get-zoning.md:147 commands/info.md:86
 #: commands/list-books-of-dc.md:93 commands/list-main-books.md:99
@@ -500,16 +500,17 @@ msgstr ""
 msgid ""
 "The first table, **LAND REGISTRY UNIT**, identifies the unit: its number, the"
 " main book, the office that keeps it, and **Last Diary Number**, the most "
-"recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)** "
-"is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica,"
-" list B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET "
-"(LIST C)** is the teretovnica, list C. When list C is empty, the tool prints "
-"**No encumbrances found**. When an entry is registered in favour of someone "
-"(its text ends with \"u korist:\"), the persons follow under **In favour "
-"of**, with their address and OIB when the registry has them."
+"recent file number entered in the diary (dnevnik); the row is empty when the "
+"unit has no entry in the electronic diary. **PARCEL LIST (SHEET A)** is the "
+"posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the vlastovnica, list "
+"B, with the share of each owner as a fraction. **ENCUMBRANCES SHEET (LIST "
+"C)** is the teretovnica, list C. When list C is empty, the tool prints **No "
+"encumbrances found**. When an entry is registered in favour of someone (its "
+"text ends with \"u korist:\"), the persons follow under **In favour of**, "
+"with their address and OIB when the registry has them."
 msgstr ""
 
-#: commands/get-lr-unit.md:94
+#: commands/get-lr-unit.md:95
 msgid ""
 "If the unit has pending entries, an extra line **Pending entries (plombe)** "
 "appears in the first table with the file numbers, and a warning follows. A "
@@ -518,14 +519,14 @@ msgid ""
 "it is resolved."
 msgstr ""
 
-#: commands/get-lr-unit.md:101
+#: commands/get-lr-unit.md:102
 msgid ""
 "`--all` shows the three sheets. To see only one, use `--show-owners` for list"
 " B, `--show-parcels` for list A, or `--show-encumbrances` for list C. Without"
 " any of them the tool prints the first table only."
 msgstr ""
 
-#: commands/get-lr-unit.md:105
+#: commands/get-lr-unit.md:106
 msgid ""
 "To see what each pending entry is about, add `--plombe-detail`. The tool then"
 " asks the registry about every plomba, which takes one extra lookup each, and"
@@ -533,7 +534,7 @@ msgid ""
 " the date it was received:"
 msgstr ""
 
-#: commands/get-lr-unit.md:150
+#: commands/get-lr-unit.md:151
 msgid ""
 "To see at a glance whether anything registered against the unit stands in the"
 " way of a sale, add `--blockers`. The tool reads the pending entries, list C,"
@@ -548,7 +549,7 @@ msgid ""
 "well and each pending entry is named by the request it is."
 msgstr ""
 
-#: commands/get-lr-unit.md:212
+#: commands/get-lr-unit.md:227
 msgid ""
 "The first table is the unit header as before. **Sale screening** gives the "
 "verdict, and **SALE BLOCKERS** lists one row per finding: its **Kind**, its "
@@ -561,7 +562,7 @@ msgid ""
 "usually belongs to an estate, not because the register says so."
 msgstr ""
 
-#: commands/get-lr-unit.md:222
+#: commands/get-lr-unit.md:237
 msgid ""
 "To name the unit directly instead of starting from a parcel, use `--unit-"
 "number` and `--main-book` together, as in the example above. If you know the "
@@ -570,7 +571,7 @@ msgid ""
 "the number up for you:"
 msgstr ""
 
-#: commands/get-lr-unit.md:232
+#: commands/get-lr-unit.md:247
 msgid ""
 "The last column of the ownership sheet, **Entry**, tells you how each owner "
 "got there: the order number of the registration entry (upis), the date the "
@@ -579,13 +580,13 @@ msgid ""
 "a lifetime maintenance contract or a dispute."
 msgstr ""
 
-#: commands/get-lr-unit.md:238
+#: commands/get-lr-unit.md:253
 msgid ""
 "To keep the result as a file, add `--format json` and `--output` with a file "
 "name."
 msgstr ""
 
-#: commands/get-lr-unit.md:241
+#: commands/get-lr-unit.md:256
 msgid ""
 "To read several units in one go, put them in a file and name it with "
 "`--input`. The easiest file is the JSON that [get-parcel](get-parcel.md) "
@@ -595,11 +596,11 @@ msgid ""
 "example [lr_units.csv](../examples/lr_units.csv):"
 msgstr ""
 
-#: commands/get-lr-unit.md:257
+#: commands/get-lr-unit.md:272
 msgid "Open Terminal in the folder where the file is and type:"
 msgstr ""
 
-#: commands/get-lr-unit.md:324
+#: commands/get-lr-unit.md:339
 msgid ""
 "The units are printed one after another, separated by a line of dashes, each "
 "laid out as above. The sheet choices apply to every unit. When one unit "
@@ -609,40 +610,40 @@ msgid ""
 "`--output`."
 msgstr ""
 
-#: commands/get-lr-unit.md:353
+#: commands/get-lr-unit.md:368
 msgid ""
 "If you give a parcel but forget the municipality, the tool stops and asks for"
 " it:"
 msgstr ""
 
-#: commands/get-lr-unit.md:361
+#: commands/get-lr-unit.md:376
 msgid "Add `-m` and the municipality name or number."
 msgstr ""
 
-#: commands/get-lr-unit.md:363
+#: commands/get-lr-unit.md:378
 msgid ""
 "If the unit number does not exist in that main book, the tool reports an "
 "error that ends with `404 Not Found`. Check both numbers against your "
 "document. Other messages are explained on the [errors page](../errors.md)."
 msgstr ""
 
-#: commands/get-lr-unit.md:369
+#: commands/get-lr-unit.md:384
 msgid ""
 "[get-parcel](get-parcel.md) shows the cadastral side of the same parcel, "
 "including the possessors."
 msgstr ""
 
-#: commands/get-lr-unit.md:370
+#: commands/get-lr-unit.md:385
 msgid ""
 "[get-parcel](get-parcel.md) with `--detail registry` lists the units of many "
 "parcels, ready for `--input`."
 msgstr ""
 
-#: commands/get-lr-unit.md:371
+#: commands/get-lr-unit.md:386
 msgid "[Glossary](../glossary.md) explains list A, B and C and the plomba."
 msgstr ""
 
-#: commands/get-lr-unit.md:372
+#: commands/get-lr-unit.md:387
 msgid ""
 "[get-parcel](get-parcel.md) with `--show-owners` shows the possessors, to "
 "compare with the owners a blocker names."

@@ -83,7 +83,8 @@ lookup. Starting from the parcel is the easier route.
 
 4. The first table, **LAND REGISTRY UNIT**, identifies the unit: its number,
    the main book, the office that keeps it, and **Last Diary Number**, the most
-   recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)**
+   recent file number entered in the diary (dnevnik); the row is empty when the
+   unit has no entry in the electronic diary. **PARCEL LIST (SHEET A)**
    is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the
    vlastovnica, list B, with the share of each owner as a fraction.
    **ENCUMBRANCES SHEET (LIST C)** is the teretovnica, list C. When list C is

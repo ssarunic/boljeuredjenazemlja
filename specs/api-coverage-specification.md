@@ -285,7 +285,7 @@ The response is a list with exactly one element.
 | `condominiums` | bool, false even on the condominium | 19/19 | typed | none; keep `is_condominium()` on the type name |
 | `lrUnitTypeId` | int, 1 or 3 | 19/19 | typed | add enum `LRUnitType` (1 = VLASNIČKI, 3 = ETAŽNO VLASNIŠTVO S ODREĐENIM OMJERIMA) with an `OTHER` fallback |
 | `lrUnitTypeName` | string | 19/19 | typed | none |
-| `lastDiaryNumber` | string | 19/19 | typed | none |
+| `lastDiaryNumber` | string; the key is absent (not null) on a unit with no entry in the electronic diary (LUKA 11269, 11225) | 19/19 | optional | none |
 | `activePlumbs[]` | list | 14/19 non-empty | typed | see 5.6 |
 | `ownershipSheetB` | object | 19/19 | typed | see 5.7 |
 | `possessionSheetA1` | object | 19/19 | typed | see 5.9 |

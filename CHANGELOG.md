@@ -284,6 +284,12 @@ number and one tag.
 
 ### Fixed
 
+- SDK, CLI, MCP: a land-registry unit with no entry in the electronic diary
+  comes back without the `lastDiaryNumber` key, and the
+  `LandRegistryUnitDetailed` model rejected the whole unit (`INVALID_RESPONSE`,
+  reason `validation_failed`), hiding its owners and encumbrances (k.o. LUKA
+  11269, 11225). `last_diary_number` is optional now; the CLI prints an empty
+  row and the JSON has `null`.
 - SDK, CLI, MCP: a possession sheet harmonized with the land registry comes
   back from the cadastre as a stub without possessors (and, by number,
   without its id) that names the land-registry unit; the `PossessionSheet`
