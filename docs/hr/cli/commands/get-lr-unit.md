@@ -85,12 +85,13 @@ put.
 
 4. Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj,
    glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji
-   poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A.
-   **VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom.
-   **TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje
-   **Nema tereta**. Kada je upis uknjižen u nečiju korist (tekst mu završava s
-   "u korist:"), osobe slijede pod **U korist**, s adresom i OIB-om kada ih
-   zemljišna knjiga ima.
+   poslovni broj upisan u dnevnik; redak je prazan kada uložak nema upisa u
+   elektroničkom dnevniku. **POSJEDOVNICA (LIST A)** je list A. **VLASTOVNICA
+   (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. **TERETOVNICA
+   (LIST C)** je list C. Kada je list C prazan, alat ispisuje **Nema tereta**.
+   Kada je upis uknjižen u nečiju korist (tekst mu završava s "u korist:"),
+   osobe slijede pod **U korist**, s adresom i OIB-om kada ih zemljišna knjiga
+   ima.
 
 5. Ako uložak ima plombe, u prvoj tablici pojavljuje se dodatni redak **Plombe
    (u tijeku)** s poslovnim brojevima, a slijedi upozorenje. Plomba znači da je

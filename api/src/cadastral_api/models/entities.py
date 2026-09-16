@@ -1930,8 +1930,11 @@ class LandRegistryUnitDetailed(SourceModel):
         alias="lrUnitTypeName", description="Type name (e.g., 'VLASNIČKI', 'ETAŽNI')"
     )
 
-    # Last activity
-    last_diary_number: str = Field(alias="lastDiaryNumber", description="Last diary number")
+    # Last activity. The server omits the key (it does not send null) on a
+    # unit with no entry in the electronic diary.
+    last_diary_number: str | None = Field(
+        default=None, alias="lastDiaryNumber", description="Last diary number"
+    )
 
     # Active plombe - pending/unresolved entries on the unit
     active_plumbs: list[Plumb] = Field(
