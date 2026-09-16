@@ -29,7 +29,9 @@ CHOICES = {
     },
     ("get_parcel_geometry", "format"): {"geojson", "wkt", "dict"},
     ("find_parcels_in_area", "relation"): {"intersects", "within"},
-    ("build_assembly", "export"): {"parcels_csv", "persons_csv", "matrix_csv", "geojson"},
+    ("build_assembly", "export"): {
+        "parcels_csv", "persons_csv", "matrix_csv", "blockers_csv", "geojson"
+    },
 }
 
 

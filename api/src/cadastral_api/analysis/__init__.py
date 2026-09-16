@@ -18,12 +18,20 @@ from .assembly import (
     AcquisitionScore,
     AssemblyAnalysis,
     AssemblyInput,
+    ParcelBlocker,
     PersonHolding,
     acquisition_score,
     build_assembly,
     resolve_weights,
 )
-from .export import matrix_csv, parcels_csv, parcels_geojson, persons_csv, rows_to_csv
+from .export import (
+    blockers_csv,
+    matrix_csv,
+    parcels_csv,
+    parcels_geojson,
+    persons_csv,
+    rows_to_csv,
+)
 from .owner_flags import (
     DEFAULT_DECEASED_THRESHOLD_YEARS,
     AddressAbroadInference,
@@ -78,8 +86,10 @@ __all__ = [
     "AssemblyAnalysis",
     "AssemblyInput",
     "DEFAULT_WEIGHTS",
+    "ParcelBlocker",
     "PersonHolding",
     "acquisition_score",
+    "blockers_csv",
     "build_assembly",
     "matrix_csv",
     "parcels_csv",

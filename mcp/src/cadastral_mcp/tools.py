@@ -8,6 +8,7 @@ from typing import Any
 from cadastral_api import CadastralAPIClient, GMLParser
 from cadastral_api.analysis import (
     AssemblyInput,
+    blockers_csv,
     build_assembly,
     check_area,
     compare_registers,
@@ -2007,7 +2008,7 @@ class CadastralTools:
     MAX_ASSEMBLY_PARCELS = 50
 
     #: What ``build_assembly`` can export next to its JSON.
-    VALID_EXPORTS = ("parcels_csv", "persons_csv", "matrix_csv", "geojson")
+    VALID_EXPORTS = ("parcels_csv", "persons_csv", "matrix_csv", "blockers_csv", "geojson")
 
     async def build_assembly(
         self,
@@ -2018,6 +2019,7 @@ class CadastralTools:
         persons_offset: int = 0,
         persons_limit: int | None = 50,
         include_plombe_detail: bool = False,
+        include_blockers: bool = True,
     ) -> dict[str, Any]:
         """
         Land-assembly analysis of a set of parcels: the persons x parcels
@@ -2033,17 +2035,21 @@ class CadastralTools:
             parcels: Up to ``MAX_ASSEMBLY_PARCELS`` parcel references.
             include_zoning: Read each parcel's zoning for the building-area factor.
             weights: Override any of the score's factor weights.
-            export: "parcels_csv" | "persons_csv" | "matrix_csv" | "geojson"
-                to add that table as text (or a FeatureCollection) under
-                ``export``.
+            export: "parcels_csv" | "persons_csv" | "matrix_csv" |
+                "blockers_csv" | "geojson" to add that table as text (or a
+                FeatureCollection) under ``export``.
             persons_offset: Skip this many ranked persons.
             persons_limit: Return at most this many (default 50; None for all).
             include_plombe_detail: Name each pending request among the sale
                 blockers (one request per plomba, once per unit).
+            include_blockers: Return the ``blockers`` table (every counted
+                blocker of every parcel); off for a smaller response.
 
         Returns:
             ``totals``, ``parcels`` (easiest first, with ``score``,
             ``sale_verdict``, ``blocker_counts`` and ``blocker_kinds``),
+            ``blockers`` (one row per parcel and blocker, the same ones the
+            verdicts rest on),
             ``persons`` (a page of the ranking, with ``persons_page``; each
             with ``likely_deceased`` and ``address_abroad``, inferred),
             ``surname_groups`` (with the counts of those flags), ``matrix``
@@ -2137,6 +2143,12 @@ class CadastralTools:
             "surname_groups": [g.model_dump(mode="json") for g in analysis.surname_groups],
             "matrix": [c.model_dump(mode="json") for c in analysis.matrix],
             "scores": [s.model_dump(mode="json") for s in analysis.scores],
+            "blockers": (
+                [b.model_dump(mode="json", exclude_none=True) for b in analysis.blockers]
+                if include_blockers
+                else None
+            ),
+            "blocker_count": len(analysis.blockers),
             "notes": analysis.notes + zoning_notes,
             "total": len(parcels),
             "successful": len(items),
@@ -2150,6 +2162,8 @@ class CadastralTools:
             response["export"] = {"format": export, "text": persons_csv(analysis)}
         elif export == "matrix_csv":
             response["export"] = {"format": export, "text": matrix_csv(analysis)}
+        elif export == "blockers_csv":
+            response["export"] = {"format": export, "text": blockers_csv(analysis)}
         elif export == "geojson":
             response["export"] = {"format": export, **parcels_geojson(analysis, geometries)}
         size = len(json.dumps(response, ensure_ascii=False))
@@ -2157,7 +2171,7 @@ class CadastralTools:
             raise ResponseTooLargeError(
                 f"The assembly analysis of {len(items)} parcels is {size:,} characters, too "
                 f"large to return in one response. Analyse fewer parcels per call, pass a "
-                f"persons_limit, or ask for one export at a time."
+                f"persons_limit, set include_blockers=false, or ask for one export at a time."
             )
         return response
 

@@ -62,6 +62,31 @@ MATRIX_COLUMNS = [
     "fuzzy",
     "records",
 ]
+BLOCKER_COLUMNS = [
+    "parcel_number",
+    "municipality_code",
+    "lr_unit_number",
+    "main_book_id",
+    "kind",
+    "severity",
+    "scope",
+    "share_order_number",
+    "condominium_unit",
+    "source",
+    "description",
+    "beneficiary",
+    "amount",
+    "amount_value",
+    "amount_currency",
+    "entry_order_number",
+    "entry_date",
+    "diary_number",
+    "file_number",
+    "request_kind",
+    "status_description",
+    "likely_lapsed",
+    "basis",
+]
 
 
 def rows_to_csv(rows: list[dict[str, Any]], columns: list[str]) -> str:
@@ -118,6 +143,19 @@ def matrix_csv(analysis: AssemblyAnalysis) -> str:
         for cell in analysis.matrix
     ]
     return rows_to_csv(rows, MATRIX_COLUMNS)
+
+
+def blockers_csv(analysis: AssemblyAnalysis) -> str:
+    """One row per parcel and blocker (long form), easiest parcel first."""
+    rows = []
+    for blocker in analysis.blockers:
+        row = blocker.model_dump(mode="json")
+        entry = blocker.entry or {}
+        row["entry_order_number"] = entry.get("order_number")
+        row["entry_date"] = entry.get("entry_date")
+        row["diary_number"] = entry.get("diary_number")
+        rows.append(row)
+    return rows_to_csv(rows, BLOCKER_COLUMNS)
 
 
 def parcels_geojson(

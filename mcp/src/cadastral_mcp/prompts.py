@@ -249,3 +249,85 @@ Please provide:
         except CadastralAPIError as e:
             logger.error(f"Failed to generate land use summary for {parcel_id}: {e}", exc_info=True)
             raise ValueError(f"Could not retrieve parcel data for {parcel_id}.") from e
+
+
+    def due_diligence_report(
+        self, parcels: str, municipality: str, language: str = "hr", format: str = "markdown"
+    ) -> str:
+        """The report request: what to call and how to render it (no data is read here).
+
+        The data is the JSON ``build_assembly`` returns; the prompt fixes the
+        section order, the terms, the provenance rule and the notices, and
+        leaves the format to the reader. Pure text, so it costs nothing to
+        render and can be pasted into any client.
+        """
+        refs = [ref.strip() for ref in parcels.split(",") if ref.strip()]
+        if not refs:
+            raise ValueError("Give at least one parcel number or parcel_id.")
+        language = language.lower().strip() or "hr"
+        format = format.lower().strip() or "markdown"
+        if language not in ("hr", "en"):
+            raise ValueError('language must be "hr" or "en".')
+        if format not in ("markdown", "html"):
+            raise ValueError('format must be "markdown" or "html".')
+        references = ", ".join(
+            f'{{"parcel_id": {ref}}}' if ref.isdigit() else
+            f'{{"parcel_number": "{ref}", "municipality": "{municipality}"}}'
+            for ref in refs
+        )
+        prose = "Croatian" if language == "hr" else "English"
+        rendering = (
+            "Markdown: tables for the parcels, the persons and the blockers; one heading per "
+            "section; readable as plain text in an email."
+            if format == "markdown"
+            else "HTML: one self-contained file with inline CSS and no external resources, "
+            "printable to PDF; a coloured badge per verdict (clear green, conditional amber, "
+            "blocked red); the map_url of each parcel as a link; tables sortable only if the "
+            "script is inline."
+        )
+        return f"""Prepare a due-diligence screening report of {len(refs)} parcel(s) in cadastral \
+municipality {municipality} for a reader who did not run the tool and will forward it to a \
+lawyer. Write the prose in {prose}; keep Croatian register terms with the English gloss on \
+first use (zemljišnoknjižni uložak / land-registry unit, vlastovnica / sheet B (owners), \
+posjedovni list / possession sheet (cadastre), teretovnica / sheet C (encumbrances), plomba / \
+pending request, zabilježba / note, založno pravo / mortgage, služnost / servitude, pravo \
+prvokupa / pre-emption right, ostavina / estate, suvlasnički udio / co-ownership share).
+
+Step 1. Call build_assembly with parcels=[{references}], include_plombe_detail=true, \
+include_zoning=true, persons_limit=null. If the response is too large, call again with \
+include_blockers=false and read the blockers with export="blockers_csv" in a second call.
+
+Step 2. Render the JSON as a report in this order, and in nothing else:
+
+1. Header: the municipality, the parcel count and total area (totals), when and from where the \
+registers were read (each parcel's provenance: register, source_url, retrieved_at), and the \
+references that failed (failed, with error_type), so the reader knows what is missing.
+2. Verdict roll-up: parcels by verdict (totals.parcels_by_verdict), persons likely deceased and \
+abroad (totals.persons_likely_deceased, totals.persons_address_abroad), public bodies present \
+(totals.public_body_parcels), and the three sentences those numbers mean for an acquisition.
+3. Parcels, easiest first (the order of parcels): number, area, land use, the unit \
+(lr_unit_number / main_book_id), distinct owners and possessors, relationship between the \
+registers, zoning status when read, area_mismatch, sale_verdict with blocker_counts, score. \
+Under each parcel list its rows of blockers: kind, severity, what it applies to (scope, \
+share_order_number, condominium_unit), the description, amount and beneficiary, the entry \
+(order_number, entry_date, diary_number) or file_number and request_kind for a plomba, and \
+likely_lapsed where set. Quote an other_annotation entry's description for the reader.
+4. Persons by controlled area (persons): name as the register writes it, party_type_inferred, \
+owner_of and possessor_of, owned / possessed / controlled area, likely_deceased and \
+address_abroad, fuzzy_matches. Then surname_groups with person_count, parcel_count, \
+controlled_area_m2, likely_deceased_count and address_abroad_count.
+5. Closing: the screening rule verbatim (any parcel's blockers carry it as rule in \
+sale_blockers; quote: a screening of the register's text, not a legal opinion), the inference \
+notice (party types, likely_deceased, address_abroad and likely_estate are inferred; each \
+carries its basis), the zoning dataset disclaimer when zoning was read, and the notes.
+
+Rules: copy every number, name, share, date and reference from the JSON, never recompute or \
+round them; do not add a fact the JSON does not hold, and say "not read" where a field is \
+null; keep every person exactly as the registers spell them; state the register (cadastre or \
+land registry) behind every fact; do not give legal advice or a recommendation to buy; where \
+the tool could not answer (unknown kind of plomba, unrecognised note), say so and name what \
+would settle it (the plomba detail, the entry text, a lokacijska informacija for buildability).
+
+Format. {rendering}
+"""
+

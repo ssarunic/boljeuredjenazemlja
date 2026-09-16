@@ -34,7 +34,7 @@ from .persons import (
     surname_of,
 )
 from .registers import PersonRecord, RegisterComparison
-from .sale_blockers import ENCUMBRANCE_KINDS
+from .sale_blockers import ENCUMBRANCE_KINDS, Blocker
 
 #: Default weights of the ease-of-acquisition factors (they sum to 1).
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -178,6 +178,15 @@ class ParcelSummary(BaseModel):
     provenance: dict[str, dict[str, str] | None]
 
 
+class ParcelBlocker(Blocker):
+    """One blocker of one parcel of the set: the blockers table, in long form."""
+
+    parcel_number: str
+    municipality_code: str
+    lr_unit_number: str | None = None
+    main_book_id: int | None = None
+
+
 class AssemblyTotals(BaseModel):
     parcel_count: int
     total_area_m2: int
@@ -214,6 +223,13 @@ class AssemblyAnalysis(BaseModel):
     surname_groups: list[SurnameGroup]
     matrix: list[MatrixCell]
     scores: list[AcquisitionScore]
+    blockers: list[ParcelBlocker] = Field(
+        default_factory=list,
+        description=(
+            "Every counted sale blocker of every parcel, easiest parcel first; the same "
+            "blockers the verdicts and counts on the parcels rest on"
+        ),
+    )
     totals: AssemblyTotals
     notes: list[str]
 
@@ -559,6 +575,22 @@ def build_assembly(
             summaries[i].parcel_number,
         ),
     )
+    blockers: list[ParcelBlocker] = []
+    for i in order:
+        sale_blockers = items[i].comparison.sale_blockers
+        if sale_blockers is None:
+            continue
+        reference = items[i].comparison.lr_unit or {}
+        blockers.extend(
+            ParcelBlocker(
+                parcel_number=items[i].parcel.parcel_number,
+                municipality_code=items[i].parcel.cad_municipality_reg_num,
+                lr_unit_number=reference.get("lr_unit_number"),
+                main_book_id=reference.get("main_book_id"),
+                **blocker.model_dump(),
+            )
+            for blocker in sale_blockers.blockers
+        )
     notes: list[str] = []
     if any(p.shares_unknown for p in persons):
         notes.append("an owner role without a registered share counts the whole parcel as owned")
@@ -587,6 +619,7 @@ def build_assembly(
         surname_groups=surname_groups,
         matrix=matrix,
         scores=[scores[i] for i in order],
+        blockers=blockers,
         totals=totals,
         notes=notes,
     )

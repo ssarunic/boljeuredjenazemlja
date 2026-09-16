@@ -428,7 +428,7 @@ every successful entry; a person on several parcels counts once). Use it
 before an acquisition: the possessor is who uses the land, the owner is who
 signs; a `disjoint` parcel needs both at the table.
 
-### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50, include_plombe_detail=False)`
+### `build_assembly(parcels, include_zoning=False, weights=None, export=None, persons_offset=0, persons_limit=50, include_plombe_detail=False, include_blockers=True)`
 
 Land-assembly analysis of a set of up to 50 parcels: the three tables an
 investor needs before talking to anyone. For every reference the cadastre
@@ -456,6 +456,13 @@ well (one WFS lookup per parcel, slower).
   expect per family, as an estimate.
 - `matrix`: one cell per person and parcel with `role` (`owner`, `possessor`,
   `both`), the shares and `fuzzy`.
+- `blockers`: one row per parcel and counted sale blocker, easiest parcel
+  first, each with the parcel, the unit and every field a blocker carries
+  (kind, severity, scope, share, source, description, amount, beneficiary,
+  entry or file number, basis), so a report or a spreadsheet needs no second
+  call; `blocker_count` gives the size, `include_blockers=false` leaves the
+  table out of a large response. The same table is the `"blockers_csv"`
+  export.
 - `scores`: the factors behind each parcel's score and `weights`. The score
   is a weighted share of yes/no factors: `single_owner`,
   `owner_is_possessor`, `no_encumbrances`, `no_pending_plombe` and
@@ -476,9 +483,10 @@ well (one WFS lookup per parcel, slower).
 References that could not be read are listed under `failed` with their
 `error_type`; the analysis covers the rest (`total`, `successful`,
 `units_fetched`, `zoning_requested` and `generated_at` say what it rests on). `export` adds one table as text
-under `export`: `"parcels_csv"`, `"persons_csv"` or `"matrix_csv"` (CSV with
-fixed English columns; the matrix in long form, one row per person and
-parcel) or `"geojson"` (a `FeatureCollection` of the parcels that have an
+under `export`: `"parcels_csv"`, `"persons_csv"`, `"matrix_csv"` or
+`"blockers_csv"` (CSV with fixed English columns; the matrix and the blockers
+in long form, one row per person and parcel, or per parcel and blocker) or
+`"geojson"` (a `FeatureCollection` of the parcels that have an
 outline, scores in the properties, the others under `skipped`). Party types
 are inferred from names and controlled areas use cadastre areas; the
 `notes` repeat both caveats. A response too large to return says so and
@@ -608,7 +616,14 @@ Resources: `cadastral://parcel/{parcel_id}` (the parcel record),
 `explain_ownership_structure(parcel_id)`, `property_report(parcel_id)`,
 `compare_parcels(parcel_ids)`, `land_use_summary(parcel_id)`; all four take
 the numeric `parcel_id` that `find_parcel` returns and read the cadastre
-record (possessors, not land-registry owners).
+record (possessors, not land-registry owners). `due_diligence_report(parcels,
+municipality, language, format)` reads nothing: it returns the request that
+tells the model to call `build_assembly` on the parcels (comma-separated
+numbers or `parcel_id` values) and how to render the answer as a report
+(section order, Croatian terms with the gloss, provenance on every fact, the
+screening and inference notices) in Croatian or English, as Markdown or one
+self-contained HTML file. The same text, for pasting into a client without a
+prompt picker, is in [due-diligence-report-prompt.md](due-diligence-report-prompt.md).
 
 The server also sends a short `instructions` text when the client connects
 (the two registers, which tool to start with, paging, provenance). Clients
