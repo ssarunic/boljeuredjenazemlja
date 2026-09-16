@@ -260,3 +260,30 @@ def test_namesakes_on_two_parcels_stay_two_people_in_the_totals() -> None:
     assert len(augustins) == 2
     assert {p.likely_deceased for p in augustins} == {True, False}
     assert {p.parcels[0] for p in augustins} == {"1122/1", "1139/4"}
+
+
+def test_the_blockers_table_lists_every_counted_blocker_per_parcel(items) -> None:
+    from cadastral_api.analysis import blockers_csv
+
+    analysis = build_assembly(items)
+    # Parcel A (unit 449) has a plomba and four owners the cadastre does not
+    # list; B (unit 625) has owners the cadastre does not list; C has no unit
+    # and so no blockers at all.
+    by_parcel: dict[str, list[str]] = {}
+    for blocker in analysis.blockers:
+        by_parcel.setdefault(blocker.parcel_number, []).append(blocker.kind)
+    assert set(by_parcel) == {"1122/1", "1139/4"}
+    assert by_parcel["1122/1"][0] == "pending_entry"
+    assert set(by_parcel["1139/4"]) <= {"owner_not_possessor", "area_mismatch", "likely_estate"}
+    assert by_parcel["1122/1"].count("owner_not_possessor") == 4
+    first = analysis.blockers[0]
+    assert first.lr_unit_number == "449" and first.main_book_id == 21277
+    assert first.municipality_code == "334979" and first.file_number == "Z-12564/2026"
+    # The table agrees with the counts on the parcel rows.
+    a_summary = next(p for p in analysis.parcels if p.parcel_number == "1122/1")
+    assert sum(a_summary.blocker_counts.values()) == len(by_parcel["1122/1"])
+    text = blockers_csv(analysis)
+    header, *rows = text.splitlines()
+    assert header.startswith("parcel_number,municipality_code,lr_unit_number,main_book_id,kind")
+    assert len(rows) == len(analysis.blockers)
+    assert rows[0].startswith("1122/1,334979,449,21277,pending_entry,blocking,unit")

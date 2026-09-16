@@ -10,6 +10,22 @@ number and one tag.
 
 ## [Unreleased]
 
+### Added
+
+- SDK, MCP: `build_assembly` returns `blockers`, one row per parcel and
+  counted sale blocker with the parcel, the unit and every blocker field
+  (`ParcelBlocker`), the list the verdicts and counts on the parcels rest
+  on, so a report or a spreadsheet needs no second call per unit;
+  `blockers_csv` exports the same table; `include_blockers=false` leaves it
+  out of a large response and the size error names that option.
+- MCP: the prompt `due_diligence_report(parcels, municipality, language,
+  format)`: the request that has the model call `build_assembly` and render
+  the result as a screening report with a fixed section order, Croatian
+  register terms with the English gloss, provenance on every fact and the
+  screening and inference notices, in Croatian or English, as Markdown or one
+  self-contained HTML file. The same text for pasting into Claude Code is in
+  `docs/due-diligence-report-prompt.md`.
+
 ## [0.3.0] - 2026-09-16
 
 ### Security

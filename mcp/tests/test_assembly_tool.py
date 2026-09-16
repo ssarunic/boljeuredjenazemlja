@@ -107,3 +107,17 @@ def test_validation(kwargs, fragment) -> None:
     with pytest.raises(ValueError) as excinfo:
         _run(CadastralTools(_FakeClient()).build_assembly(**kwargs))
     assert fragment in str(excinfo.value)
+
+
+def test_the_blockers_table_and_its_export() -> None:
+    client = _FakeClient()
+    tools = CadastralTools(client)
+    res = _run(tools.build_assembly([{"parcel_id": 1}], export="blockers_csv"))
+    assert res["blocker_count"] == len(res["blockers"]) > 0
+    first = res["blockers"][0]
+    assert first["parcel_number"] == "1122/1" and first["kind"] == "pending_entry"
+    assert first["lr_unit_number"] == "449" and "amount" not in first  # nulls left out
+    assert res["export"]["format"] == "blockers_csv"
+    assert res["export"]["text"].splitlines()[0].startswith("parcel_number,municipality_code")
+    lean = _run(tools.build_assembly([{"parcel_id": 1}], include_blockers=False))
+    assert lean["blockers"] is None and lean["blocker_count"] == res["blocker_count"]

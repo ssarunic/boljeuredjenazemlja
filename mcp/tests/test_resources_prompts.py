@@ -105,3 +105,21 @@ def test_compare_parcels_prompt_renders_every_parcel(client) -> None:
     assert client.parcel.parcel_parts[0].name in text
     with pytest.raises(ValueError):
         asyncio.run(CadastralPrompts(client).compare_parcels(["1"]))
+
+
+def test_due_diligence_report_prompt_names_the_call_the_sections_and_the_terms(client) -> None:
+    text = CadastralPrompts(client).due_diligence_report("103/2, 1122/1, 6564817", "SAVAR")
+    call = 'build_assembly with parcels=[{"parcel_number": "103/2", "municipality": "SAVAR"}'
+    assert call in text
+    assert '{"parcel_id": 6564817}' in text and "include_plombe_detail=true" in text
+    assert "Croatian" in text and "vlastovnica" in text and "ostavina" in text
+    for section in ("1. Header", "2. Verdict roll-up", "3. Parcels", "4. Persons", "5. Closing"):
+        assert section in text
+    assert "not a legal opinion" in text and "never recompute" in text
+    assert "Markdown" in text and "HTML" not in text.split("Format.")[1]
+    html = CadastralPrompts(client).due_diligence_report("103/2", "SAVAR", "en", "html")
+    assert "English" in html and "self-contained" in html
+    with pytest.raises(ValueError):
+        CadastralPrompts(client).due_diligence_report(" , ", "SAVAR")
+    with pytest.raises(ValueError):
+        CadastralPrompts(client).due_diligence_report("103/2", "SAVAR", language="de")

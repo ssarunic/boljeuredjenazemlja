@@ -162,6 +162,13 @@ legal opinion.
   longer counts against a parcel. `ParcelSummary` gets `sale_verdict`,
   `blocker_counts`, `blocker_kinds`; `PersonHolding` gets `likely_deceased`
   and `address_abroad`; `SurnameGroup` and `AssemblyTotals` count them.
+- `build_assembly` also returns the `blockers` table (`ParcelBlocker`, one
+  row per parcel and counted blocker, with the parcel and the unit) and the
+  `blockers_csv` export; a report rendered from the assembly JSON needs no
+  further call. The rendering itself is the client's: the MCP prompt
+  `due_diligence_report` fixes the section order, the terms, the provenance
+  rule and the notices, and leaves the format to the reader
+  (`docs/due-diligence-report-prompt.md`).
 - MCP `get_lr_unit`: `sale_blockers` at every level, the list itself in
   "ownership" and "encumbrances" (a large condominium's list runs to tens of
   kilobytes, too much for every page of the raw sheets), the verdict, the

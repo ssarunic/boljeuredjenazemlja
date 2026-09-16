@@ -1145,10 +1145,12 @@ def create_mcp_server() -> MCPServer:
             ),
         ] = None,
         export: Annotated[
-            Literal["parcels_csv", "persons_csv", "matrix_csv", "geojson"] | None,
+            Literal["parcels_csv", "persons_csv", "matrix_csv", "blockers_csv", "geojson"]
+            | None,
             Field(
                 description=(
-                    '"parcels_csv", "persons_csv" or "matrix_csv" put CSV text under export.text;'
+                    '"parcels_csv", "persons_csv", "matrix_csv" or "blockers_csv" put CSV text '
+                    "under export.text;"
                     ' "geojson" puts a FeatureCollection of the parcels that have an outline '
                     "under export (scores in the properties, parcels without an outline under "
                     "export.skipped)"
@@ -1177,6 +1179,10 @@ def create_mcp_server() -> MCPServer:
                 description="Name each pending plomba among the sale blockers (one request each)"
             ),
         ] = False,
+        include_blockers: Annotated[
+            bool,
+            Field(description="Return the blockers table (one row per parcel and blocker)"),
+        ] = True,
     ) -> dict[str, Any]:
         """
         Land-assembly analysis (okrupnjavanje zemljišta, due diligence) of a
@@ -1196,28 +1202,19 @@ def create_mcp_server() -> MCPServer:
         inferred from names. Controlled areas use cadastre areas.
 
         Returns:
-            ``totals`` (parcel_count, total_area_m2, area_by_land_use,
-            area_by_relationship, area_by_zoning_status, distinct_people,
-            distinct_owners, distinct_possessors, party_types,
-            public_body_parcels, fuzzy_matches, parcels_with_encumbrances,
-            parcels_with_pending_plombe, parcels_in_building_area,
-            parcels_by_verdict, persons_likely_deceased,
-            persons_address_abroad),
-            ``parcels`` (easiest first: relationship, distinct owners and
-            possessors, encumbrances, plombe, zoning, area_mismatch,
-            sale_verdict, blocker_counts, blocker_kinds, score, map_url,
-            provenance), ``persons`` (a page of the ranking: owner_of,
-            possessor_of, owned / possessed / controlled area,
-            party_type_inferred, likely_deceased, address_abroad) with
-            ``persons_page``, ``surname_groups`` (with likely_deceased_count
-            and address_abroad_count: the estates and foreign counterparties
-            to expect per family, inferred),
-            ``matrix`` (person_key, parcel_number, role, shares, fuzzy),
-            ``scores`` (factors and notes per parcel), ``weights``,
-            ``notes``, ``generated_at``, ``total`` and ``successful``
-            (references given and read), ``failed`` (references that could
-            not be read, with error_type), ``units_fetched``,
-            ``zoning_requested`` and ``export`` when asked.
+            ``totals`` (areas by land use, relationship, zoning and verdict;
+            distinct people, owners, possessors; party types; parcels with
+            encumbrances, plombe, in a building area; persons likely deceased
+            or abroad), ``parcels`` (easiest first: relationship, owners and
+            possessors, sale_verdict, blocker_counts, blocker_kinds, zoning,
+            area_mismatch, score, map_url, provenance), ``persons`` (a page
+            of the ranking with areas, party_type_inferred, likely_deceased,
+            address_abroad) with ``persons_page``, ``surname_groups`` (with
+            the estate and abroad counts per family), ``matrix``,
+            ``blockers`` (one row per parcel and counted blocker: the list
+            the verdicts rest on), ``scores``, ``weights``, ``notes``,
+            ``failed`` (references not read, with error_type),
+            ``units_fetched`` and ``export`` when asked.
         """
         logger.info(
             f"Tool invoked: build_assembly({len(parcels)} parcels, zoning={include_zoning}, "
@@ -1231,6 +1228,7 @@ def create_mcp_server() -> MCPServer:
             persons_offset=persons_offset,
             persons_limit=persons_limit,
             include_plombe_detail=include_plombe_detail,
+            include_blockers=include_blockers,
         )
 
     @mcp.tool()
@@ -1526,6 +1524,23 @@ def create_mcp_server() -> MCPServer:
         logger.info(f"Prompt invoked: land_use_summary({parcel_id})")
         return await prompts_handler.land_use_summary(parcel_id)
 
+    @mcp.prompt()
+    async def due_diligence_report(
+        parcels: str, municipality: str, language: str = "hr", format: str = "markdown"
+    ) -> str:
+        """
+        Due-diligence screening report of a set of parcels for a reader who
+        did not run the tool (an investor's email to a lawyer): calls
+        build_assembly on the parcels (comma-separated parcel numbers, or
+        parcel_id values from find_parcel) and renders the result with a fixed
+        section order, Croatian register terms with the English gloss,
+        provenance on every fact and the screening and inference notices.
+        language "hr" or "en"; format "markdown" or "html" (one self-contained
+        file).
+        """
+        logger.info(f"Prompt invoked: due_diligence_report({parcels!r}, {municipality!r})")
+        return prompts_handler.due_diligence_report(parcels, municipality, language, format)
+
     logger.info("MCP server initialized successfully")
     logger.info(
         "Available tools: find_parcel, get_parcel, resolve_municipality, "
@@ -1536,7 +1551,7 @@ def create_mcp_server() -> MCPServer:
         "download_municipality_gis"
     )
     logger.info("Available prompts: explain_ownership_structure, property_report, "
-                "compare_parcels, land_use_summary")
+                "compare_parcels, land_use_summary, due_diligence_report")
     logger.info("Available resources: cadastral://parcel/{id}, cadastral://municipality/{code}, "
                 "cadastral://office/{code}")
 
