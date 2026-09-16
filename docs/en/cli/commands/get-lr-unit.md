@@ -3,7 +3,7 @@
 
 > **Practice data only.** This tool is a demonstration. It works with the practice server that comes with it. Before connecting it to any other server, including the official Croatian cadastre and land registry, verify that you have the rights to use that server and its data; you do so at your own risk. Nothing shown on this page is real property data.
 >
-> Generated from `cadastral 0.2.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
+> Generated from `cadastral 0.3.0` by `scripts/build_docs.py`. Text between the generated markers is rewritten on every build.
 <!-- END GENERATED: banner -->
 
 # Read the land registry unit: owners, parcels, encumbrances
@@ -83,7 +83,8 @@ lookup. Starting from the parcel is the easier route.
 
 4. The first table, **LAND REGISTRY UNIT**, identifies the unit: its number,
    the main book, the office that keeps it, and **Last Diary Number**, the most
-   recent file number entered in the diary (dnevnik). **PARCEL LIST (SHEET A)**
+   recent file number entered in the diary (dnevnik); the row is empty when the
+   unit has no entry in the electronic diary. **PARCEL LIST (SHEET A)**
    is the posjedovnica, list A. **OWNERSHIP SHEET (LIST B)** is the
    vlastovnica, list B, with the share of each owner as a fraction.
    **ENCUMBRANCES SHEET (LIST C)** is the teretovnica, list C. When list C is

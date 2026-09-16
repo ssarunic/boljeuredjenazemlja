@@ -3,7 +3,7 @@
 
 > **Samo probni podaci.** Ovaj je alat demonstracija. Radi s probnim poslužiteljem koji dolazi uz njega. Prije spajanja na bilo koji drugi poslužitelj, uključujući službeni katastar i zemljišne knjige Republike Hrvatske, provjerite imate li pravo koristiti taj poslužitelj i njegove podatke; to činite na vlastitu odgovornost. Ništa na ovoj stranici nisu stvarni podaci o nekretninama.
 >
-> Izrađeno iz `cadastral 0.2.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
+> Izrađeno iz `cadastral 0.3.0` skriptom `scripts/build_docs.py`. Tekst između generiranih oznaka ponovno se ispisuje pri svakoj izradi.
 > Ova je stranica izrađena iz engleskog izvornika i datoteke `po/docs-hr.po`. Ne uređujte je ručno.
 <!-- END GENERATED: banner -->
 
@@ -85,12 +85,13 @@ put.
 
 4. Prva tablica, **ZEMLJIŠNOKNJIŽNI ULOŽAK**, određuje uložak: njegov broj,
    glavnu knjigu, ured koji ga vodi i **Zadnji broj dnevnika**, najnoviji
-   poslovni broj upisan u dnevnik. **POSJEDOVNICA (LIST A)** je list A.
-   **VLASTOVNICA (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom.
-   **TERETOVNICA (LIST C)** je list C. Kada je list C prazan, alat ispisuje
-   **Nema tereta**. Kada je upis uknjižen u nečiju korist (tekst mu završava s
-   "u korist:"), osobe slijede pod **U korist**, s adresom i OIB-om kada ih
-   zemljišna knjiga ima.
+   poslovni broj upisan u dnevnik; redak je prazan kada uložak nema upisa u
+   elektroničkom dnevniku. **POSJEDOVNICA (LIST A)** je list A. **VLASTOVNICA
+   (LIST B)** je list B, s udjelom svakog vlasnika kao razlomkom. **TERETOVNICA
+   (LIST C)** je list C. Kada je list C prazan, alat ispisuje **Nema tereta**.
+   Kada je upis uknjižen u nečiju korist (tekst mu završava s "u korist:"),
+   osobe slijede pod **U korist**, s adresom i OIB-om kada ih zemljišna knjiga
+   ima.
 
 5. Ako uložak ima plombe, u prvoj tablici pojavljuje se dodatni redak **Plombe
    (u tijeku)** s poslovnim brojevima, a slijedi upozorenje. Plomba znači da je

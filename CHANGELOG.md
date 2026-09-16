@@ -10,6 +10,8 @@ number and one tag.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-16
+
 ### Security
 
 - Mock server: the ATOM download route (`/atom/ko-<code>.zip`) no longer builds
@@ -297,6 +299,12 @@ number and one tag.
 
 ### Fixed
 
+- SDK, CLI, MCP: a land-registry unit with no entry in the electronic diary
+  comes back without the `lastDiaryNumber` key, and the
+  `LandRegistryUnitDetailed` model rejected the whole unit (`INVALID_RESPONSE`,
+  reason `validation_failed`), hiding its owners and encumbrances (k.o. LUKA
+  11269, 11225). `last_diary_number` is optional now; the CLI prints an empty
+  row and the JSON has `null`.
 - SDK, CLI, MCP: a possession sheet harmonized with the land registry comes
   back from the cadastre as a stub without possessors (and, by number,
   without its id) that names the land-registry unit; the `PossessionSheet`
@@ -737,6 +745,7 @@ was introduced.
 - Bilingual CLI user documentation (`docs/en/cli/`, `docs/hr/cli/`) generated
   by `scripts/build_docs.py`, with documentation and terminology gates in CI.
 
-[Unreleased]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ssarunic/boljeuredjenazemlja/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ssarunic/boljeuredjenazemlja/releases/tag/v0.1.0
