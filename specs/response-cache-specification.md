@@ -6,7 +6,9 @@ instead of being fetched again. Four layers, selected by configuration, behind o
 interface: in-process memory, memory plus disk, a separate cache process, and a
 distributed cache.
 
-Status: Draft, not yet implemented.
+Status: Phase 1 implemented (the cache package with the memory layer, the
+client hook, `refresh`, `fetched_at`, the `info` line); section 11 and phases
+2 to 4 are open.
 
 ## Scope Notice
 
@@ -88,7 +90,7 @@ memory budget be measured in bytes.
 The lifetime of an entry follows the data class of its endpoint (section 5), not the
 backend and not the caller. Classes that carry personal data have short lifetimes as a
 policy; the lifetimes are constants in the SDK, and configuration can turn the cache off
-or shorten it but never lengthen the personal-data classes beyond one hour.
+or shorten it but never lengthen the personal-data classes beyond 30 min.
 
 ### 3.4 One interface, composable backends
 
@@ -107,7 +109,7 @@ persists optionally. The `redis` client library speaks to both.
 
 | Layer | Library | Why |
 |---|---|---|
-| Memory | `cachetools` (`TTLCache`) | Bounded LRU with per-cache TTL, pure Python, no dependencies |
+| Memory | `cachetools` (`TLRUCache`) | Bounded LRU with a lifetime per entry, pure Python, no dependencies |
 | Disk | `diskcache` | SQLite-backed, per-key TTL, size limit with eviction, safe across threads and across processes on one machine |
 | Service | `redis` | Client for Redis and Valkey; `SET ... EX` gives per-key TTL |
 
@@ -157,7 +159,11 @@ backend might reject.
 
 The public whole-record methods (`get_lr_unit_detailed`, `get_lr_unit_from_parcel`,
 `get_parcel_info`, `get_possession_sheet*`) gain `refresh: bool = False`, which passes
-`use_cache=False` down and overwrites the entry with the fresh response.
+`use_cache=False` down and overwrites the entry with the fresh response. On a composed
+method (`get_lr_unit_from_parcel`, `get_possession_sheet_parcels`) it reaches the hops
+that return personal data (the parcel record, the unit, the sheet); the municipality,
+parcel-number and main-book lookups underneath may still be served from the cache,
+since a caller asking for a fresh copy is asking about the people on the record.
 
 ### 4.3 In-flight requests
 
@@ -227,9 +233,9 @@ header does not parse or whose `v` is unknown is a miss and is deleted.
 | Data class | Endpoints | Lifetime | Personal data |
 |---|---|---|---|
 | Reference lists | `/search-cad-parcels/offices`, `/search-cad-parcels/municipalities`, `/search-lr-parcels/main-books`, `/search-lr-parcels/books-of-dc` | 24 h | No |
-| Search (number to id) | `/search-cad-parcels/parcel-numbers`, `/cad/search-parcels`, `/cad/cad-parcels-search-data`, `/search-cad-parcels/possession-sheet-numbers` | 6 h | No |
+| Search (number to id) | `/search-cad-parcels/parcel-numbers`, `/cad/cad-parcels-search-data`, `/search-cad-parcels/possession-sheet-numbers` | 6 h | No |
 | Parcel detail | `/cad/parcel-info` | 30 min | Yes |
-| Possession sheet | `/cad/possession-sheet`, `/cad/possession-sheet-by-number` | 30 min | Yes |
+| Possession sheet | `/cad/possession-sheet`, `/cad/possession-sheet-by-number`, `/cad/search-parcels` (whole parcel records with their possessors and, when harmonized, owners) | 30 min | Yes |
 | Land-registry unit | `/lr/lr-unit` | 30 min | Yes |
 | File status | `/lr/file-status` (POST) | 5 min | No, but changes often |
 | Building areas (WFS) | planning WFS requests | 24 h | No |
@@ -244,10 +250,11 @@ uses the same cache once it is routed through the same hook; it is phase 2.
 
 ### 6.1 Layer 1: memory, in-process (default)
 
-`MemoryCache` wraps `cachetools.TTLCache` with `getsizeof=len` and a byte budget, behind
-a `threading.Lock`. Expiry is per cache in `TTLCache`, so the backend keeps one
-`TTLCache` per lifetime value and routes each `set` by its `ttl`. Entries die with the
-process. This layer alone makes every page after the first of a large unit free and
+`MemoryCache` wraps one `cachetools.TLRUCache` with `getsizeof=len` and a byte budget,
+behind a `threading.Lock`. `TLRUCache` expires each entry at its own time, so the
+lifetime passed to `set` becomes that entry's expiry and every class shares the one
+budget, least recently used out first. A response larger than the whole budget is not
+stored. Entries die with the process. This layer alone makes every page after the first of a large unit free and
 removes the municipality-list fetch from every parcel lookup within a session.
 
 ### 6.2 Layer 2: memory plus disk, in-process
